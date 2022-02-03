@@ -20,6 +20,7 @@ def group_post_code_path(instance, filename):
     return 'group_{0}/code/{1}'.format(instance.group.id, filename)
 ######################################
 
+# 그룹
 class Group(models.Model):
     name = models.CharField(verbose_name='그룹명', max_length=30)
     intro = models.TextField(verbose_name='그룹 소개', max_length=250)
@@ -30,6 +31,7 @@ class Group(models.Model):
     def __str__(self):
         return self.name
 
+# 그룹 참여 멤버
 class Participation(models.Model):
     group = models.ForeignKey(Group, verbose_name='소속 그룹명', blank=True, on_delete=models.CASCADE)
     member = models.ForeignKey(User, verbose_name='그룹멤버', on_delete=models.CASCADE)
