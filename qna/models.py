@@ -13,8 +13,8 @@ class Question(models.Model):
 
     hit = models.IntegerField(verbose_name='조회수', default=0)
 
-    created_at = models.DateTimeField(verbose_name='게시일자')
-    updated_at = models.DateTimeField(verbose_name='수정일자')
+    created_at = models.DateTimeField(verbose_name='게시일자', auto_now_add=True)
+    updated_at = models.DateTimeField(verbose_name='수정일자', auto_now=True)
 
     SE_TAG_CHOICES = (
         ('S', '스크래치'),
@@ -36,8 +36,8 @@ class Answer(models.Model):
 
     content = models.TextField(verbose_name='내용')
 
-    created_at = models.DateTimeField(verbose_name='게시일자')
-    updated_at = models.DateTimeField(verbose_name='수정일자')
+    created_at = models.DateTimeField(verbose_name='게시일자', auto_now_add=True)
+    updated_at = models.DateTimeField(verbose_name='수정일자', auto_now=True)
 
     answer_order = models.IntegerField(verbose_name='답변순서')
     answer_depth = models.IntegerField(verbose_name='답변깊이')
