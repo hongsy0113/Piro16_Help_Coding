@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="title">
+    <h1>Question List</h1>
+    <h4>묻고답하기 게시판 입니다. 질문들의 목록을 확인해보세요!</h4>
+</div>
+
+<div class="dev-container">
+    {% for question in questions %}
+        <div class="dev-cont">
+            <h3><a href = "{% url 'qna:question_detail' question.pk %}" {{ question.title }}</h3>
+        </div>
+    {% endfor %}
+</div>
+
+{% endblock %}
