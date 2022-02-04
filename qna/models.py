@@ -26,6 +26,10 @@ class Question(models.Model):
     #### 직성자필드
     user = models.ForeignKey(User, on_delete=models.CASCADE ,related_name='question_person')
 
+    like_user = models.ManyToManyField('user.User', blank=True)
+
+    tags = models.ManyToManyField('QnaTag', blank=True)
+
     def __str__(self):
         return self.title
 
@@ -44,21 +48,23 @@ class Answer(models.Model):
 
     question_id = models.ForeignKey(Question, on_delete=models.CASCADE,)
 
-    parent_answer = models.ForeignKey('self', on_delete=models.CASCADE)
+    parent_answer = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True)
 
-# 게시글 리액션
-class QuestionReaction(models.Model):
-    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='reacted_question')
+    like_user = models.ManyToManyField('user.User', blank=True)
 
-    # 리액션한 사람
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='question_react_person') 
+# # 게시글 리액션
+# class QuestionReaction(models.Model):
+#     question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='reacted_question')
 
-# 답변 리액션
-class AnswerReaction(models.Model):
-    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='reacted_answer')
+#     # 리액션한 사람
+#     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='question_react_person') 
 
-    # 리액션한 사람
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='answer_react_person') 
+# # 답변 리액션
+# class AnswerReaction(models.Model):
+#     question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='reacted_answer')
+
+#     # 리액션한 사람
+#     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='answer_react_person') 
 
 class QnaTag(models.Model):
     '''
@@ -98,6 +104,7 @@ class QnaTag(models.Model):
     def __str__(self):
         return self.tag_name
 
-class QnaTagging(models.Model):
-    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='tagged_question')
-    tag = models.ForeignKey(QnaTag, on_delete=models.CASCADE, related_name='this_question_tag', null=True)
+# manytomany field 사용
+# class QnaTagging(models.Model):
+#     question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='tagged_question')
+#     tag = models.ForeignKey(QnaTag, on_delete=models.CASCADE, related_name='this_question_tag', null=True)
