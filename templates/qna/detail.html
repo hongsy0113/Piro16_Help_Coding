@@ -34,16 +34,32 @@
         <hr>
         <p class="answer__total-count">답변 {{answers_count}} 개 </p>
         <div class="answer__list">
-            {% for answer in answers %}
+            {% for answer, replies in answers_reply_dict.items %}
                 <div class="answer__container answer__container--{{answer.id}}">
                     {% if answer.user.img %}
-                    <img src= '/media/{{ answer.user.img }}'' height="220" width="160">
+                    <img src= '{{ answer.user.img.url }}'' height="220" width="160">
                     {% endif %}
                     <h2>{{ answer.user }}</h2>
                     <p>{{ answer.created_at|date:'y.m.d  H:i'}}</p>
                     <div>
                         <p>{{ answer.content }}</p>
                         <p>좋아요 {{ answer.like_user.all | length }} </p>
+                    </div>
+
+                    <h4>reply</h4>
+                    <hr>
+                    <div class="reply__list">
+                        {% for reply in replies %}
+                            <div class="reply__container reply__container--{{reply.id}}">
+                                <p>
+                                    {{ reply.user }}   {{ reply.created_at|date:'y.m.d  H:i' }}
+                                    <br>
+                                    {{ reply.content }}
+                                    <br>
+                                    좋아요 {{ reply.like_user.all | length }}
+                                </p>
+                            </div>
+                        {% endfor %}
                     </div>
                 </div>
                 <hr>

@@ -17,8 +17,14 @@ def question_detail(request, pk):
     total_likes = len(question.like_user.all())
 
     # 해당 게시글에 대한 답변 가져오기
-    answers = Answer.objects.filter(question_id = question.id) # 나중에 답변 정렬도 고려. 최신순 또는 좋아요 순
+    answers = Answer.objects.filter(question_id = question.id, answer_depth = 0).order_by('answer_order')   #  나중에 답변 정렬도 고려. 최신순 또는 좋아요 순
     answers_count = len(answers)
+    
+    answers_reply_dict ={}
+    for answer in answers:
+        replies =  Answer.objects.filter(parent_answer= answer).order_by('answer_order')
+        answers_reply_dict[answer] = replies
+        
     ctx = {
         'question':question,
         'username': username,
@@ -26,8 +32,9 @@ def question_detail(request, pk):
         'total_likes' : total_likes,
         'answers' : answers,
         'answers_count' : answers_count,
+        'answers_reply_dict' : answers_reply_dict,
     }
-
+    # answer 와 reply로 이루어진 dictionary를 context로 넘길 예정
     return render(request, template_name='qna/detail.html', context=ctx)
 
 @csrf_exempt
