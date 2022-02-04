@@ -44,7 +44,7 @@ class Answer(models.Model):
 
     question_id = models.ForeignKey(Question, on_delete=models.CASCADE,)
 
-    parent_answer = models.ForeignKey('self', on_delete=models.CASCADE,)
+    parent_answer = models.ForeignKey('self', on_delete=models.CASCADE)
 
 # 게시글 리액션
 class QuestionReaction(models.Model):
