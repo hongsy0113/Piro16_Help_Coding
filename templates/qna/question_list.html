@@ -3,16 +3,28 @@
 {% block content %}
 
 <div class="title">
-    <h1>Question List</h1>
+    <h1>게시글 목록</h1>
     <h4>묻고답하기 게시판 입니다. 질문들의 목록을 확인해보세요!</h4>
 </div>
 
-<div class="dev-container">
+<div class="search-box">
+    <form action="{% url 'qna:search_result' %}" method="get">
+        {% csrf_token %}
+        <input type="search" placeholder="검색" name="search" />
+        <button type="submit">검색</button>
+    </form>
+</div>
+
+<div class="container">
     {% for question in questions %}
         <div class="dev-cont">
-            <h3><a href = "{% url 'qna:question_detail' question.pk %}" {{ question.title }}</h3>
+            <h3><a href = "">{{ question.title }}</a></h3>
+            <h5>작성자 | {{ question.user }}</h5>
+            <h5>등록시간 | {{ question.created_at }}</ㅗ5>
         </div>
     {% endfor %}
 </div>
+
+<a href="{% url 'qna:question_create' %}">질문 작성</a>
 
 {% endblock %}

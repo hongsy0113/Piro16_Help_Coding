@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>검색결과</h2>
+<h3>검색어: <b>"{{ query }}"</b></h3>
+
+{% for question in questions %}
+<div class="result">
+    <div>
+        <h4>{{ question.title }}</h4>
+        <p>{{ question.content }}</p>
+    </div>
+</div>    
+
+{% empty %}
+   <h4>결과 없음</h4>
+{% endfor %}
+
+
+{% endblock %}
