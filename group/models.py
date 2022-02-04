@@ -27,6 +27,7 @@ class Group(models.Model):
     maker = models.ForeignKey(User, verbose_name='방장', on_delete=models.CASCADE,related_name='group_maker')
     code = models.CharField(verbose_name='초대 코드', max_length=20, null=True)  #랜덤 코드 길이 설정
     image = models.ImageField(upload_to=group_thumbnail_path, null=True, blank=True)
+    star = models.IntegerField(verbose_name="찜하기", default=0)
 
     def __str__(self):
         return self.name
