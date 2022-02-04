@@ -44,7 +44,7 @@ class Answer(models.Model):
     updated_at = models.DateTimeField(verbose_name='수정일자', auto_now=True)
 
     answer_order = models.IntegerField(verbose_name='답변순서')
-    answer_depth = models.IntegerField(verbose_name='답변깊이')
+    answer_depth = models.IntegerField(verbose_name='답변깊이', default=0)
 
     question_id = models.ForeignKey(Question, on_delete=models.CASCADE,)
 

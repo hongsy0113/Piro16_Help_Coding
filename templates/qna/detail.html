@@ -22,21 +22,84 @@
         <hr>
         <h3>{{ question.content }}</h3>
         <hr>
-        <p>답변 {{answers_count}}개 </p>
-        {% for answer in answers %}
-            <div>
-                <img src= '/media/{{ answer.user.img }}'' height="220" width="160">
-                <h2>{{ answer.user }}</h2>
-                <p>{{ answer.created_at|date:'y.m.d  h:i'}}</p>
-                <div>
-                    <p>{{ answer.content }}</p>
-                    <p>좋아요 {{ answer.like_user.all | length }} </p>
-                </div>
-            </div>
-            <hr>
-        {% endfor %}
         
+        {% if user.is_authenticated %}
+        
+        <input type="textarea" name="new_answer" placeholder="답변을 입력하세요" class="answer__input" style="width:600px; height:220px;">
+            
+        <input type="button" value = "작성" class="answer__submit">
+        
+        {% endif %}
+
+        <hr>
+        <p class="answer__total-count">답변 {{answers_count}} 개 </p>
+        <div class="answer__list">
+            {% for answer in answers %}
+                <div class="answer__container answer__container--{{answer.id}}">
+                    {% if answer.user.img %}
+                    <img src= '/media/{{ answer.user.img }}'' height="220" width="160">
+                    {% endif %}
+                    <h2>{{ answer.user }}</h2>
+                    <p>{{ answer.created_at|date:'y.m.d  H:i'}}</p>
+                    <div>
+                        <p>{{ answer.content }}</p>
+                        <p>좋아요 {{ answer.like_user.all | length }} </p>
+                    </div>
+                </div>
+                <hr>
+            {% endfor %}
+        </div>
+
 
     </main>
+    <!-- AXIOS 사용 위한 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!-- 답변, 대댓글 위한 script -->
+    <script>
+        const onClickAnswer = async (questionId, content) => {
+            const url = "/qna/answer_ajax/";
+            // 입력을 하지 않았다면 작성 버튼 눌러도 작동 안하도록
+            if (content.length>0){
+                const {data} = await axios.post(url,{
+                    questionId, content, user: '{{user.pk}}'
+                });
+                likeHandleResponse(data.id, data.content, data.user, data.created_at)
+            }
+            
+        }
+
+
+        const likeHandleResponse = (id, content, user, created_at) => {
+            
+            const element = document.querySelector(`.answer__input`);
+            const answerList = document.querySelector(`.answer__list`);
+            
+            // input 비우기
+            element.value = "";
+
+            const newAnswer = document.createElement('div');
+            newAnswer.classList.add('answer__container', `answer__container--${id}`)
+            newAnswer.innerHTML = `<h2>${user}</h2>
+                    <p>${created_at}</p>
+                    <div>
+                        <p>${content}</p>
+                        <p>좋아요 0 </p>
+                    </div>`;
+            answerList.append(newAnswer);
+            // TODO : 총 답변 개수도 바뀌어야 함
+            const answerCount = document.querySelector('.answer__total-count');
+            const [text1 , num, text2] = answerCount.innerHTML.split(' ');
+            
+            const count = Number(num)+1;
+
+            answerCount.innerHTML = `답변 ${count}개`
+
+        }
+
+        const answerButton = document.querySelector('.answer__submit');
+        const answerInput = document.querySelector('.answer__input');
+        // 익명 함수를 통해 addEvent 호출 함수에 파라미터를 넣을 수 있다.
+        answerButton.addEventListener('click', function(){onClickAnswer({{question.id}} , answerInput.value)});
+    </script>
 </body>
 </html>
