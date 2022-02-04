@@ -7,22 +7,23 @@
     <title>나의 그룹</title>
 </head>
 <body>
-    <a href="{% url 'group:group_create' %}">그룹 생성</a>
-    <a href="#">그룹 가입하기</a>
+    <a href="{% url 'group_create' %}">그룹 생성</a>
+    <a href="">그룹 가입하기</a>
     <div class="mygroup_list">
         {% for group in groups %}
             <div class="mygroup_one">
-                <div class="group-name">{{ group.name }}</div>
+                <div class="group-name"><a href="{% url 'group_detail' group.pk %}"><h2>{{ group.name }}</h2></a></div>
                 <div class="group-img">
                     {% if group.image %}
                     <img src="{{ group.image.url }}" height="200" width="200" />
                     {% else %}
-                    <img class="random-img" src="https://picsum.photos/seed/{{group.id}}/200/200" />
+                    <img class="random-img" src="https://picsum.photos/seed/{{ group.id }}/200/200" />
                     {% endif %}
                 </div>
-                <div class="group-info">
+                <div class="group-keyword">
                     <div class="group-member">{{ member_cnt }}</div>
-                    <div class="group-star">{{ group.star }}</div>
+                    <div class="group-star">찜하기{{ group.star }}</div>
+                    <a href="{% url 'group_delete' group.pk %}">그룹 삭제</a>
                 </div>
             </div>
         {% endfor %}

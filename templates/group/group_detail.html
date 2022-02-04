@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>그룹 상세 페이지</title>
+</head>
+<body>
+    <div class="group-info">
+        <div class="group-info__nav">
+            <div class="group-info__name"><h2>{{ group.name }}</h2></div>
+            <a href="{% url 'group_home' %}">그룹 홈</a>
+            <a href="#">그룹 커뮤니티</a>
+        </div>
+        <div class="group-info__main">
+            <div class="group-info__image">
+                {% if group.image %}
+                <img src="{{ group.image.url }}" height="200" width="200" />
+                {% else %}
+                <img class="random-img" src="https://picsum.photos/seed/{{ group.id }}/200/200" />
+                {% endif %}
+            </div>
+            <div>{{ group.intro }}</div>
+        </div>
+        <div class="group-info__member">
+            <h3>멤버 명단</h3>
+            {% for member in members %}
+                <div>
+                    {{ member }}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>
