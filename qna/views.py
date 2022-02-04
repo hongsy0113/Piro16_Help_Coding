@@ -29,4 +29,4 @@ def question_create(request):
     else:
         form = QuestionForm()
     ctx = {'form': form}
-    return render(request, 'qna/question_form.html', context=ctx)
+    return render(request, 'qna/question_create.html', context=ctx)

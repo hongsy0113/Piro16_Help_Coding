@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div>
+    <h3>질문 등록</h3>
+    <h4>질문 게시글 등록 페이지입니다.</h4>
+</div>
+
+<form action="" method="post">
+    {% csrf_token %}
+    <div>
+        <label for="title">질문 제목</label><br />
+        <input type="text" name="title" id="title"/>
+    </div>
+    <div>
+        <label for="Qcontent">질문 내용</label><br />
+        <textarea name="Qcontent" id="Qcontent" cols="30" rows="10"></textarea>
+    </div>
+    <div>
+        <label for="image">이미지 업로드</label><br />
+        <p>{{ form.image }}</p>
+    </div>
+    <div>
+        <label for="attached_file">파일 업로드</label><br />
+        <p>{{ form.attached_file }}</p>
+    </div>
+    <div>
+        <label for="s_or_e_tag">기본 카테고리 선택</label><br />
+        <p>{{ form.s_or_e_tag }}</p>
+    </div>
+    <div>
+    <button type="submit">질문 등록</button>
+    <a href="{% url 'qna:question_list' %}">취소</a>
+    </div>
+</form>
+{% endblock %}
