@@ -1,7 +1,7 @@
-from socket import fromshare
 from django import forms
 from .models import *
 
-class GroupForm(form.ModelForm):
+class GroupForm(forms.ModelForm):
     class Meta:
-        
+        model = Group
+        fields = ('name', 'image', 'intro')
