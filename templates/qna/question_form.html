@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div>
+    <h3>질문 등록</h3>
+    <h4>질문 게시글 등록 페이지입니다.</h4>
+</div>
+
+<div class="container">
+    <form method="POST" enctype='multipart/form-data'>
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">등록</button>
+        <a href="{% url 'qna:question_list' %}">취소</a>
+    </form>
+</div>
+
+{% endblock %}

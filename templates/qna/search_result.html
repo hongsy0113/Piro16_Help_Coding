@@ -5,16 +5,16 @@
 <h3>검색어: <b>"{{ query }}"</b></h3>
 
 {% for question in questions %}
-<div class="result">
     <div>
+        <div>
         <h4>{{ question.title }}</h4>
         <p>{{ question.content }}</p>
-    </div>
-</div>    
+        <p>{{ question.user }}</p>
+        </div>
+    </div>    
 
-{% empty %}
-   <h4>결과 없음</h4>
+    {% empty %}
+        <h4> 결과 없음</h4>
 {% endfor %}
-
 
 {% endblock %}
