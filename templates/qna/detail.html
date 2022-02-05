@@ -1,198 +1,82 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-    <title>Document</title>
-</head>
-<body>
-    <main>
-        <h1>{{ question.title }}</h1>
-        <hr>
-        <p>{{ question.created_at|date:'y.m.d'}}</p>
-        <p>조회 {{ question.hit }}</p>
-        <p>좋아요 {{ total_likes }}</p>
-        <p>{{ username }}</p>
-        {% for tag in tags %}
-            <div class="btn btn-success">
-                {{ tag.tag_name }}
-            </div>
-        {% endfor %}
-        <hr>
-        <h3>{{ question.content }}</h3>
-        <hr>
-        
-        {% if user.is_authenticated %}
-        <input type="textarea" name="new_answer" placeholder="답변을 입력하세요" class="answer__input" style="width:600px; height:220px;">    
-        <input type="button" value = "작성" class="answer__submit">
-        {% endif %}
+{% extends 'base.html' %}
 
-        <hr>
-        <p class="answer__total-count">답변 {{answers_count}} 개 </p>
-        <div class="answer__list">
-            <!-- 답변 부분 -->
-            {% for answer, replies in answers_reply_dict.items %}
-                <div class="answer__container answer__container--{{answer.id}}">
-                    {% if answer.user.img %}
-                    <img src= '{{ answer.user.img.url }}'' height="220" width="160">
-                    {% endif %}
-                    <h2>{{ answer.user }}</h2>
-                    <p>{{ answer.created_at|date:'y.m.d  H:i'}}</p>
-                    <div>
-                        <p>{{ answer.content }}</p>
-                        <p>좋아요 {{ answer.like_user.all | length }} </p>
-                    </div>
 
+
+{% block js %}
+<script type="text/javascript" src="/static/js/qna_detail.js" defer></script>
+{% endblock %}
+{% block content %}
+{{ request.user.id|json_script:"user_id" }}
+{{ question.id|json_script:"question_id" }}
+<main>
+    <h1>{{ question.title }}</h1>
+    <hr>
+    <p>{{ question.created_at|date:'y.m.d'}}</p>
+    <p>조회 {{ question.hit }}</p>
+    <p>좋아요 {{ total_likes }}</p>
+    <p>{{ username }}</p>
+    {% for tag in tags %}
+        <div class="btn btn-success">
+            {{ tag.tag_name }}
+        </div>
+    {% endfor %}
+    <hr>
+    <h3>{{ question.content }}</h3>
+    <hr>
+    
+    {% if user.is_authenticated %}
+    <input type="textarea" name="new_answer" placeholder="답변을 입력하세요" class="answer__input" style="width:600px; height:220px;">    
+    <input type="button" value = "작성" class="answer__submit">
+    {% endif %}
+
+    <hr>
+    <p class="answer__total-count">답변 {{answers_count}} 개 </p>
+    <div class="answer__list">
+        <!-- 답변 부분 -->
+        {% for answer, replies in answers_reply_dict.items %}
+            <div class="answer__container answer__container--{{answer.id}}">
+                {% if answer.user.img %}
+                <img src= '{{ answer.user.img.url }}'' height="220" width="160">
+                {% endif %}
+                <h2>{{ answer.user }}</h2>
+                <p>{{ answer.created_at|date:'y.m.d  H:i'}}</p>
+                <div>
+                    <p>{{ answer.content }}</p>
+                    <p>좋아요 {{ answer.like_user.all | length }} </p>
+                </div>
+
+                <div>
                     <input type="checkbox" class="answer__write-reply answer__write-reply--{{ answer.id }} btn-check " id="reply-btn-{{ answer.id }}" autocomplete="off">
                     <label class="btn btn-primary" for="reply-btn-{{ answer.id }}">답글 작성</label>
-
-                    <h4>reply</h4>
-                    <hr>
-                    <div class="reply__list">
-                        <!-- 대댓글 부분 -->
-                        {% for reply in replies %}
-                            <div class="reply__container reply__container--{{reply.id}}">
-                                <p>
-                                    {{ reply.user }}   {{ reply.created_at|date:'y.m.d  H:i' }}
-                                    <br>
-                                    {{ reply.content }}
-                                    <br>
-                                    좋아요 {{ reply.like_user.all | length }}
-                                </p>
-                            </div>
-                        {% endfor %}
-                    </div>
-
-                    <div class="reply__form reply__form--{{ answer.id }}" style="display: none;">
-                        {% if user.is_authenticated %}
-                        <input type="text" name="new_reply_{{ answer.id }}" placeholder="답변을 입력하세요" class="reply__input reply__input--{{ answer.id }}" style="width:200px; height:20px;">    
-                        <input type="button" value = "작성" class="reply__submit reply__submit--{{ answer.id }}">
-                        {% endif %}
-                    </div>
                 </div>
+                <h4>reply</h4>
                 <hr>
-            {% endfor %}
-        </div>
+                <div class="reply__list">
+                    <!-- 대댓글 부분 -->
+                    {% for reply in replies %}
+                        <div class="reply__container reply__container--{{reply.id}}">
+                            <p>
+                                {{ reply.user }}   {{ reply.created_at|date:'y.m.d  H:i' }}
+                                <br>
+                                {{ reply.content }}
+                                <br>
+                                좋아요 {{ reply.like_user.all | length }}
+                            </p>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <div class="reply__form reply__form--{{ answer.id }}" style="display: none;">
+                    {% if user.is_authenticated %}
+                    <input type="text" name="new_reply_{{ answer.id }}" placeholder="답변을 입력하세요" class="reply__input reply-input-{{ answer.id }}" id = "reply__input--{{ answer.id }}"style="width:200px; height:20px;">    
+                    <input type="button" value = "작성" class="reply__submit reply__submit--{{ answer.id }}" id = "reply-submit-{{ answer.id }}">
+                    {% endif %}
+                </div>
+            </div>
+            <hr>
+        {% endfor %}
+    </div>
 
 
-    </main>
-
-    <!-- Bootstrap Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
-  
-    <!-- AXIOS 사용 위한 CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <!-- 답변, 대댓글 위한 script -->
-    <script>
-        /////////////////////////////////////////////////////
-        ////////////////////답변 작성 ///////////////////////
-        /////////////////////////////////////////////////////
-        const onClickAnswer = async (questionId, content) => {
-            const url = "/qna/answer_ajax/";
-            // 입력을 하지 않았다면 작성 버튼 눌러도 작동 안하도록
-            if (content.length>0){
-                const {data} = await axios.post(url,{
-                    questionId, content, user: '{{user.pk}}'
-                });
-                answerHandleResponse(data.id, data.content, data.user, data.created_at)
-            } 
-        }
-
-        const answerHandleResponse = (id, content, user, created_at) => {
-            
-            const element = document.querySelector(`.answer__input`);
-            const answerList = document.querySelector(`.answer__list`);
-           
-            // input 비우기
-            element.value = "";
-
-            const newAnswer = document.createElement('div');
-            newAnswer.classList.add('answer__container', `answer__container--${id}`)
-            newAnswer.innerHTML = `<h2>${user}</h2>
-                    <p>${created_at}</p>
-                    <div>
-                        <p>${content}</p>
-                        <p>좋아요 0 </p>
-                    </div>`;
-            answerList.append(newAnswer);
-            // TODO : 총 답변 개수도 바뀌어야 함
-            const answerCount = document.querySelector('.answer__total-count');
-            const [text1 , num, text2] = answerCount.innerHTML.split(' ');
-    
-            const count = Number(num)+1;
-
-            answerCount.innerHTML = `답변 ${count}개`
-        }
-
-        const answerButton = document.querySelector('.answer__submit');
-        const answerInput = document.querySelector('.answer__input');
-        // 익명 함수를 통해 addEvent 호출 함수에 파라미터를 넣을 수 있다.
-        answerButton.addEventListener('click', function(){onClickAnswer({{question.id}} , answerInput.value)});
-        /////////////////////////////////////////////////////
-
-        /////////////////////////////////////////////////////
-        ///////////////////대댓글 작성 ///////////////////////
-        /////////////////////////////////////////////////////
-
-        // 답변 작성 누르면 대댓글 작성폼 나오도록
-        const replyButton = document.querySelectorAll('.answer__write-reply');
-
-        const onClickReplyCheck = function (e, answerId) {
-            console.log (answerId);
-
-            const replyForm = document.querySelector(`.reply__form--${answerId}`);
-            if (e.target.checked) {
-                replyForm.style.display = 'block';
-            }
-            else {
-                replyForm.style.display = 'none';
-            }
-        }
-
-        replyButton.forEach(function(btn) {
-            btn.addEventListener('click',function(e){
-                // button class 이름에서 해당 대댓글 작성 버튼이 속한 답변 id 가져오기
-                const answerId = btn.classList[1].substr(-1);
-                onClickReplyCheck(e, answerId);
-            })
-        })
-        
-
-
-
-
-        const onClickReply = async (answerId, content) => {
-            const url = "/qna/reply_ajax/";
-            // 입력을 하지 않았다면 작성 버튼 눌러도 작동 안하도록
-            if (content.length>0){
-                const {data} = await axios.post(url,{
-                    answerId, content, user: '{{user.pk}}'
-                });
-                
-                relpyHandleResponse()
-            } 
-        }
-
-
-        // 같은 클래스 여러 요소에 같은 event 등록
-        const replySubmitButton = document.querySelectorAll('.reply__submit');
-        replySubmitButton.forEach(function(btn) {
-            btn.addEventListener('click',function(){
-                // button class 이름에서 해당 대댓글 작성 버튼이 속한 답변 id 가져오기
-                const answerId = btn.classList[1].substr(-1);
-                // 그걸 바탕으로 해당하는 대댓글 입력 받아오기
-                const replyInput = document.querySelector(`.reply__input--${answerId}`);
-                
-                onClickReply(answerId, replyInput.value);
-            })
-        })
-
-        /////////////////////////////////////////////////////
-
-
-    </script>
-</body>
-</html>
+</main>
+{% endblock %}
