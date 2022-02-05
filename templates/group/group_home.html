@@ -1,12 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>나의 그룹</title>
-</head>
-<body>
+{% extends 'group_base.html' %}
+{% block title %} 나의 그룹 {% endblock %}
+
+{% block content %}
+
     <a href="{% url 'group_create' %}">그룹 생성</a>
     <a href="">그룹 가입하기</a>
     <div class="mygroup_list">
@@ -22,12 +18,12 @@
                 </div>
                 <div class="group-keyword">
                     <div class="group-member">{{ member_cnt }}</div>
-                    <div class="group-star">찜하기{{ group.star }}</div>
+                    <div class="group-star"><i class="fas fa-star"></i><i class="far fa-star"></i>찜하기{{ group.star }}</div>
                     <a href="{% url 'group_delete' group.pk %}">그룹 삭제</a>
                 </div>
             </div>
         {% endfor %}
     </div>
     <a href="#">그룹 찾기</a>
-</body>
-</html>
+
+{% endblock %}

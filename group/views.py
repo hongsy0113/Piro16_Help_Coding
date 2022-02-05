@@ -59,7 +59,7 @@ def group_update(request, pk):
         if form.is_valid():
             group = form.save()
 
-            return redirect('group:group_detail', pk)
+            return redirect('group_detail', pk)
     else:
         form = GroupForm(instance=group)
         ctx = {'form': form}
@@ -78,6 +78,22 @@ def get_invite_code(length=6):
     return base64.urlsafe_b64encode(
         codecs.encode(uuid.uuid4().bytes, 'base64').rstrip()
     ).decode()[:length]
+
+# 초대 코드 공개(from 그룹 상세 페이지)
+def create_code(request, pk):
+    group = get_object_or_404(Group, pk=pk)
+    group.code = get_invite_code()
+    group.save()
+    # 여기서 3분 제한 둘 것
+    ctx = { 'group': group }
+
+    return render(request, template_name='group/create_code.html', context=ctx)
+
+# 초대 코드 입력(from 메인 페이지)
+# def join_group(request):
+#     group = get_object_or_404(Group)
+
+    
 
 # 그룹 상세 페이지
 def group_detail(request, pk):
