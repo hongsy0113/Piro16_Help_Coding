@@ -64,3 +64,11 @@ def answer_ajax(request):
     created_at = new_answer.created_at.strftime('%y.%m.%d %H:%M')
 
     return JsonResponse({'id': new_answer.id ,'content': content,'user':username, 'created_at':created_at} )
+
+@csrf_exempt
+def reply_ajax(request):
+    req = json.loads(request.body)
+    print(req)
+    ####### 2/5 ###########
+    #### 대댓글 작성 짜고 있었음. 프론트 단에서 request 보내는 건 얼추 했고 view에서 처리, front에서 비동기 업데이트 하면 됨
+    return JsonResponse({'id':'idd'})
