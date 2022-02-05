@@ -1,0 +1,9 @@
+{% extends 'user/main.html' %}
+
+{% block content %}
+<form method="POST" enctype="multipart/form-data" action="">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="SignUp">
+</form>
+{% endblock content %}
