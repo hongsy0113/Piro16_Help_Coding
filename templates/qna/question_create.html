@@ -13,13 +13,17 @@
 
 <form action="" method="post">
     {% csrf_token %}
+    <!-- <div>
+        <label for="writer">질문 작성자</label><br />
+        <p>{{ form.user }}</p>
+    </div> -->
     <div>
         <label for="title">질문 제목</label><br />
         <input type="text" name="title" id="title"/>
     </div>
     <div>
-        <label for="Qcontent">질문 내용</label><br />
-        <textarea name="Qcontent" id="Qcontent" cols="30" rows="10"></textarea>
+        <label for="content">질문 내용</label><br />
+        <textarea name="content" id="content" cols="30" rows="10"></textarea>
     </div>
     <div>
         <label for="image">이미지 업로드</label><br />

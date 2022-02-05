@@ -8,7 +8,6 @@ class UserAdmin(admin.ModelAdmin):
     list_display_links = ['id', 'nickname']
 
     
-admin.site.register(Job)
 admin.site.register(Reward)
 admin.site.register(GetReward)
 admin.site.register(Alert)

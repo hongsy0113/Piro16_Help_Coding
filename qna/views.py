@@ -63,8 +63,9 @@ def question_create(request):
         if form.is_valid():
             question = form.save()
             return redirect('qna:question_list')
-        print("print")         
+
     else:
         form = QuestionForm()
         ctx = {'form': form}
+        
         return render(request, 'qna/question_create.html', context=ctx)
