@@ -4,8 +4,10 @@
 {% block content %}
 
     <div class="code_box">
+        <h3>그룹명: {{ group.name }}</h3>
         <h3>다음 코드로 친구를 초대하세요!</h3>
         <h1>{{ group.code }}</h1>
     </div>
+    <a href="{% url 'group_home' %}">홈으로</a>
 
 {% endblock %}

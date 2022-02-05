@@ -4,7 +4,7 @@
 {% block content %}
 
     <a href="{% url 'group_create' %}">그룹 생성</a>
-    <a href="">그룹 가입하기</a>
+    <a href="{% url 'join_group' %}">그룹 가입하기</a>
     <div class="mygroup_list">
         {% for group in groups %}
             <div class="mygroup_one">
@@ -18,7 +18,14 @@
                 </div>
                 <div class="group-keyword">
                     <div class="group-member">{{ member_cnt }}</div>
-                    <div class="group-star"><i class="fas fa-star"></i><i class="far fa-star"></i>찜하기{{ group.star }}</div>
+                    <div class="group-star"><i class="fas fa-star"></i><i class="far fa-star"></i>찜하기{{ group.star }}
+                        <button class="star" id="{{ group.is_star }}" onclick="onClickStar(`{{ group.id }}`)">
+                            {% if post.islike %} <!-- 꽉 찬 별 -->
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 18.26l-7.053 3.948 1.575-7.928L.587 8.792l8.027-.952L12 .5l3.386 7.34 8.027.952-5.935 5.488 1.575 7.928z"/></svg>                            
+                            {% else %} <!-- 빈 별 -->
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 18.26l-7.053 3.948 1.575-7.928L.587 8.792l8.027-.952L12 .5l3.386 7.34 8.027.952-5.935 5.488 1.575 7.928L12 18.26zm0-2.292l4.247 2.377-.949-4.773 3.573-3.305-4.833-.573L12 5.275l-2.038 4.42-4.833.572 3.573 3.305-.949 4.773L12 15.968z"/></svg>                            {% endif %}
+                        </button>
+                    </div>
                     <a href="{% url 'group_delete' group.pk %}">그룹 삭제</a>
                 </div>
             </div>
@@ -27,3 +34,45 @@
     <a href="#">그룹 찾기</a>
 
 {% endblock %}
+
+{% block extra %}
+
+<script>
+    const requestStar = new XMLHttpRequest();
+
+    const onClickStar = (id) => {
+        const url = '/star_ajax/'
+
+        requestStar.open('POST', url, true);
+        requestStar.setRequestHeader(
+            'Content-Type',
+            'application/x-www-form-urlencoded'
+        );
+        requestStar.send(JSON.stringify({ id: id }));
+    };
+
+    const starHandleResponse = () => {
+        if(requestStar.status < 400) {
+            const id = JSON.parse(requestStar.response);
+            // const element = document.querySelector(`.group-id-${id} .star-check`);
+            const element = document.querySelector(`.star`);
+            const is_star = element.id
+
+            if(is_star == 'False') {
+                element.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 18.26l-7.053 3.948 1.575-7.928L.587 8.792l8.027-.952L12 .5l3.386 7.34 8.027.952-5.935 5.488 1.575 7.928z"/></svg>`;
+                element.id = 'True'
+            } else {
+                element.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 18.26l-7.053 3.948 1.575-7.928L.587 8.792l8.027-.952L12 .5l3.386 7.34 8.027.952-5.935 5.488 1.575 7.928L12 18.26zm0-2.292l4.247 2.377-.949-4.773 3.573-3.305-4.833-.573L12 5.275l-2.038 4.42-4.833.572 3.573 3.305-.949 4.773L12 15.968z"/></svg>`;
+                element.id = 'False'
+            }
+        }
+    };
+
+    requestStar.onreadystatechange = () => {
+        if(requestStar.readyState == XMLHttpRequest.DONE) {
+            starHandleResponse();
+        }
+    }
+</script>
+
+{% endblock%}
