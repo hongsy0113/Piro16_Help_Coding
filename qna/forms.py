@@ -4,4 +4,4 @@ from .models import *
 class QuestionForm(forms.ModelForm):
     class Meta:
         model = Question
-        exclude = ('hit', 'like_user')
+        exclude = ('hit', 'like_user', 'user')

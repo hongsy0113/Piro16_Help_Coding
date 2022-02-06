@@ -1,3 +1,4 @@
+from distutils.command.clean import clean
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import *
 from .forms import *
@@ -59,10 +60,18 @@ def search_result(request):
 def question_create(request):
     if request.method == 'POST':
         form = QuestionForm(request.POST, request.FILES)
+        question = form.save(commit=False)
+        question.user = request.user
+        question.save()
+        return redirect('qna:question_list')
 
-        if form.is_valid():
-            question = form.save()
-            return redirect('qna:question_list')
+        # if form.is_valid():
+        #     Question.objects.create(
+        #         title = form.cleaned_data['title'],
+        #         content = form.cleaned_data['content'],
+        #         user = request.user,
+        #     )
+        # return redirect('qna:question_list')
 
     else:
         form = QuestionForm()

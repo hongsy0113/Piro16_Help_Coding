@@ -11,12 +11,8 @@
     <h4>질문 게시글 등록 페이지입니다.</h4>
 </div>
 
-<form action="" method="post">
+<form action="" method="post" enctype="multipart/form-data">
     {% csrf_token %}
-    <!-- <div>
-        <label for="writer">질문 작성자</label><br />
-        <p>{{ form.user }}</p>
-    </div> -->
     <div>
         <label for="title">질문 제목</label><br />
         <input type="text" name="title" id="title"/>
