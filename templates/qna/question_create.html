@@ -29,16 +29,13 @@
         <label for="attached_file">파일 업로드</label><br />
         <p>{{ form.attached_file }}</p>
     </div>
-    <div>
-        <label for="s_or_e_tag">기본 카테고리 선택</label><br />
-        <p>{{ form.s_or_e_tag }}</p>
-    </div>
     <div class="select__tag">
-        <input type="checkbox" name="scratch" value="1" id="scratch" class="tag" />
+        <p>카테고리 선택</p>
+        <input type="radio" name="s_or_e_tag" value="S" id="scratch" class="tag" />
         <label for="scratch">스크래치</label>
-        <input type="checkbox" name="entry" value="2" id="entry" class="tag"/>
+        <input type="radio" name="s_or_e_tag" value="E" id="entry" class="tag" />
         <label for="entry">엔트리</label>
-        <input type="checkbox" name="etc" value="3" id="etc" class="tag"/>
+        <input type="radio" name="s_or_e_tag" value="ETC" id="etc" class="tag" />
         <label for="etc">기타</label>
     </div>
     <div>

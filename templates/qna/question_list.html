@@ -17,10 +17,10 @@
 
 <div class="container">
     {% for question in questions %}
-        <div class="dev-cont">
+        <div class="question-cont">
             <h3><a href = "">{{ question.title }}</a></h3>
             <h5>작성자 | {{ question.user }}</h5>
-            <h5>등록시간 | {{ question.created_at }}</ㅗ5>
+            <h5>등록시간 | {{ question.created_at }}</h5>
         </div>
     {% endfor %}
 </div>

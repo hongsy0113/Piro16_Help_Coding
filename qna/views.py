@@ -62,6 +62,7 @@ def question_create(request):
         form = QuestionForm(request.POST, request.FILES)
         question = form.save(commit=False)
         question.user = request.user
+        question.s_or_e_tag = request.POST.get('s_or_e_tag')
         question.save()
         return redirect('qna:question_list')
 
