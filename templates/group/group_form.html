@@ -5,10 +5,22 @@
 
     <form method="POST" class="post-form">
         {% csrf_token %}
-        <table>
+        <p>
+            <label>그룹명: </label>
+            <input class="form-input" name="name" type="text" maxlength="30" value="{% if group.name %} {{ group.name }} {% endif %}">
+        </p>
+        <p>
+            <label>대표이미지 </label>
+            <input class="form-input" name="image" type="file" maxlength="255" value="{% if group.image %} {{ group.image.url }} {% endif %}">
+        </p>
+        <p>
+            <label>그룹 소개 </label>
+            <textarea class="form-input" cols="63" rows="10" name="intro">{% if group.intro %} {{ group.intro }} {% endif %}</textarea>
+        </p>
+        <!-- <table>
             {{ form.as_table }}
-        </table>
-        <button type="submit" class="btn btn-default">생성</button>
+        </table> -->
+        <button type="submit" class="save btn">생성</button>
     </form>
 
 {% endblock %}

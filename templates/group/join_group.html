@@ -4,23 +4,13 @@
 {% block content %}
 
     <div class="group-join__box">
-        <div class="group-join__name"></div>
-            {% if group.name %}
-                <h2>{{ group.name }}</h2>
-            {% elif %}
-                <h2>가입할 그룹 찾기</h2>
-            {% endif %}
-        </div>
         <form method="GET" class="group-join__code">
             <input placeholder="초대 코드 입력" type="text" name="code" />
             <button>Submit</button> 
         </form>
         <div class="group-join__message">
-            {% if message %}
             <h4>{{ message }}</h4>
-            {% elif%}
-            <h4>그룹을 찾는 중 ...</h4>
-            {% endif %}
+
         </div>
     </div>
 
