@@ -133,3 +133,39 @@ replySubmitButton.forEach(function(btn) {
 })
 
 /////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////
+////////////////// 좋아요 ajax //////////////////////
+/////////////////////////////////////////////////////
+
+const questionLikeBtn = document.querySelector('.question__like-btn');
+
+onClickQuestionLike = async (questionId, userId) => {
+    const url = "/qna/question_like_ajax/";
+    // 입력을 하지 않았다면 작성 버튼 눌러도 작동 안하도록
+
+    const {data} = await axios.post(url,{
+        questionId, userId
+    });
+    questionLikeHandleResponse(data.question_id, data.total_likes, data.is_liking)
+    
+}
+
+questionLikeBtn.addEventListener('click', function(){
+    onClickQuestionLike(question_id, user_id);
+})
+
+questionLikeHandleResponse = (questionId, totalLikes, isLiking) => {
+    if (isLiking){
+        questionLikeBtn.innerHTML = `
+        <i class="fas fa-heart"></i>
+        <span>좋아요 ${totalLikes}개</span>
+        `
+    }
+    else {
+        questionLikeBtn.innerHTML = `
+        <i class="far fa-heart"></i>
+        <span>좋아요 ${totalLikes}개</span>
+        `
+    }
+}
