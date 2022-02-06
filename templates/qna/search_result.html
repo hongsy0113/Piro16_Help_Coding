@@ -15,7 +15,7 @@
 {% for question in questions %}
     <div>
         <div>
-        <h4>{{ question.title }}</h4>
+        <h4><a href="{% url 'qna:question_detail' question.pk %}">{{ question.title }} </a> </h4>
         <p>{{ question.content }}</p>
         <p>{{ question.user }}</p>
         </div>
