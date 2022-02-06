@@ -138,9 +138,9 @@ EMAIL_HOST = 'smtp.gmail.com'
 
 EMAIL_PORT = '587'
 
-EMAIL_HOST_USER = 'lgtwins1203@gmail.com'
+EMAIL_HOST_USER = '' #이메일 입력
 
-EMAIL_HOST_PASSWORD = 'ckseodcy12'
+EMAIL_HOST_PASSWORD = '' #비밀번호 입력
 
 EMAIL_USE_TLS = True
 
