@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block js %}
+<script type="text/javascript" src="/static/js/qna_detail.js" defer></script>
+{% endblock %}
+
+
+{% block content %}
+{{ request.user.id|json_script:"user_id" }}
+{{ question.id|json_script:"question_id" }}
+<main>
+    <h1>{{ question.title }}</h1>
+    <hr>
+    <p>{{ question.created_at|date:'y.m.d'}}
+    조회 {{ question.hit }}
+    좋아요 {{ total_likes }}
+    {{ username }}</p>
+    {% for tag in tags %}
+        <div class="btn btn-success">
+            {{ tag.tag_name }}
+        </div>
+    {% endfor %}
+    
+    <h3>{{ question.content }}</h3>
+    <hr>
+
+    <div class="question__buttons">
+        <a href="" class="btn btn-info">목록보기</a>
+        <a href="" class="btn btn-info">이전글</a>
+        <a href="" class="btn btn-info">다음글</a>
+    </div>
+    <hr>
+    
+    {% if user.is_authenticated %}
+    <input type="textarea" name="new_answer" placeholder="답변을 입력하세요" class="answer__input" style="width:600px; height:220px;">    
+    <input type="button" value = "작성" class="answer__submit">
+    {% endif %}
+
+    <hr>
+    <p class="answer__total-count">답변 {{answers_count}} 개 </p>
+    <div class="answer__list">
+        <!-- 답변 부분 -->
+        {% for answer, replies in answers_reply_dict.items %}
+            <div class="answer__container answer__container--{{answer.id}}">
+                {% if answer.user.img %}
+                <img src= '{{ answer.user.img.url }}'' height="220" width="160">
+                {% endif %}
+                <h2>{{ answer.user }}</h2>
+                <p>{{ answer.created_at|date:'y.m.d  H:i'}}</p>
+                <div>
+                    <p>{{ answer.content }}</p>
+                    <p>좋아요 {{ answer.like_user.all | length }} </p>
+                </div>
+
+                <div>
+                    <input type="checkbox" class="answer__write-reply answer__write-reply--{{ answer.id }} btn-check " id="reply-btn-{{ answer.id }}" autocomplete="off">
+                    <label class="btn btn-primary" for="reply-btn-{{ answer.id }}">답글 작성</label>
+                </div>
+                <h6>대댓글</h4>
+                <hr>
+                <div class="reply__list reply__list--{{ answer.id }} ">
+                    <!-- 대댓글 부분 -->
+                    {% for reply in replies %}
+                        <div class="reply__container reply__container--{{reply.id}}">
+                            <p>
+                                {{ reply.user }}   {{ reply.created_at|date:'y.m.d  H:i' }}
+                                <br>
+                                {{ reply.content }}
+                                <br>
+                                좋아요 {{ reply.like_user.all | length }}
+                            </p>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <div class="reply__form reply__form--{{ answer.id }}" style="display: none;">
+                    {% if user.is_authenticated %}
+                    <input type="text" name="new_reply_{{ answer.id }}" placeholder="답변을 입력하세요" class="reply__input reply__input--{{ answer.id }}" id = "reply-input-{{ answer.id }}"style="width:200px; height:20px;">    
+                    <input type="button" value = "작성" class="reply__submit reply__submit--{{ answer.id }}" id = "reply-submit-{{ answer.id }}">
+                    {% endif %}
+                </div>
+            </div>
+            <hr>
+        {% endfor %}
+    </div>
+
+
+</main>
+{% endblock %}

@@ -27,6 +27,10 @@ class Question(models.Model):
     like_user = models.ManyToManyField('user.User', blank=True)
     tags = models.ManyToManyField('QnaTag', blank=True)
 
+    like_user = models.ManyToManyField('user.User', blank=True)
+
+    tags = models.ManyToManyField('QnaTag', blank=True)
+
     def __str__(self):
         return self.title
 
@@ -38,23 +42,14 @@ class Answer(models.Model):
     created_at = models.DateTimeField(verbose_name='게시일자', auto_now_add=True)
     updated_at = models.DateTimeField(verbose_name='수정일자', auto_now=True)
     answer_order = models.IntegerField(verbose_name='답변순서')
-    answer_depth = models.IntegerField(verbose_name='답변깊이')
+    answer_depth = models.IntegerField(verbose_name='답변깊이', default=0)
+
     question_id = models.ForeignKey(Question, on_delete=models.CASCADE,)
-    parent_answer = models.ForeignKey('self', on_delete=models.CASCADE)
+
+    parent_answer = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True)
+
     like_user = models.ManyToManyField('user.User', blank=True)
 
-# # 게시글 리액션
-# class QuestionReaction(models.Model):
-#     question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='reacted_question')
-#     # 리액션한 사람
-#     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='question_react_person') 
-
-# # 답변 리액션
-# class AnswerReaction(models.Model):
-#     question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='reacted_answer')
-#     # 리액션한 사람
-#     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='answer_react_person') 
-    
 class QnaTag(models.Model):
     '''
     # 스크래치 메뉴
