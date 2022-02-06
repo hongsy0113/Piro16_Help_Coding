@@ -2,26 +2,16 @@ from cmath import pi
 from django.db import models
 # from django.contrib.auth.models import User
 from group.models import *
+# from qna.models import *
 from django.contrib.auth.models import AbstractUser
-
-#from qna.models import *
-
 
 #######################################
 # 파일 저장 경로 지정하기 위한 함수들
 # user 대표 이미지
 def user_thumbnail_path(instance, filename):
-    # file will be uploaded to MEDIA_ROOT/user_<user.id>/<filename>
-    return 'user_{0}/thumbnail/{1}'.format(instance.id, filename)
-
-
+    # file will be uploaded to MEDIA_ROOT/user_<email>/<filename>
+    return 'user_{0}/thumbnail/{1}'.format(instance.email, filename)
 ######################################
-
-
-#class Job(models.Model):
-#    school_company = models.CharField(max_length=50)
-#    def __str__(self):
-#        return self.school_company
 
 class User(AbstractUser):
     email = models.EmailField(verbose_name='email')
