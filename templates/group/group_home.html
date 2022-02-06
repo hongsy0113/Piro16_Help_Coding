@@ -1,0 +1,46 @@
+{% extends 'group_base.html' %}
+{% block title %} 나의 그룹 {% endblock %}
+
+{% block content %}
+
+    <a href="{% url 'group:group_create' %}">그룹 생성</a>
+    <a href="{% url 'group:join_group' %}">그룹 가입하기</a>
+    <a href="{% url 'user:main' %}">메인 화면으로</a>
+    <div class="mygroup_list">
+        <form method="get" action="" class="movie_sort float-end me-4">
+            <select id="sort_select" class="sort_select" onChange="location=this.value; getSelectValue(this.form);">
+                <option class="sort-name" value="/">--정렬기준--</option>
+                <option class="sort-name" value="?sort=name">이름순</option>
+                <option class="sort-star" value="?sort=star">찜하기순</option>
+                <option class="sort-date" value="?sort=date">가입날짜순</option>
+            </select>
+        </form>
+        {% for group in groups %}
+            <div class="mygroup_one group-{{ group.id }}">
+                <div class="group-name"><a href="{% url 'group:group_detail' group.pk %}"><h2>{{ group.name }}</h2></a></div>
+                <div class="group-img">
+                    {% if group.image %}
+                    <img src="{{ group.image.url }}" height="200" width="200" />
+                    {% else %}
+                    <img class="random-img" src="https://picsum.photos/seed/{{ group.id }}/200/200" />
+                    {% endif %}
+                </div>
+                <div class="group-keyword">
+                    <div class="group-member">{{ group.members.all | length }}</div>
+                    <div class="group-star">찜하기
+                        <button class="star {{ group.is_star }}" onclick="onClickStar(`{{ group.id }}`)">  
+                            {% if group.is_star %} <!-- 꽉 찬 별 -->
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 18.26l-7.053 3.948 1.575-7.928L.587 8.792l8.027-.952L12 .5l3.386 7.34 8.027.952-5.935 5.488 1.575 7.928z"/></svg>                            
+                            {% else %} <!-- 빈 별 -->
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 18.26l-7.053 3.948 1.575-7.928L.587 8.792l8.027-.952L12 .5l3.386 7.34 8.027.952-5.935 5.488 1.575 7.928L12 18.26zm0-2.292l4.247 2.377-.949-4.773 3.573-3.305-4.833-.573L12 5.275l-2.038 4.42-4.833.572 3.573 3.305-.949 4.773L12 15.968z"/></svg>                            
+                            {% endif %}
+                        </button>
+                    </div>
+                    <a href="{% url 'group:group_delete' group.pk %}">그룹 삭제</a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    <a href="#">그룹 찾기</a>
+
+{% endblock %}
