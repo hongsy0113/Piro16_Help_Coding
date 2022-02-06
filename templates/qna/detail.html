@@ -11,17 +11,24 @@
 <main>
     <h1>{{ question.title }}</h1>
     <hr>
-    <p>{{ question.created_at|date:'y.m.d'}}</p>
-    <p>조회 {{ question.hit }}</p>
-    <p>좋아요 {{ total_likes }}</p>
-    <p>{{ username }}</p>
+    <p>{{ question.created_at|date:'y.m.d'}}
+    조회 {{ question.hit }}
+    좋아요 {{ total_likes }}
+    {{ username }}</p>
     {% for tag in tags %}
         <div class="btn btn-success">
             {{ tag.tag_name }}
         </div>
     {% endfor %}
-    <hr>
+    
     <h3>{{ question.content }}</h3>
+    <hr>
+
+    <div class="question__buttons">
+        <a href="" class="btn btn-info">목록보기</a>
+        <a href="" class="btn btn-info">이전글</a>
+        <a href="" class="btn btn-info">다음글</a>
+    </div>
     <hr>
     
     {% if user.is_authenticated %}
@@ -49,7 +56,7 @@
                     <input type="checkbox" class="answer__write-reply answer__write-reply--{{ answer.id }} btn-check " id="reply-btn-{{ answer.id }}" autocomplete="off">
                     <label class="btn btn-primary" for="reply-btn-{{ answer.id }}">답글 작성</label>
                 </div>
-                <h4>reply</h4>
+                <h6>대댓글</h4>
                 <hr>
                 <div class="reply__list reply__list--{{ answer.id }} ">
                     <!-- 대댓글 부분 -->
