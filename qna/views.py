@@ -216,8 +216,8 @@ def answer_like_ajax(request):
     answer = get_object_or_404(Answer, pk=answer_id)
     liked_users = answer.like_user
 
-    is_liked = request.user in  liked_users.all()
-
+    is_liked = request.user in liked_users.all()
+    
     if is_liked:
         liked_users.remove(request.user)
     else:

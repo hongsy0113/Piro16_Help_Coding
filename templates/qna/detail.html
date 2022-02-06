@@ -61,7 +61,7 @@
                     <p>{{ answer.content }}</p>
 
                     <div class="answer__like-btn answer__like-btn--{{ answer.id }} btn"  id="answer-like-{{ answer.id }}">
-                        {% if user in answer.liked_user.all %}
+                        {% if user in answer.like_user.all %}
                         <i class="fas fa-heart"></i>
                         {% else %}
                         <i class="far fa-heart"></i>
@@ -87,7 +87,7 @@
                                 <br>
                             </p>
                             <div class="answer__like-btn answer__like-btn--{{ reply.id }} btn" id="reply-like-{{ reply.id }}">
-                                {% if user in reply.liked_user.all %}
+                                {% if user in reply.like_user.all %}
                                 <i class="fas fa-heart"></i>
                                 {% else %}
                                 <i class="far fa-heart"></i>
