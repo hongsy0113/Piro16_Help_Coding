@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/question_create.css' %}">
+{% endblock %}
+
+{% block content %}
+<div>
+    <h3>질문 등록</h3>
+    <h4>질문 게시글 등록 페이지입니다.</h4>
+</div>
+
+<form action="" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div>
+        <label for="title">질문 제목</label><br />
+        <input type="text" name="title" id="title"/>
+    </div>
+    <div>
+        <label for="content">질문 내용</label><br />
+        <textarea name="content" id="content" cols="30" rows="10"></textarea>
+    </div>
+    <div>
+        <label for="image">이미지 업로드</label><br />
+        <p>{{ form.image }}</p>
+    </div>
+    <div>
+        <label for="attached_file">파일 업로드</label><br />
+        <p>{{ form.attached_file }}</p>
+    </div>
+    <div class="select__tag">
+        <p>카테고리 선택</p>
+        <input type="radio" name="s_or_e_tag" value="S" id="scratch" class="tag" />
+        <label for="scratch">스크래치</label>
+        <input type="radio" name="s_or_e_tag" value="E" id="entry" class="tag" />
+        <label for="entry">엔트리</label>
+        <input type="radio" name="s_or_e_tag" value="ETC" id="etc" class="tag" />
+        <label for="etc">기타</label>
+    </div>
+    <div>
+        <button type="submit">질문 등록</button>
+        <a href="{% url 'qna:question_list' %}">취소</a>
+    </div>
+</form>
+{% endblock %}

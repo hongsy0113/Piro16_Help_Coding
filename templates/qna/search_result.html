@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="search-box">
+    <form action="{% url 'qna:search_result' %}" method="get">
+        {% csrf_token %}
+        <input type="search" placeholder="검색" name="search" />
+        <button type="submit">검색</button>
+    </form>
+</div>
+
+<h2>검색결과</h2>
+<h3>검색어: <b>"{{ query }}"</b></h3>
+
+{% for question in questions %}
+    <div>
+        <div>
+        <h4>{{ question.title }}</h4>
+        <p>{{ question.content }}</p>
+        <p>{{ question.user }}</p>
+        </div>
+    </div>    
+
+    {% empty %}
+        <h4> 결과 없음</h4>
+{% endfor %}
+
+{% endblock %}
