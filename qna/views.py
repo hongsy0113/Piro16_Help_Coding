@@ -1,3 +1,4 @@
+import queue
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import *
 from .forms import *
@@ -100,7 +101,10 @@ def question_detail(request, pk):
     for answer in answers:
         replies =  Answer.objects.filter(parent_answer= answer).order_by('answer_order')
         answers_reply_dict[answer] = replies
-        
+
+    # 좋아요 눌렀는지 안 눌렀는지
+    is_liked = request.user in  question.like_user.all()
+
     ctx = {
         'question':question,
         'username': username,
@@ -109,6 +113,7 @@ def question_detail(request, pk):
         'answers' : answers,
         'answers_count' : answers_count,
         'answers_reply_dict' : answers_reply_dict,
+        'is_liked': is_liked,
     }
     # answer 와 reply로 이루어진 dictionary를 context로 넘길 예정
     return render(request, template_name='qna/detail.html', context=ctx)
@@ -182,3 +187,42 @@ def reply_ajax(request):
     })
 
     return response
+
+@csrf_exempt
+def question_like_ajax(request):
+    req = json.loads(request.body)
+    # user id 는 요청 안 보내도 됐을 수도
+    question_id = req['questionId']
+    
+    question = get_object_or_404(Question, pk=question_id)
+    liked_users = question.like_user
+
+    is_liked = request.user in  liked_users.all()
+
+    if is_liked:
+        liked_users.remove(request.user)
+    else:
+        liked_users.add(request.user)
+
+    total_likes = len(liked_users.all())
+    return JsonResponse({'question_id':question_id, 'total_likes':total_likes, 'is_liking': not(is_liked)})
+
+@csrf_exempt
+def answer_like_ajax(request):
+    req = json.loads(request.body)
+
+    answer_id = req['id']
+
+    answer = get_object_or_404(Answer, pk=answer_id)
+    liked_users = answer.like_user
+
+    is_liked = request.user in liked_users.all()
+    
+    if is_liked:
+        liked_users.remove(request.user)
+    else:
+        liked_users.add(request.user)
+
+    total_likes = len(liked_users.all())
+
+    return JsonResponse({'answer_id':answer_id, 'total_likes':total_likes,  'is_liking': not(is_liked)})
