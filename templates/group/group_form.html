@@ -3,7 +3,7 @@
 
 {% block content %}
 
-    <form method="POST" class="post-form">
+    <form method="POST" class="post-form" enctype="multipart/form-data">
         {% csrf_token %}
         <!-- <p>
             <label>그룹명: </label>

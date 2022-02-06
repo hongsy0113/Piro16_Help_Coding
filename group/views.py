@@ -16,12 +16,15 @@ def group_home(request):
 
     # 해당 유저의 그룹 리스트
     groups = Group.objects.filter(members__nickname__contains=user.nickname)
-    # for group in groups:
-    #     member_cnt = group.members.all().count()
-    # groups = Group.objects.all()
-    members = Group.objects.values('members')
-    # members = groups[0].members
-    # print(members)
+    
+    # 정렬하기
+    sort = request.GET.get('sort', '')
+    if sort == 'name':
+        groups = groups.order_by('name')
+    elif sort == 'star':
+        groups = groups.order_by('-is_star')
+    # elif sort == 'date':  # django에서 기본 제공하는 create날짜 있는지 체크
+    #     groups = groups.order_by('date')
     ### user의 닉네임이랑 같은 경우에 처리해야 하는 부분 이후 추가
 
     ctx = { 'groups': groups }
@@ -35,15 +38,11 @@ def group_home(request):
 def group_create(request):
     user = request.user
     if request.method == 'POST':
-        form = GroupForm(request.POST)
+        form = GroupForm(request.POST, request.FILES)
         if form.is_valid():
             group = form.save()
-            # member = group.members.all().delete()
-            # for member in group.members:
-            #     print(member)
-
-            #     member.delete()
-            group.image = request.POST.get('image')
+            
+            # group.image = request.POST.get('image')
             group.maker = user    # 방장 = 접속한 유저
             group.members.add(user)  # 방장도 그룹의 멤버로 추가
             group.save()
@@ -51,7 +50,7 @@ def group_create(request):
             print(group.members)
 
 
-            return redirect('group_home')
+            return redirect('group:group_home')
     else:
         form = GroupForm()
         users = User.objects.all()
@@ -78,7 +77,7 @@ def group_update(request, pk):
         if form.is_valid():
             group = form.save()
 
-            return redirect('group_detail', pk)
+            return redirect('group:group_detail', pk)
     else:
         form = GroupForm(instance=group)
         ctx = {'group': group, 'form': form}
@@ -90,7 +89,7 @@ def group_delete(request, pk):
     group = get_object_or_404(Group, pk=pk)
     group.delete()
 
-    return redirect('group_home')
+    return redirect('group:group_home')
 
 
 ## 초대 코드 
@@ -132,7 +131,7 @@ def join_group(request):
                 group.members.add(user)  # 방장도 그룹의 멤버로 추가
                 group.save()
 
-                return redirect('group_home')
+                return redirect('group:group_home')
     except:
         print('존재하지 않는 그룹입니다.')
         message = "존재하지 않는 코드입니다."

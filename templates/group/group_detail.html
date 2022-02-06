@@ -6,9 +6,9 @@
     <div class="group-info">
         <div class="group-info__nav">
             <div class="group-info__name"><h2>{{ group.name }}</h2></div>
-            <a href="{% url 'group_home' %}">그룹 홈</a>
+            <a href="{% url 'group:group_home' %}">그룹 홈</a>
             <a href="#">그룹 커뮤니티</a>
-            <a href="{% url 'create_code' group.pk %}">친구 초대하기</a>
+            <a href="{% url 'group:create_code' group.pk %}">친구 초대하기</a>
         </div>
         <div class="group-info__main">
             <div class="group-info__image">
@@ -29,9 +29,9 @@
             {% endfor %}
         </div>
         <div class="group-info__input">
-            <a href="{% url 'group_delete' group.pk %}" class="delete_btn">삭제</a>
-            <a href="{% url 'group_home' %}" class="list_btn">목록</a>
-            <a href="{% url 'group_update' group.pk %}" class="update_btn">수정</a>
+            <a href="{% url 'group:group_delete' group.pk %}" class="delete_btn">삭제</a>
+            <a href="{% url 'group:group_home' %}" class="list_btn">목록</a>
+            <a href="{% url 'group:group_update' group.pk %}" class="update_btn">수정</a>
         </div>
     </div>
 
