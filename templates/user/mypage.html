@@ -1,7 +1,6 @@
 {% extends 'user/main.html' %}
 
 {% block content %}
-<hr>
 <div>
   <h3>○ 나의 프로필 ( {{ user.email }} )</h3>
   {% if user.img %}<img src="{{ user.img.url }}" height="100">{% else %}<p>사진 없음</p>{% endif %}

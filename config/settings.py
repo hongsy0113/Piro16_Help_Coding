@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'group',
     'user',
     'qna',
+    'six',
 ]
 
 MIDDLEWARE = [
@@ -132,3 +133,15 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 AUTH_USER_MODEL = 'user.User'
+
+EMAIL_HOST = 'smtp.gmail.com'
+
+EMAIL_PORT = '587'
+
+EMAIL_HOST_USER = '' !!!구글 이메일 주소
+
+EMAIL_HOST_PASSWORD = '' !!!구글 비밀번호
+
+EMAIL_USE_TLS = True
+
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
