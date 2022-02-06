@@ -22,6 +22,16 @@
     {% endfor %}
     
     <h3>{{ question.content }}</h3>
+
+    <div class="question__like-btn btn btn-secondary">
+        {% if is_liked %}
+        <i class="fas fa-heart"></i>
+        {% else %}
+        <i class="far fa-heart"></i>
+        {% endif %}
+        <span>좋아요 {{total_likes}}개</span>
+    </div>
+
     <hr>
 
     <div class="question__buttons">
@@ -49,7 +59,15 @@
                 <p>{{ answer.created_at|date:'y.m.d  H:i'}}</p>
                 <div>
                     <p>{{ answer.content }}</p>
-                    <p>좋아요 {{ answer.like_user.all | length }} </p>
+
+                    <div class="answer__like-btn answer__like-btn--{{ answer.id }} btn"  id="answer-like-{{ answer.id }}">
+                        {% if user in answer.like_user.all %}
+                        <i class="fas fa-heart"></i>
+                        {% else %}
+                        <i class="far fa-heart"></i>
+                        {% endif %}
+                        <span>좋아요 {{ answer.like_user.all | length }}개</span>
+                    </div>
                 </div>
 
                 <div>
@@ -67,8 +85,15 @@
                                 <br>
                                 {{ reply.content }}
                                 <br>
-                                좋아요 {{ reply.like_user.all | length }}
                             </p>
+                            <div class="answer__like-btn answer__like-btn--{{ reply.id }} btn" id="reply-like-{{ reply.id }}">
+                                {% if user in reply.like_user.all %}
+                                <i class="fas fa-heart"></i>
+                                {% else %}
+                                <i class="far fa-heart"></i>
+                                {% endif %}
+                                <span>좋아요 {{ reply.like_user.all | length }}개</span>
+                            </div>
                         </div>
                     {% endfor %}
                 </div>

@@ -27,10 +27,6 @@ class Question(models.Model):
     like_user = models.ManyToManyField('user.User', blank=True)
     tags = models.ManyToManyField('QnaTag', blank=True)
 
-    like_user = models.ManyToManyField('user.User', blank=True)
-
-    tags = models.ManyToManyField('QnaTag', blank=True)
-
     def __str__(self):
         return self.title
 
