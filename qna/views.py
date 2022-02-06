@@ -206,3 +206,23 @@ def question_like_ajax(request):
 
     total_likes = len(liked_users.all())
     return JsonResponse({'question_id':question_id, 'total_likes':total_likes, 'is_liking': not(is_liked)})
+
+@csrf_exempt
+def answer_like_ajax(request):
+    req = json.loads(request.body)
+
+    answer_id = req['id']
+
+    answer = get_object_or_404(Answer, pk=answer_id)
+    liked_users = answer.like_user
+
+    is_liked = request.user in  liked_users.all()
+
+    if is_liked:
+        liked_users.remove(request.user)
+    else:
+        liked_users.add(request.user)
+
+    total_likes = len(liked_users.all())
+
+    return JsonResponse({'answer_id':answer_id, 'total_likes':total_likes,  'is_liking': not(is_liked)})

@@ -31,8 +31,18 @@ const answerHandleResponse = (id, content, user, created_at) => {
             <p>${created_at}</p>
             <div>
                 <p>${content}</p>
-                <p>좋아요 0 </p>
-            </div>`;
+                <div class="answer__like-btn answer__like-btn--${id} btn"  id="answer-like-${id}">
+                        <i class="far fa-heart"></i>
+                        <span>좋아요 0개</span>
+                </div>
+            </div>
+            <div>
+                    <input type="checkbox" class="answer__write-reply answer__write-reply--${id} btn-check " id="reply-btn-${id}" autocomplete="off">
+                    <label class="btn btn-primary" for="reply-btn-${id}">답글 작성</label>
+            </div>
+            <h6>대댓글</h4>
+            <hr>
+            `;
     answerList.append(newAnswer);
 
     //////////////////////////////////////////////////////////
@@ -140,19 +150,17 @@ replySubmitButton.forEach(function(btn) {
 
 const questionLikeBtn = document.querySelector('.question__like-btn');
 
-onClickQuestionLike = async (questionId, userId) => {
+onClickQuestionLike = async (questionId) => {
     const url = "/qna/question_like_ajax/";
-    // 입력을 하지 않았다면 작성 버튼 눌러도 작동 안하도록
-
     const {data} = await axios.post(url,{
-        questionId, userId
+        questionId
     });
     questionLikeHandleResponse(data.question_id, data.total_likes, data.is_liking)
     
 }
 
 questionLikeBtn.addEventListener('click', function(){
-    onClickQuestionLike(question_id, user_id);
+    onClickQuestionLike(question_id);
 })
 
 questionLikeHandleResponse = (questionId, totalLikes, isLiking) => {
@@ -169,3 +177,43 @@ questionLikeHandleResponse = (questionId, totalLikes, isLiking) => {
         `
     }
 }
+///
+const onClickAnswerLike = async (id) => {
+    const url = "/qna/answer_like_ajax/";
+    const {data} = await axios.post(url,{
+        id
+    });
+    answerLikeHandleResponse(data.answer_id, data.total_likes, data.is_liking)
+}
+// 같은 클래스 여러 요소에 같은 event 등록
+const answerLikeButtons = document.querySelectorAll('.answer__like-btn');
+answerLikeButtons.forEach(function(btn) {
+    btn.addEventListener('click',function(){
+        const [text1 , text2, answerId] = btn.getAttribute('id').split('-');
+        console.log(answerId);
+        onClickAnswerLike(answerId);
+    })
+})
+
+answerLikeHandleResponse = (answerId, totalLikes, isLiking) => {
+    const answerLikeBtn = document.querySelector(`.answer__like-btn--${answerId}`)
+
+    if (isLiking){
+        answerLikeBtn.innerHTML = `
+        <i class="fas fa-heart"></i>
+        <span>좋아요 ${totalLikes}개</span>
+        `
+    }
+    else {
+        answerLikeBtn.innerHTML = `
+        <i class="far fa-heart"></i>
+        <span>좋아요 ${totalLikes}개</span>
+        `
+    }
+}
+
+//// TODO 동적으로 생긴 객체에 event 바인딩 하기 
+// document.addEventListener("DOMContentLoaded", function(){
+
+// });
+    
