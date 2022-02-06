@@ -16,14 +16,15 @@ def group_home(request):
 
     # 해당 유저의 그룹 리스트
     groups = Group.objects.filter(members__nickname__contains=user.nickname)
+    # for group in groups:
+    #     member_cnt = group.members.all().count()
     # groups = Group.objects.all()
     members = Group.objects.values('members')
-    print(members)
+    # members = groups[0].members
+    # print(members)
     ### user의 닉네임이랑 같은 경우에 처리해야 하는 부분 이후 추가
-    member_cnt = members.count() - 1  # django의 superuser(nickname 없음) 제외
-    # member_cnt = len(members)  # 그룹의 총 멤버 수
 
-    ctx = { 'groups': groups, 'member_cnt': member_cnt }
+    ctx = { 'groups': groups }
 
     return render(request, template_name='group/group_home.html', context=ctx)
 
@@ -37,12 +38,12 @@ def group_create(request):
         form = GroupForm(request.POST)
         if form.is_valid():
             group = form.save()
-            member = group.members.all().delete()
+            # member = group.members.all().delete()
             # for member in group.members:
             #     print(member)
 
             #     member.delete()
-
+            group.image = request.POST.get('image')
             group.maker = user    # 방장 = 접속한 유저
             group.members.add(user)  # 방장도 그룹의 멤버로 추가
             group.save()
@@ -50,7 +51,7 @@ def group_create(request):
             print(group.members)
 
 
-            return redirect('group_home')  # 나중에 home 또는 detail로
+            return redirect('group_home')
     else:
         form = GroupForm()
         users = User.objects.all()
