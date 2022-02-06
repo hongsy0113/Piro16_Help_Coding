@@ -168,11 +168,13 @@ def star_ajax(request):
     group_id = req['id']
     group = get_object_or_404(Group, id=group_id)
     
-    if (group.is_star):
+    if (group.is_star == True):
         group.is_star = False
+
     else:
         group.is_star = True
 
+    is_stared = group.is_star
     group.save()
 
-    return JsonResponse({ 'id': group_id })
+    return JsonResponse({ 'id': group_id, 'is_star': is_stared })
