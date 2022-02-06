@@ -18,6 +18,17 @@
             <a href="{% url 'group:group_home' %}">그룹 홈</a>
             <a href="#">그룹 커뮤니티</a>
             <a href="{% url 'group:create_code' group.pk %}">친구 초대하기</a>
+            <div class="group__code--alert-box" id="create-code">
+                Alert 친구초대 
+                <div class="code_box">
+                    <h3>그룹명: {{ group.name }}</h3>
+                    <h3>다음 코드로 친구를 초대하세요!</h3>
+                    <h1>{{ group.code }}</h1>
+                </div>
+                <a href="{% url 'group:group_home' %}">홈으로</a>
+                <button class="group__code--close btn btn-dark" onclick="closeCode()">닫기</button>
+            </div>
+            <button class="group__code--btn btn btn-dark" onclick="createCode()">친구 초대하기</button>
         </div>
         <div class="group-info__main">
             <div class="group-info__image">

@@ -8,6 +8,20 @@
     <nav>
         <a href="{% url 'group:group_create' %}">그룹 생성</a>
         <a href="{% url 'group:join_group' %}">그룹 가입하기</a>
+        <div class="group-join__alert-box" id="join-group">
+            <div class="group-join__box">
+                <form method="GET" class="group-join__code">
+                    <input placeholder="초대 코드 입력" type="text" name="code" />
+                    <button>Submit</button> 
+                </form>
+                <div class="group-join__message">
+                    <h4>{{ message }}</h4>
+        
+                </div>
+            </div>
+            <button class="join__code--close btn btn-dark" onclick="closeJoin()">닫기</button>
+        </div>
+        <button class="group-join__btn btn btn-dark" onclick="groupJoin()">그룹 가입하기</button>
         <a href="{% url 'user:main' %}">메인 화면으로</a>
     </nav>
     <div class="mygroup_list">
@@ -16,7 +30,6 @@
                 <option class="sort-name" value="/">--정렬기준--</option>
                 <option class="sort-name" value="?sort=name">이름순</option>
                 <option class="sort-star" value="?sort=star">찜하기순</option>
-                <option class="sort-date" value="?sort=date">가입날짜순</option>
             </select>
         </form>
         {% for group in groups %}
