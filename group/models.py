@@ -30,6 +30,7 @@ class Group(models.Model):
     members = models.ManyToManyField(User, blank=True)  # 그룹에 가입한 멤버
     star = models.IntegerField(verbose_name="찜하기 개수", default=0)
     is_star = models.BooleanField(verbose_name="찜하기", default=False)
+    
 
     def __str__(self):
         return self.name

@@ -1,7 +1,12 @@
+const user_id = JSON.parse(document.getElementById('user_id').textContent);
+const group_id = JSON.parse(document.getElementById('group_id').textContent);
+
+const starButton = document.querySelectorAll('.group__keyword-star');
+
 const requestStar = new XMLHttpRequest();
 
 const onClickStar = (id) => {
-    const url = '/group/star_ajax/'
+    const url = '/group/star_ajax/';
 
     requestStar.open('POST', url, true);
     requestStar.setRequestHeader(
@@ -16,7 +21,7 @@ const starHandleResponse = () => {
         const id = JSON.parse(requestStar.response);
         // const element = document.querySelector(`.group-id-${id} .star-check`);
         const element = document.querySelector('.star');
-        const is_star = element.id
+        const is_star = element.id;
 
         if(is_star == 'False') {
             element.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 18.26l-7.053 3.948 1.575-7.928L.587 8.792l8.027-.952L12 .5l3.386 7.34 8.027.952-5.935 5.488 1.575 7.928z"/></svg>`;
@@ -33,3 +38,12 @@ requestStar.onreadystatechange = () => {
         starHandleResponse();
     }
 };
+
+starButton.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+        const [txt1, txt2, groupId] = btn.getAttribute('id').split('-');
+        // const groupStar = document.querySelector(`.group__keyword-star--${groupId}`);
+
+        onClickStar(groupId);
+    })
+}) 
