@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
 
-
-
 {% block js %}
 <script type="text/javascript" src="/static/js/qna_detail.js" defer></script>
 {% endblock %}
+
+
 {% block content %}
 {{ request.user.id|json_script:"user_id" }}
 {{ question.id|json_script:"question_id" }}
@@ -51,7 +51,7 @@
                 </div>
                 <h4>reply</h4>
                 <hr>
-                <div class="reply__list">
+                <div class="reply__list reply__list--{{ answer.id }} ">
                     <!-- 대댓글 부분 -->
                     {% for reply in replies %}
                         <div class="reply__container reply__container--{{reply.id}}">
@@ -68,7 +68,7 @@
 
                 <div class="reply__form reply__form--{{ answer.id }}" style="display: none;">
                     {% if user.is_authenticated %}
-                    <input type="text" name="new_reply_{{ answer.id }}" placeholder="답변을 입력하세요" class="reply__input reply-input-{{ answer.id }}" id = "reply__input--{{ answer.id }}"style="width:200px; height:20px;">    
+                    <input type="text" name="new_reply_{{ answer.id }}" placeholder="답변을 입력하세요" class="reply__input reply__input--{{ answer.id }}" id = "reply-input-{{ answer.id }}"style="width:200px; height:20px;">    
                     <input type="button" value = "작성" class="reply__submit reply__submit--{{ answer.id }}" id = "reply-submit-{{ answer.id }}">
                     {% endif %}
                 </div>

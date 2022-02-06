@@ -17,7 +17,7 @@ def question_detail(request, pk):
     total_likes = len(question.like_user.all())
 
     # 해당 게시글에 대한 답변 가져오기
-    answers = Answer.objects.filter(question_id = question.id, answer_depth = 0).order_by('answer_order')   #  나중에 답변 정렬도 고려. 최신순 또는 좋아요 순
+    answers = Answer.objects.filter(question_id = question.id, parent_answer__isnull=True).order_by('answer_order')   #  나중에 답변 정렬도 고려. 최신순 또는 좋아요 순
     answers_count = len(answers)
     
     answers_reply_dict ={}
@@ -68,7 +68,41 @@ def answer_ajax(request):
 @csrf_exempt
 def reply_ajax(request):
     req = json.loads(request.body)
-    print(req)
-    ####### 2/5 ###########
-    #### 대댓글 작성 짜고 있었음. 프론트 단에서 request 보내는 건 얼추 했고 view에서 처리, front에서 비동기 업데이트 하면 됨
-    return JsonResponse({'id':'idd'})
+
+    answer_id = req['answerId']
+    content = req['content']
+    user_id = req['user']
+    user = get_object_or_404(User, pk=user_id)
+    username = user.nickname
+
+    # 작성하려는 대댓글이 속한 질문 구하기
+    this_answer = get_object_or_404(Answer, pk=answer_id)
+    this_question = this_answer.question_id
+    
+    ## 새 답변의 order 필드를 정해주기 위한 부분. 
+    current_answers = Answer.objects.filter(question_id=this_question.id).order_by('answer_order')
+    if len(current_answers)==0:
+        new_order = 1
+    else:
+        new_order = current_answers.last().answer_order + 1
+
+    ## 새로운 대댓글
+    new_answer = Answer.objects.create(
+        question_id=this_question, 
+        content=content, 
+        answer_order=new_order, 
+        user = user,
+        parent_answer = this_answer
+    )
+    # 템플릿에서 쉽게 띄울 수 있도록 답변 게시일자 포맷팅해서 json에 전달
+    created_at = new_answer.created_at.strftime('%y.%m.%d %H:%M')
+
+    response = JsonResponse({
+        'reply_id': new_answer.id,
+        'answer_id' : this_answer.id,
+        'content': content,
+        'user':username, 
+        'created_at':created_at,
+    })
+
+    return response

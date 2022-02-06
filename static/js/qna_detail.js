@@ -85,11 +85,39 @@ const onClickReply = async (answerId, content) => {
     // 입력을 하지 않았다면 작성 버튼 눌러도 작동 안하도록
     if (content.length>0){
         const {data} = await axios.post(url,{
-            answerId, content, user: 'user_id'
+            answerId, content, user: user_id
         });
-        relpyHandleResponse()
+        relpyHandleResponse(
+            data.reply_id, 
+            data.answer_id,
+            data.content,
+            data.user,
+            data.created_at,
+        )
     } 
 }
+
+relpyHandleResponse = (replyId, answerId ,content, user, created_at) => {
+    
+    const element = document.querySelector(`.reply__input--${answerId}`);
+    const replyList = document.querySelector(`.reply__list--${answerId}`);
+    
+    // input 비우기
+    element.value = "";
+
+    const newReply = document.createElement('div');
+    newReply.classList.add('reply__container', `reply__container--${replyId}`)
+    newReply.innerHTML = `<p>
+        ${user}   ${created_at}
+        <br>
+        ${content}
+        <br>
+        좋아요 0
+        </p>`;
+
+    replyList.append(newReply);
+}
+
 
 // 같은 클래스 여러 요소에 같은 event 등록
 const replySubmitButton = document.querySelectorAll('.reply__submit');
@@ -99,7 +127,7 @@ replySubmitButton.forEach(function(btn) {
         const [text1 , text2, answerId] = btn.getAttribute('id').split('-');
         // 그걸 바탕으로 해당하는 대댓글 입력 받아오기
         const replyInput = document.querySelector(`.reply__input--${answerId}`);
-        
+
         onClickReply(answerId, replyInput.value);
     })
 })
