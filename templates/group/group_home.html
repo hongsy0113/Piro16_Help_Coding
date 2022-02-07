@@ -6,13 +6,13 @@
 {{ group.id|json_script:"group_id" }}
 
     <nav>
-        <a href="{% url 'group:group_create' %}">그룹 생성</a>
-        <a href="{% url 'group:join_group' %}">그룹 가입하기</a>
-        <div class="group-join__alert-box" id="join-group">
+        <a href="{% url 'group:group_create' %}" class="btn btn-primary">그룹 생성</a>
+        <a href="{% url 'group:input_code' %}" class="btn btn-dark">그룹 가입하기</a>
+        <!-- <div class="group-join__alert-box" id="join-group">
             <div class="group-join__box">
                 <form method="GET" class="group-join__code">
                     <input placeholder="초대 코드 입력" type="text" name="code" />
-                    <button>Submit</button> 
+                    <a href="{% url 'group:join_group' %}"><button>Submit</button> </a>
                 </form>
                 <div class="group-join__message">
                     <h4>{{ message }}</h4>
@@ -21,8 +21,8 @@
             </div>
             <button class="join__code--close btn btn-dark" onclick="closeJoin()">닫기</button>
         </div>
-        <button class="group-join__btn btn btn-dark" onclick="groupJoin()">그룹 가입하기</button>
-        <a href="{% url 'user:main' %}">메인 화면으로</a>
+        <button class="group-join__btn btn btn-dark" onclick="groupJoin()">그룹 가입하기</button> -->
+        <a href="{% url 'user:main' %}" class="btn btn-warning">메인 화면으로</a>
     </nav>
     <div class="mygroup_list">
         <form method="get" action="" class="movie_sort float-end me-4">
@@ -39,11 +39,11 @@
                     {% if group.image %}
                     <img src="{{ group.image.url }}" height="200" width="200" />
                     {% else %}
-                    <img class="random-img" src="https://picsum.photos/seed/{{ group.id }}/200/200" />
+                    <img src="{{ ani_image }}" height="200" width="200" />
                     {% endif %}
                 </div>
                 <div class="group-keyword">
-                    <div class="group-member">{{ group.members.all | length }}</div>
+                    <div class="group-member">멤버 수{{ group.members.all | length }}</div>
                     <div class="group-star">찜하기
                         <button class="star group__keyword-star group__keyword-star--{{ group.id }}" id="keyword-star-{{ group.id }}">  
                             {% if group.is_star %} <!-- 꽉 찬 별 -->
@@ -58,6 +58,6 @@
             </div>
         {% endfor %}
     </div>
-    <a href="#">그룹 찾기</a>
+    <a href="{% url 'group:group_list' %}">그룹 찾기</a>
 
 {% endblock %}

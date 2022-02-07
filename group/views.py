@@ -30,7 +30,10 @@ def group_home(request):
     #     groups = groups.order_by('date')
     ### user의 닉네임이랑 같은 경우에 처리해야 하는 부분 이후 추가
 
-    ctx = { 'groups': groups }
+    ctx = { 
+        'groups': groups,
+        'ani_image': static('image/helphelp.png')    
+    }
 
     return render(request, template_name='group/group_home.html', context=ctx)
 
@@ -139,6 +142,7 @@ def group_detail(request, pk):
         'group': groups, 
         'members': members,
         'maker': maker,
+        'ani_image': static('image/helphelp.png'),    
         'profile_img': static('image/none_image_user.jpeg')
         }
 
@@ -189,36 +193,26 @@ def join_group(request):
             return render(request, template_name='group/join_group.html', context=ctx)
 
         else:   # user != 방장
-            if (group):
-                group.members.add(user)
-                group.save()
+            # if (group):   #queryset이 비어있을 때 반대로 생각하기
+            group.members.add(user)
+            group.save()
                 # status = group_status(group, user)
 
-                # if status == 1:
-                #     group.status = 'false'
-                #     group.waits.add(user)  # 대기자 명단에 user 추가
-                #     group.save()
-                #     message = '수락을 기다리고 있습니다.'
-                #     ctx = { 'message': message }
-
-                #     return render(request, template_name='group/join_group.html', context=ctx)
-                # elif status == 3:
-                #     group.waits.remove(user)
-                #     group.members.add(user) 
-                #     group.status = 'true'
-                #     group.save()
-
-                #     return redirect('group:group_home')
-                # else:
-                #     print('error!')
                 
-                return redirect('group:group_home')
+            return redirect('group:group_home')
     except:
         print('존재하지 않는 그룹입니다.')
         message = "존재하지 않는 코드입니다."
         ctx = { 'message': message }
 
         return render(request, template_name='group/join_group.html', context=ctx)
+
+def input_code(request):
+    input_code = request.GET.get('code')
+    ctx = { 'input': input_code }
+
+    return render(request, template_name='group/input_code.html', context=ctx)
+
 
 # 그룹 가입 요청 리스트(user == 방장일 때만 확인 가능)
 def join_list(request, pk):
@@ -246,7 +240,10 @@ def join_list(request, pk):
 # 그룹 모아보기 게시판(그룹 찾기)
 def group_list(request):
     group = Group.objects.all()
-    ctx = { 'groups': group }
+    ctx = { 
+        'groups': group,
+        'ani_image': static('image/helphelp.png')    
+    }
 
     return render(request, template_name='group/group_list.html', context=ctx)
 

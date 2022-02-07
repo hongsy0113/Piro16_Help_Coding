@@ -15,3 +15,9 @@
 .hidden {
     display: none;
 }
+
+.align-center {
+    display: grid;
+    place-items: center;
+    min-height: 100vh;
+}

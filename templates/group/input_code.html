@@ -1,0 +1,9 @@
+{% extends 'group_base.html' %}
+{% block title %}초대코드를 입력하세요!{% endblock %}
+
+{% block content %}
+    <form method="GET" class="group-join__code align-center">
+        <input placeholder="초대 코드 입력" type="text" name="code" />
+        <button><a href="{% url 'group:join_group' %}">Submit</a></button> 
+    </form>
+{% endblock %}
