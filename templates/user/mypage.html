@@ -1,0 +1,53 @@
+{% extends 'user/main.html' %}
+
+{% block content %}
+<div>
+  <h3>○ 나의 프로필 ( {{ user.email }} )</h3>
+  {% if user.img %}<img src="{{ user.img.url }}" height="100">{% else %}<p>사진 없음</p>{% endif %}
+  <p>- 닉네임 : {{ user.nickname }}</p>
+  <p>- 소개 : {{ user.introduction }}</p>
+  <p>- 생년월일 : {{ user.birth }}</p>
+  <p>- 직업 : {{ user.job }}</p>
+  <p>- 좋아요 수 : {{ user.total_like }}</p>
+  <button class="btn btn-secondary"><a class="text-white" href="{% url 'user:mypage_revise' %}" style="text-decoration: none">개인정보 수정</a></button>
+  {% if messages %}{% for message in messages %}<p class="text-danger">{{ message.message }}</p>{% endfor %}{% endif %}
+</div>
+<hr>
+<div>
+  <h3>○ 나의 업적</h3>
+  {% if rewards %}
+  {% for reward in rewards %}
+  <p>- [업적] {{ reward.reward_id.name }} (달성일 : {{ reward.get_date }})</p>
+  {% endfor %}
+  <button class="btn btn-secondary"><a class="text-white" href="" style="text-decoration: none">전체 업적 보기</a></button>
+  {% else %}
+  <p>- 아직 달성한 업적이 없습니다.</p>
+  {% endif %}
+</div>
+<hr>
+<div>
+  <h3>○ 최근 질문</h3>
+  {% if questions %}
+  {% for question in questions %}
+  <p><a class="text-black" href="{% url 'qna:question_detail' question.pk %}" style="text-decoration: none">- Q> {{ question.title }}</a></p>
+  {% endfor %}
+  <button class="btn btn-secondary"><a class="text-white" href="{% url 'user:mypage_question' %}" style="text-decoration: none">전체 질문 보기</a></button>
+  {% else %}
+  <p>- 질문 기록이 없습니다.</p>
+  {% endif %}
+  <button class="btn btn-secondary"><a class="text-white" href="{% url 'qna:question_list' %}" style="text-decoration: none">질문하러 가기</a></button>
+</div>
+<hr>
+<div>
+  <h3>○ 최근 답변</h3>
+  {% if answers %}
+  {% for answer in answers %}
+  <p><a class="text-black" href="{% url 'qna:question_detail' answer.question_id.pk %}" style="text-decoration: none">- A> {{ answer.content }}</a></p>
+  {% endfor %}
+  <button class="btn btn-secondary"><a class="text-white" href="{% url 'user:mypage_answer' %}" style="text-decoration: none">전체 답변 보기</a></button>
+  {% else %}
+  <p>- 답변 기록이 없습니다.</p>
+  {% endif %}
+  <button class="btn btn-secondary"><a class="text-white" href="{% url 'qna:question_list' %}" style="text-decoration: none">답변하러 가기</a></button>
+</div>
+{% endblock content %}
