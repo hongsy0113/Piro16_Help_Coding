@@ -31,6 +31,7 @@ def group_home(request):
     ### user의 닉네임이랑 같은 경우에 처리해야 하는 부분 이후 추가
 
     ctx = { 
+        'user': user,  #나중에는 쓸모 X 
         'groups': groups,
         'ani_image': static('image/helphelp.png')    
     }
@@ -101,7 +102,7 @@ def group_delete(request, pk):
         return redirect('group:group_home')
     else:
         ### 알림 창 하나 띄우기(alert) "방장만 그룹을 삭제할 수 있습니다."
-        return redirect('group:group_detail')
+        return redirect('group:group_detail', pk)
 
 # 그룹 탈퇴
 def group_drop(request, pk):
@@ -180,26 +181,34 @@ def create_code(request, pk):
 def join_group(request):    
     user = request.user
     input_code = request.GET.get('code')
+    print(input_code)
 
     mygroup = list(Group.objects.filter(members__nickname__contains=user))
     try:
-        group = get_object_or_404(Group, code=input_code)
-        print(group)
-        # 예외처리 or 조건문
-        if group in mygroup:
-            message = "이미 가입된 그룹입니다."
+        if input_code != None:
+            group = get_object_or_404(Group, code=input_code)
+            print(group)
+            # 예외처리 or 조건문
+            if group in mygroup:
+                message = "이미 가입된 그룹입니다."
+                ctx = { 'message': message }
+
+                return render(request, template_name='group/join_group.html', context=ctx)
+
+            else:   # user != 방장
+                # if (group):   #queryset이 비어있을 때 반대로 생각하기
+                group.members.add(user)
+                group.save()
+                # status = group_status(group, user)
+
+                
+                return redirect('group:group_home')
+        else:
+            message = "아무것도 입력하지 않았습니다."
             ctx = { 'message': message }
 
             return render(request, template_name='group/join_group.html', context=ctx)
 
-        else:   # user != 방장
-            # if (group):   #queryset이 비어있을 때 반대로 생각하기
-            group.members.add(user)
-            group.save()
-                # status = group_status(group, user)
-
-                
-            return redirect('group:group_home')
     except:
         print('존재하지 않는 그룹입니다.')
         message = "존재하지 않는 코드입니다."
