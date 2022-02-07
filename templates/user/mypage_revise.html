@@ -1,0 +1,10 @@
+{% extends 'user/main.html' %}
+
+{% block content %}
+{% if revise_error %}<span>{{ revise_error }}</span>{% endif %}
+<form method="POST" enctype="multipart/form-data" action="">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="MypageRevise">
+</form>
+{% endblock content %}
