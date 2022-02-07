@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, HttpResponse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import AnonymousUser
 from django.views import View
+from django.views.generic import ListView
 from .forms import LoginForm, SignupForm, MypageReviseForm
 from .models import *
 from qna.models import Question, Answer
@@ -179,3 +180,71 @@ def my_page_revise(request):
         form = MypageReviseForm(instance = user)
         ctx = {'user': user, 'form': form}
         return render(request, template_name = 'user/mypage_revise.html', context = ctx)
+
+# My Page Question List
+class QuestionView(ListView):
+    model = Question
+    paginate_by = 10
+    template_name = 'user/mypage_question.html'
+    context_object_name = 'questions'
+    
+    def get_queryset(self):
+        questions = Question.objects.order_by('-updated_at') 
+        return questions
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        paginator = context['paginator']
+        page_numbers_range = 5
+        max_index = len(paginator.page_range)
+        page = self.request.GET.get('page')
+        current_page = int(page) if page else 1
+        start_index = int((current_page - 1) / page_numbers_range) * page_numbers_range
+        end_index = start_index + page_numbers_range
+        if end_index >= max_index:
+            end_index = max_index
+        page_range = paginator.page_range[start_index:end_index]
+        context['page_range'] = page_range
+        return context
+
+class AnswerView(ListView):
+    model = Answer
+    paginate_by = 10
+    template_name = 'user/mypage_answer.html'
+    context_object_name = 'answers'
+    
+    def get_queryset(self):
+        answers = Answer.objects.order_by('-updated_at') 
+        return answers
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        paginator = context['paginator']
+        page_numbers_range = 5
+        max_index = len(paginator.page_range)
+        page = self.request.GET.get('page')
+        current_page = int(page) if page else 1
+        start_index = int((current_page - 1) / page_numbers_range) * page_numbers_range
+        end_index = start_index + page_numbers_range
+        if end_index >= max_index:
+            end_index = max_index
+        page_range = paginator.page_range[start_index:end_index]
+        context['page_range'] = page_range
+        return context
+
+#def my_page_question(request):
+#    user = request.user
+#    if user == AnonymousUser():
+#        return redirect('user:login')
+#    questions = Question.objects.filter(user = user).order_by('-updated_at')
+#    ctx = {'user': user, 'questions': questions}
+#    return render(request, template_name = 'user/mypage_question.html', context = ctx)
+
+# My Page Answer List
+#def my_page_answer(request):
+#    user = request.user
+#    if user == AnonymousUser():
+#        return redirect('user:login')
+#    answers = Answer.objects.filter(user = user).order_by('-updated_at')
+#    ctx = {'user': user, 'answers': answers}
+#    return render(request, template_name = 'user/mypage_answer.html', context = ctx)

@@ -29,25 +29,25 @@
   <h3>○ 최근 질문</h3>
   {% if questions %}
   {% for question in questions %}
-  <a class="text-black" href="{% url 'qna:question_detail' question.pk %}" style="text-decoration: none">- Q> {{ question.content }}</a>
+  <p><a class="text-black" href="{% url 'qna:question_detail' question.pk %}" style="text-decoration: none">- Q> {{ question.title }}</a></p>
   {% endfor %}
-  <button class="btn btn-secondary"><a class="text-white" href="" style="text-decoration: none">전체 질문 보기</a></button>
+  <button class="btn btn-secondary"><a class="text-white" href="{% url 'user:mypage_question' %}" style="text-decoration: none">전체 질문 보기</a></button>
   {% else %}
   <p>- 질문 기록이 없습니다.</p>
-  <button class="btn btn-secondary"><a class="text-white" href="{% url 'qna:question_list' %}" style="text-decoration: none">질문하러 가기</a></button>
   {% endif %}
+  <button class="btn btn-secondary"><a class="text-white" href="{% url 'qna:question_list' %}" style="text-decoration: none">질문하러 가기</a></button>
 </div>
 <hr>
 <div>
   <h3>○ 최근 답변</h3>
   {% if answers %}
   {% for answer in answers %}
-  <a class="text-black" href="{% url 'qna:question_detail' answer.question_id.pk %}" style="text-decoration: none">- A> {{ answer.content }}</p>
+  <p><a class="text-black" href="{% url 'qna:question_detail' answer.question_id.pk %}" style="text-decoration: none">- A> {{ answer.content }}</a></p>
   {% endfor %}
-  <button class="btn btn-secondary"><a class="text-white" href="" style="text-decoration: none">전체 답변 보기</a></button>
+  <button class="btn btn-secondary"><a class="text-white" href="{% url 'user:mypage_answer' %}" style="text-decoration: none">전체 답변 보기</a></button>
   {% else %}
   <p>- 답변 기록이 없습니다.</p>
-  <button class="btn btn-secondary"><a class="text-white" href="{% url 'qna:question_list' %}" style="text-decoration: none">답변하러 가기</a></button>
   {% endif %}
+  <button class="btn btn-secondary"><a class="text-white" href="{% url 'qna:question_list' %}" style="text-decoration: none">답변하러 가기</a></button>
 </div>
 {% endblock content %}
