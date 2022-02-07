@@ -1,3 +1,4 @@
+import re
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import *
 from .forms import *
@@ -62,9 +63,23 @@ def search_result(request):
 def question_create(request):
     if request.method == 'POST':
         form = QuestionForm(request.POST, request.FILES)
-        question = form.save(commit=False)
-        question.user = request.user
+
+        # 넘겨진 데이터 form에 바로 저장 X
+        question = form.save(commit=False) 
+
+        # 카테고리 (스크래치, 엔트리, 기타) 중 1 선택
         question.s_or_e_tag = request.POST.get('s_or_e_tag')
+        
+        question.user = request.user
+
+        # 상세 태그 (기능) 중 선택
+        tags = request.POST.getlist('detail_tag')
+        print(question.id)
+        question.save()
+        for tag in tags:
+            newtag = get_object_or_404(QnaTag, tag_name=tag)
+            question.tags.add(newtag)
+
         question.save()
         return redirect('qna:question_list')
 
