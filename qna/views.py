@@ -1,3 +1,4 @@
+from multiprocessing.dummy import JoinableQueue
 import queue
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import *
@@ -118,6 +119,14 @@ def question_detail(request, pk):
     # answer 와 reply로 이루어진 dictionary를 context로 넘길 예정
     return render(request, template_name='qna/detail.html', context=ctx)
 
+def question_delete(request, pk):
+    question = get_object_or_404(Question, pk=pk)
+    question.delete()
+    return redirect('qna:question_list')
+
+############### ajax 관련 view 합수들
+
+# 답변 작성 
 @csrf_exempt
 def answer_ajax(request):
     req = json.loads(request.body)
@@ -146,6 +155,7 @@ def answer_ajax(request):
 
     return JsonResponse({'id': new_answer.id ,'content': content,'user':username, 'created_at':created_at} )
 
+# 대댓글 작성
 @csrf_exempt
 def reply_ajax(request):
     req = json.loads(request.body)
@@ -188,6 +198,7 @@ def reply_ajax(request):
 
     return response
 
+# 게시글(질문) 좋아요 기능
 @csrf_exempt
 def question_like_ajax(request):
     req = json.loads(request.body)
@@ -207,10 +218,10 @@ def question_like_ajax(request):
     total_likes = len(liked_users.all())
     return JsonResponse({'question_id':question_id, 'total_likes':total_likes, 'is_liking': not(is_liked)})
 
+# 답변 (대댓글 포함) 좋아요 기능
 @csrf_exempt
 def answer_like_ajax(request):
     req = json.loads(request.body)
-
     answer_id = req['id']
 
     answer = get_object_or_404(Answer, pk=answer_id)
@@ -226,3 +237,41 @@ def answer_like_ajax(request):
     total_likes = len(liked_users.all())
 
     return JsonResponse({'answer_id':answer_id, 'total_likes':total_likes,  'is_liking': not(is_liked)})
+
+# 답변(대댓글 포함) 삭제
+@csrf_exempt
+def answer_delete_ajax(request):
+    req = json.loads(request.body)
+    answer_id = req['id']
+
+    answer = get_object_or_404(Answer, pk=answer_id)
+    answer.delete()
+
+    return JsonResponse({'id':answer_id})
+
+# 답변(대댓글 포함) 수정
+# 수정버튼 눌렀을 때 해당하는 폼 띄우는 기능
+@csrf_exempt
+def answer_edit_ajax(request):
+    req = json.loads(request.body)
+    answer_id = req['id']
+
+    answer = get_object_or_404(Answer, pk=answer_id)
+    # TODO : 고려해볼 사항. 원래 작성되어 있던 내용을 지금은 db에서 찾아서 넘겨주고 있는데
+    # 그렇게 말고 data전송을 최소화화면서 프론트 단에서 그냥 현재 입력된 내용 받앙오기
+    content = answer.content
+
+    return JsonResponse({'id':answer_id, 'content':content})
+
+# 답변(대댓글 포함) 수정
+# 수정할 내용 입력 후 버튼 눌렀을 때 수정 내용 적용하는 기능
+@csrf_exempt
+def answer_edit_submit_ajax(request):
+    req = json.loads(request.body)
+    answer_id = req['id']
+    new_content = req['content']
+    answer = get_object_or_404(Answer, pk=answer_id)
+    answer.content = new_content
+    answer.save()
+
+    return JsonResponse({'id':answer_id, 'content':new_content})

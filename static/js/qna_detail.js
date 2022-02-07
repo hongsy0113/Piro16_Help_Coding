@@ -90,7 +90,8 @@ const onClickReplyCheck = function (e, answerId) {
 replyButton.forEach(function(btn) {
     btn.addEventListener('click',function(e){
         // button class 이름에서 해당 대댓글 작성 버튼이 속한 답변 id 가져오기
-        const [text1 , text2, answerId] = btn.getAttribute('id').split('-');
+        const btnElementId = btn.getAttribute('id').split('-');
+        const answerId = btnElementId[btnElementId.length-1];
         onClickReplyCheck(e, answerId);
     })
 })
@@ -144,7 +145,8 @@ const replySubmitButton = document.querySelectorAll('.reply__submit');
 replySubmitButton.forEach(function(btn) {
     btn.addEventListener('click',function(){
         // button class 이름에서 해당 대댓글 작성 버튼이 속한 답변 id 가져오기
-        const [text1 , text2, answerId] = btn.getAttribute('id').split('-');
+        const btnElementId = btn.getAttribute('id').split('-');
+        const answerId = btnElementId[btnElementId.length-1];
         onClickReply(answerId);
     })
 })
@@ -196,7 +198,8 @@ const onClickAnswerLike = async (id) => {
 const answerLikeButtons = document.querySelectorAll('.answer__like-btn');
 answerLikeButtons.forEach(function(btn) {
     btn.addEventListener('click',function(){
-        const [text1 , text2, answerId] = btn.getAttribute('id').split('-');
+        const btnElementId = btn.getAttribute('id').split('-');
+        const answerId = btnElementId[btnElementId.length-1];
         
         onClickAnswerLike(answerId);
     })
@@ -219,3 +222,97 @@ answerLikeHandleResponse = (answerId, totalLikes, isLiking) => {
     }
 }
 
+//------------댓글 삭제 -----------//
+const answerDeleteButtons = document.querySelectorAll('.answer__delete-btn');
+answerDeleteButtons.forEach(function(btn) {
+    btn.addEventListener('click',function(){
+        const btnElementId = btn.getAttribute('id').split('-');
+        const answerId = btnElementId[btnElementId.length-1];
+        onClickAnswerDelete(answerId);
+    })
+})
+
+const onClickAnswerDelete = async (id) => {
+    const url = "/qna/answer_delete_ajax/";
+    const {data} = await axios.post(url,{
+        id
+    });
+    answerDeleteHandleResponse(data.id)
+}
+
+answerDeleteHandleResponse = (answerId) => {
+    const answerContainer = document.querySelector(`.answer__container--${answerId}`)
+
+    // 답변 개수도 바뀌어야함
+    // 대댓글, 답변 다 한 함수로 통일 했으므로 조건 나눠줘야 한다.
+    if (!answerContainer.classList.contains('reply__container')){
+        const answerCount = document.querySelector('.answer__total-count');
+        const [text1 , num, text2] = answerCount.innerHTML.split(' ');
+    
+        const count = Number(num)-1;
+
+        answerCount.innerHTML = `답변 ${count} 개`
+    }
+    answerContainer.remove();
+}
+//---------------------------------//
+
+//------------댓글 수정 -----------//
+///일단 먼저 댓글 수정 클릭하면 form 뜨는 거 부터 하자
+//// 그 다음에 동적 요소 이벤트 바인딩
+
+////// 1.  댓글 수정 클릭하면 해당 form ajax로 나오게 
+const answerEditButtons = document.querySelectorAll('.answer__edit-btn');
+answerEditButtons.forEach(function(btn) {
+    btn.addEventListener('click',function(){
+        const btnElementId = btn.getAttribute('id').split('-');
+        const answerId = btnElementId[btnElementId.length-1];
+        onClickAnswerEdit(answerId);
+    })
+})
+
+const onClickAnswerEdit = async (id) => {
+    const url = "/qna/answer_edit_ajax/";
+    const {data} = await axios.post(url,{
+        id
+    });
+    answerEditHandleResponse(data.id, data.content)
+}
+answerEditHandleResponse = (answerId, content) => {
+    const answerContainer = document.querySelector(`.answer__content-container--${answerId}`);
+    answerContainer.style.display = 'none';
+
+    const answerEditForm = document.querySelector(`.answer__edit--${answerId}`);
+    answerEditForm.style.display = 'block';
+}
+
+////// 2.  해당 폼에서 수정 클릭하면 ajax로 댓글 수정
+const answerEditSubmitButtons = document.querySelectorAll('.answer__edit-submit');
+answerEditSubmitButtons.forEach(function(btn) {
+    btn.addEventListener('click',function(){
+        const btnElementId = btn.getAttribute('id').split('-');
+        const answerId = btnElementId[btnElementId.length-1];
+        onClickAnswerEditSubmit(answerId);
+    })
+})
+
+const onClickAnswerEditSubmit = async(id) => {
+    const url = '/qna/answer_edit_submit_ajax/'
+
+    const content = document.querySelector(`#answer-edit-input-${id}`).value;
+    const {data} = await axios.post(url,{
+        id, content
+    });
+    answerEditSubmitHandleResponse(data.id, data.content)
+}
+answerEditSubmitHandleResponse = (answerId, content) => {
+    const answerContainer = document.querySelector(`.answer__content-container--${answerId}`);
+    answerContainer.style.display = 'block';
+
+    const answerContent = document.querySelector(`.answer__content--${answerId}`);
+    answerContent.innerHTML = content;
+    
+    const answerEditForm = document.querySelector(`.answer__edit--${answerId}`);
+    answerEditForm.style.display = 'none';
+    console.dir(answerEditForm);
+}
