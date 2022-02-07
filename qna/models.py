@@ -47,7 +47,6 @@ class Answer(models.Model):
     like_user = models.ManyToManyField('user.User', blank=True)
 
 class QnaTag(models.Model):
-    '''
     # 스크래치 메뉴
     S_TAG_CHOICES = (
         ('MOTION', '동작'),
@@ -61,6 +60,8 @@ class QnaTag(models.Model):
         ('MY', '내 블록'),
         ('ETC', '기타'),
     )
+
+    '''
     # 엔트리 메뉴
     E_TAG_CHOICES = (
         ('START', '시작'),
@@ -79,7 +80,7 @@ class QnaTag(models.Model):
         ('ETC', '기타'),
     )
     '''
-    tag_name = models.CharField(verbose_name='태그', max_length=20)
+    tag_name = models.CharField(verbose_name='태그', choices=S_TAG_CHOICES, max_length=20)
 
     def __str__(self):
         return self.tag_name

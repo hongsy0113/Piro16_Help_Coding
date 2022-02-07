@@ -64,19 +64,29 @@ def search_result(request):
 def question_create(request):
     if request.method == 'POST':
         form = QuestionForm(request.POST, request.FILES)
-        question = form.save(commit=False)
-        question.user = request.user
-        question.s_or_e_tag = request.POST.get('s_or_e_tag')
-        question.save()
-        return redirect('qna:question_list')
 
-        # if form.is_valid():
-        #     Question.objects.create(
-        #         title = form.cleaned_data['title'],
-        #         content = form.cleaned_data['content'],
-        #         user = request.user,
-        #     )
-        # return redirect('qna:question_list')
+        question = form.save(commit=False)  # 넘겨진 데이터 form에 바로 저장 X
+        question.s_or_e_tag = request.POST.get('s_or_e_tag')  # 카테고리 (스크래치, 엔트리, 기타) 중 1 선택
+        question.user = request.user
+
+        # 상세 태그 (기능) 선택
+        qnatag = QnaTag.objects.all()
+        tags = request.POST.getlist('detail_tag')
+        question.save()
+        
+        for tag in tags:
+            if len(QnaTag.objects.filter(tag_name=tag)) == 0:
+                QnaTag.objects.create(
+                    tag_name = tag,
+                )
+
+            # QnaTag db에 없으면 오류 발생
+            newtag = get_object_or_404(QnaTag, tag_name=tag)
+            question.tags.add(newtag)
+
+        question.save()
+
+        return redirect('qna:question_list')
 
     else:
         form = QuestionForm()
