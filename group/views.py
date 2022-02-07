@@ -120,6 +120,7 @@ def group_drop(request, pk):
         
     else: 
         group.delete()
+
         # group_delete(request, pk)  # 그룹 삭제 함수 호출
 
     return redirect('group:group_home')
@@ -268,3 +269,15 @@ def star_ajax(request):
     group.save()
 
     return JsonResponse({ 'id': group_id, 'is_star': is_stared })
+
+# 공개 그룹 좋아요 수 = 인기 그룹 선정 기준
+@csrf_exempt
+def group_interest_ajax(request):
+    req = json.loads(request.body)
+    group_id = req['id']
+    group = Group.objects.get(id=group_id)
+
+    group.like += 1
+    group.save()
+
+    return JsonResponse({ 'id': group_id })
