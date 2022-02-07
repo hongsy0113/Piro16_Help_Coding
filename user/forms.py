@@ -35,3 +35,18 @@ class SignupForm(UserCreationForm):
   class Meta:
     model = User
     fields = ['email', 'password1', 'password2', 'nickname', 'birth', 'img', 'introduction', 'job']
+
+class MypageReviseForm(forms.ModelForm):
+  current_password = forms.CharField(widget = forms.PasswordInput, required = False)
+  new_password1 = forms.CharField(widget = forms.PasswordInput, required = False)
+  new_password2 = forms.CharField(widget = forms.PasswordInput, required = False)
+  nickname = forms.CharField()
+  birth = forms.CharField()
+  img = forms.ImageField(required = False)
+  introduction = forms.CharField(required = False)
+  JOB_CHOICE = (('elementary_school', '초등학생'), ('middle_school', '중학생'), ('high_school', '고등학생'), ('university', '대학생'), ('programmer', '개발자'), ('parents', '학부모'), ('etc', '기타'))
+  job = forms.ChoiceField(choices = JOB_CHOICE)
+
+  class Meta:
+    model = User
+    fields = ['nickname', 'birth', 'img', 'introduction', 'job']
