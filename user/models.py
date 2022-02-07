@@ -35,7 +35,6 @@ class Reward(models.Model):
     def __str__(self):
         return self.name
 
-
 class GetReward(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     reward_id =  models.ForeignKey(Reward, on_delete=models.CASCADE)

@@ -9,7 +9,8 @@
   <p>- 생년월일 : {{ user.birth }}</p>
   <p>- 직업 : {{ user.job }}</p>
   <p>- 좋아요 수 : {{ user.total_like }}</p>
-  <button class="btn btn-secondary"><a class="text-white" href="" style="text-decoration: none">개인정보 수정</a></button>
+  <button class="btn btn-secondary"><a class="text-white" href="{% url 'user:mypage_revise' %}" style="text-decoration: none">개인정보 수정</a></button>
+  {% if messages %}{% for message in messages %}<p class="text-danger">{{ message.message }}</p>{% endfor %}{% endif %}
 </div>
 <hr>
 <div>
@@ -28,25 +29,25 @@
   <h3>○ 최근 질문</h3>
   {% if questions %}
   {% for question in questions %}
-  <p>- Q> {{ question.content }}</p>
+  <p><a class="text-black" href="{% url 'qna:question_detail' question.pk %}" style="text-decoration: none">- Q> {{ question.title }}</a></p>
   {% endfor %}
-  <button class="btn btn-secondary"><a class="text-white" href="" style="text-decoration: none">전체 질문 보기</a></button>
+  <button class="btn btn-secondary"><a class="text-white" href="{% url 'user:mypage_question' %}" style="text-decoration: none">전체 질문 보기</a></button>
   {% else %}
   <p>- 질문 기록이 없습니다.</p>
-  <button class="btn btn-secondary"><a class="text-white" href="" style="text-decoration: none">질문하러 가기</a></button>
   {% endif %}
+  <button class="btn btn-secondary"><a class="text-white" href="{% url 'qna:question_list' %}" style="text-decoration: none">질문하러 가기</a></button>
 </div>
 <hr>
 <div>
   <h3>○ 최근 답변</h3>
   {% if answers %}
   {% for answer in answers %}
-  <p>- A> {{ answer.content }}</p>
+  <p><a class="text-black" href="{% url 'qna:question_detail' answer.question_id.pk %}" style="text-decoration: none">- A> {{ answer.content }}</a></p>
   {% endfor %}
-  <button class="btn btn-secondary"><a class="text-white" href="" style="text-decoration: none">전체 답변 보기</a></button>
+  <button class="btn btn-secondary"><a class="text-white" href="{% url 'user:mypage_answer' %}" style="text-decoration: none">전체 답변 보기</a></button>
   {% else %}
   <p>- 답변 기록이 없습니다.</p>
-  <button class="btn btn-secondary"><a class="text-white" href="" style="text-decoration: none">답변하러 가기</a></button>
   {% endif %}
+  <button class="btn btn-secondary"><a class="text-white" href="{% url 'qna:question_list' %}" style="text-decoration: none">답변하러 가기</a></button>
 </div>
 {% endblock content %}
