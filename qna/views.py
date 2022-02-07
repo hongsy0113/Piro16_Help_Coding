@@ -259,9 +259,9 @@ def answer_edit_ajax(request):
     answer = get_object_or_404(Answer, pk=answer_id)
     # TODO : 고려해볼 사항. 원래 작성되어 있던 내용을 지금은 db에서 찾아서 넘겨주고 있는데
     # 그렇게 말고 data전송을 최소화화면서 프론트 단에서 그냥 현재 입력된 내용 받앙오기
-    content = answer.content
+    
 
-    return JsonResponse({'id':answer_id, 'content':content})
+    return JsonResponse({'id':answer_id})
 
 # 답변(대댓글 포함) 수정
 # 수정할 내용 입력 후 버튼 눌렀을 때 수정 내용 적용하는 기능

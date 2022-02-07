@@ -98,36 +98,39 @@
                 <div class="reply__list reply__list--{{ answer.id }} ">
                     <!-- 대댓글 부분 -->
                     {% for reply in replies %}
-                        <div class="reply__container reply__container--{{reply.id}} answer__container--{{ reply.id }} answer__content-container answer__content-container--{{ reply.id }}">
-                            <p>
-                                {{ reply.user }}   {{ reply.created_at|date:'y.m.d  H:i' }}
-                                <br>
-                                <p class= "answer__content answer__content--{{ reply.id }}"> {{ reply.content }}</p>
-                                <br>
-                            </p>
-                            <div class="answer__like-btn answer__like-btn--{{ reply.id }} btn" id="reply-like-{{ reply.id }}">
-                                {% if user in reply.like_user.all %}
-                                <i class="fas fa-heart"></i>
-                                {% else %}
-                                <i class="far fa-heart"></i>
+                        <div class="reply__container reply__container--{{reply.id}} answer__container--{{ reply.id }} ">
+                            <div class="answer__content-container answer__content-container--{{ reply.id }}">
+                                <p>
+                                    {{ reply.user }}   {{ reply.created_at|date:'y.m.d  H:i' }}
+                                    <br>
+                                    <p class= "answer__content answer__content--{{ reply.id }}"> {{ reply.content }}</p>
+                                    <br>
+                                </p>
+                                <div class="answer__like-btn answer__like-btn--{{ reply.id }} btn" id="reply-like-{{ reply.id }}">
+                                    {% if user in reply.like_user.all %}
+                                    <i class="fas fa-heart"></i>
+                                    {% else %}
+                                    <i class="far fa-heart"></i>
+                                    {% endif %}
+                                    <span>좋아요 {{ reply.like_user.all | length }}개</span>
+                                </div>
+
+                                {% if reply.user.id == user.id %}
+                                <div>
+                                    <button class="btn btn-sm btn-secondary answer__edit-btn answer__edit-btn--{{ reply.id }} " id="answer-edit-btn-{{ reply.id }}">답변 수정</button>
+                                    <button class="btn btn-sm btn-secondary answer__delete-btn answer__delete-btn--{{ reply.id }} " id="answer-delete-btn-{{ reply.id }}">답변 삭제</button>
+                                </div>
                                 {% endif %}
-                                <span>좋아요 {{ reply.like_user.all | length }}개</span>
                             </div>
 
-                            {% if reply.user.id == user.id %}
-                            <div>
-                                <button class="btn btn-sm btn-secondary answer__edit-btn answer__edit-btn--{{ reply.id }} " id="answer-edit-btn-{{ reply.id }}">답변 수정</button>
-                                <button class="btn btn-sm btn-secondary answer__delete-btn answer__delete-btn--{{ reply.id }} " id="answer-delete-btn-{{ reply.id }}">답변 삭제</button>
+                            <div class="answer__edit answer__edit--{{ reply.id }}" style=" display: none;">
+                                <input type="text" name="edit_answer_{{ reply.id }}" class="answer__edit-input answer__edit-input--{{ reply.id }}" id = "answer-edit-input-{{ reply.id }}" 
+                                style="width:200px; height:20px;" value="{{ reply.content }}">    
+                                <input type="button" value = "수정" class="answer__edit-submit answer__edit-submit--{{ reply.id }}" id = "answer-edit-submit-{{ reply.id }}">
                             </div>
-                            {% endif %}
-
                         </div>
 
-                        <div class="answer__edit answer__edit--{{ reply.id }}" style=" display: none;">
-                            <input type="text" name="edit_answer_{{ reply.id }}" class="answer__edit-input answer__edit-input--{{ reply.id }}" id = "answer-edit-input-{{ reply.id }}" 
-                            style="width:200px; height:20px;" value="{{ reply.content }}">    
-                            <input type="button" value = "수정" class="answer__edit-submit answer__edit-submit--{{ reply.id }}" id = "answer-edit-submit-{{ reply.id }}">
-                        </div>
+                        
 
                     {% endfor %}
                 </div>
