@@ -1,14 +1,17 @@
+import re
+from tokenize import blank_re
 import uuid
 import base64
 import codecs
 import json
 from django.shortcuts import render, redirect, get_object_or_404
+from django.templatetags.static import static
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import *
 from .forms import *
 
-## 그룹 메인 페이지
+######## 그룹 메인 페이지 ########
 
 # 나의 그룹
 def group_home(request):
@@ -32,7 +35,7 @@ def group_home(request):
     return render(request, template_name='group/group_home.html', context=ctx)
 
 
-## 그룹 CRUD
+######## 그룹 CRUD ########
 
 # 그룹 생성
 def group_create(request):
@@ -84,15 +87,78 @@ def group_update(request, pk):
 
         return render(request, template_name='group/group_form.html', context=ctx)
 
-# 그룹 탈퇴
+# 그룹 삭제
 def group_delete(request, pk):
+    user = request.user
     group = get_object_or_404(Group, pk=pk)
-    group.delete()
+
+    if user == group.maker:
+        group.delete()
+
+        return redirect('group:group_home')
+    else:
+        ### 알림 창 하나 띄우기(alert) "방장만 그룹을 삭제할 수 있습니다."
+        return redirect('group:group_detail')
+
+# 그룹 탈퇴
+def group_drop(request, pk):
+    user = request.user
+    group = get_object_or_404(Group, pk=pk)
+    members = group.members.all()
+
+    print(group.maker)
+    print(members)
+    print(user)
+
+    if len(members) > 1:
+        if user == group.maker:
+            group.members.remove(user)
+            print(members)
+            group.maker = members[0]
+            print(members)
+        else:
+            group.members.remove(user)
+        
+    else: 
+        group_delete(request, pk)  # 그룹 삭제 함수 호출
 
     return redirect('group:group_home')
 
+# 그룹 상세 페이지
+def group_detail(request, pk):
+    groups = get_object_or_404(Group, pk=pk)
+    members = groups.members.all()
+    maker = groups.maker
 
-## 초대 코드 
+    # member_list = members.values_list('nickname')
+
+    print(maker)
+    # member 목록 정렬 -> 0번째 index와 방장의 indext swap
+    # index = 0
+    # for member in members:
+    #     if member == maker:
+    #         break
+    #     index += 1
+
+    # flag = members[0]
+    # members[0] = maker
+    # members[index] = flag
+
+    print(len(members))
+    print(members)
+    print(members.filter(nickname__contains=maker.nickname))
+
+    ctx = { 
+        'group': groups, 
+        'members': members,
+        'maker': maker,
+        'profile_img': static('image/none_image_user.jpeg')
+        }
+
+    return render(request, template_name='group/group_detail.html', context=ctx)
+
+
+######## 초대 코드 ########
 
 # 초대 코드 발급
 def get_invite_code(length=6):
@@ -140,17 +206,6 @@ def join_group(request):
         return render(request, template_name='group/join_group.html', context=ctx)
 
 
-
-# 그룹 상세 페이지
-def group_detail(request, pk):
-    groups = get_object_or_404(Group, pk=pk)
-    members = groups.members.all()
-
-    print(members)
-
-    ctx = { 'group': groups, 'members': members }
-
-    return render(request, template_name='group/group_detail.html', context=ctx)
 
 # 그룹 모아보기 게시판(그룹 찾기)
 def group_list(request):

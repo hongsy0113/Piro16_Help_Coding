@@ -42,16 +42,32 @@
         </div>
         <div class="group-info__member">
             <h3>멤버 명단</h3>
+            <div class="d-flex flex-row align-items-center">
+                {% if maker.img %}
+                <img src="{{ maker.img.url }}" height="50" width="50" style="border-radius: 50px;"/>
+                {% else %}
+                <img src="{{ profile_img }}" height="50" width="50" style="border-radius: 50px;"/>
+                {% endif %}
+                <h6>{{ maker }} [방장] </h6>
+            </div>
             {% for member in members %}
-                <div>
-                    {{ member }}
-                </div>
+                {% if member != maker %}
+                    <div class="d-flex flex-row align-items-center">
+                        {% if member.img %}
+                        <img src="{{ member.img.url }}" height="50" width="50" style="border-radius: 50px;"/>
+                        {% else %}
+                        <img src="{{ profile_img }}" height="50" width="50" style="border-radius: 50px;"/>
+                        {% endif %}
+                        <h6>{{ member }}</h6>
+                    </div>
+                {% endif %}
             {% endfor %}
         </div>
         <div class="group-info__input">
             <a href="{% url 'group:group_delete' group.pk %}" class="delete_btn">삭제</a>
             <a href="{% url 'group:group_home' %}" class="list_btn">목록</a>
             <a href="{% url 'group:group_update' group.pk %}" class="update_btn">수정</a>
+            <a href="{% url 'group:group_drop' group.pk %}">그룹 탈퇴하기</a>
         </div>
     </div>
 
