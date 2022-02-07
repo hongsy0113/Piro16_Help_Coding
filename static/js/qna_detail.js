@@ -27,29 +27,65 @@ const answerHandleResponse = (id, content, user, created_at) => {
 
     const newAnswer = document.createElement('div');
     newAnswer.classList.add('answer__container', `answer__container--${id}`)
-    newAnswer.innerHTML = `<h2>${user}</h2>
+    newAnswer.innerHTML = `
+        <div class="answer__content-container answer__content-container--${id}">
+            <h2>${user}</h2>
             <p>${created_at}</p>
             <div>
-                <p>${content}</p>
-                <div class="answer__like-btn answer__like-btn--${id} btn"  id="answer-like-${id}"  onclick="onClickAnswerLike(${id})">
-                        <i class="far fa-heart"></i>
-                        <span>좋아요 0개</span>
+                <p class="answer__content answer__content--${id}">${content}</p>
+                <div class="answer__like-btn answer__like-btn--${id} btn"  id="answer-like-${id}" >
+                    <i class="far fa-heart"></i>
+                    <span>좋아요 0개</span>
                 </div>
             </div>
             <div>
-                    <input type="checkbox" class="answer__write-reply answer__write-reply--${id} btn-check" id="reply-btn-${id}" autocomplete="off" onclick="onClickReplyCheck(event,${id})">
-                    <label class="btn btn-primary" for="reply-btn-${id}">답글 작성</label>
+                <button class="btn btn-secondary answer__edit-btn answer__edit-btn--${id} " id="answer-edit-btn-${id}">답변 수정</button>
+                <button class="btn btn-secondary answer__delete-btn answer__delete-btn--${id}" id="answer-delete-btn-${id}">답변 삭제</button>
+            </div>
+            <div>
+                <input type="checkbox" class="answer__write-reply answer__write-reply--${id} btn-check" id="reply-btn-${id}" autocomplete="off"">
+                <label class="btn btn-primary" for="reply-btn-${id}">답글 작성</label>
             </div>
             <h6>대댓글</h4>
             <hr>
             <div class="reply__list reply__list--${id}"></div>
             <div class="reply__form reply__form--${id}" style="display: none;">
                 <input type="text" name="new_reply_${id}" placeholder="답변을 입력하세요" class="reply__input reply__input--${id}" id = "reply-input-${id}"style="width:200px; height:20px;">    
-                <input type="button" value = "작성" class="reply__submit reply__submit--${id}" id = "reply-submit-${id}" onclick="onClickReply(${id})">
+                <input type="button" value = "작성" class="reply__submit reply__submit--${id}" id ="reply-submit-${id}">
             </div>
+        </div>
+        <div class="answer__edit answer__edit--${id}" style="display: none;">
+            <input type="text" name="edit_answer_${id}" class="answer__edit-input answer__edit-input--${id}" id = "answer-edit-input-${id}" style="width:200px; height:20px;" value="${content}">    
+            <input type="button" value = "수정" class="answer__edit-submit answer__edit-submit--${id}" id = "answer-edit-submit-${id}">
+        </div>
             `;
     answerList.append(newAnswer);
 
+    /// 동적으로 생성된 요소들에 이벤트 바인딩
+    const answerLikeButton = document.querySelector(`.answer__like-btn--${id}`);
+    answerLikeButton.addEventListener('click',function(){
+        onClickAnswerLike(id);
+    })
+    const answerDeleteButton = document.querySelector(`.answer__delete-btn--${id}`);
+    answerDeleteButton.addEventListener('click',function(){
+        onClickAnswerDelete(id);
+    })
+    const replyButton = document.querySelector(`.answer__write-reply--${id}`);
+    replyButton.addEventListener('click',function(e){
+        onClickReplyCheck(e, id);
+    })
+    const replySubmitButton = document.querySelector(`.reply__submit--${id}`);
+    replySubmitButton.addEventListener('click',function(){
+        onClickReply(id);
+    })
+    const answerEditButton = document.querySelector(`.answer__edit-btn--${id}`);
+    answerEditButton.addEventListener('click',function(){
+        onClickAnswerEdit(id);
+    })
+    const answerEditSubmitButton = document.querySelector(`.answer__edit-submit--${id}`);
+    answerEditSubmitButton.addEventListener('click', function(){
+        onClickAnswerEditSubmit(id);
+    })
     //////////////////////////////////////////////////////////
     //TODO : 댓글 ajax 로 달릴 때 . 답변 추가 버튼도 달리도록
 
@@ -75,8 +111,6 @@ answerButton.addEventListener('click', function(){onClickAnswer(question_id , an
 /////////////////////////////////////////////////////
 
 // 답변 작성 누르면 대댓글 작성폼 나오도록
-const replyButton = document.querySelectorAll('.answer__write-reply');
-
 const onClickReplyCheck = function (e, answerId) {
     const replyForm = document.querySelector(`.reply__form--${answerId}`);
     if (e.target.checked) {
@@ -87,10 +121,12 @@ const onClickReplyCheck = function (e, answerId) {
     }
 }
 
-replyButton.forEach(function(btn) {
+const replyButtons = document.querySelectorAll('.answer__write-reply');
+replyButtons.forEach(function(btn) {
     btn.addEventListener('click',function(e){
         // button class 이름에서 해당 대댓글 작성 버튼이 속한 답변 id 가져오기
-        const [text1 , text2, answerId] = btn.getAttribute('id').split('-');
+        const btnElementId = btn.getAttribute('id').split('-');
+        const answerId = btnElementId[btnElementId.length-1];
         onClickReplyCheck(e, answerId);
     })
 })
@@ -123,28 +159,61 @@ relpyHandleResponse = (replyId, answerId ,content, user, created_at) => {
     element.value = "";
 
     const newReply = document.createElement('div');
-    newReply.classList.add('reply__container', `reply__container--${replyId}`)
-    newReply.innerHTML = `<p>
-        ${user}   ${created_at}
-        <br>
-        ${content}
-        <br>
-        <div class="answer__like-btn answer__like-btn--${replyId} btn"  id="answer-like-${replyId}"  onclick="onClickAnswerLike(${replyId})">
-        <i class="far fa-heart"></i>
-        <span>좋아요 0개</span>
+    newReply.classList.add('reply__container', `reply__container--${replyId}`, `answer__container--${replyId}`)
+    newReply.innerHTML = `
+        <div class="answer__content-container answer__content-container--${replyId}">
+            <p>
+            ${user}   ${created_at}
+            <br>
+            <p class= "answer__content answer__content--${replyId}"> ${content}</p>
+            <br>
+            <div class="answer__like-btn answer__like-btn--${replyId} btn"  id="answer-like-${replyId}" >
+            <i class="far fa-heart"></i>
+            <span>좋아요 0개</span>
+            </div>
+            </p>
+            <div>
+                <button class="btn btn-sm btn-secondary answer__edit-btn answer__edit-btn--${replyId} " id="answer-edit-btn-${replyId}">답변 수정</button>
+                <button class="btn btn-sm btn-secondary answer__delete-btn answer__delete-btn--${replyId} " id="answer-delete-btn-${replyId}">답변 삭제</button>
+            </div>
         </div>
-        </p>`;
+        <div class="answer__edit answer__edit--${replyId}" style=" display: none;">
+            <input type="text" name="edit_answer_${replyId}" class="answer__edit-input answer__edit-input--${replyId}" id = "answer-edit-input-${replyId}" 
+            style="width:200px; height:20px;" value="${content}">    
+            <input type="button" value = "수정" class="answer__edit-submit answer__edit-submit--${replyId}" id = "answer-edit-submit-${replyId}">
+        </div>
+        `;
 
     replyList.append(newReply);
+
+
+    /// 동적으로 생성된 요소들에 이벤트 바인딩
+    const answerLikeButton = document.querySelector(`.answer__like-btn--${replyId}`);
+    answerLikeButton.addEventListener('click',function(){
+        onClickAnswerLike(replyId);
+    })
+    const answerDeleteButton = document.querySelector(`.answer__delete-btn--${replyId}`);
+    answerDeleteButton.addEventListener('click',function(){
+        onClickAnswerDelete(replyId);
+    })
+    const answerEditButton = document.querySelector(`.answer__edit-btn--${replyId}`);
+    answerEditButton.addEventListener('click',function(){
+        onClickAnswerEdit(replyId);
+    })
+    const answerEditSubmitButton = document.querySelector(`.answer__edit-submit--${replyId}`);
+    answerEditSubmitButton.addEventListener('click', function(){
+        onClickAnswerEditSubmit(replyId);
+    })
 }
 
 
 // 같은 클래스 여러 요소에 같은 event 등록
-const replySubmitButton = document.querySelectorAll('.reply__submit');
-replySubmitButton.forEach(function(btn) {
+const replySubmitButtons = document.querySelectorAll('.reply__submit');
+replySubmitButtons.forEach(function(btn) {
     btn.addEventListener('click',function(){
         // button class 이름에서 해당 대댓글 작성 버튼이 속한 답변 id 가져오기
-        const [text1 , text2, answerId] = btn.getAttribute('id').split('-');
+        const btnElementId = btn.getAttribute('id').split('-');
+        const answerId = btnElementId[btnElementId.length-1];
         onClickReply(answerId);
     })
 })
@@ -184,7 +253,7 @@ questionLikeHandleResponse = (questionId, totalLikes, isLiking) => {
         `
     }
 }
-///
+/// 댓글 좋아요
 const onClickAnswerLike = async (id) => {
     const url = "/qna/answer_like_ajax/";
     const {data} = await axios.post(url,{
@@ -196,7 +265,8 @@ const onClickAnswerLike = async (id) => {
 const answerLikeButtons = document.querySelectorAll('.answer__like-btn');
 answerLikeButtons.forEach(function(btn) {
     btn.addEventListener('click',function(){
-        const [text1 , text2, answerId] = btn.getAttribute('id').split('-');
+        const btnElementId = btn.getAttribute('id').split('-');
+        const answerId = btnElementId[btnElementId.length-1];
         
         onClickAnswerLike(answerId);
     })
@@ -219,3 +289,96 @@ answerLikeHandleResponse = (answerId, totalLikes, isLiking) => {
     }
 }
 
+//------------댓글 삭제 -----------//
+const answerDeleteButtons = document.querySelectorAll('.answer__delete-btn');
+answerDeleteButtons.forEach(function(btn) {
+    btn.addEventListener('click',function(){
+        const btnElementId = btn.getAttribute('id').split('-');
+        const answerId = btnElementId[btnElementId.length-1];
+        onClickAnswerDelete(answerId);
+    })
+})
+
+const onClickAnswerDelete = async (id) => {
+    const url = "/qna/answer_delete_ajax/";
+    const {data} = await axios.post(url,{
+        id
+    });
+    answerDeleteHandleResponse(data.id)
+}
+
+answerDeleteHandleResponse = (answerId) => {
+    const answerContainer = document.querySelector(`.answer__container--${answerId}`)
+
+    // 답변 개수도 바뀌어야함
+    // 대댓글, 답변 다 한 함수로 통일 했으므로 조건 나눠줘야 한다.
+    if (!answerContainer.classList.contains('reply__container')){
+        const answerCount = document.querySelector('.answer__total-count');
+        const [text1 , num, text2] = answerCount.innerHTML.split(' ');
+    
+        const count = Number(num)-1;
+
+        answerCount.innerHTML = `답변 ${count} 개`
+    }
+    answerContainer.remove();
+}
+//---------------------------------//
+
+//------------댓글 수정 -----------//
+///일단 먼저 댓글 수정 클릭하면 form 뜨는 거 부터 하자
+//// 그 다음에 동적 요소 이벤트 바인딩
+
+////// 1.  댓글 수정 클릭하면 해당 form ajax로 나오게 
+const answerEditButtons = document.querySelectorAll('.answer__edit-btn');
+answerEditButtons.forEach(function(btn) {
+    btn.addEventListener('click',function(){
+        const btnElementId = btn.getAttribute('id').split('-');
+        const answerId = btnElementId[btnElementId.length-1];
+        onClickAnswerEdit(answerId);
+    })
+})
+
+const onClickAnswerEdit = async (id) => {
+    const url = "/qna/answer_edit_ajax/";
+    const {data} = await axios.post(url,{
+        id
+    });
+    answerEditHandleResponse(data.id)
+}
+answerEditHandleResponse = (answerId) => {
+    const answerContentContainer = document.querySelector(`.answer__content-container--${answerId}`);
+    answerContentContainer.style.display = 'none';
+    
+    const answerEditForm = document.querySelector(`.answer__edit--${answerId}`);
+    answerEditForm.style.display = 'block';
+}
+
+////// 2.  해당 폼에서 수정 클릭하면 ajax로 댓글 수정
+const answerEditSubmitButtons = document.querySelectorAll('.answer__edit-submit');
+answerEditSubmitButtons.forEach(function(btn) {
+    btn.addEventListener('click',function(){
+        const btnElementId = btn.getAttribute('id').split('-');
+        const answerId = btnElementId[btnElementId.length-1];
+        onClickAnswerEditSubmit(answerId);
+    })
+})
+
+const onClickAnswerEditSubmit = async(id) => {
+    const url = '/qna/answer_edit_submit_ajax/'
+
+    const content = document.querySelector(`#answer-edit-input-${id}`).value;
+    const {data} = await axios.post(url,{
+        id, content
+    });
+    answerEditSubmitHandleResponse(data.id, data.content)
+}
+answerEditSubmitHandleResponse = (answerId, content) => {
+    const answerContainer = document.querySelector(`.answer__content-container--${answerId}`);
+    answerContainer.style.display = 'block';
+
+    const answerContent = document.querySelector(`.answer__content--${answerId}`);
+    answerContent.innerHTML = content;
+    
+    const answerEditForm = document.querySelector(`.answer__edit--${answerId}`);
+    answerEditForm.style.display = 'none';
+}
