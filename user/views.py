@@ -94,7 +94,7 @@ def sign_up(request):
                 total_like = 0,
                 job = request.POST['job'],
             )
-            user.is_active = False
+            user.is_active = True  # 이메일 인증 기능 구현 시에는 False로 바꿀 것
             user.save()
             # 인증 이메일 발송
             current_site = get_current_site(request)
