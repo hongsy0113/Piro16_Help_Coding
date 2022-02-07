@@ -108,7 +108,7 @@ def sign_up(request):
             )
             mail_subject = '[도와줘, 코딩] 회원가입 인증 메일입니다.'
             email = EmailMessage(mail_subject, message, to=[user.email])
-            email.send()
+            # email.send()
             return render(request, 'user/signup_success.html', {'email': user.email})
         return render(request, 'user/signup.html', {'form': form, 'sign_up_error': sign_up_error})
             

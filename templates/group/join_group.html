@@ -8,10 +8,11 @@
             <input placeholder="초대 코드 입력" type="text" name="code" />
             <button>Submit</button> 
         </form>
+
         <div class="group-join__message">
             <h4>{{ message }}</h4>
-
         </div>
+        <a href="{% url 'group:group_home' %}">홈으로</a>
     </div>
 
 {% endblock %}

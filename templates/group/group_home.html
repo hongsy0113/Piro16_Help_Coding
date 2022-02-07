@@ -2,33 +2,51 @@
 {% block title %} 나의 그룹 {% endblock %}
 
 {% block content %}
+{{ request.user.id|json_script:"user_id" }}
+{{ group.id|json_script:"group_id" }}
 
-    <a href="{% url 'group:group_create' %}">그룹 생성</a>
-    <a href="{% url 'group:join_group' %}">그룹 가입하기</a>
-    <a href="{% url 'user:main' %}">메인 화면으로</a>
+    <nav>
+        <a href="{% url 'group:group_create' %}" class="btn btn-primary">그룹 생성</a>
+        <a href="{% url 'group:join_group' %}" class="btn btn-dark">그룹 가입하기</a>
+        <!-- <div class="group-join__alert-box" id="join-group">
+            <div class="group-join__box">
+                <form method="GET" class="group-join__code">
+                    <input placeholder="초대 코드 입력" type="text" name="code" />
+                    <a href="{% url 'group:join_group' %}"><button>Submit</button> </a>
+                </form>
+                <div class="group-join__message">
+                    <h4>{{ message }}</h4>
+        
+                </div>
+            </div>
+            <button class="join__code--close btn btn-dark" onclick="closeJoin()">닫기</button>
+        </div>
+        <button class="group-join__btn btn btn-dark" onclick="groupJoin()">그룹 가입하기</button> -->
+        <a href="{% url 'user:main' %}" class="btn btn-warning">메인 화면으로</a>
+    </nav>
     <div class="mygroup_list">
+        <h3>현재 유저 : {{ user }}</h3>
         <form method="get" action="" class="movie_sort float-end me-4">
             <select id="sort_select" class="sort_select" onChange="location=this.value; getSelectValue(this.form);">
                 <option class="sort-name" value="/">--정렬기준--</option>
                 <option class="sort-name" value="?sort=name">이름순</option>
                 <option class="sort-star" value="?sort=star">찜하기순</option>
-                <option class="sort-date" value="?sort=date">가입날짜순</option>
             </select>
         </form>
         {% for group in groups %}
-            <div class="mygroup_one group-{{ group.id }}">
+            <div class="mygroup_one">
                 <div class="group-name"><a href="{% url 'group:group_detail' group.pk %}"><h2>{{ group.name }}</h2></a></div>
                 <div class="group-img">
                     {% if group.image %}
                     <img src="{{ group.image.url }}" height="200" width="200" />
                     {% else %}
-                    <img class="random-img" src="https://picsum.photos/seed/{{ group.id }}/200/200" />
+                    <img src="{{ ani_image }}" height="200" width="200" />
                     {% endif %}
                 </div>
                 <div class="group-keyword">
-                    <div class="group-member">{{ group.members.all | length }}</div>
+                    <div class="group-member">멤버 수{{ group.members.all | length }}</div>
                     <div class="group-star">찜하기
-                        <button class="star {{ group.is_star }}" onclick="onClickStar(`{{ group.id }}`)">  
+                        <button class="star group__keyword-star group__keyword-star--{{ group.id }}" id="keyword-star-{{ group.id }}">  
                             {% if group.is_star %} <!-- 꽉 찬 별 -->
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 18.26l-7.053 3.948 1.575-7.928L.587 8.792l8.027-.952L12 .5l3.386 7.34 8.027.952-5.935 5.488 1.575 7.928z"/></svg>                            
                             {% else %} <!-- 빈 별 -->
@@ -36,11 +54,11 @@
                             {% endif %}
                         </button>
                     </div>
-                    <a href="{% url 'group:group_delete' group.pk %}">그룹 삭제</a>
+                    <a href="{% url 'group:group_drop' group.pk %}">그룹 탈퇴</a>
                 </div>
             </div>
         {% endfor %}
     </div>
-    <a href="#">그룹 찾기</a>
+    <a href="{% url 'group:group_list' %}">그룹 찾기</a>
 
 {% endblock %}

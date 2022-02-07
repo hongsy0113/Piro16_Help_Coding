@@ -28,8 +28,16 @@ class Group(models.Model):
     code = models.CharField(verbose_name='초대 코드', max_length=20, null=True, blank=True)  #랜덤 코드 길이 설정
     image = models.ImageField(upload_to=group_thumbnail_path, null=True, blank=True)
     members = models.ManyToManyField(User, blank=True)  # 그룹에 가입한 멤버
+    waits = models.ManyToManyField(User, blank=True, related_name='waits')  # 가입 대기 멤버
+    # status = models.CharField(default="false", max_length=30)  # 초대수락 여부에 따른 상태
+    MODE_CHOICES = (
+        ('PUBLIC', '공개'),
+        ('PRIVATE', '비공개'),
+    )
+    mode = models.CharField(verbose_name='공개 여부', choices=MODE_CHOICES, max_length=20)
     star = models.IntegerField(verbose_name="찜하기 개수", default=0)
     is_star = models.BooleanField(verbose_name="찜하기", default=False)
+    
 
     def __str__(self):
         return self.name
