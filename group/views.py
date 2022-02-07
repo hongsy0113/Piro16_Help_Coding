@@ -207,11 +207,11 @@ def join_group(request):
 
         return render(request, template_name='group/join_group.html', context=ctx)
 
-def input_code(request):
-    input_code = request.GET.get('code')
-    ctx = { 'input': input_code }
+# def input_code(request):
+#     input_code = request.GET.get('code')
+#     ctx = { 'input': input_code }
 
-    return render(request, template_name='group/input_code.html', context=ctx)
+#     return render(request, template_name='group/input_code.html', context=ctx)
 
 
 # 그룹 가입 요청 리스트(user == 방장일 때만 확인 가능)

@@ -4,6 +4,11 @@
 {% block content %}
 
     <div class="group-join__box align-center">
+        <form method="GET" class="group-join__code align-center">
+            <input placeholder="초대 코드 입력" type="text" name="code" />
+            <button><a href="{% url 'group:join_group' %}">Submit</a></button> 
+        </form>
+        
         <div class="group-join__message">
             <h4>{{ message }}</h4>
         </div>
