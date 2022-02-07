@@ -5,6 +5,10 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/question_create.css' %}">
 {% endblock %}
 
+{% block js %}
+    <script type="text/javascript" src="/static/js/qna_create.js" defer></script>
+{% endblock %} 
+
 {% block content %}
 <div>
     <h3>질문 등록</h3>
@@ -60,10 +64,14 @@
         <label for="my">내 블록</label>
         <input type="checkbox" name="detail_tag" value="DETAIL_ETC" id="detail_etc" class="tag" />
         <label for="detail_etc">기타</label>
+        <input type="checkbox" name="add_tag" value="ADD_TAG" id="add_tag" class="tag" />
+        <label for="add_tag">태그 추가</label>
     </div>
+    <div class="tag_input_box"></div>
     <div>
         <button type="submit">질문 등록</button>
         <a href="{% url 'qna:question_list' %}">취소</a>
     </div>
 </form>
+
 {% endblock %}
