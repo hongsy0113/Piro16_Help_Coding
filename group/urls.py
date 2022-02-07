@@ -11,6 +11,7 @@ urlpatterns = [
     path('<int:pk>/group_drop/', view=views.group_drop, name='group_drop'),
     path('<int:pk>/group_detail/', view=views.group_detail, name='group_detail' ),
     path('<int:pk>/create_code/', view=views.create_code, name='create_code'),
+    # path('<int:pk>/join_list/', view=views.join_list, name='join_list'),
     path('join_group/', view=views.join_group, name='join_group'),
     # path('<int:pk>/join_group/', view=views.join_group_each, name='join_group_each'),
     path('star_ajax/', view=views.star_ajax, name='star_ajax'),

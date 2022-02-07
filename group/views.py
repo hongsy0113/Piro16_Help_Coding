@@ -106,21 +106,21 @@ def group_drop(request, pk):
     group = get_object_or_404(Group, pk=pk)
     members = group.members.all()
 
-    print(group.maker)
-    print(members)
-    print(user)
-
     if len(members) > 1:
         if user == group.maker:
+            # group.members.remove(user)
+            print(members)
             group.members.remove(user)
-            print(members)
             group.maker = members[0]
-            print(members)
+            group.save()
+
+            print(group.maker)
         else:
             group.members.remove(user)
         
     else: 
-        group_delete(request, pk)  # 그룹 삭제 함수 호출
+        group.delete()
+        # group_delete(request, pk)  # 그룹 삭제 함수 호출
 
     return redirect('group:group_home')
 
@@ -130,22 +130,8 @@ def group_detail(request, pk):
     members = groups.members.all()
     maker = groups.maker
 
-    # member_list = members.values_list('nickname')
-
-    print(maker)
-    # member 목록 정렬 -> 0번째 index와 방장의 indext swap
-    # index = 0
-    # for member in members:
-    #     if member == maker:
-    #         break
-    #     index += 1
-
-    # flag = members[0]
-    # members[0] = maker
-    # members[index] = flag
-
-    print(len(members))
     print(members)
+    print(maker)
     print(members.filter(nickname__contains=maker.nickname))
 
     ctx = { 
@@ -159,6 +145,15 @@ def group_detail(request, pk):
 
 
 ######## 초대 코드 ########
+
+# def group_status(group, login_user):
+#     if group.status == 'false':
+#         if group.maker == login_user:
+#             return 2  # 초대 수락 여부 결정
+#         else:
+#             return 1  # 수락을 기다리는 중
+#     else:
+#         return 3  # 가입 완료
 
 # 초대 코드 발급
 def get_invite_code(length=6):
@@ -192,11 +187,30 @@ def join_group(request):
 
             return render(request, template_name='group/join_group.html', context=ctx)
 
-        else:
+        else:   # user != 방장
             if (group):
-                group.members.add(user)  # 방장도 그룹의 멤버로 추가
+                group.members.add(user)
                 group.save()
+                # status = group_status(group, user)
 
+                # if status == 1:
+                #     group.status = 'false'
+                #     group.waits.add(user)  # 대기자 명단에 user 추가
+                #     group.save()
+                #     message = '수락을 기다리고 있습니다.'
+                #     ctx = { 'message': message }
+
+                #     return render(request, template_name='group/join_group.html', context=ctx)
+                # elif status == 3:
+                #     group.waits.remove(user)
+                #     group.members.add(user) 
+                #     group.status = 'true'
+                #     group.save()
+
+                #     return redirect('group:group_home')
+                # else:
+                #     print('error!')
+                
                 return redirect('group:group_home')
     except:
         print('존재하지 않는 그룹입니다.')
@@ -205,7 +219,28 @@ def join_group(request):
 
         return render(request, template_name='group/join_group.html', context=ctx)
 
+# 그룹 가입 요청 리스트(user == 방장일 때만 확인 가능)
+def join_list(request, pk):
+    user = request.user
+    group = get_object_or_404(Group, pk=pk)
+    waits = group.waits.all()
+    members = group.members.all()
+    result = request.GET.get('accept')  # 수락/거절 중 user가 선책한 값
+    maker = group.maker
 
+    ctx = { 
+        'group': group,
+        'members': members,
+        'waits': waits,
+        'maker': maker,
+        'profile_img': static('image/none_image_user.jpeg'),
+    }
+    
+    return render(request, template_name='join_list.html', name='join_list')
+
+
+
+######## 공개 그룹 ########
 
 # 그룹 모아보기 게시판(그룹 찾기)
 def group_list(request):
