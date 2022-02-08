@@ -15,7 +15,7 @@
     <script src="https://use.fontawesome.com/releases/v5.2.0/js/all.js"></script>
     {% block js %}
     {% endblock %}
-    <title>Help Coding!</title>
+    <title>도와줘, 코딩</title>
 </head>
 <body>
     <header>
@@ -46,8 +46,13 @@
                 <a class="header__searchbtn" href="#"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M19.2349 17.109L15.4381 13.3122C15.2668 13.1408 15.0345 13.0456 14.7907 13.0456H14.17C15.2211 11.7013 15.8456 10.0105 15.8456 8.1711C15.8456 3.79545 12.3002 0.25 7.92452 0.25C3.54887 0.25 0.00341797 3.79545 0.00341797 8.1711C0.00341797 12.5467 3.54887 16.0922 7.92452 16.0922C9.76389 16.0922 11.4547 15.4677 12.799 14.4166V15.0373C12.799 15.2811 12.8942 15.5134 13.0656 15.6847L16.8624 19.4815C17.2204 19.8395 17.7992 19.8395 18.1534 19.4815L19.2311 18.4038C19.5891 18.0458 19.5891 17.467 19.2349 17.109ZM7.92452 13.0456C5.23211 13.0456 3.05 10.8673 3.05 8.1711C3.05 5.47869 5.2283 3.29658 7.92452 3.29658C10.6169 3.29658 12.799 5.47488 12.799 8.1711C12.799 10.8635 10.6207 13.0456 7.92452 13.0456Z" fill="#4E4E4E"/>
                     </svg>                    
+                </a>
+                <div class="header__mypagecontainer">
+                    <a href="{%  url 'user:mypage' %}">{{user.email}}</a>
+                    <a class="header__mypagebtn" href="{% url 'user:mypage' %}">
+                        {% if user.img %}<img src="{{ user.img.url }}" style='height: 100%; width: auto; object-fit: contain'>{% else %}<p class="header__mypagebtn-noimage"></p>{% endif %}
                     </a>
-                <a class="header__mypagebtn" href="{% url 'user:mypage' %}"></a>
+                </div>
             {% else %}
             <ul>
                 <li><a href="#">도와줘코딩 가입</a></li>
