@@ -6,6 +6,7 @@ import codecs
 import json
 from django.shortcuts import render, redirect, get_object_or_404
 from django.templatetags.static import static
+from django.db.models import Q
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import *
@@ -26,6 +27,8 @@ def group_home(request):
         groups = groups.order_by('name')
     elif sort == 'star':
         groups = groups.order_by('-is_star')
+    # elif sort == 'member':
+    #     groups = groups.order_by('-members')
     # elif sort == 'date':  # django에서 기본 제공하는 create날짜 있는지 체크
     #     groups = groups.order_by('date')
     ### user의 닉네임이랑 같은 경우에 처리해야 하는 부분 이후 추가
@@ -44,11 +47,15 @@ def group_home(request):
 # 그룹 생성
 def group_create(request):
     user = request.user
+    groups = Group.objects.values('name')
+    print(groups)
+
     if request.method == 'POST':
         form = GroupForm(request.POST, request.FILES)
         if form.is_valid():
             group = form.save()
             
+            group.mode = request.POST.get('group-mode__tag')
             # group.image = request.POST.get('image')
             group.maker = user    # 방장 = 접속한 유저
             group.members.add(user)  # 방장도 그룹의 멤버로 추가
@@ -75,6 +82,7 @@ def group_update(request, pk):
         form = GroupForm(request.POST, instance=group)
         # group.name = request.POST.get('name')
         # 이미지 수정 -> 파일 탐색기
+        group.mode = request.POST.get('group-mode__tag')
         image = request.FILES.get('image')
         group.image = image
         # group.intro = request.POST.get('intro')
@@ -115,10 +123,13 @@ def group_drop(request, pk):
             # group.members.remove(user)
             print(members)
             group.members.remove(user)
-            group.maker = members[0]
+            # group.maker = members[0]   #랜덤하게 지정해야 하나..?
             group.save()
 
             print(group.maker)
+            # group.maker = members[0]
+            # group.save()
+
         else:
             group.members.remove(user)
         
@@ -133,6 +144,7 @@ def group_drop(request, pk):
 def group_detail(request, pk):
     groups = get_object_or_404(Group, pk=pk)
     members = groups.members.all()
+    groups.maker = members[0]
     maker = groups.maker
 
     print(members)
@@ -248,7 +260,8 @@ def join_list(request, pk):
 
 # 그룹 모아보기 게시판(그룹 찾기)
 def group_list(request):
-    group = Group.objects.all()
+    group = Group.objects.filter(mode='PUBLIC')
+    print(group)
     ctx = { 
         'groups': group,
         'ani_image': static('image/helphelp.png')    
