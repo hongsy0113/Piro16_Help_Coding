@@ -2,10 +2,13 @@
 {% block title %} Group Form {% endblock %}
 
 {% block content %}
-    <!-- <div class="select__group-mode">
+    <div class="select__group-mode">
         <p>그룹 공개 여부 선택</p>
-        <input type='radio' name='group-mode__tag' value='PUBLIC'>
-    </div> -->
+        <input type="radio" name="group-mode__tag" value="PUBLIC" id="public" class="tag">
+        <label for="public">공개</label>
+        <input type="radio" name="group-mode__tag" value="PRIVATE" id="private" class="tag">
+        <label for="private">비공개</label>
+    </div>
 
     <form method="POST" class="post-form" enctype="multipart/form-data">
         {% csrf_token %}
