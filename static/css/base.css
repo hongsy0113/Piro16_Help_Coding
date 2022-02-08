@@ -47,11 +47,21 @@ header li, header a {
     gap: 30px;
 }
 
+.header__mypagecontainer {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
 .header__mypagebtn {
     width: 40px;
     height: 40px;
     border-radius: 50%;
     background: #C4C4C4;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #C4C4C4;
 }
 
 section{
