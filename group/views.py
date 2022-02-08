@@ -27,6 +27,8 @@ def group_home(request):
         groups = groups.order_by('name')
     elif sort == 'star':
         groups = groups.order_by('-is_star')
+    # elif sort == 'member':
+    #     groups = groups.order_by('-members')
     # elif sort == 'date':  # django에서 기본 제공하는 create날짜 있는지 체크
     #     groups = groups.order_by('date')
     ### user의 닉네임이랑 같은 경우에 처리해야 하는 부분 이후 추가
@@ -45,13 +47,15 @@ def group_home(request):
 # 그룹 생성
 def group_create(request):
     user = request.user
+    groups = Group.objects.values('name')
+    print(groups)
+
     if request.method == 'POST':
         form = GroupForm(request.POST, request.FILES)
         if form.is_valid():
             group = form.save()
             
             group.mode = request.POST.get('group-mode__tag')
-
             # group.image = request.POST.get('image')
             group.maker = user    # 방장 = 접속한 유저
             group.members.add(user)  # 방장도 그룹의 멤버로 추가
@@ -123,8 +127,8 @@ def group_drop(request, pk):
             group.save()
 
             print(group.maker)
-            group.maker = members[0]
-            group.save()
+            # group.maker = members[0]
+            # group.save()
 
         else:
             group.members.remove(user)
@@ -140,6 +144,7 @@ def group_drop(request, pk):
 def group_detail(request, pk):
     groups = get_object_or_404(Group, pk=pk)
     members = groups.members.all()
+    groups.maker = members[0]
     maker = groups.maker
 
     print(members)

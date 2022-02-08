@@ -34,7 +34,7 @@ class Group(models.Model):
         ('PUBLIC', '공개'),
         ('PRIVATE', '비공개'),
     )
-    mode = models.CharField(verbose_name='공개 여부', choices=MODE_CHOICES, max_length=20, default=0)
+    mode = models.CharField(verbose_name='공개 여부', choices=MODE_CHOICES, max_length=20, default=0, null=True)
     star = models.IntegerField(verbose_name="찜하기 개수", default=0)
     is_star = models.BooleanField(verbose_name="찜하기", default=False)
     
