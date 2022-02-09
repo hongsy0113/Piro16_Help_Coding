@@ -54,15 +54,15 @@ def group_create(request):
         form = GroupForm(request.POST, request.FILES)
         if form.is_valid():
             group = form.save()
-            
             group.mode = request.POST.get('group-mode__tag')
-            # group.image = request.POST.get('image')
+        # image = request.FILES.get('image')
+        # group.image = image
+            print(group.mode)
             group.maker = user    # 방장 = 접속한 유저
             group.members.add(user)  # 방장도 그룹의 멤버로 추가
             group.save()
 
             print(group.members)
-
 
             return redirect('group:group_home')
     else:
@@ -80,19 +80,21 @@ def group_update(request, pk):
 
     if request.method == 'POST':
         form = GroupForm(request.POST, instance=group)
-        # group.name = request.POST.get('name')
+        group.name = request.POST.get('name')
         # 이미지 수정 -> 파일 탐색기
         group.mode = request.POST.get('group-mode__tag')
         image = request.FILES.get('image')
         group.image = image
-        # group.intro = request.POST.get('intro')
+        group.intro = request.POST.get('intro')
         
         group.save()
 
-        if form.is_valid():
-            group = form.save()
+        # if form.is_valid():
+        #     group = form.save()
+        #     group.user = request.user
+        #     group.save()
 
-            return redirect('group:group_detail', pk)
+        return redirect('group:group_detail', pk)
     else:
         form = GroupForm(instance=group)
         ctx = {'group': group, 'form': form}
@@ -146,9 +148,14 @@ def group_detail(request, pk):
     members = groups.members.all()
     groups.maker = members[0]
     maker = groups.maker
+    groups.save()
+
+    # if groups.mode == 'PUBLIC':
+    #     modes = groups.mode
 
     print(members)
     print(maker)
+    print(groups.mode)
     print(members.filter(nickname__contains=maker.nickname))
 
     ctx = { 
@@ -156,8 +163,8 @@ def group_detail(request, pk):
         'members': members,
         'maker': maker,
         'ani_image': static('image/helphelp.png'),    
-        'profile_img': static('image/none_image_user.jpeg')
-        }
+        'profile_img': static('image/none_image_user.jpeg'),
+    }
 
     return render(request, template_name='group/group_detail.html', context=ctx)
 
@@ -189,7 +196,7 @@ def create_code(request, pk):
 
     return render(request, template_name='group/create_code.html', context=ctx)
 
-# 초대 코드 입력(from 메인 페이지)
+# 초대 코드 입력(from 그룹 메인 페이지 / 비공개 그룹 가입)
 def join_group(request):    
     user = request.user
     input_code = request.GET.get('code')
@@ -235,33 +242,14 @@ def join_group(request):
 #     return render(request, template_name='group/input_code.html', context=ctx)
 
 
-# 그룹 가입 요청 리스트(user == 방장일 때만 확인 가능)
-def join_list(request, pk):
-    user = request.user
-    group = get_object_or_404(Group, pk=pk)
-    waits = group.waits.all()
-    members = group.members.all()
-    result = request.GET.get('accept')  # 수락/거절 중 user가 선책한 값
-    maker = group.maker
-
-    ctx = { 
-        'group': group,
-        'members': members,
-        'waits': waits,
-        'maker': maker,
-        'profile_img': static('image/none_image_user.jpeg'),
-    }
-    
-    return render(request, template_name='join_list.html', name='join_list')
-
-
-
 ######## 공개 그룹 ########
 
 # 그룹 모아보기 게시판(그룹 찾기)
 def group_list(request):
     group = Group.objects.filter(mode='PUBLIC')
+    groups = Group.objects.all()
     print(group)
+    print(groups)
     ctx = { 
         'groups': group,
         'ani_image': static('image/helphelp.png')    
@@ -269,6 +257,38 @@ def group_list(request):
 
     return render(request, template_name='group/group_list.html', context=ctx)
 
+# 그룹 가입하기
+def public_group_join(request, pk):
+    user = request.user
+    group = get_object_or_404(Group, pk=pk)
+    members = group.members.all()
+
+    if user not in members:
+        group.waits.add(user)
+        group.save()
+
+    redirect('group:group_detail', pk)
+
+# 그룹 가입 요청 리스트(user == 방장일 때만 확인 가능)
+def join_list(request, pk):
+    user = request.user
+    group = get_object_or_404(Group, pk=pk)
+    waits = group.waits.all()
+    members = group.members.all()
+    result = request.GET.get('accept')  # 수락/거절 중 user가 선책한 값
+
+    if user == group.maker:
+        ctx = { 
+            'group': group,
+            'members': members,
+            'waits': waits,
+            'profile_img': static('image/none_image_user.jpeg'),
+        }
+        
+        return render(request, template_name='group/join_list.html', context=ctx)
+    else:
+        # alert 창 띄우기 (방장이 아니므로 열람할 수 없습니다)
+        redirect('group:group_detail')
 
 ## Ajax
 # 내 그룹 - 찜 기능 ajax

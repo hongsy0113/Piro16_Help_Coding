@@ -16,8 +16,11 @@
                 </h2>
             </div>
             <a href="{% url 'group:group_home' %}">그룹 홈</a>
-            <a href="{% url 'group:group_list' %}">그룹 커뮤니티</a>
+            <a href="#">그룹 커뮤니티</a>
             <a href="{% url 'group:create_code' group.pk %}">친구 초대하기</a>
+            {% if group.mode == PUBLIC %}
+            <a href="{% url 'group:join_list' group.pk %}">그룹 가입신청 관리</a>
+            {% endif %}
             <!-- <div class="group__code--alert-box" id="create-code">
                 Alert 친구초대 
                 <div class="code_box">
@@ -68,6 +71,9 @@
             <a href="{% url 'group:group_home' %}" class="list_btn">목록</a>
             <a href="{% url 'group:group_update' group.pk %}" class="update_btn">수정</a>
             <a href="{% url 'group:group_drop' group.pk %}">그룹 탈퇴하기</a>
+            {% if group.mode == PUBLIC %}
+            <a href="{% url 'group:public_group_join' group.pk %}">그룹 가입하기[공개그룹]</a>
+            {% endif %}
         </div>
     </div>
 
