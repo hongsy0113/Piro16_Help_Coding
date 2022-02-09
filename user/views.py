@@ -73,9 +73,9 @@ def validation_check(email, current_password, new_password1, new_password2, birt
 # Birth Format (YYYY-MM-DD)
 def birth_format(year, month, day):
     today = date.today()
-    if int(year) > today.year:
-        return ''
     try:
+        if int(year) > today.year:
+            return ''
         birth = datetime(int(year), int(month), int(day)).strftime("%Y-%m-%d")
         return birth
     except:  # 잘못된 날짜
@@ -163,7 +163,6 @@ def my_page_revise(request):
         if request.FILES.get('img') or request.POST.get('img_setting') != 'own_img':
             command += ['image_change']
         birth = birth_format(request.POST['birth-y'], request.POST['birth-m'], request.POST['birth-d'])
-        print(birth)
         revise_error = validation_check(
             user.email,
             request.POST['current_password'],
