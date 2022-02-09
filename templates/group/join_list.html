@@ -1,0 +1,40 @@
+{% extends 'group_base.html' %}
+{% block title %}가입 대기자 명단{% endblock %}
+
+{% block content %}
+
+<div class="group__wait--member-list">
+    <div class="group__wait-name"><h2>{{ group.name }}</h2></div>
+    <h3>대기자 명단</h3>
+    {% for wait in waits %}
+        <form method="GET" class="group-wait__one">
+            <h6>{{ wait }}</h6>
+            <button>수락</button>
+            <button>거절</button>
+        </form>
+    {% endfor %}
+    <hr/>
+    <h3>멤버 명단</h3>
+    <div class="d-flex flex-row align-items-center">
+        {% if maker.img %}
+        <img src="{{ maker.img.url }}" height="50" width="50" style="border-radius: 50px;"/>
+        {% else %}
+        <img src="{{ profile_img }}" height="50" width="50" style="border-radius: 50px;"/>
+        {% endif %}
+        <h6>{{ maker }} [방장] </h6>
+    </div>
+    {% for member in members %}
+        {% if member != maker %}
+            <div class="d-flex flex-row align-items-center">
+                {% if member.img %}
+                <img src="{{ member.img.url }}" height="50" width="50" style="border-radius: 50px;"/>
+                {% else %}
+                <img src="{{ profile_img }}" height="50" width="50" style="border-radius: 50px;"/>
+                {% endif %}
+                <h6>{{ member }}</h6>
+            </div>
+        {% endif %}
+    {% endfor %}
+</div>
+
+{% endblock %}

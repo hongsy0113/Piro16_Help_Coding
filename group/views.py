@@ -1,14 +1,17 @@
+import re
+from tokenize import blank_re
 import uuid
 import base64
 import codecs
 import json
 from django.shortcuts import render, redirect, get_object_or_404
+from django.templatetags.static import static
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import *
 from .forms import *
 
-## 그룹 메인 페이지
+######## 그룹 메인 페이지 ########
 
 # 나의 그룹
 def group_home(request):
@@ -27,12 +30,16 @@ def group_home(request):
     #     groups = groups.order_by('date')
     ### user의 닉네임이랑 같은 경우에 처리해야 하는 부분 이후 추가
 
-    ctx = { 'groups': groups }
+    ctx = { 
+        'user': user,  #나중에는 쓸모 X 
+        'groups': groups,
+        'ani_image': static('image/helphelp.png')    
+    }
 
     return render(request, template_name='group/group_home.html', context=ctx)
 
 
-## 그룹 CRUD
+######## 그룹 CRUD ########
 
 # 그룹 생성
 def group_create(request):
@@ -84,15 +91,75 @@ def group_update(request, pk):
 
         return render(request, template_name='group/group_form.html', context=ctx)
 
-# 그룹 탈퇴
+# 그룹 삭제
 def group_delete(request, pk):
+    user = request.user
     group = get_object_or_404(Group, pk=pk)
-    group.delete()
+
+    if user == group.maker:
+        group.delete()
+
+        return redirect('group:group_home')
+    else:
+        ### 알림 창 하나 띄우기(alert) "방장만 그룹을 삭제할 수 있습니다."
+        return redirect('group:group_detail', pk)
+
+# 그룹 탈퇴
+def group_drop(request, pk):
+    user = request.user
+    group = get_object_or_404(Group, pk=pk)
+    members = group.members.all()
+
+    if len(members) > 1:
+        if user == group.maker:
+            # group.members.remove(user)
+            print(members)
+            group.members.remove(user)
+            group.maker = members[0]
+            group.save()
+
+            print(group.maker)
+        else:
+            group.members.remove(user)
+        
+    else: 
+        group.delete()
+
+        # group_delete(request, pk)  # 그룹 삭제 함수 호출
 
     return redirect('group:group_home')
 
+# 그룹 상세 페이지
+def group_detail(request, pk):
+    groups = get_object_or_404(Group, pk=pk)
+    members = groups.members.all()
+    maker = groups.maker
 
-## 초대 코드 
+    print(members)
+    print(maker)
+    print(members.filter(nickname__contains=maker.nickname))
+
+    ctx = { 
+        'group': groups, 
+        'members': members,
+        'maker': maker,
+        'ani_image': static('image/helphelp.png'),    
+        'profile_img': static('image/none_image_user.jpeg')
+        }
+
+    return render(request, template_name='group/group_detail.html', context=ctx)
+
+
+######## 초대 코드 ########
+
+# def group_status(group, login_user):
+#     if group.status == 'false':
+#         if group.maker == login_user:
+#             return 2  # 초대 수락 여부 결정
+#         else:
+#             return 1  # 수락을 기다리는 중
+#     else:
+#         return 3  # 가입 완료
 
 # 초대 코드 발급
 def get_invite_code(length=6):
@@ -114,24 +181,34 @@ def create_code(request, pk):
 def join_group(request):    
     user = request.user
     input_code = request.GET.get('code')
+    print(input_code)
 
     mygroup = list(Group.objects.filter(members__nickname__contains=user))
     try:
-        group = get_object_or_404(Group, code=input_code)
-        print(group)
-        # 예외처리 or 조건문
-        if group in mygroup:
-            message = "이미 가입된 그룹입니다."
+        if input_code != None:
+            group = get_object_or_404(Group, code=input_code)
+            print(group)
+            # 예외처리 or 조건문
+            if group in mygroup:
+                message = "이미 가입된 그룹입니다."
+                ctx = { 'message': message }
+
+                return render(request, template_name='group/join_group.html', context=ctx)
+
+            else:   # user != 방장
+                # if (group):   #queryset이 비어있을 때 반대로 생각하기
+                group.members.add(user)
+                group.save()
+                # status = group_status(group, user)
+
+                
+                return redirect('group:group_home')
+        else:
+            message = "아무것도 입력하지 않았습니다."
             ctx = { 'message': message }
 
             return render(request, template_name='group/join_group.html', context=ctx)
 
-        else:
-            if (group):
-                group.members.add(user)  # 방장도 그룹의 멤버로 추가
-                group.save()
-
-                return redirect('group:group_home')
     except:
         print('존재하지 않는 그룹입니다.')
         message = "존재하지 않는 코드입니다."
@@ -139,23 +216,43 @@ def join_group(request):
 
         return render(request, template_name='group/join_group.html', context=ctx)
 
+# def input_code(request):
+#     input_code = request.GET.get('code')
+#     ctx = { 'input': input_code }
+
+#     return render(request, template_name='group/input_code.html', context=ctx)
 
 
-# 그룹 상세 페이지
-def group_detail(request, pk):
-    groups = get_object_or_404(Group, pk=pk)
-    members = groups.members.all()
+# 그룹 가입 요청 리스트(user == 방장일 때만 확인 가능)
+def join_list(request, pk):
+    user = request.user
+    group = get_object_or_404(Group, pk=pk)
+    waits = group.waits.all()
+    members = group.members.all()
+    result = request.GET.get('accept')  # 수락/거절 중 user가 선책한 값
+    maker = group.maker
 
-    print(members)
+    ctx = { 
+        'group': group,
+        'members': members,
+        'waits': waits,
+        'maker': maker,
+        'profile_img': static('image/none_image_user.jpeg'),
+    }
+    
+    return render(request, template_name='join_list.html', name='join_list')
 
-    ctx = { 'group': groups, 'members': members }
 
-    return render(request, template_name='group/group_detail.html', context=ctx)
+
+######## 공개 그룹 ########
 
 # 그룹 모아보기 게시판(그룹 찾기)
 def group_list(request):
     group = Group.objects.all()
-    ctx = { 'groups': group }
+    ctx = { 
+        'groups': group,
+        'ani_image': static('image/helphelp.png')    
+    }
 
     return render(request, template_name='group/group_list.html', context=ctx)
 
@@ -168,11 +265,25 @@ def star_ajax(request):
     group_id = req['id']
     group = get_object_or_404(Group, id=group_id)
     
-    if (group.is_star):
+    if (group.is_star == True):
         group.is_star = False
+
     else:
         group.is_star = True
 
+    is_stared = group.is_star
+    group.save()
+
+    return JsonResponse({ 'id': group_id, 'is_star': is_stared })
+
+# 공개 그룹 좋아요 수 = 인기 그룹 선정 기준
+@csrf_exempt
+def group_interest_ajax(request):
+    req = json.loads(request.body)
+    group_id = req['id']
+    group = Group.objects.get(id=group_id)
+
+    group.like += 1
     group.save()
 
     return JsonResponse({ 'id': group_id })
