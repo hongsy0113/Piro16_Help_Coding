@@ -148,6 +148,7 @@ def group_detail(request, pk):
     members = groups.members.all()
     groups.maker = members[0]
     maker = groups.maker
+    user = request.user
     groups.save()
 
     # if groups.mode == 'PUBLIC':
@@ -162,6 +163,7 @@ def group_detail(request, pk):
         'group': groups, 
         'members': members,
         'maker': maker,
+        'user': user,
         'ani_image': static('image/helphelp.png'),    
         'profile_img': static('image/none_image_user.jpeg'),
     }
@@ -288,7 +290,7 @@ def join_list(request, pk):
         return render(request, template_name='group/join_list.html', context=ctx)
     else:
         # alert 창 띄우기 (방장이 아니므로 열람할 수 없습니다)
-        redirect('group:group_detail')
+        return redirect('group:group_detail', pk)
 
 ## Ajax
 # 내 그룹 - 찜 기능 ajax

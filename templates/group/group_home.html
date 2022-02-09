@@ -36,7 +36,16 @@
         </form>
         {% for group in groups %}
             <div class="mygroup_one">
-                <div class="group-name"><a href="{% url 'group:group_detail' group.pk %}"><h2>{{ group.name }}</h2></a></div>
+                <div class="group-name d-flex flex-row">
+                    <a href="{% url 'group:group_detail' group.pk %}"><h2>{{ group.name }}</h2></a>
+                    <div class="group-mode__mygroup">
+                        {% if group.mode == 'PUBLIC' %}
+                        <i class="ri-lock-unlock-fill"></i>
+                        {% else %}
+                        <i class="ri-lock-2-fill"></i>
+                        {% endif %}
+                    </div>
+                </div>
                 <div class="group-img">
                     {% if group.image %}
                     <img src="{{ group.image.url }}" height="200" width="200" />
