@@ -18,4 +18,6 @@ urlpatterns = [
     path('group_list/', view=views.group_list, name='group_list'),
     path('<int:pk>/public_group_join/', view=views.public_group_join, name='public_group_join'),
     path('<int:pk>/join_list/', view=views.join_list, name='join_list'),
+    path('interest_ajax/', view=views.interest_ajax, name='interest_ajax'),
+    # path('<int:pk>/member_thumbnail/', view=views.member_thumbnail, name='member_thumbnail'),
 ]

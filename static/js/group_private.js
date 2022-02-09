@@ -1,6 +1,7 @@
 const user_id = JSON.parse(document.getElementById('user_id').textContent);
 const group_id = JSON.parse(document.getElementById('group_id').textContent);
 
+// 찜 기능
 const onClickStar = async (id) => {
     const url = '/group/star_ajax/';
     const {data} = await axios.post(url, {
@@ -29,6 +30,8 @@ const starHandleResponse = (groupId, is_star) => {
     }
 };
 
+
+// 초대 코드 모달 구현
 const createCodeBtn = document.querySelector('.group__code--btn');
 const closeCodeBtn = document.querySelector('.group__code--close');
 const groupJoinBtn = document.querySelector('.group-join__btn');

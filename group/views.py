@@ -431,12 +431,12 @@ def star_ajax(request):
 
 # 공개 그룹 좋아요 수 
 @csrf_exempt
-def group_interest_ajax(request):
+def interest_ajax(request):
     req = json.loads(request.body)
     group_id = req['id']
     group = Group.objects.get(id=group_id)
 
-    group.like += 1
+    group.interest += 1
     group.save()
 
     return JsonResponse({ 'id': group_id })

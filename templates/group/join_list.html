@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block js %}
-    <script src="{% static 'js/group_star.js' %}" defer></script>
+    <script src="{% static 'js/group_private.js' %}" defer></script>
 {% endblock %}
 {% block title %}그룹 멤버관리{% endblock %}
 
@@ -19,10 +19,17 @@
             <h3>대기자 명단</h3>
             <hr/>
             {% for wait in waits %}
-                <form method="GET" class="group-wait__one">
-                    <h6>{{ wait }}</h6>
-                    <input type="submit" value="수락" name="accept">
-                    <input type="submit" value="거절" name="reject">
+                <form method="GET" class="group-wait__one d-flex flex-row">
+                    <div class="d-flex flex-row align-items-center">
+                        {% if wait.img %}
+                        <img src="{{ wait.img.url }}" height="50" width="50" style="border-radius: 50px;"/>
+                        {% else %}
+                        <img src="{{ profile_img }}" height="50" width="50" style="border-radius: 50px;"/>
+                        {% endif %}
+                        <h6>{{ wait }}</h6>
+                        <input type="submit" value="수락" name="accept">
+                        <input type="submit" value="거절" name="reject">
+                    </div>  
                 </form>
             {% endfor %}
         </div>

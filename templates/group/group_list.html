@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block js %}
-    <script src="{% static 'js/group_star.js' %}" defer></script>
+    <script src="{% static 'js/group_public.js' %}" defer></script>
 {% endblock %}
 {% block title %} 그룹 커뮤니티 {% endblock %}
 
@@ -40,11 +40,11 @@
                     </div>
                     <div class="all-group__intro">{{ group.intro|truncatewords:30 }}</div>
                     <div class="all-group__keyword d-flex flex-row">
-                        <div class="all-group__heart">
-                            좋아요
-                            <button class="group__heart">  
+                        <div class="all-group__heart all-group__heart--{{ group.id }}" id="group-heart-{{ group.id }}">
+                            <button class="group__heart heart">
                                 <i class="fas fa-heart"></i>
                             </button>
+                            {{ group.interest }}
                         </div>
                         <div class="all-group__member">멤버 수{{ group.members.all | length }}</div>
                     </div>
