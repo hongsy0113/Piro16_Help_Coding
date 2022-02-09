@@ -7,8 +7,10 @@
   <p>- 닉네임 : {{ user.nickname }}</p>
   <p>- 소개 : {{ user.introduction }}</p>
   <p>- 생년월일 : {{ user.birth }}</p>
-  <p>- 직업 : {{ user.job }}</p>
+  <p>- 직업 : {{ user.get_job_display }}</p>
+  <p>- 레벨 : {{ user.get_level }}</p>
   <p>- 좋아요 수 : {{ user.total_like }}</p>
+  <p>- 포인트 : {{ user.points }}</p>
   <button class="btn btn-secondary"><a class="text-white" href="{% url 'user:mypage_revise' %}" style="text-decoration: none">개인정보 수정</a></button>
   {% if messages %}{% for message in messages %}<p class="text-danger">{{ message.message }}</p>{% endfor %}{% endif %}
 </div>

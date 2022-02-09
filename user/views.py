@@ -5,6 +5,7 @@ from django.views import View
 from django.views.generic import ListView
 from .forms import LoginForm, SignupForm, MypageReviseForm
 from .models import *
+from .constants import *
 from qna.models import Question, Answer
 from django.contrib import messages
 from django.contrib.sites.shortcuts import get_current_site
@@ -59,16 +60,16 @@ def validation_check(email, nickname, current_password, new_password1, new_passw
         error += '이미 사용 중인 닉네임입니다.\n'
 
     if 'password_change' in command:
-        if not check_password(current_password, User.objects.get(email = email).password):  # 예외2-1) 현재 비밀번호 오류
+        if not check_password(current_password, User.objects.get(email = email).password):  # 예외3-1) 현재 비밀번호 오류
             error += '현재 비밀번호가 일치하지 않습니다.\n'
 
     if 'signup' in command or 'password_change' in command:
-        if not re.compile('^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d$@$!%*#?&]{8,}$').match(new_password1):  # 예외3-1) 잘못된 비밀번호 형식
+        if not re.compile('^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d$@$!%*#?&]{8,}$').match(new_password1):  # 예외4-1) 잘못된 비밀번호 형식
             error += '비밀번호는 영문자와 숫자를 혼합하여 8자리 이상으로 만들어주세요. (사용 가능 특수 기호 : $@$!%*#?&)\n'
-        elif new_password1 != new_password2:  # 예외3-2) 비밀번호 불일치
+        elif new_password1 != new_password2:  # 예외4-2) 비밀번호 불일치
             error += '비밀번호가 일치하지 않습니다.\n'
 
-    if not re.compile('^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$').match(birth):  # 예외4) 잘못된 생년월일 형식
+    if not re.compile('^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$').match(birth):  # 예외5) 잘못된 생년월일 형식
         error += '생년월일을 2022-02-22 형식으로 입력해주세요.\n'
     
     return error
@@ -106,7 +107,7 @@ def sign_up(request):
                 birth = request.POST['birth'],
                 img = request.FILES.get('img'),
                 introduction = request.POST['introduction'],
-                total_like = 0,
+                total_like = 0, total_question = 0, total_answer = 0, total_answer_reply = 0,
                 job = request.POST['job'],
             )
             user.is_active = True  # 이메일 인증 기능 구현 시에는 False로 바꿀 것
