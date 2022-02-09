@@ -26,7 +26,7 @@ def group_home(request):
     page = request.GET.get('page', '1')
 
     # 정렬하기
-    sort = request.GET.get('sort', '')
+    sort = request.GET.get('sort', 'name')
     if sort == 'name':
         groups = groups.order_by('name')
     elif sort == 'star':
@@ -91,15 +91,33 @@ def group_create(request):
 
         if form.is_valid():
             name = request.POST.get('name')
+            intro = request.POST.get('intro')
             if Group.objects.filter(name=name):  # 그룹명은 식별자 => 이미 존재하는 이름이면 생성된 그룹 삭제
-                error = '이미 존재하는 이름입니다.'
-                ctx = { 'error': error }
+                error_name = '이미 존재하는 이름입니다.'
+
+                ctx = { 
+                    'error_name': error_name,
+                    'name': name,
+                    'intro': intro
+                }
 
                 return render(request, template_name='group/group_form.html', context=ctx)
+
+            if not request.POST.get('group-mode__tag'):
+                error_mode = '그룹 공개모드를 선택하세요.'
+
+                ctx = {
+                    'error_mode': error_mode,
+                    'name': name,
+                    'intro': intro
+                }
+
+                return render(request, template_name='group/group_form.html', context=ctx)
+
             group = form.save()
             group.mode = request.POST.get('group-mode__tag')
-        # image = request.FILES.get('image')
-        # group.image = image
+            # image = request.FILES.get('image')
+            # group.image = image
             print(group.mode)
             group.maker = user    # 방장 = 접속한 유저
             group.members.add(user)  # 방장도 그룹의 멤버로 추가
@@ -127,17 +145,32 @@ def group_update(request, pk):
         group.name = request.POST.get('name')
         if group.name != prev_name:
             if Group.objects.filter(name=group.name).exclude(name=prev_name):  # 그룹명은 식별자 => 이미 존재하는 이름이면 생성된 그룹 삭제
-                error = '이미 존재하는 이름입니다.'
-                ctx = { 'error': error }
+                error_name = '이미 존재하는 이름입니다.'
+                ctx = { 
+                    'error_name': error_name 
+                }
 
                 return render(request, template_name='group/group_form.html', context=ctx)
-        
+
+
+        if not request.POST.get('group-mode__tag'):
+            error_mode = '그룹 공개모드를 선택하세요.'
+
+            ctx = {
+                'error_mode': error_mode
+            }
+
+            return render(request, template_name='group/group_form.html', context=ctx)
+
+
         if form.is_valid():
             group = form.save()
             # 이미지 수정 -> 파일 탐색기
             group.mode = request.POST.get('group-mode__tag')
-            image = request.FILES.get('image')
-            group.image = image
+            # 기존 이미지는 유지
+            if request.FILES.get('image'):
+                image = request.FILES.get('image')
+                group.image = image
             group.intro = request.POST.get('intro')
             
             group.save()
@@ -163,9 +196,9 @@ def group_delete(request, pk):
         group.delete()
 
         return redirect('group:group_home')
-    else:
-        ### 알림 창 하나 띄우기(alert) "방장만 그룹을 삭제할 수 있습니다."
-        return redirect('group:group_detail', pk)
+    # else:
+    #     ### 알림 창 하나 띄우기(alert) "방장만 그룹을 삭제할 수 있습니다."
+    #     return redirect('group:group_detail', pk)
 
 # 그룹 탈퇴
 def group_drop(request, pk):
@@ -310,7 +343,7 @@ def group_list(request):
     page = request.GET.get('page', '1')
 
 
-    sort = request.GET.get('sort', '')
+    sort = request.GET.get('sort', 'name')
     if sort == 'name':
         groups = groups.order_by('name')
     elif sort == 'interest':
@@ -396,7 +429,7 @@ def star_ajax(request):
 
     return JsonResponse({ 'id': group_id, 'is_star': is_stared })
 
-# 공개 그룹 좋아요 수 = 인기 그룹 선정 기준
+# 공개 그룹 좋아요 수 
 @csrf_exempt
 def group_interest_ajax(request):
     req = json.loads(request.body)

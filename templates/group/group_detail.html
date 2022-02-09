@@ -13,8 +13,8 @@
 {{ request.user.id|json_script:"user_id" }}
 {{ group.id|json_script:"group_id" }}
 
-    <div class="group-info">
-        <div class="group-info__nav">
+    <div class="group-info align-center">
+        <div class="group-info__nav d-flex flex-row">
             <div class="group-info__name">
                 <h2 class="d-flex flex-row">
                     {{ group.name }}
@@ -31,16 +31,20 @@
                     {% endif %}
                 </h2>
             </div>
-            <a href="{% url 'group:group_home' %}">그룹 홈</a>
-            <a href="#">그룹 커뮤니티</a>
-            {% if group.mode == 'PRIVATE' %}
-            <a href="{% url 'group:create_code' group.pk %}">친구 초대하기</a>
-            {% endif %}
-            {% if group.mode == 'PUBLIC' %}
-                {% if maker == user %}
-                <a href="{% url 'group:join_list' group.pk %}">그룹 가입신청 관리</a>
+            <nav>
+                <a href="{% url 'group:group_home' %}">그룹 홈</a>
+                <a href="#">그룹 커뮤니티</a>
+                {% if group.mode == 'PRIVATE' %}
+                    {% if maker == user %}
+                    <a href="{% url 'group:create_code' group.pk %}">친구 초대하기</a>
+                    {% endif %}
                 {% endif %}
-            {% endif %}
+                {% if group.mode == 'PUBLIC' %}
+                    {% if maker == user %}
+                    <a href="{% url 'group:join_list' group.pk %}">그룹 가입신청 관리</a>
+                    {% endif %}
+                {% endif %}
+            </nav>
             <!-- <div class="group__code--alert-box" id="create-code">
                 Alert 친구초대 
                 <div class="code_box">
@@ -53,7 +57,7 @@
             </div>
             <button class="group__code--btn btn btn-dark" onclick="createCode()">친구 초대하기</button> -->
         </div>
-        <div class="group-info__main">
+        <div class="group-info__main d-flex flex-row">
             <div class="group-info__image">
                 {% if group.image %}
                 <img src="{{ group.image.url }}" height="200" width="200" />
@@ -61,7 +65,7 @@
                 <img src="{{ ani_image }}" height="200" width="200" />
                 {% endif %}
             </div>
-            <div>{{ group.intro }}</div>
+            <div class="group-info__intro ms-3" style="width:35em;">{{ group.intro }}</div>
         </div>
         <div class="group-info__member">
             <h3>멤버 명단</h3>
@@ -87,13 +91,15 @@
             {% endfor %}
         </div>
         <div class="group-info__input">
-            <a href="{% url 'group:group_delete' group.pk %}" class="delete_btn">삭제</a>
-            <a href="{% url 'group:group_home' %}" class="list_btn">목록</a>
-            <a href="{% url 'group:group_update' group.pk %}" class="update_btn">수정</a>
-            <a href="{% url 'group:group_drop' group.pk %}">그룹 탈퇴하기</a>
+            <a href="{% url 'group:group_home' %}" class="list_btn btn btn-light">목록</a>
+            <a href="{% url 'group:group_update' group.pk %}" class="update_btn btn btn-light">수정</a>
+            <a href="{% url 'group:group_drop' group.pk %}" class="btn btn-light">그룹 탈퇴</a>
+            {% if maker == user %}
+            <a href="{% url 'group:group_delete' group.pk %}" class="delete_btn btn btn-light">그룹 삭제</a>
+            {% endif %}
             {% if group.mode == 'PUBLIC' %}
                 {% if maker != user %}
-                <a href="{% url 'group:public_group_join' group.pk %}">그룹 가입하기[공개그룹]</a>
+                <a href="{% url 'group:public_group_join' group.pk %}" class="btn btn-light">그룹 가입</a>
                 {% endif %}
             {% endif %}
         </div>
