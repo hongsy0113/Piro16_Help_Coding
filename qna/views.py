@@ -68,12 +68,9 @@ def question_create(request):
         question = form.save(commit=False)  # 넘겨진 데이터 form에 바로 저장 X
         question.s_or_e_tag = request.POST.get('s_or_e_tag')  # 카테고리 (스크래치, 엔트리, 기타) 중 1 선택
         question.user = request.user
-
+        question.save() 
         # 상세 태그 (기능) 선택
-        qnatag = QnaTag.objects.all()
         tags = request.POST.getlist('detail_tag')
-        question.save()
-        
         for tag in tags:
             if len(QnaTag.objects.filter(tag_name=tag)) == 0:
                 QnaTag.objects.create(
@@ -86,13 +83,13 @@ def question_create(request):
 
         question.save()
 
-        return redirect('qna:question_list')
+        return redirect('qna:question_detail', question.pk)
 
     else:
         form = QuestionForm()
         ctx = {'form': form}
         
-        return render(request, 'qna/question_create.html', context=ctx)
+        return render(request, 'qna/question_form.html', context=ctx)
         
         
 def question_detail(request, pk):
@@ -128,6 +125,48 @@ def question_detail(request, pk):
     }
     # answer 와 reply로 이루어진 dictionary를 context로 넘길 예정
     return render(request, template_name='qna/detail.html', context=ctx)
+
+def question_update(request,pk):
+    question = get_object_or_404(Question, pk=pk)
+    if request.method == "POST":
+        form = QuestionForm(request.POST, request.FILES, instance =question)
+
+        question = form.save()  
+        question.s_or_e_tag = request.POST.get('s_or_e_tag')  # 카테고리 (스크래치, 엔트리, 기타) 중 1 선택
+
+        # 상세 태그 (기능) 선택
+        tags = request.POST.getlist('detail_tag')
+        for tag in tags:
+            if len(QnaTag.objects.filter(tag_name=tag)) == 0:
+                QnaTag.objects.create(
+                    tag_name = tag,
+                )
+
+            # QnaTag db에 없으면 오류 발생
+            newtag = get_object_or_404(QnaTag, tag_name=tag)
+            question.tags.add(newtag)
+
+        question.save()
+
+        return redirect('qna:question_detail', pk)
+
+    else:
+        form = QuestionForm(instance=question)
+        # TODO : 선택 태그 뭘 선택했었는 지를 ctx로 넘겨주자
+        # 기본 태그와 추가 태그 다르게 넘기자
+        # TODO :  기본 태그 가 바뀌게 된다면 아래 리스트 수정해야 됨.
+        basic_tags = ['MOTION', 'LOOKS', 'SOUND', 'EVENTS', 'CONTROL', 'SENSING', 'OPERATORS','VARIABLES', 'MY', 'ETC', ]
+        tags = question.tags.all()
+        basic_tag_names = []
+        extra_tag_names = []
+        for tag in tags:
+            if tag.tag_name in basic_tags:
+                basic_tag_names.append(tag.tag_name)
+            else:
+                extra_tag_names.append(tag.tag_name)
+        ctx = {'form': form, 'question':question, 'basic_tag_names': basic_tag_names,  'extra_tag_names': extra_tag_names}
+
+        return render(request, template_name="qna/question_form.html", context=ctx)        
 
 def question_delete(request, pk):
     question = get_object_or_404(Question, pk=pk)

@@ -29,14 +29,14 @@
         {% else %}
         <i class="far fa-heart"></i>
         {% endif %}
-        <span>좋아요 {{total_likes}}개</span>
+        <span>좋아요 {{ total_likes }}개</span>
     </div>
 
     <hr>
 
     <div class="question__buttons">
         {% if question.user.id == user.id %}
-        <a href="{% url 'qna:question_list' %}" class="btn btn-success">수정</a>
+        <a href="{% url 'qna:question_update' question.pk %}" class="btn btn-success">수정</a>
         <a href="{% url 'qna:question_delete' question.pk %}" class="btn btn-success">삭제</a>
         {% endif %}
         <a href="{% url 'qna:question_list' %}" class="btn btn-info">목록보기</a>
