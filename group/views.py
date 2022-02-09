@@ -24,8 +24,6 @@ def group_home(request):
     
     # 페이징 처리
     page = request.GET.get('page', '1')
-    pagintor = Paginator(groups, 6)
-    page_obj = pagintor.get_page(page)
 
     # 정렬하기
     sort = request.GET.get('sort', '')
@@ -38,6 +36,8 @@ def group_home(request):
     # elif sort == 'date':  # django에서 기본 제공하는 create날짜 있는지 체크
     #     groups = groups.order_by('date')
     ### user의 닉네임이랑 같은 경우에 처리해야 하는 부분 이후 추가
+    pagintor = Paginator(groups, 6)
+    page_obj = pagintor.get_page(page)
 
     ctx = { 
         'user': user,  #나중에는 쓸모 X 
@@ -189,11 +189,12 @@ def group_drop(request, pk):
 
 # 그룹 상세 페이지
 def group_detail(request, pk):
+    user = request.user
     groups = get_object_or_404(Group, pk=pk)
+    mygroup = Group.objects.filter(members__nickname__contains=user)
     members = groups.members.all()
     groups.maker = members[0]
     maker = groups.maker
-    user = request.user
     groups.save()
 
     # if groups.mode == 'PUBLIC':
@@ -206,6 +207,7 @@ def group_detail(request, pk):
 
     ctx = { 
         'group': groups, 
+        'mygroup': mygroup,
         'members': members,
         'maker': maker,
         'user': user,
@@ -295,8 +297,17 @@ def join_group(request):
 def group_list(request):
     group = Group.objects.filter(mode='PUBLIC')
     groups = Group.objects.all()
+    groups = Group.objects.order_by('name')
     # 페이징 처리
     page = request.GET.get('page', '1')
+
+
+    sort = request.GET.get('sort', '')
+    if sort == 'name':
+        groups = groups.order_by('name')
+    elif sort == 'interest':
+        groups = groups.order_by('-interest')
+
     pagintor = Paginator(groups, 6)
     page_obj = pagintor.get_page(page)
     print(group)

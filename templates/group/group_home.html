@@ -38,10 +38,10 @@
             </form>
         </div>
         <form method="get" action="" class="movie_sort float-end me-4">
-            <select id="sort_select" class="sort_select" onChange="location=this.value; getSelectValue(this.form);">
+            <select id="sort_select" class="sort_select" onchange="location=this.value; getSelectValue(this.form);">
                 <option class="sort-name" value="/">--정렬기준--</option>
                 <option class="sort-name" value="?sort=name">이름순</option>
-                <option class="sort-star" value="?sort=star">찜하기순</option>
+                <option class="sort-star" value="?sort=interest">찜하기순</option>
                 <!-- <option class="sort-member" value="?sort=member">멤버수</option> -->
             </select>
         </form>
