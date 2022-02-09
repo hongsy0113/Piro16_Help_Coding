@@ -40,15 +40,15 @@ from django.views.generic import ListView
 #         return context
 
 def question_list(request):
-    questions = Question.objects.all().order_by('-updated_at')
+    questions = Question.objects.all().order_by('-created_at')
     page = request.GET.get('page', '1')    # 페이지
     #questions = Question.objects.order_by('-created_at')   # [기본 정렬] 최신순으로 정렬
 
     # 게시물 정렬
 
-    sort = request.GET.get('sort', '')
+    sort = request.GET.get('sort', 'recent')
     if sort == 'recent':    # 최신순
-        questions = Question.objects.order_by('-updated_at')
+        questions = Question.objects.order_by('-created_at')
     elif sort == 'liked':   # 좋아요순
         #questions = Question.objects.order_by('-like_user')
         questions = Question.objects.all().annotate(total_likes=Count('like_user')).order_by('-total_likes')
@@ -146,13 +146,25 @@ def question_create(request):
         
 def question_detail(request, pk):
     question = get_object_or_404(Question, pk=pk)
-
+    
+    try:
+        previous_pk = Question.get_previous_by_created_at(question).pk
+    except:
+        # 이전글 없을 때
+        previous_pk = -1
+        print('not exist')
+    try:
+        next_pk = Question.get_next_by_created_at(question).pk
+    except:
+        # 이전글 없을 때
+        next_pk = -1
+        print('not exist')
     # 해당 게시글에 대한 tag, 유저, 좋아요 수 등 가져오기
     # 이외에 필드들은 template 에서 {{question.필드 }} 로 접근
     tags = question.tags.all()
     username = question.user.nickname
     total_likes = len(question.like_user.all())
-
+    
     # 해당 게시글에 대한 답변 가져오기
     answers = Answer.objects.filter(question_id = question.id, parent_answer__isnull=True).order_by('answer_order')   #  나중에 답변 정렬도 고려. 최신순 또는 좋아요 순
     answers_count = len(answers)
@@ -174,6 +186,8 @@ def question_detail(request, pk):
         'answers_count' : answers_count,
         'answers_reply_dict' : answers_reply_dict,
         'is_liked': is_liked,
+        'next_pk':next_pk,
+        'previous_pk':previous_pk,
     }
     # answer 와 reply로 이루어진 dictionary를 context로 넘길 예정
     return render(request, template_name='qna/detail.html', context=ctx)
