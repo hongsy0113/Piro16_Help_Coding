@@ -1,13 +1,38 @@
 {% extends 'base.html' %}
 
-{% block content %}
+{% block js %}
+    <script type="text/javascript" src="/static/js/qna_list.js" defer></script>
+{% endblock %} 
 
+{% block content %}
 <div class="title">
     <h1>게시글 목록</h1>
     <h4>묻고답하기 게시판 입니다. 질문들의 목록을 확인해보세요!</h4>
 </div>
 
-<div class="search-box">
+<div class="sortbox">
+    <form method="get" action="{% url 'qna:question_list' %}" class="float-end">
+        <select class="select_sort" onchange="location=this.value; getSelectValue(this.form);">
+            <option class="sort-name" value="/">정렬기준</option>
+            <option class="sort-recent" value="?sort=recent">최신순</option>
+            <option class="sort-liked" value="?sort=liked">좋아요순</option>
+            <option class="sort-view" value="?sort=view">조회수순</option>
+        </select>
+    </form>
+</div>
+
+<!-- 
+<div class="sortbox">
+    <form method="get" action="{% url 'qna:question_list' %}" class="float-end">
+        <input type="hidden" id="sort" name="sort" value="{{ sort }}" />
+        <select class="select_sort">
+            <option value="recent" {% if sort == 'recent' %}selected{% endif %}>최신순</option>
+            <option value="liked" {% if sort == 'liked' %}selected{% endif %}>좋아요순</option>
+        </select>
+    </form>
+</div> -->
+
+<div class="searchbox mt-3">
     <form action="{% url 'qna:search_result' %}" method="get">
         {% csrf_token %}
         <input type="search" placeholder="검색" name="search" />
@@ -25,6 +50,39 @@
     {% endfor %}
 </div>
 
-<a href="{% url 'qna:question_create' %}">질문 작성</a>
+<ul class="pagination justify-content-center">
+    {% if questions.has_previous %}
+    <li class="page-item">
+        <a class="page-link" href="?page={{ questions.previous_page_number }}">이전</a>
+    </li>
+    {% else %}
+    <li class="page-item disabled">
+        <a class="page-link" tabindex="-1" aria-disabled="true" href="#">이전</a>
+    </li>
+    {% endif %}
 
+    {% for page_number in questions.paginator.page_range %}
+        {% if page_number == questions.number %}
+        <li class="page-item active" aria-current="page">
+            <a class="page-link" href="?page={{ page_number }}">{{ page_number }}</a>
+        </li>
+        {% else %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_number }}">{{ page_number }}</a>
+        </li>
+        {% endif %}
+    {% endfor %}
+
+    {% if questions.has_next %}
+    <li class="page-item">
+        <a class="page-link" href="?page={{ questions.next_page_number }}">다음</a>
+    </li>
+    {% else %}
+    <li class="page-item">
+        <a class="page-link" tabindex="-1" aria-disabled="true" href="#">다음</a>
+    </li>
+    {% endif %}
+</ul>
+
+<a href="{% url 'qna:question_create' %}">질문 작성</a>
 {% endblock %}
