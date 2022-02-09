@@ -77,7 +77,14 @@ def group_create(request):
 
     if request.method == 'POST':
         form = GroupForm(request.POST, request.FILES)
+
         if form.is_valid():
+            name = request.POST.get('name')
+            if Group.objects.filter(name=name):  # 그룹명은 식별자 => 이미 존재하는 이름이면 생성된 그룹 삭제
+                error = '이미 존재하는 이름입니다.'
+                ctx = { 'error': error }
+
+                return render(request, template_name='group/group_form.html', context=ctx)
             group = form.save()
             group.mode = request.POST.get('group-mode__tag')
         # image = request.FILES.get('image')

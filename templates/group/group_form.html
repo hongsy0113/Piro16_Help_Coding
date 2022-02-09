@@ -16,6 +16,9 @@
             <p>
                 <label>그룹명: </label>
                 <input class="form-input" name="name" type="text" maxlength="30" value="{% if group.name %} {{ group.name }} {% endif %}">
+                {% if error %}
+                <p style="color:red;">{{ error }}</p>
+                {% endif %}
             </p>
             <p>
                 <label>대표이미지 </label>
