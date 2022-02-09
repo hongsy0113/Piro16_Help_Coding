@@ -1,5 +1,14 @@
-{% extends 'group_base.html' %}
-{% block title %} 그룹 커뮤니티 {% endblock %}
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/group.css' %}" />
+{% endblock %}
+
+{% block js %}
+    <script src="{% static 'js/group_star.js' %}" defer></script>
+{% endblock %}
+{% block title %} 그룹 검색결과 페이지 {% endblock %}
 
 {% block content %}
 {{ request.user.id|json_script:"user_id" }}

@@ -1,4 +1,14 @@
-{% extends 'group_base.html' %}
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/group.css' %}" />
+{% endblock %}
+
+{% block js %}
+    <script src="{% static 'js/group_star.js' %}" defer></script>
+{% endblock %}
+
 {% block title %} 나의 그룹 {% endblock %}
 
 {% block content %}
@@ -22,9 +32,10 @@
             <button class="join__code--close btn btn-dark" onclick="closeJoin()">닫기</button>
         </div>
         <button class="group-join__btn btn btn-dark" onclick="groupJoin()">그룹 가입하기</button> -->
+        <a href="{% url 'group:group_list' %}" class="btn btn-info">그룹 찾기</a>
         <a href="{% url 'user:main' %}" class="btn btn-warning">메인 화면으로</a>
     </nav>
-    <div class="mygroup_list">
+    <div class="mygroup__home">
         <h3>현재 유저 : {{ user }}</h3>
         <div class="group__search-container">
             <form class="group__search-box" action="{% url 'group:group_search' %}" method="get">
@@ -40,53 +51,54 @@
         <form method="get" action="" class="movie_sort float-end me-4">
             <select id="sort_select" class="sort_select" onchange="location=this.value; getSelectValue(this.form);">
                 <option class="sort-name" value="/">--정렬기준--</option>
-                <option class="sort-name" value="?sort=name">이름순</option>
-                <option class="sort-star" value="?sort=interest">찜하기순</option>
+                <option class="sort-name" value="?sort=name" {% if sort_by == 'name' %} selected {% endif %}>이름순</option>
+                <option class="sort-star" value="?sort=star" {% if sort_by == 'star' %} selected {% endif %}>찜하기순</option>
                 <!-- <option class="sort-member" value="?sort=member">멤버수</option> -->
             </select>
         </form>
-        {% for group in groups %}
-            <div class="mygroup_one">
-                <div class="group-name d-flex flex-row">
-                    <a href="{% url 'group:group_detail' group.pk %}"><h2>{{ group.name }}</h2></a>
-                    <div class="group-mode__mygroup">
-                        {% if group.mode == 'PUBLIC' %}
-                        <i class="ri-lock-unlock-fill"></i>
+        <div class="mygroup__list d-grid align-center">
+            {% for group in groups %}
+                <div class="mygroup_one">
+                    <div class="group-name d-flex flex-row">
+                        <a href="{% url 'group:group_detail' group.pk %}"><h2>{{ group.name }}</h2></a>
+                        <div class="group-mode__mygroup">
+                            {% if group.mode == 'PUBLIC' %}
+                            <i class="ri-lock-unlock-fill"></i>
+                            {% else %}
+                            <i class="ri-lock-2-fill"></i>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="group-img">
+                        {% if group.image %}
+                        <img src="{{ group.image.url }}" height="200" width="200" />
                         {% else %}
-                        <i class="ri-lock-2-fill"></i>
+                        <img src="{{ ani_image }}" height="200" width="200" />
                         {% endif %}
                     </div>
-                </div>
-                <div class="group-img">
-                    {% if group.image %}
-                    <img src="{{ group.image.url }}" height="200" width="200" />
-                    {% else %}
-                    <img src="{{ ani_image }}" height="200" width="200" />
-                    {% endif %}
-                </div>
-                <div class="group-keyword">
-                    <div class="group-member">멤버 수{{ group.members.all | length }}</div>
-                    <div class="group-star">찜하기
-                        <button class="star group__keyword-star group__keyword-star--{{ group.id }}" id="keyword-star-{{ group.id }}">  
-                            {% if group.is_star %} <!-- 꽉 찬 별 -->
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 18.26l-7.053 3.948 1.575-7.928L.587 8.792l8.027-.952L12 .5l3.386 7.34 8.027.952-5.935 5.488 1.575 7.928z"/></svg>                            
-                            {% else %} <!-- 빈 별 -->
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 18.26l-7.053 3.948 1.575-7.928L.587 8.792l8.027-.952L12 .5l3.386 7.34 8.027.952-5.935 5.488 1.575 7.928L12 18.26zm0-2.292l4.247 2.377-.949-4.773 3.573-3.305-4.833-.573L12 5.275l-2.038 4.42-4.833.572 3.573 3.305-.949 4.773L12 15.968z"/></svg>                            
-                            {% endif %}
-                        </button>
+                    <div class="group-keyword">
+                        <div class="group-member">멤버 수{{ group.members.all | length }}</div>
+                        <div class="group-star">찜하기
+                            <button class="star group__keyword-star group__keyword-star--{{ group.id }}" id="keyword-star-{{ group.id }}">  
+                                {% if group.is_star %} <!-- 꽉 찬 별 -->
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 18.26l-7.053 3.948 1.575-7.928L.587 8.792l8.027-.952L12 .5l3.386 7.34 8.027.952-5.935 5.488 1.575 7.928z"/></svg>                            
+                                {% else %} <!-- 빈 별 -->
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 18.26l-7.053 3.948 1.575-7.928L.587 8.792l8.027-.952L12 .5l3.386 7.34 8.027.952-5.935 5.488 1.575 7.928L12 18.26zm0-2.292l4.247 2.377-.949-4.773 3.573-3.305-4.833-.573L12 5.275l-2.038 4.42-4.833.572 3.573 3.305-.949 4.773L12 15.968z"/></svg>                            
+                                {% endif %}
+                            </button>
+                        </div>
+                        <a href="{% url 'group:group_drop' group.pk %}">그룹 탈퇴</a>
                     </div>
-                    <a href="{% url 'group:group_drop' group.pk %}">그룹 탈퇴</a>
                 </div>
-            </div>
-        {% endfor %}
+            {% endfor %}
+        </div>
     </div>
-    <a href="{% url 'group:group_list' %}" class="btn btn-light">그룹 찾기</a>
     <div>도움말</div>
 
     <ul class="pagination justify-content-center">
         {% if groups.has_previous %}
         <li class="page-item">
-            <a class="page-link" href="?page={{ groups.previous_page_number }}">이전</a>
+            <a class="page-link" href="?page={{ groups.previous_page_number }}&sort={{ sort_by }}">이전</a>
         </li>
         {% else %}
         <li class="page-item disabled">
@@ -97,18 +109,20 @@
         {% for page_number in groups.paginator.page_range %}
             {% if page_number == groups.number %}
             <li class="page-item active" aria-current="page">
-                <a class="page-link" href="?page={{ page_number }}">{{ page_number }}</a>
+                <a class="page-link" href="?page={{ page_number }}&sort={{ sort_by }}">{{ page_number }}</a>
             </li>
             {% else %}
             <li class="page-item">
-                <a class="page-link" href="?page={{ page_number }}">{{ page_number }}</a>
+                <a class="page-link" href="?page={{ page_number }}&sort={{ sort_by }}">{{ page_number }}</a>
             </li>
             {% endif %}
         {% endfor %}
+        </div>
+        
     
         {% if groups.has_next %}
         <li class="page-item">
-            <a class="page-link" href="?page={{ groups.next_page_number }}">다음</a>
+            <a class="page-link" href="?page={{ groups.next_page_number }}&sort={{ sort_by }}">다음</a>
         </li>
         {% else %}
         <li class="page-item">

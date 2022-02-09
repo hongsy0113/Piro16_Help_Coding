@@ -42,6 +42,7 @@ def group_home(request):
     ctx = { 
         'user': user,  #나중에는 쓸모 X 
         'groups': page_obj,
+        'sort_by': sort,
         'ani_image': static('image/helphelp.png')    
     }
 
@@ -51,10 +52,14 @@ def group_home(request):
 def group_search(request):
     if 'search' in request.GET:
         query = request.GET.get('search')
-        groups = Group.objects.all().filter(Q(name__icontains=query))
+        groups = Group.objects.filter(
+            name__icontains=query
+            # Q(members__nickname__icontains=query)
+        )
         ctx = { 
             'groups': groups,
-            'query': query
+            'query': query, 
+            'ani_image': static('image/helphelp.png')    
         }
 
     return render(request, 'group/group_search.html', context=ctx)
@@ -126,13 +131,16 @@ def group_update(request, pk):
                 ctx = { 'error': error }
 
                 return render(request, template_name='group/group_form.html', context=ctx)
-        # 이미지 수정 -> 파일 탐색기
-        group.mode = request.POST.get('group-mode__tag')
-        image = request.FILES.get('image')
-        group.image = image
-        group.intro = request.POST.get('intro')
         
-        group.save()
+        if form.is_valid():
+            group = form.save()
+            # 이미지 수정 -> 파일 탐색기
+            group.mode = request.POST.get('group-mode__tag')
+            image = request.FILES.get('image')
+            group.image = image
+            group.intro = request.POST.get('intro')
+            
+            group.save()
 
         # if form.is_valid():
         #     group = form.save()
@@ -142,7 +150,7 @@ def group_update(request, pk):
         return redirect('group:group_detail', pk)
     else:
         form = GroupForm(instance=group)
-        ctx = {'group': group, 'form': form}
+        ctx = { 'group': group, 'form': form }
 
         return render(request, template_name='group/group_form.html', context=ctx)
 
@@ -296,7 +304,7 @@ def join_group(request):
 # 그룹 모아보기 게시판(그룹 찾기)
 def group_list(request):
     group = Group.objects.filter(mode='PUBLIC')
-    groups = Group.objects.all()
+    # group = Group.objects.all()
     groups = Group.objects.order_by('name')
     # 페이징 처리
     page = request.GET.get('page', '1')
@@ -314,6 +322,7 @@ def group_list(request):
     print(groups)
     ctx = { 
         'groups': page_obj,
+        'sort_by': sort,
         'ani_image': static('image/helphelp.png')    
     }
 
