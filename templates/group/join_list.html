@@ -9,8 +9,8 @@
     {% for wait in waits %}
         <form method="GET" class="group-wait__one">
             <h6>{{ wait }}</h6>
-            <button>수락</button>
-            <button>거절</button>
+            <input type="submit" value="수락" name="accept">
+            <input type="submit" value="거절" name="reject">
         </form>
     {% endfor %}
     <hr/>
@@ -35,6 +35,8 @@
             </div>
         {% endif %}
     {% endfor %}
+
+    <a href="{% url 'group:group_detail' group.pk %}">이전으로</a>
 </div>
 
 {% endblock %}

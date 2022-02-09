@@ -23,7 +23,7 @@ def group_post_code_path(instance, filename):
 # 그룹
 class Group(models.Model):
     name = models.CharField(verbose_name='그룹명', max_length=30)
-    intro = models.TextField(verbose_name='그룹 소개', max_length=250)
+    intro = models.TextField(verbose_name='그룹 소개', max_length=250, blank=True)
     maker = models.ForeignKey(User, verbose_name='방장', on_delete=models.CASCADE, null=True, related_name='group_maker')
     code = models.CharField(verbose_name='초대 코드', max_length=20, null=True, blank=True)  #랜덤 코드 길이 설정
     image = models.ImageField(upload_to=group_thumbnail_path, null=True, blank=True)
@@ -34,7 +34,7 @@ class Group(models.Model):
         ('PUBLIC', '공개'),
         ('PRIVATE', '비공개'),
     )
-    mode = models.CharField(verbose_name='공개 여부', choices=MODE_CHOICES, max_length=20, default=0, null=True)
+    mode = models.CharField(verbose_name='공개 여부', choices=MODE_CHOICES, max_length=20, default=0)
     star = models.IntegerField(verbose_name="찜하기 개수", default=0)
     is_star = models.BooleanField(verbose_name="찜하기", default=False)
     

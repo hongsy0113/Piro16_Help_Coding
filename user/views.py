@@ -6,7 +6,6 @@ from django.views.generic import ListView
 from .forms import LoginForm, SignupForm, MypageReviseForm
 from .models import *
 from qna.models import Question, Answer
-from django.contrib import auth
 from django.contrib import messages
 from django.contrib.sites.shortcuts import get_current_site
 from django.contrib.auth.hashers import check_password
@@ -16,7 +15,8 @@ from django.utils.encoding import force_bytes
 from django.core.mail import EmailMessage
 from .tokens import user_activation_token
 from django.utils.encoding import force_bytes, force_str
-import re
+from datetime import date, datetime
+import re, shutil
 
 # Main
 def main(request):
@@ -46,7 +46,7 @@ def log_out(request):
     return redirect('user:main')
 
 # Validation Check (Sign Up / My Page Revise)
-def validation_check(email, current_password, new_password1, new_password2, birth, command):
+def validation_check(email, nickname, current_password, new_password1, new_password2, birth, command):
     error = ''
 
     if 'signup' in command:
@@ -54,6 +54,9 @@ def validation_check(email, current_password, new_password1, new_password2, birt
             error += '올바른 이메일 주소를 입력해주세요.\n'
         elif User.objects.filter(email = email):  # 예외1-2) 이미 가입된 유저
             error += '이미 가입된 유저입니다.\n'
+
+    if User.objects.filter(nickname = nickname) or not nickname:
+        error += '이미 사용 중인 닉네임입니다.\n'
 
     if 'password_change' in command:
         if not check_password(current_password, User.objects.get(email = email).password):  # 예외2-1) 현재 비밀번호 오류
@@ -70,12 +73,24 @@ def validation_check(email, current_password, new_password1, new_password2, birt
     
     return error
 
+# Birth Format (YYYY-MM-DD)
+def birth_format(year, month, day):
+    today = date.today()
+    try:
+        if int(year) > today.year:
+            return ''
+        birth = datetime(int(year), int(month), int(day)).strftime("%Y-%m-%d")
+        return birth
+    except:  # 잘못된 날짜
+        return ''
+
 # Sign Up
 def sign_up(request):
     if request.method == 'POST':
         form = SignupForm(request.POST)
         sign_up_error = validation_check(
             request.POST['email'],
+            request.POST['nickname'],
             '',
             request.POST['password1'],
             request.POST['password2'],
@@ -149,14 +164,16 @@ def my_page_revise(request):
         command = ['mypage_revise']
         if request.POST['current_password'] or request.POST['new_password1'] or request.POST['new_password2']:
             command += ['password_change']
-        if request.FILES.get('img'):
+        if request.FILES.get('img') or request.POST.get('img_setting') != 'own_img':
             command += ['image_change']
+        birth = birth_format(request.POST['birth-y'], request.POST['birth-m'], request.POST['birth-d'])
         revise_error = validation_check(
             user.email,
+            request.POST['nickname'],
             request.POST['current_password'],
             request.POST['new_password1'],
             request.POST['new_password2'],
-            request.POST['birth'],
+            birth,
             command
         )
         if not revise_error:
@@ -165,9 +182,14 @@ def my_page_revise(request):
                 user.set_password(request.POST['new_password1'])
                 updated += ' (비밀번호가 성공적으로 변경되었습니다.)'
             if 'image_change' in command:
-                user.img = request.FILES.get('img')
+                if request.POST.get('img_setting') == 'own_img':
+                    user.img = request.FILES.get('img')
+                else:
+                    shutil.copyfile('./static/img/{}'.format(request.POST.get('img_setting')),
+                    './media/user_{}/thumbnail/{}'.format(user.email, request.POST.get('img_setting')))
+                    user.img = '/user_{}/thumbnail/{}'.format(user.email, request.POST.get('img_setting'))
             user.nickname = request.POST['nickname']
-            user.birth = request.POST['birth']
+            user.birth = birth
             user.introduction = request.POST['introduction']
             user.job = request.POST['job']
             user.save()
@@ -189,7 +211,7 @@ class QuestionView(ListView):
     context_object_name = 'questions'
     
     def get_queryset(self):
-        questions = Question.objects.order_by('-updated_at') 
+        questions = Question.objects.filter(user = self.request.user).order_by('-updated_at') 
         return questions
 
     def get_context_data(self, **kwargs):
@@ -214,7 +236,7 @@ class AnswerView(ListView):
     context_object_name = 'answers'
     
     def get_queryset(self):
-        answers = Answer.objects.order_by('-updated_at') 
+        answers = Answer.objects.filter(user = self.request.user).order_by('-updated_at') 
         return answers
 
     def get_context_data(self, **kwargs):
