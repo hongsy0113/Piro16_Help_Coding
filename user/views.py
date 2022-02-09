@@ -46,7 +46,7 @@ def log_out(request):
     return redirect('user:main')
 
 # Validation Check (Sign Up / My Page Revise)
-def validation_check(email, current_password, new_password1, new_password2, birth, command):
+def validation_check(email, nickname, current_password, new_password1, new_password2, birth, command):
     error = ''
 
     if 'signup' in command:
@@ -206,7 +206,7 @@ class QuestionView(ListView):
     context_object_name = 'questions'
     
     def get_queryset(self):
-        questions = Question.objects.order_by('-updated_at') 
+        questions = Question.objects.filter(user = self.request.user).order_by('-updated_at') 
         return questions
 
     def get_context_data(self, **kwargs):
@@ -231,7 +231,7 @@ class AnswerView(ListView):
     context_object_name = 'answers'
     
     def get_queryset(self):
-        answers = Answer.objects.order_by('-updated_at') 
+        answers = Answer.objects.filter(user = self.request.user).order_by('-updated_at') 
         return answers
 
     def get_context_data(self, **kwargs):
