@@ -55,6 +55,9 @@ def validation_check(email, nickname, current_password, new_password1, new_passw
         elif User.objects.filter(email = email):  # 예외1-2) 이미 가입된 유저
             error += '이미 가입된 유저입니다.\n'
 
+    if User.objects.filter(nickname = nickname) or not nickname:
+        error += '이미 사용 중인 닉네임입니다.\n'
+
     if 'password_change' in command:
         if not check_password(current_password, User.objects.get(email = email).password):  # 예외2-1) 현재 비밀번호 오류
             error += '현재 비밀번호가 일치하지 않습니다.\n'
@@ -87,6 +90,7 @@ def sign_up(request):
         form = SignupForm(request.POST)
         sign_up_error = validation_check(
             request.POST['email'],
+            request.POST['nickname']
             '',
             request.POST['password1'],
             request.POST['password2'],
@@ -165,6 +169,7 @@ def my_page_revise(request):
         birth = birth_format(request.POST['birth-y'], request.POST['birth-m'], request.POST['birth-d'])
         revise_error = validation_check(
             user.email,
+            request.POST['nickname'],
             request.POST['current_password'],
             request.POST['new_password1'],
             request.POST['new_password2'],
