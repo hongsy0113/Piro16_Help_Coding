@@ -1,3 +1,4 @@
+from gc import get_objects
 from multiprocessing.dummy import JoinableQueue
 import queue
 from django.shortcuts import render, redirect, get_object_or_404
@@ -11,8 +12,9 @@ from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator 
 
 def question_list(request):
+    question = Question.objects.all()
     page = request.GET.get('page', '1')    # 페이지
-    questions = Question.objects.order_by('-created_at')   # 최신순으로 정렬
+    questions = Question.objects.order_by('-created_at')   # [기본 정렬] 최신순으로 정렬
 
     # 게시물 정렬
     sort = request.GET.get('sort', '')
@@ -27,7 +29,9 @@ def question_list(request):
     paginator = Paginator(questions, 5)    # 페이지당 5개씩 보여주기
     page_obj = paginator.get_page(page)
 
-    ctx = {'questions': page_obj}
+    ctx = {
+        'questions': page_obj,
+    }
 
     return render(request, 'qna/question_list.html', context=ctx)
 
@@ -86,7 +90,6 @@ def question_create(request):
         question.user = request.user
 
         # 상세 태그 (기능) 선택
-        qnatag = QnaTag.objects.all()
         tags = request.POST.getlist('detail_tag')
         question.save()
         

@@ -37,25 +37,6 @@
     </form>
 </div>
 
-<!-- 
-<div class="sortbox">
-    <form method="get" action="{% url 'qna:question_list' %}" class="float-end">
-        <input type="hidden" id="sort" name="sort" value="{{ sort }}" />
-        <select class="select_sort">
-            <option value="recent" {% if sort == 'recent' %}selected{% endif %}>최신순</option>
-            <option value="liked" {% if sort == 'liked' %}selected{% endif %}>좋아요순</option>
-        </select>
-    </form>
-</div> -->
-
-<div class="searchbox mt-3">
-    <form action="{% url 'qna:search_result' %}" method="get">
-        {% csrf_token %}
-        <input type="search" placeholder="검색" name="search" />
-        <button type="submit">검색</button>
-    </form>
-</div>
-
 <div class="question__list-container">
     {% for question in questions %}
     <div class="question__container">
@@ -72,7 +53,7 @@
                     {% endif %}
                 </div>
                 <div class="question__info">
-                    <span>{{ question.user }} · 조회 {{question.hit}} · 좋아요 {{question.like_user | length}} · {{ question.created_at }}</span>
+                    <span>{{ question.user }} · 조회 {{ question.hit }} · 좋아요 {{ question.like_user.all | length }} · {{ question.created_at | date:'y.m.d' }}</span>
                 </div>
             </div>
             <div class="question__content">
@@ -82,7 +63,9 @@
         <div class="question__cont-right">
             <div>답변</div>
             <!-- 답변 갯수 불러오도록 -->
-            <div>1</div> 
+            <div>
+                {{ question.answer_set.all | length }}
+            </div> 
         </div>
     </div>
     {% endfor %}
@@ -123,5 +106,4 @@
     {% endif %}
 </ul>
 
-<a href="{% url 'qna:question_create' %}">질문 작성</a>
 {% endblock %}
