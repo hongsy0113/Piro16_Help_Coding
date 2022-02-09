@@ -10,6 +10,7 @@
             <div class="group-info__name">
                 <h2 class="d-flex flex-row">
                     {{ group.name }}
+                    {% if group in mygroup %}
                     <div class="group-star">
                         <button class="star group__keyword-star group__keyword-star--{{ group.id }}" id="keyword-star-{{ group.id }}">  
                             {% if group.is_star %} <!-- 꽉 찬 별 -->
@@ -19,6 +20,7 @@
                             {% endif %}
                         </button>
                     </div>
+                    {% endif %}
                 </h2>
             </div>
             <a href="{% url 'group:group_home' %}">그룹 홈</a>
