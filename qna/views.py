@@ -1,3 +1,4 @@
+from gc import get_objects
 from multiprocessing.dummy import JoinableQueue
 import queue
 from django.shortcuts import render, redirect, get_object_or_404
@@ -8,10 +9,29 @@ from django.db.models import Q
 import json
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.core.paginator import Paginator 
 
 def question_list(request):
-    questions = Question.objects.all()
-    ctx = {'questions': questions}
+    question = Question.objects.all()
+    page = request.GET.get('page', '1')    # 페이지
+    questions = Question.objects.order_by('-created_at')   # [기본 정렬] 최신순으로 정렬
+
+    # 게시물 정렬
+    sort = request.GET.get('sort', '')
+    if sort == 'recent':    # 최신순
+        questions = Question.objects.order_by('-created_at')
+    elif sort == 'liked':   # 좋아요순
+        questions = Question.objects.order_by('-like_user')
+    elif sort == 'view':    # 조회수순
+        questions = Question.objects.order_by('-hit')
+
+    # 페이징 처리
+    paginator = Paginator(questions, 5)    # 페이지당 5개씩 보여주기
+    page_obj = paginator.get_page(page)
+
+    ctx = {
+        'questions': page_obj,
+    }
 
     return render(request, 'qna/question_list.html', context=ctx)
 
