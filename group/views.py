@@ -7,6 +7,7 @@ import json
 from django.shortcuts import render, redirect, get_object_or_404
 from django.templatetags.static import static
 from django.db.models import Q
+from django.core.paginator import Paginator
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import *
@@ -21,6 +22,11 @@ def group_home(request):
     # 해당 유저의 그룹 리스트
     groups = Group.objects.filter(members__nickname__contains=user.nickname)
     
+    # 페이징 처리
+    page = request.GET.get('page', '1')
+    pagintor = Paginator(groups, 6)
+    page_obj = pagintor.get_page(page)
+
     # 정렬하기
     sort = request.GET.get('sort', '')
     if sort == 'name':
@@ -35,7 +41,7 @@ def group_home(request):
 
     ctx = { 
         'user': user,  #나중에는 쓸모 X 
-        'groups': groups,
+        'groups': page_obj,
         'ani_image': static('image/helphelp.png')    
     }
 
@@ -289,10 +295,14 @@ def join_group(request):
 def group_list(request):
     group = Group.objects.filter(mode='PUBLIC')
     groups = Group.objects.all()
+    # 페이징 처리
+    page = request.GET.get('page', '1')
+    pagintor = Paginator(groups, 6)
+    page_obj = pagintor.get_page(page)
     print(group)
     print(groups)
     ctx = { 
-        'groups': group,
+        'groups': page_obj,
         'ani_image': static('image/helphelp.png')    
     }
 

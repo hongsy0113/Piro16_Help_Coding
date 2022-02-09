@@ -52,6 +52,38 @@
         </div>
         {% endfor %}
     </div>
-
+    <ul class="pagination justify-content-center">
+        {% if groups.has_previous %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ groups.previous_page_number }}">이전</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <a class="page-link" tabindex="-1" aria-disabled="true" href="#">이전</a>
+        </li>
+        {% endif %}
+    
+        {% for page_number in groups.paginator.page_range %}
+            {% if page_number == groups.number %}
+            <li class="page-item active" aria-current="page">
+                <a class="page-link" href="?page={{ page_number }}">{{ page_number }}</a>
+            </li>
+            {% else %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_number }}">{{ page_number }}</a>
+            </li>
+            {% endif %}
+        {% endfor %}
+    
+        {% if groups.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ groups.next_page_number }}">다음</a>
+        </li>
+        {% else %}
+        <li class="page-item">
+            <a class="page-link" tabindex="-1" aria-disabled="true" href="#">다음</a>
+        </li>
+        {% endif %}
+    </ul>
 
 {% endblock %}
