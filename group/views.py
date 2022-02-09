@@ -351,8 +351,7 @@ def group_list(request):
 
     pagintor = Paginator(groups, 6)
     page_obj = pagintor.get_page(page)
-    print(group)
-    print(groups)
+
     ctx = { 
         'groups': page_obj,
         'sort_by': sort,
@@ -383,9 +382,6 @@ def join_list(request, pk):
     maker = group.maker
 
     for wait in waits:
-        # result = request.GET.get('is_accept')  # 수락/거절 중 user가 선책한 값
-        # print(result)
-        print(wait)
         if request.GET.get('accept'):
             group.waits.remove(wait)
             group.members.add(wait)
@@ -394,7 +390,6 @@ def join_list(request, pk):
             group.waits.remove(wait)
             group.save()
     
-    print(members)
     if user == group.maker:
 
         ctx = { 

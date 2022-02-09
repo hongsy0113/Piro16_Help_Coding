@@ -40,11 +40,11 @@
                     </div>
                     <div class="all-group__intro">{{ group.intro|truncatewords:30 }}</div>
                     <div class="all-group__keyword d-flex flex-row">
-                        <div class="all-group__heart all-group__heart--{{ group.id }}" id="group-heart-{{ group.id }}">
-                            <button class="group__heart heart">
+                        <div class="all-group__heart--{{ group.id }}" id="group-heart-{{ group.id }}">
+                            <button class="group__heart heart all-group__heart">
                                 <i class="fas fa-heart"></i>
+                                <span>{{ group.interest }}</span>
                             </button>
-                            {{ group.interest }}
                         </div>
                         <div class="all-group__member">멤버 수{{ group.members.all | length }}</div>
                     </div>
