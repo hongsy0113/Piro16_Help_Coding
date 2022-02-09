@@ -1,3 +1,4 @@
+from ast import Global
 from gc import get_objects
 from multiprocessing.dummy import JoinableQueue
 import queue
@@ -10,20 +11,50 @@ import json
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator 
+from django.db.models import Count
+from django.views.generic import ListView
+
+# class QuestionView(ListView):
+#     model = Question
+#     paginate_by = 5
+#     template_name = 'qna/question_list.html'
+#     context_object_name = 'questions'
+    
+#     def get_queryset(self):
+#         questions = Question.objects.order_by('-updated_at') 
+#         return questions
+
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         paginator = context['paginator']
+#         page_numbers_range = 5
+#         max_index = len(paginator.page_range)
+#         page = self.request.GET.get('page')
+#         current_page = int(page) if page else 1
+#         start_index = int((current_page - 1) / page_numbers_range) * page_numbers_range
+#         end_index = start_index + page_numbers_range
+#         if end_index >= max_index:
+#             end_index = max_index
+#         page_range = paginator.page_range[start_index:end_index]
+#         context['page_range'] = page_range
+#         return context
 
 def question_list(request):
-    question = Question.objects.all()
+    questions = Question.objects.all().order_by('-created_at')
     page = request.GET.get('page', '1')    # 페이지
-    questions = Question.objects.order_by('-created_at')   # [기본 정렬] 최신순으로 정렬
+    #questions = Question.objects.order_by('-created_at')   # [기본 정렬] 최신순으로 정렬
 
     # 게시물 정렬
-    sort = request.GET.get('sort', '')
+
+    sort = request.GET.get('sort', 'recent')
     if sort == 'recent':    # 최신순
         questions = Question.objects.order_by('-created_at')
     elif sort == 'liked':   # 좋아요순
-        questions = Question.objects.order_by('-like_user')
+        #questions = Question.objects.order_by('-like_user')
+        questions = Question.objects.all().annotate(total_likes=Count('like_user')).order_by('-total_likes')
     elif sort == 'view':    # 조회수순
         questions = Question.objects.order_by('-hit')
+        
 
     # 페이징 처리
     paginator = Paginator(questions, 5)    # 페이지당 5개씩 보여주기
@@ -31,6 +62,7 @@ def question_list(request):
 
     ctx = {
         'questions': page_obj,
+        'sort_by':sort
     }
 
     return render(request, 'qna/question_list.html', context=ctx)
@@ -88,11 +120,9 @@ def question_create(request):
         question = form.save(commit=False)  # 넘겨진 데이터 form에 바로 저장 X
         question.s_or_e_tag = request.POST.get('s_or_e_tag')  # 카테고리 (스크래치, 엔트리, 기타) 중 1 선택
         question.user = request.user
-
+        question.save() 
         # 상세 태그 (기능) 선택
         tags = request.POST.getlist('detail_tag')
-        question.save()
-        
         for tag in tags:
             if len(QnaTag.objects.filter(tag_name=tag)) == 0:
                 QnaTag.objects.create(
@@ -105,24 +135,36 @@ def question_create(request):
 
         question.save()
 
-        return redirect('qna:question_list')
+        return redirect('qna:question_detail', question.pk)
 
     else:
         form = QuestionForm()
         ctx = {'form': form}
         
-        return render(request, 'qna/question_create.html', context=ctx)
+        return render(request, 'qna/question_form.html', context=ctx)
         
         
 def question_detail(request, pk):
     question = get_object_or_404(Question, pk=pk)
-
+    
+    try:
+        previous_pk = Question.get_previous_by_created_at(question).pk
+    except:
+        # 이전글 없을 때
+        previous_pk = -1
+        print('not exist')
+    try:
+        next_pk = Question.get_next_by_created_at(question).pk
+    except:
+        # 이전글 없을 때
+        next_pk = -1
+        print('not exist')
     # 해당 게시글에 대한 tag, 유저, 좋아요 수 등 가져오기
     # 이외에 필드들은 template 에서 {{question.필드 }} 로 접근
     tags = question.tags.all()
     username = question.user.nickname
     total_likes = len(question.like_user.all())
-
+    
     # 해당 게시글에 대한 답변 가져오기
     answers = Answer.objects.filter(question_id = question.id, parent_answer__isnull=True).order_by('answer_order')   #  나중에 답변 정렬도 고려. 최신순 또는 좋아요 순
     answers_count = len(answers)
@@ -144,12 +186,61 @@ def question_detail(request, pk):
         'answers_count' : answers_count,
         'answers_reply_dict' : answers_reply_dict,
         'is_liked': is_liked,
+        'next_pk':next_pk,
+        'previous_pk':previous_pk,
     }
     # answer 와 reply로 이루어진 dictionary를 context로 넘길 예정
     return render(request, template_name='qna/detail.html', context=ctx)
 
+def question_update(request,pk):
+    question = get_object_or_404(Question, pk=pk)
+    if request.method == "POST":
+        form = QuestionForm(request.POST, request.FILES, instance =question)
+
+        question = form.save()  
+        question.s_or_e_tag = request.POST.get('s_or_e_tag')  # 카테고리 (스크래치, 엔트리, 기타) 중 1 선택
+
+        # 상세 태그 (기능) 선택
+        tags = request.POST.getlist('detail_tag')
+        for tag in tags:
+            if len(QnaTag.objects.filter(tag_name=tag)) == 0:
+                QnaTag.objects.create(
+                    tag_name = tag,
+                )
+
+            # QnaTag db에 없으면 오류 발생
+            newtag = get_object_or_404(QnaTag, tag_name=tag)
+            question.tags.add(newtag)
+
+        question.save()
+
+        return redirect('qna:question_detail', pk)
+
+    else:
+        form = QuestionForm(instance=question)
+        # TODO : 선택 태그 뭘 선택했었는 지를 ctx로 넘겨주자
+        # 기본 태그와 추가 태그 다르게 넘기자
+        # TODO :  기본 태그 가 바뀌게 된다면 아래 리스트 수정해야 됨.
+        basic_tags = ['MOTION', 'LOOKS', 'SOUND', 'EVENTS', 'CONTROL', 'SENSING', 'OPERATORS','VARIABLES', 'MY', 'ETC', ]
+        tags = question.tags.all()
+        basic_tag_names = []
+        extra_tag_names = []
+        for tag in tags:
+            if tag.tag_name in basic_tags:
+                basic_tag_names.append(tag.tag_name)
+            else:
+                extra_tag_names.append(tag.tag_name)
+        ctx = {'form': form, 'question':question, 'basic_tag_names': basic_tag_names,  'extra_tag_names': extra_tag_names}
+
+        return render(request, template_name="qna/question_form.html", context=ctx)        
+
 def question_delete(request, pk):
     question = get_object_or_404(Question, pk=pk)
+
+    # TODO : 게시글에 댓글이 있는지 확인
+    if len(question.answer_set.all()) > 0:
+        ### 답변이 달려 있어서 삭제 불가능
+        return redirect('qna:question_detail', pk)
     question.delete()
     return redirect('qna:question_list')
 
