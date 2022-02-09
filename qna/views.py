@@ -1,3 +1,4 @@
+from ast import Global
 from gc import get_objects
 from multiprocessing.dummy import JoinableQueue
 import queue
@@ -10,20 +11,50 @@ import json
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator 
+from django.db.models import Count
+from django.views.generic import ListView
+
+# class QuestionView(ListView):
+#     model = Question
+#     paginate_by = 5
+#     template_name = 'qna/question_list.html'
+#     context_object_name = 'questions'
+    
+#     def get_queryset(self):
+#         questions = Question.objects.order_by('-updated_at') 
+#         return questions
+
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         paginator = context['paginator']
+#         page_numbers_range = 5
+#         max_index = len(paginator.page_range)
+#         page = self.request.GET.get('page')
+#         current_page = int(page) if page else 1
+#         start_index = int((current_page - 1) / page_numbers_range) * page_numbers_range
+#         end_index = start_index + page_numbers_range
+#         if end_index >= max_index:
+#             end_index = max_index
+#         page_range = paginator.page_range[start_index:end_index]
+#         context['page_range'] = page_range
+#         return context
 
 def question_list(request):
-    question = Question.objects.all()
+    questions = Question.objects.all().order_by('-updated_at')
     page = request.GET.get('page', '1')    # 페이지
-    questions = Question.objects.order_by('-created_at')   # [기본 정렬] 최신순으로 정렬
+    #questions = Question.objects.order_by('-created_at')   # [기본 정렬] 최신순으로 정렬
 
     # 게시물 정렬
+
     sort = request.GET.get('sort', '')
     if sort == 'recent':    # 최신순
-        questions = Question.objects.order_by('-created_at')
+        questions = Question.objects.order_by('-updated_at')
     elif sort == 'liked':   # 좋아요순
-        questions = Question.objects.order_by('-like_user')
+        #questions = Question.objects.order_by('-like_user')
+        questions = Question.objects.all().annotate(total_likes=Count('like_user')).order_by('-total_likes')
     elif sort == 'view':    # 조회수순
         questions = Question.objects.order_by('-hit')
+        
 
     # 페이징 처리
     paginator = Paginator(questions, 5)    # 페이지당 5개씩 보여주기
@@ -31,6 +62,7 @@ def question_list(request):
 
     ctx = {
         'questions': page_obj,
+        'sort_by':sort
     }
 
     return render(request, 'qna/question_list.html', context=ctx)

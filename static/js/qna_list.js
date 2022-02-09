@@ -1,1 +1,0 @@
-const listSort = document.querySelector(".select_sort")
