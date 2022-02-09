@@ -109,10 +109,17 @@ def group_create(request):
 # 그룹 정보 수정
 def group_update(request, pk):
     group = get_object_or_404(Group, pk=pk)
+    prev_name = group.name
 
     if request.method == 'POST':
         form = GroupForm(request.POST, instance=group)
         group.name = request.POST.get('name')
+        if group.name != prev_name:
+            if Group.objects.filter(name=group.name).exclude(name=prev_name):  # 그룹명은 식별자 => 이미 존재하는 이름이면 생성된 그룹 삭제
+                error = '이미 존재하는 이름입니다.'
+                ctx = { 'error': error }
+
+                return render(request, template_name='group/group_form.html', context=ctx)
         # 이미지 수정 -> 파일 탐색기
         group.mode = request.POST.get('group-mode__tag')
         image = request.FILES.get('image')
