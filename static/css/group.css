@@ -21,3 +21,7 @@
     place-items: center;
     min-height: 100vh;
 }
+
+.mygroup__list {
+    grid-template-columns: 1fr 1fr 1fr;
+}

@@ -1,4 +1,13 @@
-{% extends 'group_base.html' %}
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/group.css' %}" />
+{% endblock %}
+
+{% block js %}
+    <script src="{% static 'js/group_star.js' %}" defer></script>
+{% endblock %}
 {% block title %}그룹 가입하기{% endblock %}
 
 {% block content %}

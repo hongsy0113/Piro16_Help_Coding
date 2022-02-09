@@ -1,5 +1,14 @@
-{% extends 'group_base.html' %}
-{% block title %}가입 대기자 명단{% endblock %}
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/group.css' %}" />
+{% endblock %}
+
+{% block js %}
+    <script src="{% static 'js/group_star.js' %}" defer></script>
+{% endblock %}
+{% block title %}그룹 멤버관리{% endblock %}
 
 {% block content %}
 

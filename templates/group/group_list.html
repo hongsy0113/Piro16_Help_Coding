@@ -1,4 +1,13 @@
-{% extends 'group_base.html' %}
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/group.css' %}" />
+{% endblock %}
+
+{% block js %}
+    <script src="{% static 'js/group_star.js' %}" defer></script>
+{% endblock %}
 {% block title %} 그룹 커뮤니티 {% endblock %}
 
 {% block content %}
@@ -12,7 +21,7 @@
     </nav>
     <div class="all-group__list">
         <div class="group__search-container">
-            <form class="group__search-box" action="{% url 'group:group_search_public' %}" method="get">
+            <form class="group__search-box" action="{% url 'group:group_search' %}" method="get">
                 {% csrf_token %}
                 <input type="search" placeholder="그룹명을 검색하세요" name="search" />
                 <button type="submit">
@@ -55,7 +64,7 @@
     <ul class="pagination justify-content-center">
         {% if groups.has_previous %}
         <li class="page-item">
-            <a class="page-link" href="?page={{ groups.previous_page_number }}">이전</a>
+            <a class="page-link" href="?page={{ groups.previous_page_number }}&sort={{ sort_by }}">이전</a>
         </li>
         {% else %}
         <li class="page-item disabled">
@@ -66,18 +75,18 @@
         {% for page_number in groups.paginator.page_range %}
             {% if page_number == groups.number %}
             <li class="page-item active" aria-current="page">
-                <a class="page-link" href="?page={{ page_number }}">{{ page_number }}</a>
+                <a class="page-link" href="?page={{ page_number }}&sort={{ sort_by }}">{{ page_number }}</a>
             </li>
             {% else %}
             <li class="page-item">
-                <a class="page-link" href="?page={{ page_number }}">{{ page_number }}</a>
+                <a class="page-link" href="?page={{ page_number }}&sort={{ sort_by }}">{{ page_number }}</a>
             </li>
             {% endif %}
         {% endfor %}
     
         {% if groups.has_next %}
         <li class="page-item">
-            <a class="page-link" href="?page={{ groups.next_page_number }}">다음</a>
+            <a class="page-link" href="?page={{ groups.next_page_number }}&sort={{ sort_by }}">다음</a>
         </li>
         {% else %}
         <li class="page-item">

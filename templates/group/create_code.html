@@ -1,4 +1,9 @@
-{% extends 'group_base.html' %}
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/group.css' %}" />
+{% endblock %}
 {% block title %} 초대 코드 발급 {% endblock %}
 
 {% block content %}
