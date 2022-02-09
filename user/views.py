@@ -56,8 +56,12 @@ def validation_check(email, nickname, current_password, new_password1, new_passw
         elif User.objects.filter(email = email):  # 예외1-2) 이미 가입된 유저
             error += '이미 가입된 유저입니다.\n'
 
-    if User.objects.filter(nickname = nickname) or not nickname:
-        error += '이미 사용 중인 닉네임입니다.\n'
+    if 'signup' in command:  # 예외2-1) 이미 사용 중인 닉네임 (회원 가입 시)
+        if User.objects.filter(nickname = nickname) or not nickname:
+            error += '이미 사용 중인 닉네임입니다.\n'
+    else:  # 예외2-2) 이미 사용 중인 닉네임 (닉네임 수정 시)
+        if User.objects.filter(nickname = nickname) and User.objects.get(nickname = nickname).email != email:
+            error += '이미 사용 중인 닉네임입니다.\n'
 
     if 'password_change' in command:
         if not check_password(current_password, User.objects.get(email = email).password):  # 예외3-1) 현재 비밀번호 오류
