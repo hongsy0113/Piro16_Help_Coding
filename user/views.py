@@ -90,7 +90,7 @@ def sign_up(request):
         form = SignupForm(request.POST)
         sign_up_error = validation_check(
             request.POST['email'],
-            request.POST['nickname']
+            request.POST['nickname'],
             '',
             request.POST['password1'],
             request.POST['password2'],
