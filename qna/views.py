@@ -170,6 +170,11 @@ def question_update(request,pk):
 
 def question_delete(request, pk):
     question = get_object_or_404(Question, pk=pk)
+
+    # TODO : 게시글에 댓글이 있는지 확인
+    if len(question.answer_set.all()) > 0:
+        ### 답변이 달려 있어서 삭제 불가능
+        return redirect('qna:question_detail', pk)
     question.delete()
     return redirect('qna:question_list')
 
