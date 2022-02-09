@@ -16,7 +16,7 @@
     <script src="https://use.fontawesome.com/releases/v5.2.0/js/all.js"></script>
     {% block js %}
     {% endblock %}
-    <title>도와줘, 코딩</title>
+    <title>{% block title %}도와줘, 코딩{% endblock %}</title>
 </head>
 <body>
     <header>
@@ -49,10 +49,23 @@
                     </svg>                    
                 </a>
                 <div class="header__mypagecontainer">
-                    <a href="{%  url 'user:mypage' %}">{{user.email}}</a>
+                    <a href="{%  url 'user:mypage' %}">{{user.nickname}}</a>
                     <a class="header__mypagebtn" href="{% url 'user:mypage' %}">
                         {% if user.img %}<img src="{{ user.img.url }}" style='height: 100%; width: auto; object-fit: contain'>{% else %}<p class="header__mypagebtn-noimage"></p>{% endif %}
                     </a>
+                    <div class="header__mypage-dropdown">
+                        <a href="{% url 'user:mypage' %}" class="mypage-dropdown__userprofile">
+                            <div class="mypage-dropdown__userprofile-img">
+                                {% if user.img %}<img src="{{ user.img.url }}" style='height: 100%; width: auto; object-fit: contain'>{% else %}<p class="header__mypagebtn-noimage"></p>{% endif %}
+                            </div>
+                            <div class="mypage-dropdown__userprofile-name">
+                                <p>{{user.nickname}}</p>
+                                <p>{{user.email}}</p>
+                            </div>
+                        </a>
+                        <a href="{% url 'user:mypage' %}" class="mypage-dropdown__mypagebtn">마이페이지</a>
+                        <a href="{% url 'user:logout' %}" class="mypage-dropdown__logoutbtn">로그아웃</a>
+                    </div>
                 </div>
             {% else %}
             <ul>
