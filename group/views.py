@@ -41,6 +41,31 @@ def group_home(request):
 
     return render(request, template_name='group/group_home.html', context=ctx)
 
+# 그룹 검색하기(나의 그룹 홈)
+def group_search(request):
+    if 'search' in request.GET:
+        query = request.GET.get('search')
+        groups = Group.objects.all().filter(Q(name__icontains=query))
+        ctx = { 
+            'groups': groups,
+            'query': query
+        }
+
+    return render(request, 'group/group_search.html', context=ctx)
+
+# 그룹 검색하기(공개 그룹 찾기)
+def group_search_public(request):
+    if 'search' in request.GET:
+        query = request.GET.get('search')
+        groups = Group.objects.all().filter(Q(name__icontains=query) & Q(mode='PUBLIC'))
+        ctx = { 
+            'groups': groups,
+            'query': query
+        }
+
+    return render(request, 'group/group_search_public.html', context=ctx)
+
+
 
 ######## 그룹 CRUD ########
 
@@ -278,16 +303,17 @@ def join_list(request, pk):
     waits = group.waits.all()
     members = group.members.all()
     group.maker = members[0]
+    maker = group.maker
 
     for wait in waits:
-        result = request.GET.get('is_accept')  # 수락/거절 중 user가 선책한 값
-        print(result)
+        # result = request.GET.get('is_accept')  # 수락/거절 중 user가 선책한 값
+        # print(result)
         print(wait)
-        if result == 'accept':
+        if request.GET.get('accept'):
             group.waits.remove(wait)
             group.members.add(wait)
             group.save()
-        else:
+        elif request.GET.get('reject'):
             group.waits.remove(wait)
             group.save()
     
@@ -298,6 +324,7 @@ def join_list(request, pk):
             'group': group,
             'members': members,
             'waits': waits,
+            'maker': maker,
             'profile_img': static('image/none_image_user.jpeg'),
         }
         
