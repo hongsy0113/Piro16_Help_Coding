@@ -269,7 +269,7 @@ def public_group_join(request, pk):
         group.waits.add(user)
         group.save()
 
-    redirect('group:group_detail', pk)
+    return redirect('group:group_detail', pk)
 
 # 그룹 가입 요청 리스트(user == 방장일 때만 확인 가능)
 def join_list(request, pk):
@@ -277,9 +277,23 @@ def join_list(request, pk):
     group = get_object_or_404(Group, pk=pk)
     waits = group.waits.all()
     members = group.members.all()
-    result = request.GET.get('accept')  # 수락/거절 중 user가 선책한 값
+    group.maker = members[0]
 
+    for wait in waits:
+        result = request.GET.get('is_accept')  # 수락/거절 중 user가 선책한 값
+        print(result)
+        print(wait)
+        if result == 'accept':
+            group.waits.remove(wait)
+            group.members.add(wait)
+            group.save()
+        else:
+            group.waits.remove(wait)
+            group.save()
+    
+    print(members)
     if user == group.maker:
+
         ctx = { 
             'group': group,
             'members': members,

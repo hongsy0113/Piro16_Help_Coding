@@ -76,8 +76,10 @@
             <a href="{% url 'group:group_update' group.pk %}" class="update_btn">수정</a>
             <a href="{% url 'group:group_drop' group.pk %}">그룹 탈퇴하기</a>
             {% if group.mode == 'PUBLIC' %}
-            <a href="{% url 'group:public_group_join' group.pk %}">그룹 가입하기[공개그룹]</a>
-            {% endif %}
+                {% if maker != user %}
+                <a href="{% url 'group:public_group_join' group.pk %}">그룹 가입하기[공개그룹]</a>
+                {% endif %}
+                {% endif %}
         </div>
     </div>
 
