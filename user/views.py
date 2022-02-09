@@ -6,7 +6,6 @@ from django.views.generic import ListView
 from .forms import LoginForm, SignupForm, MypageReviseForm
 from .models import *
 from qna.models import Question, Answer
-from django.contrib import auth
 from django.contrib import messages
 from django.contrib.sites.shortcuts import get_current_site
 from django.contrib.auth.hashers import check_password
@@ -16,7 +15,8 @@ from django.utils.encoding import force_bytes
 from django.core.mail import EmailMessage
 from .tokens import user_activation_token
 from django.utils.encoding import force_bytes, force_str
-import re
+from datetime import date, datetime
+import re, shutil
 
 # Main
 def main(request):
@@ -69,6 +69,17 @@ def validation_check(email, current_password, new_password1, new_password2, birt
         error += '생년월일을 2022-02-22 형식으로 입력해주세요.\n'
     
     return error
+
+# Birth Format (YYYY-MM-DD)
+def birth_format(year, month, day):
+    today = date.today()
+    if int(year) > today.year:
+        return ''
+    try:
+        birth = datetime(int(year), int(month), int(day)).strftime("%Y-%m-%d")
+        return birth
+    except:  # 잘못된 날짜
+        return ''
 
 # Sign Up
 def sign_up(request):
@@ -149,14 +160,16 @@ def my_page_revise(request):
         command = ['mypage_revise']
         if request.POST['current_password'] or request.POST['new_password1'] or request.POST['new_password2']:
             command += ['password_change']
-        if request.FILES.get('img'):
+        if request.FILES.get('img') or request.POST.get('img_setting') != 'own_img':
             command += ['image_change']
+        birth = birth_format(request.POST['birth-y'], request.POST['birth-m'], request.POST['birth-d'])
+        print(birth)
         revise_error = validation_check(
             user.email,
             request.POST['current_password'],
             request.POST['new_password1'],
             request.POST['new_password2'],
-            request.POST['birth'],
+            birth,
             command
         )
         if not revise_error:
@@ -165,9 +178,14 @@ def my_page_revise(request):
                 user.set_password(request.POST['new_password1'])
                 updated += ' (비밀번호가 성공적으로 변경되었습니다.)'
             if 'image_change' in command:
-                user.img = request.FILES.get('img')
+                if request.POST.get('img_setting') == 'own_img':
+                    user.img = request.FILES.get('img')
+                else:
+                    shutil.copyfile('./static/img/{}'.format(request.POST.get('img_setting')),
+                    './media/user_{}/thumbnail/{}'.format(user.email, request.POST.get('img_setting')))
+                    user.img = '/user_{}/thumbnail/{}'.format(user.email, request.POST.get('img_setting'))
             user.nickname = request.POST['nickname']
-            user.birth = request.POST['birth']
+            user.birth = birth
             user.introduction = request.POST['introduction']
             user.job = request.POST['job']
             user.save()
