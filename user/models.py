@@ -4,12 +4,17 @@ from django.db import models
 from group.models import *
 # from qna.models import *
 from django.contrib.auth.models import AbstractUser
-from .constants import JOB_CHOICE, JOB_CATEGORY, LEVEL, LEVEL_UP_BOUNDARY, POINT
+from .constants import *
 
 # user 대표 이미지
 def user_thumbnail_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/user_<email>/<filename>
     return 'user_{0}/thumbnail/{1}'.format(instance.email, filename)
+
+# reward 대표 이미지
+def reward_thumbnail_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/user_<email>/<filename>
+    return 'reward_{0}/thumbnail/{1}'.format(instance.name, filename)
 
 class User(AbstractUser):
     email = models.EmailField(verbose_name='email')
@@ -50,7 +55,9 @@ class User(AbstractUser):
 class Reward(models.Model):
     name = models.CharField(max_length=20)
     info = models.TextField()
-    img = models.ImageField(upload_to="image/reward_thumbnail", null=True, blank=True)
+    type = models.CharField(max_length=50, choices=REWARD_TYPE, default='total_like')
+    criteria = models.IntegerField(null=True, blank=True)
+    img = models.ImageField(upload_to=reward_thumbnail_path, null=True, blank=True)
 
     def __str__(self):
         return self.name
