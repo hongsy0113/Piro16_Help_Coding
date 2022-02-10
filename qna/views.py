@@ -15,6 +15,7 @@ from django.views.generic import ListView, View
 from hitcount.views import HitCountDetailView
 from django.views.generic.detail import SingleObjectMixin
 from django.core.files.storage import FileSystemStorage
+import mimetypes
 
 # class QuestionView(ListView):
 #     model = Question
@@ -287,11 +288,11 @@ class FileDownloadView(SingleObjectMixin, View):
     queryset = Question.objects.all()
 
     def get(self, request, pk):
-        print('test')
         object = get_object_or_404(Question, pk=pk)
         
         file_path = object.attached_file.path
-        file_type = object.attached_file.name.split('.')[-1]  # django file object에 content type 속성이 없어서 따로 저장한 필드
+        file_type, _ = mimetypes.guess_type(file_path)
+        #file_type = object.attached_file.name.split('.')[-1]  # django file object에 content type 속성이 없어서 따로 저장한 필드
         fs = FileSystemStorage(file_path)
         response = FileResponse(fs.open(file_path, 'rb'), content_type=file_type)
         response['Content-Disposition'] = f'attachment; filename={object.get_filename()}'
