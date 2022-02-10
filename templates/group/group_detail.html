@@ -32,7 +32,7 @@
                 </h2>
             </div>
             <a href="{% url 'group:group_home' %}">그룹 홈</a>
-            <a href="#">그룹 커뮤니티</a>
+            <a href="{% url 'group:post_list' group.pk %}">그룹 커뮤니티</a>
             {% if group.mode == 'PRIVATE' %}
             <a href="{% url 'group:create_code' group.pk %}">친구 초대하기</a>
             {% endif %}

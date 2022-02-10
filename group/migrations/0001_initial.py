@@ -51,6 +51,7 @@ class Migration(migrations.Migration):
                 ('content', models.TextField(verbose_name='내용')),
                 ('image', models.ImageField(blank=True, null=True, upload_to=group.models.group_post_img_path)),
                 ('attached_file', models.FileField(blank=True, null=True, upload_to=group.models.group_post_code_path, verbose_name='첨부파일')),
+                ('category_tag', models.CharField(choices=[('S', '자랑하기'), ('Q', '질문하기'), ('ETC', '기타')], max_length=20, verbose_name='기본 카테고리')),
                 ('hit', models.IntegerField(default=0, verbose_name='조회수')),
                 ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='게시일자')),
                 ('updated_at', models.DateTimeField(auto_now=True, verbose_name='수정일자')),

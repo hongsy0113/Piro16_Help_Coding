@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/group_post_list.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}">
+{% endblock %}
+
+
+{% block content %}
+<div class="group_post__top-search-container">
+    <div class="group_post__top">
+        <span class="group_post__top-title">그룹 게시판</span>
+        <span class="group_post__top-info">그룹원들과 내가 만든 작품을 공유하고 이야기를 나누세요!</span>
+    </div>
+    <div class="group_post__search-container">
+        <form class="group_post__search-box" action="{% url 'group:search_result' %}" method="get">
+            {% csrf_token %}
+            <input type="search" placeholder="원하는 글을 찾아보세요!" name="search" />
+            <button type="submit">
+                <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M25.1504 22.115L20.2822 17.2468C20.0625 17.0271 19.7646 16.905 19.4521 16.905H18.6562C20.0039 15.1814 20.8047 13.0134 20.8047 10.655C20.8047 5.04468 16.2588 0.498779 10.6484 0.498779C5.03809 0.498779 0.492188 5.04468 0.492188 10.655C0.492188 16.2654 5.03809 20.8113 10.6484 20.8113C13.0068 20.8113 15.1748 20.0105 16.8984 18.6628V19.4587C16.8984 19.7712 17.0205 20.0691 17.2402 20.2888L22.1084 25.157C22.5674 25.616 23.3096 25.616 23.7637 25.157L25.1455 23.7751C25.6045 23.3162 25.6045 22.574 25.1504 22.115ZM10.6484 16.905C7.19629 16.905 4.39844 14.1121 4.39844 10.655C4.39844 7.20288 7.19141 4.40503 10.6484 4.40503C14.1006 4.40503 16.8984 7.198 16.8984 10.655C16.8984 14.1072 14.1055 16.905 10.6484 16.905Z" fill="#4E4E4E"/>
+                </svg>
+                </button>
+        </form>
+        <a class="group_post__ask-btn" href="{% url 'group:post_create' group.pk %}">게시글 작성</a>
+    </div>
+</div>
+
+<div class="group_post__list-container">
+    {% for post in posts %}
+    <div class="group_post__container">
+        <div class="group_post__cont-left">
+            <a class="list__title" href = "">{{ post.title }}</a>
+            <div class="group_post__tag-info">
+                <div class="group_post__tag">
+                    {% if post.category_tag == 'S' %}
+                    <span class="tag__scratch">자랑하기</span>
+                    {% elif post.category_tag == 'Q' %}
+                    <span class="tag__entry">질문하기</span>
+                    {% else %}
+                    <span class="tag__etc">기타</span>
+                    {% endif %}
+                </div>
+                <div class="group_post__info">
+                    <span>{{ post.user }} · 조회 {{ post.hit }} · {{ post.created_at | date:'y.m.d' }}</span>
+                </div>
+            </div>
+            <div class="group_post__content">
+                <span>{{ post.content }}</span>
+            </div>
+        </div>
+        <div class="group_post__cont-right">
+            <div>답변</div>
+            <div>
+                <!-- 답변 개수 -->
+                1
+            </div> 
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<ul class="pagination justify-content-center">
+    {% if posts.has_previous %}
+    <li class="page-item">
+        <a class="page-link" href="?page={{ post.previous_page_number }}">이전</a>
+    </li>
+    {% else %}
+    <li class="page-item disabled">
+        <a class="page-link" tabindex="-1" aria-disabled="true" href="#">이전</a>
+    </li>
+    {% endif %}
+
+    {% for page_number in posts.paginator.page_range %}
+        {% if page_number == posts.number %}
+        <li class="page-item active" aria-current="page">
+            <a class="page-link" href="?page={{ page_number }}">{{ page_number }}</a>
+        </li>
+        {% else %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_number }}">{{ page_number }}</a>
+        </li>
+        {% endif %}
+    {% endfor %}
+
+    {% if posts.has_next %}
+    <li class="page-item">
+        <a class="page-link" href="?page={{ posts.next_page_number }}">다음</a>
+    </li>
+    {% else %}
+    <li class="page-item">
+        <a class="page-link" tabindex="-1" aria-disabled="true" href="#">다음</a>
+    </li>
+    {% endif %}
+</ul>
+
+{% endblock %}
