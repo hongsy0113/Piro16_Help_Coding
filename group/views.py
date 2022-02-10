@@ -22,7 +22,7 @@ def group_home(request):
     user = request.user  # 현재 접속한 사용자
 
     # 해당 유저의 그룹 리스트
-    groups = Group.objects.filter(members__nickname__contains=user.nickname)
+    groups = user.group_set.all()
     
     # 페이징 처리
     page = request.GET.get('page', '1')
@@ -177,11 +177,6 @@ def group_update(request, pk):
             
             group.save()
 
-        # if form.is_valid():
-        #     group = form.save()
-        #     group.user = request.user
-        #     group.save()
-
         return redirect('group:group_detail', pk)
     else:
         form = GroupForm(instance=group)
@@ -235,7 +230,7 @@ def group_detail(request, pk):
     user = request.user
     group = get_object_or_404(Group, pk=pk)
 
-    mygroup = Group.objects.filter(members__nickname__contains=user)
+    mygroup = user.group_set.all()
     members = group.members.all()
     group.maker = members[0]
     maker = group.maker
@@ -265,39 +260,13 @@ def group_detail(request, pk):
 
 ######## 초대 코드 ########
 
-# def group_status(group, login_user):
-#     if group.status == 'false':
-#         if group.maker == login_user:
-#             return 2  # 초대 수락 여부 결정
-#         else:
-#             return 1  # 수락을 기다리는 중
-#     else:
-#         return 3  # 가입 완료
-
 # 초대 코드 발급
 def get_invite_code(length=6):
     return base64.urlsafe_b64encode(
         codecs.encode(uuid.uuid4().bytes, 'base64').rstrip()
     ).decode()[:length]
 
-# 초대 코드 공개(from 그룹 상세 페이지)
-def create_code(request, pk):
-
-    group = get_object_or_404(Group, pk=pk)
-    group.code = get_invite_code()
-    group.save()
-    # 여기서 3분 제한 둘 것
-    code = group.code
-    print(code)
-
-    ctx = { 
-        'group': group
-    }
-
-    return render(request, template_name='group/create_code.html', context=ctx)
-
-    # return render(request, template_name='group/group_detail.html', context=ctx)
-
+# 초대 코드 생성 (from 상세 페이지)
 @csrf_exempt
 def create_code_ajax(request):
     req = json.loads(request.body)    
@@ -309,51 +278,6 @@ def create_code_ajax(request):
 
     return JsonResponse({ 'name': group.name, 'code': code })
 
-# 초대 코드 입력(from 그룹 메인 페이지 / 비공개 그룹 가입)
-def join_group(request):    
-    user = request.user
-    input_code = request.GET.get('code')
-    print(input_code)
-    print("text")
-
-    mygroup = list(Group.objects.filter(members__nickname__contains=user))
-    try:
-        if input_code != None:
-            group = get_object_or_404(Group, code=input_code)
-            print(group)
-            # 예외처리 or 조건문
-            if group in mygroup:
-                message = "이미 가입된 그룹입니다."
-                ctx = { 'message': message }
-
-                return render(request, template_name='group/group_home.html', context=ctx)
-
-            else:   # user != 방장
-                # if (group):   #queryset이 비어있을 때 반대로 생각하기
-                group.members.add(user)
-                group.save()
-                # status = group_status(group, user)
-
-                
-                return redirect('group:group_home')
-        else:
-            message = "아무것도 입력하지 않았습니다."
-            ctx = { 'message': message }
-
-            return render(request, template_name='group/group_home.html', context=ctx)
-
-    except:
-        print('존재하지 않는 그룹입니다.')
-        message = "존재하지 않는 코드입니다."
-        ctx = { 'message': message }
-
-        return render(request, template_name='group/group_home.html', context=ctx)
-
-# def input_code(request):
-#     input_code = request.GET.get('code')
-#     ctx = { 'input': input_code }
-
-#     return render(request, template_name='group/input_code.html', context=ctx)
 
 # 초대 코드 입력하기 (나의 그룹 홈페이지)
 @csrf_exempt
@@ -362,7 +286,7 @@ def join_code_ajax(request):
     
     user = request.user
     input_code = req['code']
-    mygroup = list(Group.objects.filter(members__nickname__contains=user))
+    mygroup = list(user.group_set.all())
 
     try:
         if input_code != None:
@@ -380,9 +304,8 @@ def join_code_ajax(request):
     except:
         message = '존재하지 않는 코드입니다.'
 
-    ctx = { 'message': message }
-
     return JsonResponse({ 'message': message })
+
 
 ######## 공개 그룹 ########
 
@@ -457,7 +380,31 @@ def join_list(request, pk):
         # alert 창 띄우기 (방장이 아니므로 열람할 수 없습니다)
         return redirect('group:group_detail', pk)
 
-## Ajax
+# 그룹 가입 대기자 명단
+@csrf_exempt
+def wait_list_ajax(request):
+    req = json.loads(request.body)
+    group_id = req['id']
+    group = get_object_or_404(Group, pk=group_id)
+    waits = group.waits.all()
+    waits_img = group.waits.get('image')
+    
+    for wait in waits:
+        if request.GET.get('accept'):
+            group.waits.remove(wait)
+            group.members.add(wait)
+            group.save()
+        elif request.GET.get('reject'):
+            group.waits.remove(wait)
+            group.save()
+    print(waits)
+    JsonResponse({
+        'groupName': group.name,
+        'waits': waits,
+        'waits_img': waits_img
+    })
+
+
 # 내 그룹 - 찜 기능 ajax
 @csrf_exempt
 def star_ajax(request):

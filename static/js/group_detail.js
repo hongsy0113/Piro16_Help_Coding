@@ -77,10 +77,11 @@ function closeCreateCode() {
     createCodeAlert.style.display = 'none';
 }
 
-createCodeBtn.addEventListener('click', function() {
-    console.log('!')
-    onClickCreateCode(group_id);
-})
+if(createCodeBtn){
+    createCodeBtn.addEventListener('click', function() {
+        onClickCreateCode(group_id);
+    })
+}
 
 const onClickCreateCode = async(groupId) => {
     const url = '/group/create_code_ajax/';

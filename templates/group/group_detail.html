@@ -6,6 +6,7 @@
 {% endblock %}
 {% block js %}
     <script src="{% static 'js/group_detail.js' %}" defer></script>
+    <script src="{% static 'js/group_wait.js' %}" defer></script>
 {% endblock %}
 {% block title %}그룹 상세 페이지{% endblock %}
 
@@ -54,7 +55,35 @@
                 {% endif %}
                 {% if group.mode == 'PUBLIC' %}
                     {% if maker == user %}
-                    <a href="{% url 'group:join_list' group.pk %}">그룹 가입신청 관리</a>
+                    <button class="group__wait--btn btn btn-dark">그룹 가입신청 관리</button>
+
+                    <!-- 가입 대기 리스트 modal -->
+                    <div class="group__member--all">
+                        <div class="group__wait-name"><h2></h2></div>
+                        <div class="d-flex flex-row">
+                            <h3>대기자 명단</h3>
+                            <hr/>
+                            <div class="group__wait--member-list me-2 p-4">
+                                
+                                {% for wait in waits %}
+                                    <form method="GET" class="group-wait__one d-flex flex-row">
+                                        <div class="d-flex flex-row align-items-center">
+                                            {% if wait.img %}
+                                            <img src="{{ wait.img.url }}" height="50" width="50" style="border-radius: 50px;"/>
+                                            {% else %}
+                                            <img src="{{ profile_img }}" height="50" width="50" style="border-radius: 50px;"/>
+                                            {% endif %}
+                                            <h6>{{ wait }}</h6>
+                                            <input type="submit" value="수락" name="accept">
+                                            <input type="submit" value="거절" name="reject">
+                                        </div>  
+                                    </form>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
+                        <button class="group__wait--close btn btn-dark" onclick="closeGroupWait()">닫기</button>
+                    </div>
                     {% endif %}
                 {% endif %}
             </nav>
