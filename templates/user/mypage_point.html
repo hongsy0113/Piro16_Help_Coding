@@ -1,0 +1,48 @@
+{% extends 'user/main.html' %}
+
+{% block content %}
+<div>
+  <h3>○ 나의 포인트 현황 ( {{ user.email }} )</h3>
+  {% if points %}
+  {% for point in points %}
+  <p>
+    <p>내용 : {{ point.get_type_display }}</p>
+    <p>획득 포인트 : {{ point.point }}</p>
+    <p>일시 : {{ point.get_date }}</p>
+  </p>
+  {% endfor %}
+  {% else %}
+  <p>- 아직 획득한 포인트가 없습니다.</p>
+  {% endif %}
+
+  {% if is_paginated %}
+  <ul class="pagination">
+    {% if page_obj.has_previous %}
+    <li class="page-item">
+      <a class="page-link" href="?page={{ page_obj.previous_page_number }}" tabindex="-1">이전</a>
+    </li>
+    {% else %}
+    <li class="page-item disabled">
+      <a class="page-link" href="#" tabindex="-1">이전</a>
+    </li>
+    {% endif %}
+
+    {% for page in page_range %}
+    <li class="page-item {% if page == page_obj.number %} activate {% endif %}">
+      <a class="page-link" href="?page={{ page }}">{{ page }}</a>
+    </li>
+    {% endfor %}
+
+    {% if page_obj.has_next %}
+    <li class="page-item">
+      <a class="page-link" href="?page={{ page_obj.next_page_number }}">다음</a>
+    </li>
+    {% else %}
+    <li class="page-item disabled">
+      <a class="page-link" href="#">다음</a>
+    </li>
+    {% endif %}
+  </ul>
+  {% endif %}
+</div>
+{% endblock content %}

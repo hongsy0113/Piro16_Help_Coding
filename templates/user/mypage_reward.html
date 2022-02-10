@@ -1,0 +1,48 @@
+{% extends 'user/main.html' %}
+
+{% block content %}
+<div>
+  <h3>○ 나의 업적들 ( {{ user.email }} )</h3>
+  {% if rewards %}
+  {% for reward in rewards %}
+  <p>
+    <p>업적 이름 : {{ reward.reward.name }}</p>
+    <p>업적 설명 : {{ reward.reward.info }}</p>
+    <p>획득일 : {{ reward.get_date }}</p>
+  </p>
+  {% endfor %}
+  {% else %}
+  <p>- 아직 업적이 없습니다.</p>
+  {% endif %}
+
+  {% if is_paginated %}
+  <ul class="pagination">
+    {% if page_obj.has_previous %}
+    <li class="page-item">
+      <a class="page-link" href="?page={{ page_obj.previous_page_number }}" tabindex="-1">이전</a>
+    </li>
+    {% else %}
+    <li class="page-item disabled">
+      <a class="page-link" href="#" tabindex="-1">이전</a>
+    </li>
+    {% endif %}
+
+    {% for page in page_range %}
+    <li class="page-item {% if page == page_obj.number %} activate {% endif %}">
+      <a class="page-link" href="?page={{ page }}">{{ page }}</a>
+    </li>
+    {% endfor %}
+
+    {% if page_obj.has_next %}
+    <li class="page-item">
+      <a class="page-link" href="?page={{ page_obj.next_page_number }}">다음</a>
+    </li>
+    {% else %}
+    <li class="page-item disabled">
+      <a class="page-link" href="#">다음</a>
+    </li>
+    {% endif %}
+  </ul>
+  {% endif %}
+</div>
+{% endblock content %}

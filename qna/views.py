@@ -16,6 +16,7 @@ from hitcount.views import HitCountDetailView
 from django.views.generic.detail import SingleObjectMixin
 from django.core.files.storage import FileSystemStorage
 import mimetypes
+from user.update import *
 
 # class QuestionView(ListView):
 #     model = Question
@@ -316,6 +317,7 @@ def question_update(request,pk):
             question.tags.add(newtag)
 
         question.save()
+        update_question(question, request.user)
 
         return redirect('qna:question_detail', pk)
 
@@ -344,6 +346,7 @@ def question_delete(request, pk):
     if len(question.answer_set.all()) > 0:
         ### 답변이 달려 있어서 삭제 불가능
         return redirect('qna:question_detail', pk)
+    update_question_cancel(question, request.user)
     question.delete()
     return redirect('qna:question_list')
 
@@ -375,6 +378,8 @@ def answer_ajax(request):
     new_answer = Answer.objects.create(question_id=this_question, content=content, answer_order=new_order, user = user)
     # 템플릿에서 쉽게 띄울 수 있도록 답변 게시일자 포맷팅해서 json에 전달
     created_at = new_answer.created_at.strftime('%y.%m.%d %H:%M')
+
+    update_answer(new_answer, this_question.user, request.user)
 
     return JsonResponse({'id': new_answer.id ,'content': content,'user':username, 'created_at':created_at} )
 
@@ -408,6 +413,9 @@ def reply_ajax(request):
         user = user,
         parent_answer = this_answer
     )
+
+    update_answer_reply(new_answer, request.user)
+
     # 템플릿에서 쉽게 띄울 수 있도록 답변 게시일자 포맷팅해서 json에 전달
     created_at = new_answer.created_at.strftime('%y.%m.%d %H:%M')
 
@@ -435,8 +443,10 @@ def question_like_ajax(request):
 
     if is_liked:
         liked_users.remove(request.user)
+        update_question_like_cancel(question, question.user, request.user)
     else:
         liked_users.add(request.user)
+        update_question_like(question, question.user, request.user)
 
     total_likes = len(liked_users.all())
     return JsonResponse({'question_id':question_id, 'total_likes':total_likes, 'is_liking': not(is_liked)})
@@ -454,8 +464,10 @@ def answer_like_ajax(request):
     
     if is_liked:
         liked_users.remove(request.user)
+        update_comment_like_cancel(answer, answer.user, request.user)
     else:
         liked_users.add(request.user)
+        update_comment_like(answer, answer.user, request.user)
 
     total_likes = len(liked_users.all())
 
@@ -468,6 +480,10 @@ def answer_delete_ajax(request):
     answer_id = req['id']
 
     answer = get_object_or_404(Answer, pk=answer_id)
+    if answer.parent_answer:
+        update_answer_reply_cancel(answer, request.user)
+    else:
+        update_answer_cancel(answer, answer.question_id.user, request.user)
     answer.delete()
 
     return JsonResponse({'id':answer_id})
