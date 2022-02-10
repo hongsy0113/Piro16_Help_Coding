@@ -63,6 +63,7 @@
     height: 350px;
     margin-bottom: 30px;
     position: relative; 
+    z-index: -10;
 
     border: 1px solid #BDBDBD;
     box-sizing: border-box;
