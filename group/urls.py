@@ -17,4 +17,7 @@ urlpatterns = [
     # path('<int:pk>/join_group/', view=views.join_group_each, name='join_group_each'),
     path('star_ajax/', view=views.star_ajax, name='star_ajax'),
     path('group_list/', view=views.group_list, name='group_list'),
+    path('<int:pk>/post_list/', view=views.post_list, name='post_list'),
+    path('<int:pk>/post_create/', view=views.post_create, name='post_create'),
+    path('search_list/', view=views.search_result, name='search_result'),
 ]

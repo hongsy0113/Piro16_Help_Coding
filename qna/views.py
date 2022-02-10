@@ -12,7 +12,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator 
 
 def question_list(request):
-    question = Question.objects.all()
+    # question = Question.objects.all()
     page = request.GET.get('page', '1')    # 페이지
     questions = Question.objects.order_by('-created_at')   # [기본 정렬] 최신순으로 정렬
 

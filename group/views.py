@@ -8,8 +8,10 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.templatetags.static import static
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.db.models import Q
 from .models import *
 from .forms import *
+from django.core.paginator import Paginator 
 
 ######## 그룹 메인 페이지 ########
 
@@ -242,8 +244,6 @@ def join_list(request, pk):
     
     return render(request, template_name='join_list.html', name='join_list')
 
-
-
 ######## 공개 그룹 ########
 
 # 그룹 모아보기 게시판(그룹 찾기)
@@ -256,6 +256,57 @@ def group_list(request):
 
     return render(request, template_name='group/group_list.html', context=ctx)
 
+
+
+####### 그룹 내 커뮤니티 게시판 ########
+# 게시글 목록
+def post_list(request, pk):
+    posts = GroupPost.objects.filter(group__pk=pk)
+    group = Group.objects.get(pk=pk)
+    page = request.GET.get('page', '1')    # 페이지
+
+    # 페이징 처리
+    paginator = Paginator(posts, 5)    # 페이지당 5개씩 보여주기
+    page_obj = paginator.get_page(page)
+
+    ctx = {
+        'posts': page_obj,
+        'group': group,
+    }
+
+    return render(request, 'group/group_post_list.html', context=ctx)
+
+# 게시글 검색
+def search_result(request):
+    if 'search' in request.GET:
+        query = request.GET.get('search')
+        posts = GroupPost.objects.all().filter(
+            Q(title__icontains=query) | # 제목으로 검색
+            Q(content__icontains=query) # 내용으로 검색
+        )
+
+    return render(request, 'group/search_result.html', {'query': query, 'posts': posts})
+
+# 게시글 작성
+def post_create(request, pk):
+    if request.method == 'POST':
+        form = PostForm(request.POST, request.FILES)
+
+        print(form.errors)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.group = get_object_or_404(Group, pk=pk)   # 그룹 pk로 받아오기
+            # post.category_tag = request.POST.get('category_choice')  # 그룹게시글 카테고리 (대분류)
+            post.user = request.user
+            post = form.save()
+
+        return redirect('group:post_list', pk=pk)
+
+    else:
+        form = PostForm()
+        ctx = {'form': form}
+
+        return render(request, 'group/group_post_create.html', context=ctx)
 
 ## Ajax
 # 내 그룹 - 찜 기능 ajax
