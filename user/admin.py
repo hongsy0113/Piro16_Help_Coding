@@ -4,10 +4,10 @@ from .models import *
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ['id', 'nickname']
-    list_display_links = ['id', 'nickname']
+    list_display = ['id', 'email', 'nickname']
+    list_display_links = ['id', 'email', 'nickname']
 
-    
+admin.site.register(GetPoint)
 admin.site.register(Reward)
 admin.site.register(GetReward)
 admin.site.register(Alert)

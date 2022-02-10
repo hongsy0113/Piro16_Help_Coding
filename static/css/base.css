@@ -1,0 +1,164 @@
+* {
+    font-family: 'Noto Sans KR', sans-serif;
+    text-decoration: none;
+}
+
+header{
+    border-bottom: 1px solid #E5E5E5;
+    background-color: white;
+    position: sticky;
+    top: 0;
+}
+
+.header__nav-container {
+    height: 80px;
+    width: 1080px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+    top: 0;
+}
+
+header li, header a {
+    color: #4E4E4E;
+    font-size: 18px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.header__nav-left {
+    display: flex;
+    align-items: center;
+    gap: 67px;
+}
+
+.header__nav-left > ul, .header__nav-right > ul {
+    display: flex;
+    align-items: center;
+    gap: 50px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.header__nav-right {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.header__mypagecontainer {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    position: relative;
+    padding-bottom: 60px;
+    margin-top: 60px;
+}
+
+.header__mypagebtn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #C4C4C4;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #C4C4C4;
+}
+
+.header__mypage-dropdown {
+    display: none;
+    top: 0;
+    right: 0;
+    /* width: 1080px; */
+    position: absolute;
+    background-color: white;
+    padding: 0;
+    border-radius: 8px;
+    border: 1px solid #E5E5E5;
+    /* box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); */
+    z-index: 1;
+    /* display: flex; */
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    margin-top: 60px;
+    
+}
+
+.header__mypagecontainer:hover .header__mypage-dropdown {
+    display: flex;
+}
+
+.mypage-dropdown__userprofile{
+    display: flex;
+    align-items: center;
+    padding: 25px 20px;
+    gap: 15px;
+    border-bottom: 1px solid #E5E5E5;
+}
+
+.mypage-dropdown__userprofile-img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #C4C4C4;
+}
+
+.mypage-dropdown__userprofile-name {
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+}
+
+.mypage-dropdown__userprofile-name :first-child{
+    font-weight: bold;
+    font-size: 20px;
+    line-height: 100%;
+    margin: 0;
+}
+
+.mypage-dropdown__userprofile-name :last-child{
+    font-size: 14px;
+    line-height: 150%;
+    color: #828282;
+    margin: 0;
+}
+
+.header__mypage-dropdown a {
+    width: 100%;
+    padding: 15px 20px;
+    text-decoration: none;
+}
+
+.header__mypage-dropdown a:hover {background-color: #f1f1f1}
+
+.mypage-dropdown__mypagebtn{
+    font-weight: bold;
+    font-size: 18px;
+    line-height: 150%;
+    color: #828282;
+    border-bottom: 1px solid #E5E5E5;
+}
+
+.mypage-dropdown__logoutbtn{
+    font-weight: bold;
+    font-size: 18px;
+    line-height: 150%;
+    color: #EB6464;
+}
+
+section{
+    width: 1080px;
+    margin: 0 auto;
+    padding-top: 60px;
+}

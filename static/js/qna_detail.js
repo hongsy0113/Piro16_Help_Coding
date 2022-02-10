@@ -32,6 +32,7 @@ const answerHandleResponse = (id, content, user, created_at) => {
             <h2>${user}</h2>
             <p>${created_at}</p>
             <div>
+                <span>(작성자)</span>
                 <p class="answer__content answer__content--${id}">${content}</p>
                 <div class="answer__like-btn answer__like-btn--${id} btn"  id="answer-like-${id}" >
                     <i class="far fa-heart"></i>
@@ -165,6 +166,7 @@ relpyHandleResponse = (replyId, answerId ,content, user, created_at) => {
             <p>
             ${user}   ${created_at}
             <br>
+            <span>(작성자)</span>
             <p class= "answer__content answer__content--${replyId}"> ${content}</p>
             <br>
             <div class="answer__like-btn answer__like-btn--${replyId} btn"  id="answer-like-${replyId}" >

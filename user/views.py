@@ -5,6 +5,8 @@ from django.views import View
 from django.views.generic import ListView
 from .forms import LoginForm, SignupForm, MypageReviseForm
 from .models import *
+from .constants import *
+from .update import *
 from qna.models import Question, Answer
 from django.contrib import messages
 from django.contrib.sites.shortcuts import get_current_site
@@ -55,20 +57,24 @@ def validation_check(email, nickname, current_password, new_password1, new_passw
         elif User.objects.filter(email = email):  # 예외1-2) 이미 가입된 유저
             error += '이미 가입된 유저입니다.\n'
 
-    if User.objects.filter(nickname = nickname) or not nickname:
-        error += '이미 사용 중인 닉네임입니다.\n'
+    if 'signup' in command:  # 예외2-1) 이미 사용 중인 닉네임 (회원 가입 시)
+        if User.objects.filter(nickname = nickname) or not nickname:
+            error += '이미 사용 중인 닉네임입니다.\n'
+    else:  # 예외2-2) 이미 사용 중인 닉네임 (닉네임 수정 시)
+        if User.objects.filter(nickname = nickname) and User.objects.get(nickname = nickname).email != email:
+            error += '이미 사용 중인 닉네임입니다.\n'
 
     if 'password_change' in command:
-        if not check_password(current_password, User.objects.get(email = email).password):  # 예외2-1) 현재 비밀번호 오류
+        if not check_password(current_password, User.objects.get(email = email).password):  # 예외3-1) 현재 비밀번호 오류
             error += '현재 비밀번호가 일치하지 않습니다.\n'
 
     if 'signup' in command or 'password_change' in command:
-        if not re.compile('^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d$@$!%*#?&]{8,}$').match(new_password1):  # 예외3-1) 잘못된 비밀번호 형식
+        if not re.compile('^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d$@$!%*#?&]{8,}$').match(new_password1):  # 예외4-1) 잘못된 비밀번호 형식
             error += '비밀번호는 영문자와 숫자를 혼합하여 8자리 이상으로 만들어주세요. (사용 가능 특수 기호 : $@$!%*#?&)\n'
-        elif new_password1 != new_password2:  # 예외3-2) 비밀번호 불일치
+        elif new_password1 != new_password2:  # 예외4-2) 비밀번호 불일치
             error += '비밀번호가 일치하지 않습니다.\n'
 
-    if not re.compile('^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$').match(birth):  # 예외4) 잘못된 생년월일 형식
+    if not re.compile('^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$').match(birth):  # 예외5) 잘못된 생년월일 형식
         error += '생년월일을 2022-02-22 형식으로 입력해주세요.\n'
     
     return error
@@ -106,7 +112,11 @@ def sign_up(request):
                 birth = request.POST['birth'],
                 img = request.FILES.get('img'),
                 introduction = request.POST['introduction'],
-                total_like = 0,
+                total_question_like = 0,
+                total_comment_like = 0,
+                total_question = 0,
+                total_answer = 0,
+                total_answer_reply = 0,
                 job = request.POST['job'],
             )
             user.is_active = True  # 이메일 인증 기능 구현 시에는 False로 바꿀 것
@@ -123,7 +133,7 @@ def sign_up(request):
             )
             mail_subject = '[도와줘, 코딩] 회원가입 인증 메일입니다.'
             email = EmailMessage(mail_subject, message, to=[user.email])
-            email.send()
+            # email.send()
             return render(request, 'user/signup_success.html', {'email': user.email})
         return render(request, 'user/signup.html', {'form': form, 'sign_up_error': sign_up_error})
             
@@ -148,7 +158,7 @@ def my_page(request):
     user = request.user
     if user == AnonymousUser():
         return redirect('user:login')
-    rewards = GetReward.objects.filter(user_id = user).order_by('-get_date')[:5]
+    rewards = GetReward.objects.filter(user = user).order_by('-get_date')[:5]
     questions = Question.objects.filter(user = user).order_by('-updated_at')[:5]
     answers = Answer.objects.filter(user = user).order_by('-updated_at')[:5]
     ctx = {'user': user, 'rewards': rewards, 'questions': questions, 'answers': answers}
@@ -160,6 +170,7 @@ def my_page_revise(request):
     if user == AnonymousUser():
         return redirect('user:login')
     if request.method == 'POST':
+        update_question_like(user, user)
         form = MypageReviseForm(request.POST)
         command = ['mypage_revise']
         if request.POST['current_password'] or request.POST['new_password1'] or request.POST['new_password2']:
@@ -203,10 +214,28 @@ def my_page_revise(request):
         ctx = {'user': user, 'form': form}
         return render(request, template_name = 'user/mypage_revise.html', context = ctx)
 
-# My Page Question List
-class QuestionView(ListView):
-    model = Question
+# List View (Question, Answer, Reward, Point)
+class MypageView(ListView):
     paginate_by = 10
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        paginator = context['paginator']
+        page_numbers_range = 5
+        max_index = len(paginator.page_range)
+        page = self.request.GET.get('page')
+        current_page = int(page) if page else 1
+        start_index = int((current_page - 1) / page_numbers_range) * page_numbers_range
+        end_index = start_index + page_numbers_range
+        if end_index >= max_index:
+            end_index = max_index
+        page_range = paginator.page_range[start_index:end_index]
+        context['page_range'] = page_range
+        return context
+
+# My Page Question List
+class QuestionView(MypageView):
+    model = Question
     template_name = 'user/mypage_question.html'
     context_object_name = 'questions'
     
@@ -214,24 +243,9 @@ class QuestionView(ListView):
         questions = Question.objects.filter(user = self.request.user).order_by('-updated_at') 
         return questions
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        paginator = context['paginator']
-        page_numbers_range = 5
-        max_index = len(paginator.page_range)
-        page = self.request.GET.get('page')
-        current_page = int(page) if page else 1
-        start_index = int((current_page - 1) / page_numbers_range) * page_numbers_range
-        end_index = start_index + page_numbers_range
-        if end_index >= max_index:
-            end_index = max_index
-        page_range = paginator.page_range[start_index:end_index]
-        context['page_range'] = page_range
-        return context
-
-class AnswerView(ListView):
+# My Page Answer List
+class AnswerView(MypageView):
     model = Answer
-    paginate_by = 10
     template_name = 'user/mypage_answer.html'
     context_object_name = 'answers'
     
@@ -239,34 +253,22 @@ class AnswerView(ListView):
         answers = Answer.objects.filter(user = self.request.user).order_by('-updated_at') 
         return answers
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        paginator = context['paginator']
-        page_numbers_range = 5
-        max_index = len(paginator.page_range)
-        page = self.request.GET.get('page')
-        current_page = int(page) if page else 1
-        start_index = int((current_page - 1) / page_numbers_range) * page_numbers_range
-        end_index = start_index + page_numbers_range
-        if end_index >= max_index:
-            end_index = max_index
-        page_range = paginator.page_range[start_index:end_index]
-        context['page_range'] = page_range
-        return context
+# My Page Reward List
+class RewardView(MypageView):
+    model = GetReward
+    template_name = 'user/mypage_reward.html'
+    context_object_name = 'rewards'
+    
+    def get_queryset(self):
+        rewards = GetReward.objects.filter(user = self.request.user).order_by('-get_date')
+        return rewards
 
-#def my_page_question(request):
-#    user = request.user
-#    if user == AnonymousUser():
-#        return redirect('user:login')
-#    questions = Question.objects.filter(user = user).order_by('-updated_at')
-#    ctx = {'user': user, 'questions': questions}
-#    return render(request, template_name = 'user/mypage_question.html', context = ctx)
-
-# My Page Answer List
-#def my_page_answer(request):
-#    user = request.user
-#    if user == AnonymousUser():
-#        return redirect('user:login')
-#    answers = Answer.objects.filter(user = user).order_by('-updated_at')
-#    ctx = {'user': user, 'answers': answers}
-#    return render(request, template_name = 'user/mypage_answer.html', context = ctx)
+# My Page Point List
+class PointView(MypageView):
+    model = GetPoint
+    template_name = 'user/mypage_point.html'
+    context_object_name = 'points'
+    
+    def get_queryset(self):
+        points = GetPoint.objects.filter(user = self.request.user).order_by('-get_date') 
+        return points

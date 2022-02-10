@@ -1,18 +1,18 @@
-{% extends 'base.html' %}
+{% extends 'user/main.html' %}
 
 {% block content %}
 <div>
-  <h3>○ 나의 질문들 ( {{ user.email }} )</h3>
-  <button class="btn btn-secondary"><a class="text-white" href="{% url 'qna:question_list' %}" style="text-decoration: none">질문하러 가기</a></button>
-  {% if questions %}
-  {% for question in questions %}
+  <h3>○ 나의 업적들 ( {{ user.email }} )</h3>
+  {% if rewards %}
+  {% for reward in rewards %}
   <p>
-    <a class="text-black" href="{% url 'qna:question_detail' question.pk %}" style="text-decoration: none">- Q> {{ question.title }}</a>
-    <p>최근 수정일 : {{ question.updated_at }}</p>
+    <p>업적 이름 : {{ reward.reward.name }}</p>
+    <p>업적 설명 : {{ reward.reward.info }}</p>
+    <p>획득일 : {{ reward.get_date }}</p>
   </p>
   {% endfor %}
   {% else %}
-  <p>- 질문 기록이 없습니다.</p>
+  <p>- 아직 업적이 없습니다.</p>
   {% endif %}
 
   {% if is_paginated %}

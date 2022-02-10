@@ -1,10 +1,16 @@
-{% extends 'group_base.html' %}
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/group.css' %}" />
+{% endblock %}
 {% block title %} 초대 코드 발급 {% endblock %}
 
 {% block content %}
 
-    <div class="code_box">
+    <div class="code_box align-center">
         <h3>그룹명: {{ group.name }}</h3>
+        <a href="#">가입요청 목록</a>
         <h3>다음 코드로 친구를 초대하세요!</h3>
         <h1>{{ group.code }}</h1>
     </div>

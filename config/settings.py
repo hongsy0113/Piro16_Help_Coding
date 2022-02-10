@@ -10,6 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
+import os, json
+import secrets
 from pathlib import Path
 import os, json
 import secrets
@@ -58,6 +60,7 @@ INSTALLED_APPS = [
     'user',
     'qna',
     'six',
+    'hitcount',
 ]
 
 MIDDLEWARE = [
@@ -84,6 +87,9 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
+            'libraries':{
+            'my_tags': 'qna.templatetags.my_tags',  
+            }
         },
     },
 ]
