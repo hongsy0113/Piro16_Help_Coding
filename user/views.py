@@ -158,7 +158,7 @@ def my_page(request):
     user = request.user
     if user == AnonymousUser():
         return redirect('user:login')
-    rewards = GetReward.objects.filter(user_id = user).order_by('-get_date')[:5]
+    rewards = GetReward.objects.filter(user = user).order_by('-get_date')[:5]
     questions = Question.objects.filter(user = user).order_by('-updated_at')[:5]
     answers = Answer.objects.filter(user = user).order_by('-updated_at')[:5]
     ctx = {'user': user, 'rewards': rewards, 'questions': questions, 'answers': answers}
@@ -214,10 +214,28 @@ def my_page_revise(request):
         ctx = {'user': user, 'form': form}
         return render(request, template_name = 'user/mypage_revise.html', context = ctx)
 
-# My Page Question List
-class QuestionView(ListView):
-    model = Question
+# List View (Question, Answer, Reward, Point)
+class MypageView(ListView):
     paginate_by = 10
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        paginator = context['paginator']
+        page_numbers_range = 5
+        max_index = len(paginator.page_range)
+        page = self.request.GET.get('page')
+        current_page = int(page) if page else 1
+        start_index = int((current_page - 1) / page_numbers_range) * page_numbers_range
+        end_index = start_index + page_numbers_range
+        if end_index >= max_index:
+            end_index = max_index
+        page_range = paginator.page_range[start_index:end_index]
+        context['page_range'] = page_range
+        return context
+
+# My Page Question List
+class QuestionView(MypageView):
+    model = Question
     template_name = 'user/mypage_question.html'
     context_object_name = 'questions'
     
@@ -225,24 +243,9 @@ class QuestionView(ListView):
         questions = Question.objects.filter(user = self.request.user).order_by('-updated_at') 
         return questions
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        paginator = context['paginator']
-        page_numbers_range = 5
-        max_index = len(paginator.page_range)
-        page = self.request.GET.get('page')
-        current_page = int(page) if page else 1
-        start_index = int((current_page - 1) / page_numbers_range) * page_numbers_range
-        end_index = start_index + page_numbers_range
-        if end_index >= max_index:
-            end_index = max_index
-        page_range = paginator.page_range[start_index:end_index]
-        context['page_range'] = page_range
-        return context
-
-class AnswerView(ListView):
+# My Page Answer List
+class AnswerView(MypageView):
     model = Answer
-    paginate_by = 10
     template_name = 'user/mypage_answer.html'
     context_object_name = 'answers'
     
@@ -250,17 +253,22 @@ class AnswerView(ListView):
         answers = Answer.objects.filter(user = self.request.user).order_by('-updated_at') 
         return answers
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        paginator = context['paginator']
-        page_numbers_range = 5
-        max_index = len(paginator.page_range)
-        page = self.request.GET.get('page')
-        current_page = int(page) if page else 1
-        start_index = int((current_page - 1) / page_numbers_range) * page_numbers_range
-        end_index = start_index + page_numbers_range
-        if end_index >= max_index:
-            end_index = max_index
-        page_range = paginator.page_range[start_index:end_index]
-        context['page_range'] = page_range
-        return context
+# My Page Reward List
+class RewardView(MypageView):
+    model = GetReward
+    template_name = 'user/mypage_reward.html'
+    context_object_name = 'rewards'
+    
+    def get_queryset(self):
+        rewards = GetReward.objects.filter(user = self.request.user).order_by('-get_date')
+        return rewards
+
+# My Page Point List
+class PointView(MypageView):
+    model = GetPoint
+    template_name = 'user/mypage_point.html'
+    context_object_name = 'points'
+    
+    def get_queryset(self):
+        points = GetPoint.objects.filter(user = self.request.user).order_by('-get_date') 
+        return points

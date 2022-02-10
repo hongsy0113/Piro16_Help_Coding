@@ -12,6 +12,7 @@
   <p>- 좋아요 수 : {{ user.total_like }}</p>
   <p>- 포인트 : {{ user.points }}</p>
   <button class="btn btn-secondary"><a class="text-white" href="{% url 'user:mypage_revise' %}" style="text-decoration: none">개인정보 수정</a></button>
+  <button class="btn btn-secondary"><a class="text-white" href="{% url 'user:mypage_point' %}" style="text-decoration: none">나의 포인트 현황</a></button>
   {% if messages %}{% for message in messages %}<p class="text-danger">{{ message.message }}</p>{% endfor %}{% endif %}
 </div>
 <hr>
@@ -21,7 +22,7 @@
   {% for reward in rewards %}
   <p>- [업적] {{ reward.reward.name }} (달성일 : {{ reward.get_date }})</p>
   {% endfor %}
-  <button class="btn btn-secondary"><a class="text-white" href="" style="text-decoration: none">전체 업적 보기</a></button>
+  <button class="btn btn-secondary"><a class="text-white" href="{% url 'user:mypage_reward' %}" style="text-decoration: none">전체 업적 보기</a></button>
   {% else %}
   <p>- 아직 달성한 업적이 없습니다.</p>
   {% endif %}
