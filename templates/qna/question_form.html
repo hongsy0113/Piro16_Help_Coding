@@ -19,11 +19,22 @@
     {% csrf_token %}
     <div>
         <label for="title">질문 제목</label><br />
+        {% comment %}
         <input type="text" name="title" id="title" value="{{ question.title }}"/>
+        {{ form.title.errors }}
+        {% endcomment %}
+        {{ form.title }}
+        
     </div>
     <div>
         <label for="content">질문 내용</label><br />
+        {{form.content}}
+
+        {% comment %}
         <textarea name="content" id="content" cols="30" rows="10">{% if question.content %}{{ question.content }}{% endif %}</textarea>
+        {{ form.content.errors }}
+        {% endcomment %}
+        
     </div>
     <div>
         <label for="image">이미지 업로드</label><br />
@@ -42,6 +53,7 @@
         <input type="radio" name="s_or_e_tag" value="ETC" id="etc" class="tag" {% if question.s_or_e_tag == 'ETC' %} checked {% endif %}/>
         <label for="etc">기타</label>
     </div>
+    <span style="color: red;">{{ s_or_e_error }}</span>
     <div class="select__tag">
         <p>상세 태그 선택</p>
         <input type="checkbox" name="detail_tag" value="MOTION" id="motion" class="tag" {% if 'MOTION' in basic_tag_names %} checked {% endif %} />

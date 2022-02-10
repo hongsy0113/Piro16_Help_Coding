@@ -117,27 +117,39 @@ def search_result(request):
 def question_create(request):
     if request.method == 'POST':
         form = QuestionForm(request.POST, request.FILES)
-
-        question = form.save(commit=False)  # 넘겨진 데이터 form에 바로 저장 X
-        question.s_or_e_tag = request.POST.get('s_or_e_tag')  # 카테고리 (스크래치, 엔트리, 기타) 중 1 선택
-        question.user = request.user
-        question.save() 
+        
+        if form.is_valid():
+            question = form.save(commit=False)  # 넘겨진 데이터 form에 바로 저장 X
+            if request.POST.get('s_or_e_tag', '') == '':
+                error = '기본 카테고리를 선택해주세요!'
+                ctx = {'form': form, 's_or_e_error': error, 'question':question}
+                return render(request, 'qna/question_form.html', context=ctx)
+            question.s_or_e_tag = request.POST.get('s_or_e_tag')  # 카테고리 (스크래치, 엔트리, 기타) 중 1 선택
+            
+            question.user = request.user
+            question.save() 
         # 상세 태그 (기능) 선택
-        tags = request.POST.getlist('detail_tag')
-        for tag in tags:
-            if len(QnaTag.objects.filter(tag_name=tag)) == 0:
-                QnaTag.objects.create(
-                    tag_name = tag,
-                )
+            tags = request.POST.getlist('detail_tag')
+            for tag in tags:
+                if len(QnaTag.objects.filter(tag_name=tag)) == 0:
+                    QnaTag.objects.create(
+                        tag_name = tag,
+                    )
 
-            # QnaTag db에 없으면 오류 발생
-            newtag = get_object_or_404(QnaTag, tag_name=tag)
-            question.tags.add(newtag)
+                # QnaTag db에 없으면 오류 발생
+                newtag = get_object_or_404(QnaTag, tag_name=tag)
+                question.tags.add(newtag)
 
-        question.save()
+            question.save()
 
-        return redirect('qna:question_detail', question.pk)
-
+            return redirect('qna:question_detail', question.pk)
+        else:
+            error_data = (form.errors.as_data())
+            error_dict = {}
+            for k in error_data:
+                error_dict[k] = error_data[k][0].message
+            print(error_dict)
+            return render(request, 'qna/question_form.html', context={'form': form,})
     else:
         form = QuestionForm()
         ctx = {'form': form}
