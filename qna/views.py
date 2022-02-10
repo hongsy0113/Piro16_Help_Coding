@@ -1,5 +1,4 @@
-from ast import Global
-from gc import get_objects
+
 from multiprocessing.dummy import JoinableQueue
 import queue
 from django.shortcuts import render, redirect, get_object_or_404
@@ -8,12 +7,14 @@ from .forms import *
 from django.contrib import messages
 from django.db.models import Q
 import json
-from django.http import JsonResponse
+from django.http import JsonResponse, FileResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator 
 from django.db.models import Count
-from django.views.generic import ListView
+from django.views.generic import ListView, View
 from hitcount.views import HitCountDetailView
+from django.views.generic.detail import SingleObjectMixin
+from django.core.files.storage import FileSystemStorage
 
 # class QuestionView(ListView):
 #     model = Question
@@ -83,7 +84,7 @@ def question_list(request):
     # 페이징 처리
     paginator = Paginator(questions, 5)    # 페이지당 5개씩 보여주기
     page_obj = paginator.get_page(page)
-    print(sort_by)
+
     ctx = {
         'questions': page_obj,
         'sort_by':sort_by,
@@ -149,7 +150,6 @@ def question_create(request):
                 ctx = {'form': form, 's_or_e_error': error, 'question':question}
                 return render(request, 'qna/question_form.html', context=ctx)
             question.s_or_e_tag = request.POST.get('s_or_e_tag')  # 카테고리 (스크래치, 엔트리, 기타) 중 1 선택
-            
             question.user = request.user
             question.save() 
         # 상세 태그 (기능) 선택
@@ -275,10 +275,28 @@ class QuestionDetailView(HitCountDetailView):
         context['answers_reply_dict']= answers_reply_dict
         context['is_liked']= is_liked
         
+        print(self.object.attached_file)
+        print(self.object.attached_file.name)
+        print(self.object.attached_file.path)
+        print(self.object.attached_file.url)
+        print(self.object.attached_file.name.split('.')[-1])
 
         return context
 
+class FileDownloadView(SingleObjectMixin, View):
+    queryset = Question.objects.all()
 
+    def get(self, request, pk):
+        print('test')
+        object = get_object_or_404(Question, pk=pk)
+        
+        file_path = object.attached_file.path
+        file_type = object.attached_file.name.split('.')[-1]  # django file object에 content type 속성이 없어서 따로 저장한 필드
+        fs = FileSystemStorage(file_path)
+        response = FileResponse(fs.open(file_path, 'rb'), content_type=file_type)
+        response['Content-Disposition'] = f'attachment; filename={object.get_filename()}'
+        
+        return response
 
 
 

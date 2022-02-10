@@ -3,6 +3,7 @@ from user.models  import User
 from group.models  import *
 from django.contrib.contenttypes.fields import GenericRelation
 from hitcount.models import HitCountMixin, HitCount
+import os
 
 # Create your models here.
 class Question(models.Model, HitCountMixin):
@@ -34,6 +35,9 @@ class Question(models.Model, HitCountMixin):
 
     def is_answered(self):
         return self.answer_set.count() > 0
+
+    def get_filename(self):
+        return os.path.basename(self.attached_file.name)
 
     hit_count_generic = GenericRelation(
         HitCount, object_id_field='object_pk',
@@ -90,7 +94,7 @@ class QnaTag(models.Model):
         ('ETC', '기타'),
     )
     '''
-    tag_name = models.CharField(verbose_name='태그', choices=S_TAG_CHOICES, max_length=20)
+    tag_name = models.CharField(verbose_name='태그',  max_length=20)
 
     def __str__(self):
         return self.tag_name

@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from .views import FileDownloadView
 
 app_name = 'qna'
 
@@ -19,4 +20,5 @@ urlpatterns = [
     path('answer_delete_ajax/', views.answer_delete_ajax, name='answer_delete_ajax'),
     path('answer_edit_ajax/', views.answer_edit_ajax, name='answer_edit_ajax'),
     path('answer_edit_submit_ajax/', views.answer_edit_submit_ajax, name='answer_edit_submit_ajax'),
+    path('<int:pk>/download/', FileDownloadView.as_view(), name="download"),
 ]
