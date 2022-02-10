@@ -31,7 +31,7 @@ const starHandleResponse = (groupId, is_star) => {
 };
 
 // 초대 코드 입력 창 
-const groupJoinBtn = document.querySelector('.group-join__btn');
+const groupJoinBtn = document.querySelector('.right__joinbtn');
 const closeJoinBtn = document.querySelector('.group-join__close');
 
 function showGroupJoin() {
