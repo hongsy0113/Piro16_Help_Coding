@@ -5,7 +5,8 @@
     <link rel="stylesheet" href="{% static 'css/group.css' %}" />
 {% endblock %}
 {% block js %}
-    <script src="{% static 'js/group_star.js' %}" defer></script>
+    <script src="{% static 'js/group_detail.js' %}" defer></script>
+    <script src="{% static 'js/group_wait.js' %}" defer></script>
 {% endblock %}
 {% block title %}그룹 상세 페이지{% endblock %}
 
@@ -13,14 +14,19 @@
 {{ request.user.id|json_script:"user_id" }}
 {{ group.id|json_script:"group_id" }}
 
-    <div class="group-info">
-        <div class="group-info__nav">
+    <div class="group-info align-center">
+        <div class="group-info__nav d-flex flex-row">
             <div class="group-info__name">
+                {% if group.mode == 'PUBLIC' %}
+                <i class="ri-lock-unlock-fill"></i>
+                {% else %}
+                <i class="ri-lock-2-fill"></i>
+                {% endif %}
                 <h2 class="d-flex flex-row">
                     {{ group.name }}
                     {% if group in mygroup %}
                     <div class="group-star">
-                        <button class="star group__keyword-star group__keyword-star--{{ group.id }}" id="keyword-star-{{ group.id }}">  
+                        <button class="star group__keyword-star group__keyword-star--{{ group.id }} btn btn-light" id="keyword-star-{{ group.id }}">  
                             {% if group.is_star %} <!-- 꽉 찬 별 -->
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 18.26l-7.053 3.948 1.575-7.928L.587 8.792l8.027-.952L12 .5l3.386 7.34 8.027.952-5.935 5.488 1.575 7.928z"/></svg>                            
                             {% else %} <!-- 빈 별 -->
@@ -31,29 +37,59 @@
                     {% endif %}
                 </h2>
             </div>
-            <a href="{% url 'group:group_home' %}">그룹 홈</a>
+            <nav>
+                <a href="{% url 'group:group_home' %}">그룹 홈</a>
+                {% if group.mode == 'PRIVATE' %}
+                    {% if maker == user %}
+                    <!-- 그룹 초대코드 생성 modal -->
+                    <div class="group__code--alert-box" id="create-code">
+                        친구 초대 
+                        <div class="code_box">
+                        </div>
+                        <button class="group__code--close btn btn-dark" onclick="closeCreateCode()">닫기</button>
+                    </div>
+                    <button class="group__code--btn btn btn-dark">친구 초대하기</button>
+
+                    {% endif %}
             <a href="{% url 'group:post_list' group.pk %}">그룹 커뮤니티</a>
-            {% if group.mode == 'PRIVATE' %}
-            <a href="{% url 'group:create_code' group.pk %}">친구 초대하기</a>
-            {% endif %}
-            {% if group.mode == 'PUBLIC' %}
-                {% if maker == user %}
-                <a href="{% url 'group:join_list' group.pk %}">그룹 가입신청 관리</a>
                 {% endif %}
-            {% endif %}
-            <!-- <div class="group__code--alert-box" id="create-code">
-                Alert 친구초대 
-                <div class="code_box">
-                    <h3>그룹명: {{ group.name }}</h3>
-                    <h3>다음 코드로 친구를 초대하세요!</h3>
-                    <h1>{{ group.code }}</h1>
-                </div>
-                <a href="{% url 'group:group_home' %}">홈으로</a>
-                <button class="group__code--close btn btn-dark" onclick="closeCode()">닫기</button>
-            </div>
-            <button class="group__code--btn btn btn-dark" onclick="createCode()">친구 초대하기</button> -->
+                {% if group.mode == 'PUBLIC' %}
+                    {% if maker == user %}
+                    <button class="group__wait--btn btn btn-dark">그룹 가입신청 관리</button>
+
+                    <!-- 가입 대기 리스트 modal -->
+                    <div class="group__member--all">
+                        <div class="group__wait-name"><h2></h2></div>
+                        <div class="d-flex flex-row">
+                            <h3>대기자 명단</h3>
+                            <hr/>
+                            <div class="group__wait--member-list me-2 p-4">
+                                
+                                {% for wait in waits %}
+                                    <form method="GET" class="group-wait__one d-flex flex-row">
+                                        <div class="d-flex flex-row align-items-center">
+                                            {% if wait.img %}
+                                            <img src="{{ wait.img.url }}" height="50" width="50" style="border-radius: 50px;"/>
+                                            {% else %}
+                                            <img src="{{ profile_img }}" height="50" width="50" style="border-radius: 50px;"/>
+                                            {% endif %}
+                                            <h6>{{ wait }}</h6>
+                                            <input type="submit" value="수락" name="accept">
+                                            <input type="submit" value="거절" name="reject">
+                                        </div>  
+                                    </form>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
+                        <button class="group__wait--close btn btn-dark" onclick="closeGroupWait()">닫기</button>
+                    </div>
+                    {% endif %}
+                {% endif %}
+            </nav>
+
         </div>
-        <div class="group-info__main">
+        <div class="group-info__main d-flex flex-row">
             <div class="group-info__image">
                 {% if group.image %}
                 <img src="{{ group.image.url }}" height="200" width="200" />
@@ -61,8 +97,18 @@
                 <img src="{{ ani_image }}" height="200" width="200" />
                 {% endif %}
             </div>
-            <div>{{ group.intro }}</div>
+            <div class="group-info__intro ms-3" style="width:35em;">{{ group.intro }}</div>
         </div>
+        {% if group.mode == 'PUBLIC' %}
+            <div class="all-group__heart btn btn-primary" id="all-group__heart">
+                {% if is_liked %}
+                <i class="fas fa-heart"></i>
+                {% else %}
+                <i class="far fa-heart"></i>
+                {% endif %}
+                <span>좋아요 {{ total_likes }}개</span>
+            </div>
+        {% endif %}
         <div class="group-info__member">
             <h3>멤버 명단</h3>
             <div class="d-flex flex-row align-items-center">
@@ -87,13 +133,15 @@
             {% endfor %}
         </div>
         <div class="group-info__input">
-            <a href="{% url 'group:group_delete' group.pk %}" class="delete_btn">삭제</a>
-            <a href="{% url 'group:group_home' %}" class="list_btn">목록</a>
-            <a href="{% url 'group:group_update' group.pk %}" class="update_btn">수정</a>
-            <a href="{% url 'group:group_drop' group.pk %}">그룹 탈퇴하기</a>
+            <a href="{% url 'group:group_home' %}" class="list_btn btn btn-light">목록</a>
+            <a href="{% url 'group:group_update' group.pk %}" class="update_btn btn btn-light">수정</a>
+            <a href="{% url 'group:group_drop' group.pk %}" class="btn btn-light">그룹 탈퇴</a>
+            {% if maker == user %}
+            <a href="{% url 'group:group_delete' group.pk %}" class="delete_btn btn btn-light">그룹 삭제</a>
+            {% endif %}
             {% if group.mode == 'PUBLIC' %}
                 {% if maker != user %}
-                <a href="{% url 'group:public_group_join' group.pk %}">그룹 가입하기[공개그룹]</a>
+                <a href="{% url 'group:public_group_join' group.pk %}" class="btn btn-light">그룹 가입</a>
                 {% endif %}
             {% endif %}
         </div>

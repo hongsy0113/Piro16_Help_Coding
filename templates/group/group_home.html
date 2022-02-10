@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block js %}
-    <script src="{% static 'js/group_star.js' %}" defer></script>
+    <script src="{% static 'js/group_home.js' %}" defer></script>
 {% endblock %}
 
 {% block title %} 나의 그룹 {% endblock %}
@@ -22,6 +22,17 @@
     <div class="mygroup__top">
         <div class="mygroup__top-left">
             <span>내 그룹</span>
+        <!-- 그룹 초대 modal -->
+        <div class="group-join__alert-box" id="join-group">
+            <div class="group-join__box">
+                <input type="text" name="group_code" placeholder="초대코드를 입력하세요!" class="group-code__input">
+                <input type="submit" value="입력" class="group-code__submit">
+
+                <div class="group-code__text">
+                    <h4>{{ message }}</h4>
+                </div>
+            </div>
+            <button class="join__code--close btn btn-dark" onclick="closeGroupJoin()">닫기</button>
         </div>
         <div class="mygroup__top-right">
             <a href="{% url 'group:group_create' %}" class="right__makebtn">그룹 만들기</a>
@@ -72,6 +83,18 @@
                                 <i class="ri-lock-2-fill"></i>
                                 {% endif %}
                             </div>
+        <button class="group-join__btn btn btn-dark" onclick="showGroupJoin()">그룹 가입하기</button>
+
+    <div class="mygroup__home">
+        
+        <form method="get" action="{% url 'group:group_home' %}" class="group_sort float-end me-4">
+            <select id="sort_select" class="sort_select" onchange="location=this.value; getSelectValue(this.form);">
+
+                <option class="sort-star" value="?sort=star" {% if sort_by == 'star' %} selected {% endif %}>찜하기순</option>
+                <option class="sort-name" value="?sort=name" {% if sort_by == 'name' %} selected {% endif %}>이름순</option>
+                <!-- <option class="sort-member" value="?sort=member">멤버수</option> -->
+            </select>
+        </form>
                         </div>
 
                         <!-- 그룹인원수 -->

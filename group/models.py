@@ -35,10 +35,9 @@ class Group(models.Model):
         ('PRIVATE', '비공개'),
     )
     mode = models.CharField(verbose_name='공개 여부', choices=MODE_CHOICES, max_length=20, default=0)
-    star = models.IntegerField(verbose_name="찜하기 개수", default=0)
+    interests = models.ManyToManyField('user.User', blank=True, related_name='interests')
     is_star = models.BooleanField(verbose_name="찜하기", default=False)
     
-
     def __str__(self):
         return self.name
 
