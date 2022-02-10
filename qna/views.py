@@ -185,6 +185,8 @@ def answer_ajax(request):
     # 템플릿에서 쉽게 띄울 수 있도록 답변 게시일자 포맷팅해서 json에 전달
     created_at = new_answer.created_at.strftime('%y.%m.%d %H:%M')
 
+    update_answer(this_question.user, request.user)
+
     return JsonResponse({'id': new_answer.id ,'content': content,'user':username, 'created_at':created_at} )
 
 # 대댓글 작성
@@ -217,6 +219,9 @@ def reply_ajax(request):
         user = user,
         parent_answer = this_answer
     )
+
+    update_answer_reply(request.user)
+
     # 템플릿에서 쉽게 띄울 수 있도록 답변 게시일자 포맷팅해서 json에 전달
     created_at = new_answer.created_at.strftime('%y.%m.%d %H:%M')
 
@@ -244,8 +249,10 @@ def question_like_ajax(request):
 
     if is_liked:
         liked_users.remove(request.user)
+        update_question_like_cancel(question, question.user, request.user)
     else:
         liked_users.add(request.user)
+        update_question_like(question, question.user, request.user)
 
     total_likes = len(liked_users.all())
     return JsonResponse({'question_id':question_id, 'total_likes':total_likes, 'is_liking': not(is_liked)})
@@ -263,8 +270,10 @@ def answer_like_ajax(request):
     
     if is_liked:
         liked_users.remove(request.user)
+        update_comment_like_cancel(answer, answer.user, request.user)
     else:
         liked_users.add(request.user)
+        update_comment_like(answer, answer.user, request.user)
 
     total_likes = len(liked_users.all())
 
@@ -277,6 +286,10 @@ def answer_delete_ajax(request):
     answer_id = req['id']
 
     answer = get_object_or_404(Answer, pk=answer_id)
+    if answer.parent_answer:
+        update_answer_reply_cancel(request.user)
+    else:
+        update_answer_cancel(answer.question_id.user, request.user)
     answer.delete()
 
     return JsonResponse({'id':answer_id})
