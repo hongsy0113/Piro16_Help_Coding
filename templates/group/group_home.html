@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block js %}
-    <script src="{% static 'js/group_ajax.js' %}" defer></script>
+    <script src="{% static 'js/group_home.js' %}" defer></script>
 {% endblock %}
 
 {% block title %} 나의 그룹 {% endblock %}
@@ -20,39 +20,12 @@
         <!-- <a href="{% url 'group:join_group' %}" class="btn btn-dark">그룹 가입하기</a> -->
 
         <!-- 그룹 초대 modal -->
-        <button type="button" data-toggle="modal" data-target="#myModal">Launch modal</button>
-
-
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#staticBackdrop"> Launch static backdrop modal </button>
-
-        <div class="modal fade" id="staticBackdrop" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true"> 
-            <div class="modal-dialog" role="document"> 
-                <div class="modal-content"> 
-                    <div class="modal-header"> 
-                        <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5> 
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"> 
-                            <span aria-hidden="true">&times;</span> 
-                        </button> 
-                    </div> 
-                    <div class="modal-body"> ... </div> 
-                    <div class="modal-footer"> 
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> 
-                        <button type="button" class="btn btn-primary">Understood</button> 
-                    </div> 
-                </div> 
-            </div> 
-        </div>
-
-
-
-
         <div class="group-join__alert-box" id="join-group">
             <div class="group-join__box">
-                <form method="GET" class="group-join__code" action="{% url 'group:join_group' %}">
-                    <input placeholder="초대 코드 입력" type="text" name="code" />
-                    <button type="submit">Submit</button>
-                </form>
-                <div class="group-join__message">
+                <input type="text" name="group_code" placeholder="초대코드를 입력하세요!" class="group-code__input">
+                <input type="submit" value="입력" class="group-code__submit">
+
+                <div class="group-code__text">
                     <h4>{{ message }}</h4>
                 </div>
             </div>

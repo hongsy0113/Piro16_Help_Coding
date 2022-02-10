@@ -1,3 +1,4 @@
+from email import message
 import re
 from tokenize import blank_re
 import uuid
@@ -280,24 +281,20 @@ def get_invite_code(length=6):
     ).decode()[:length]
 
 # 초대 코드 공개(from 그룹 상세 페이지)
-@csrf_exempt
-def create_code(request):
-    req = json.loads(request.body)
-    group_id = req['id']
-    group = get_object_or_404(Group, pk=group_id)
+def create_code(request, pk):
+
+    group = get_object_or_404(Group, pk=pk)
     group.code = get_invite_code()
     group.save()
     # 여기서 3분 제한 둘 것
     code = group.code
     print(code)
-    
+
     ctx = { 
-        'id': group_id,
-        'code': code,
-        'name': group.name
+        'group': group
     }
 
-    return render(request, template_name='group/group_detail.html', context=ctx)
+    return render(request, template_name='group/create_code.html', context=ctx)
 
     # return render(request, template_name='group/group_detail.html', context=ctx)
 
@@ -347,6 +344,34 @@ def join_group(request):
 
 #     return render(request, template_name='group/input_code.html', context=ctx)
 
+# 초대 코드 입력하기 (나의 그룹 홈페이지)
+@csrf_exempt
+def join_code_ajax(request):
+    req = json.loads(request.body)
+    
+    user = request.user
+    input_code = req['code']
+    mygroup = list(Group.objects.filter(members__nickname__contains=user))
+
+    try:
+        if input_code != None:
+            group = get_object_or_404(Group, code=input_code)
+            if group in mygroup:
+                message = '이미 가입된 그룹입니다.'
+            else:
+                group.members.add(user)
+                group.save()
+                message = '가입에 성공했습니다.'
+
+        else:
+            message = '가입에 성공했습니다.'
+
+    except:
+        message = '존재하지 않는 코드입니다.'
+
+    ctx = { 'message': message }
+
+    return JsonResponse({ 'message': message })
 
 ######## 공개 그룹 ########
 
