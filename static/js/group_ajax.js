@@ -1,7 +1,7 @@
 const user_id = JSON.parse(document.getElementById('user_id').textContent);
 const group_id = JSON.parse(document.getElementById('group_id').textContent);
 
-// 찜 기능
+// 나의 그룹 찜 기능 ajax
 const onClickStar = async (id) => {
     const url = '/group/star_ajax/';
     const {data} = await axios.post(url, {
@@ -62,3 +62,35 @@ function closeJoin() {
 // }
 
 // closeCodeBtn.addEventListener('click', closeCode);
+
+
+// 공개 그룹 좋아요 ajax
+const heartBtn = document.getElementById('all-group__heart');
+
+onClickLike = async(groupId) => {
+    const url = '/group/interest_ajax/';
+    const {data} = await axios.post(url,{
+        groupId
+    });
+    likeHandleResponse(data.groupId, data.total_likes, data.is_liked);
+}
+
+heartBtn.addEventListener('click', function(){
+    onClickLike(group_id);
+})
+
+likeHandleResponse = (groupId, total_likes, is_liked) => {
+
+    if (is_liked){
+        heartBtn.innerHTML = `
+        <i class="fas fa-heart"></i>
+        <span>좋아요 ${total_likes}개</span>
+        `
+    }
+    else {
+        heartBtn.innerHTML = `
+        <i class="far fa-heart"></i>
+        <span>좋아요 ${total_likes}개</span>
+        `
+    }
+};

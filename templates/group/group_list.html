@@ -6,8 +6,9 @@
 {% endblock %}
 
 {% block js %}
-    <script src="{% static 'js/group_public.js' %}" defer></script>
+
 {% endblock %}
+
 {% block title %} 그룹 커뮤니티 {% endblock %}
 
 {% block content %}
@@ -23,8 +24,8 @@
         <form method="get" action="" class="all-group__sort float-end">
             <select id="sort_select" class="sort_select" onchange="location=this.value; getSelectValue(this.form);">
 
+                <option class="sort-interest" value="?sort=interest">인기순</option>
                 <option class="sort-name" value="?sort=name">이름순</option>
-                <option class="sort-interest" value="?sort=interest">관심순</option>
             </select>
         </form>
         <div class="all-group__list d-grid align-center">
@@ -39,12 +40,10 @@
                         {% endif %}
                     </div>
                     <div class="all-group__intro">{{ group.intro|truncatewords:30 }}</div>
-                    <div class="all-group__keyword d-flex flex-row">
-                        <div class="all-group__heart--{{ group.id }}" id="group-heart-{{ group.id }}">
-                            <button class="group__heart heart all-group__heart">
-                                <i class="fas fa-heart"></i>
-                                <span>{{ group.interest }}</span>
-                            </button>
+                    <div class="all-group__keyword d-flex flex-row justify-content-around">
+                        <div class="all-group__interest">
+                            <i class="fas fa-heart"></i>
+                            <span>{{ group.interests.all | length }}</span>
                         </div>
                         <div class="all-group__member">멤버 수{{ group.members.all | length }}</div>
                     </div>

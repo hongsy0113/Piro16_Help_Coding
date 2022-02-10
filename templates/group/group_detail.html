@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="{% static 'css/group.css' %}" />
 {% endblock %}
 {% block js %}
-    <script src="{% static 'js/group_private.js' %}" defer></script>
+    <script src="{% static 'js/group_ajax.js' %}" defer></script>
 {% endblock %}
 {% block title %}그룹 상세 페이지{% endblock %}
 
@@ -16,11 +16,16 @@
     <div class="group-info align-center">
         <div class="group-info__nav d-flex flex-row">
             <div class="group-info__name">
+                {% if group.mode == 'PUBLIC' %}
+                <i class="ri-lock-unlock-fill"></i>
+                {% else %}
+                <i class="ri-lock-2-fill"></i>
+                {% endif %}
                 <h2 class="d-flex flex-row">
                     {{ group.name }}
                     {% if group in mygroup %}
                     <div class="group-star">
-                        <button class="star group__keyword-star group__keyword-star--{{ group.id }}" id="keyword-star-{{ group.id }}">  
+                        <button class="star group__keyword-star group__keyword-star--{{ group.id }} btn btn-light" id="keyword-star-{{ group.id }}">  
                             {% if group.is_star %} <!-- 꽉 찬 별 -->
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 18.26l-7.053 3.948 1.575-7.928L.587 8.792l8.027-.952L12 .5l3.386 7.34 8.027.952-5.935 5.488 1.575 7.928z"/></svg>                            
                             {% else %} <!-- 빈 별 -->
@@ -67,6 +72,16 @@
             </div>
             <div class="group-info__intro ms-3" style="width:35em;">{{ group.intro }}</div>
         </div>
+        {% if group.mode == 'PUBLIC' %}
+            <div class="all-group__heart btn btn-primary" id="all-group__heart">
+                {% if is_liked %}
+                <i class="fas fa-heart"></i>
+                {% else %}
+                <i class="far fa-heart"></i>
+                {% endif %}
+                <span>좋아요 {{ total_likes }}개</span>
+            </div>
+        {% endif %}
         <div class="group-info__member">
             <h3>멤버 명단</h3>
             <div class="d-flex flex-row align-items-center">

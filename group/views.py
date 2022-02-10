@@ -8,6 +8,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.templatetags.static import static
 from django.db.models import Q
 from django.core.paginator import Paginator
+from django.db.models import Count
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import *
@@ -26,7 +27,7 @@ def group_home(request):
     page = request.GET.get('page', '1')
 
     # 정렬하기
-    sort = request.GET.get('sort', 'name')
+    sort = request.GET.get('sort', 'star')
     if sort == 'name':
         groups = groups.order_by('name')
     elif sort == 'star':
@@ -231,26 +232,28 @@ def group_drop(request, pk):
 # 그룹 상세 페이지
 def group_detail(request, pk):
     user = request.user
-    groups = get_object_or_404(Group, pk=pk)
+    group = get_object_or_404(Group, pk=pk)
+
     mygroup = Group.objects.filter(members__nickname__contains=user)
-    members = groups.members.all()
-    groups.maker = members[0]
-    maker = groups.maker
-    groups.save()
+    members = group.members.all()
+    group.maker = members[0]
+    maker = group.maker
+    group.save()
 
-    # if groups.mode == 'PUBLIC':
-    #     modes = groups.mode
+    total_likes = len(group.interests.all())
+    is_liked = user in group.interests.all()
 
-    print(members)
-    print(maker)
-    print(groups.mode)
-    print(members.filter(nickname__contains=maker.nickname))
+    print(group.interests.all())
+    print(is_liked)
+    print(total_likes)
 
     ctx = { 
-        'group': groups, 
+        'group': group, 
         'mygroup': mygroup,
         'members': members,
         'maker': maker,
+        'total_likes': total_likes,
+        'is_liked': is_liked,
         'user': user,
         'ani_image': static('image/helphelp.png'),    
         'profile_img': static('image/none_image_user.jpeg'),
@@ -291,6 +294,7 @@ def join_group(request):
     user = request.user
     input_code = request.GET.get('code')
     print(input_code)
+    print("text")
 
     mygroup = list(Group.objects.filter(members__nickname__contains=user))
     try:
@@ -338,16 +342,16 @@ def join_group(request):
 def group_list(request):
     group = Group.objects.filter(mode='PUBLIC')
     # group = Group.objects.all()
-    groups = Group.objects.order_by('name')
+    groups = group.order_by('name')
     # 페이징 처리
     page = request.GET.get('page', '1')
 
 
-    sort = request.GET.get('sort', 'name')
+    sort = request.GET.get('sort', 'interest')
     if sort == 'name':
-        groups = groups.order_by('name')
+        groups = group.order_by('name')
     elif sort == 'interest':
-        groups = groups.order_by('-interest')
+        groups = group.annotate(total_likes=Count('interests')).order_by('-total_likes')
 
     pagintor = Paginator(groups, 6)
     page_obj = pagintor.get_page(page)
@@ -428,10 +432,18 @@ def star_ajax(request):
 @csrf_exempt
 def interest_ajax(request):
     req = json.loads(request.body)
-    group_id = req['id']
-    group = Group.objects.get(id=group_id)
+    group_id = req['groupId']
+    group = get_object_or_404(Group, pk=group_id)
+    interests = group.interests
 
-    group.interest += 1
-    group.save()
+    is_liked = request.user in interests.all()
 
-    return JsonResponse({ 'id': group_id })
+    if is_liked:
+        interests.remove(request.user)
+    else:
+        interests.add(request.user)
+    print("test")
+    total_likes = len(interests.all())
+    # group.save()
+
+    return JsonResponse({ 'groupId': group_id, 'total_likes': total_likes, 'is_liked': not(is_liked) })

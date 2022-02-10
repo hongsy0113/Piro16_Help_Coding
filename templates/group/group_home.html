@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block js %}
-    <script src="{% static 'js/group_private.js' %}" defer></script>
+    <script src="{% static 'js/group_ajax.js' %}" defer></script>
 {% endblock %}
 
 {% block title %} 나의 그룹 {% endblock %}
@@ -18,11 +18,13 @@
     <nav>
         <a href="{% url 'group:group_create' %}" class="btn btn-primary">그룹 생성</a>
         <a href="{% url 'group:join_group' %}" class="btn btn-dark">그룹 가입하기</a>
+
+        <!-- 그룹 초대 modal -->
         <!-- <div class="group-join__alert-box" id="join-group">
             <div class="group-join__box">
-                <form method="GET" class="group-join__code">
+                <form method="GET" class="group-join__code" action="{% url 'group:join_group' %}">
                     <input placeholder="초대 코드 입력" type="text" name="code" />
-                    <a href="{% url 'group:join_group' %}"><button>Submit</button> </a>
+                    <button type="submit">Submit</button>
                 </form>
                 <div class="group-join__message">
                     <h4>{{ message }}</h4>
@@ -32,6 +34,8 @@
             <button class="join__code--close btn btn-dark" onclick="closeJoin()">닫기</button>
         </div>
         <button class="group-join__btn btn btn-dark" onclick="groupJoin()">그룹 가입하기</button> -->
+
+
         <a href="{% url 'group:group_list' %}" class="btn btn-info">그룹 찾기</a>
         <a href="{% url 'user:main' %}" class="btn btn-warning">메인 화면으로</a>
     </nav>
@@ -40,8 +44,8 @@
         <form method="get" action="{% url 'group:group_home' %}" class="group_sort float-end me-4">
             <select id="sort_select" class="sort_select" onchange="location=this.value; getSelectValue(this.form);">
 
-                <option class="sort-name" value="?sort=name" {% if sort_by == 'name' %} selected {% endif %}>이름순</option>
                 <option class="sort-star" value="?sort=star" {% if sort_by == 'star' %} selected {% endif %}>찜하기순</option>
+                <option class="sort-name" value="?sort=name" {% if sort_by == 'name' %} selected {% endif %}>이름순</option>
                 <!-- <option class="sort-member" value="?sort=member">멤버수</option> -->
             </select>
         </form>
