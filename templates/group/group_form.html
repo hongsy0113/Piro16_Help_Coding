@@ -25,9 +25,11 @@
         <div class="group-create-form">
             <div class="group-create__input">
                 <input class="input-name" placeholder="그룹 이름을 입력하세요." name="name" type="text" maxlength="30" value="{% if group.name %} {{ group.name }} {% endif %}">
-                {% if error %}
-                <p style="color:red;">{{ error }}</p>
-                {% endif %}
+                <div>
+                    {% if error %}
+                    <p style="color:red;">{{ error }}</p>
+                    {% endif %}
+                </div>
             </div>
 
             <div class="group-create__input">
