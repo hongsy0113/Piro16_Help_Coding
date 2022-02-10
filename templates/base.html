@@ -70,8 +70,8 @@
                 </div>
             {% else %}
             <ul>
-                <li><a href="#">도와줘코딩 가입</a></li>
-                <li><a href="#">로그인</a></li>
+                <li><a href="{% url 'user:signup' %}">도와줘코딩 가입</a></li>
+                <li><a href="{% url 'user:login' %}">로그인</a></li>
             </ul>
             {% endif %}
             </div>
