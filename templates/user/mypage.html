@@ -19,7 +19,7 @@
   <h3>○ 나의 업적</h3>
   {% if rewards %}
   {% for reward in rewards %}
-  <p>- [업적] {{ reward.reward_id.name }} (달성일 : {{ reward.get_date }})</p>
+  <p>- [업적] {{ reward.reward.name }} (달성일 : {{ reward.get_date }})</p>
   {% endfor %}
   <button class="btn btn-secondary"><a class="text-white" href="" style="text-decoration: none">전체 업적 보기</a></button>
   {% else %}

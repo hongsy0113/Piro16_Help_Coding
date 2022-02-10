@@ -264,20 +264,3 @@ class AnswerView(ListView):
         page_range = paginator.page_range[start_index:end_index]
         context['page_range'] = page_range
         return context
-
-#def my_page_question(request):
-#    user = request.user
-#    if user == AnonymousUser():
-#        return redirect('user:login')
-#    questions = Question.objects.filter(user = user).order_by('-updated_at')
-#    ctx = {'user': user, 'questions': questions}
-#    return render(request, template_name = 'user/mypage_question.html', context = ctx)
-
-# My Page Answer List
-#def my_page_answer(request):
-#    user = request.user
-#    if user == AnonymousUser():
-#        return redirect('user:login')
-#    answers = Answer.objects.filter(user = user).order_by('-updated_at')
-#    ctx = {'user': user, 'answers': answers}
-#    return render(request, template_name = 'user/mypage_answer.html', context = ctx)

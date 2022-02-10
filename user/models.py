@@ -1,8 +1,4 @@
-from cmath import pi
 from django.db import models
-# from django.contrib.auth.models import User
-from group.models import *
-# from qna.models import *
 from django.contrib.auth.models import AbstractUser
 from .constants import *
 
@@ -23,11 +19,11 @@ class User(AbstractUser):
     birth = models.DateField(null=True, blank=True)
     img = models.ImageField(upload_to=user_thumbnail_path, null=True, blank=True)
     introduction = models.TextField(null=True, blank=True)
-    total_question_like = models.IntegerField(null=True, blank=True)
-    total_comment_like = models.IntegerField(null=True, blank=True)
-    total_question = models.IntegerField(null=True, blank=True)
-    total_answer = models.IntegerField(null=True, blank=True)
-    total_answer_reply = models.IntegerField(null=True, blank=True)
+    total_question_like = models.IntegerField(null=True, blank=True, default=0)
+    total_comment_like = models.IntegerField(null=True, blank=True, default=0)
+    total_question = models.IntegerField(null=True, blank=True, default=0)
+    total_answer = models.IntegerField(null=True, blank=True, default=0)
+    total_answer_reply = models.IntegerField(null=True, blank=True, default=0)
     level = models.CharField(max_length=50, choices=LEVEL, default='level_1')
     job = models.CharField(max_length=50, choices=JOB_CHOICE, default='etc')
     
@@ -56,10 +52,16 @@ class User(AbstractUser):
                 for index in range(len(LEVEL_UP_BOUNDARY[category])):
                     if self.points() >= LEVEL_UP_BOUNDARY[category][index]:
                         level = LEVEL[index]
+        # 등급 상승/하락 시 알림
         self.level = level[0]
         self.save()
         return level[1]
         
+class GetPoint(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    type = models.CharField(max_length=50, choices=POINT_TYPE, default='question_like')
+    point = models.IntegerField(null=True, blank=True)
+    get_date = models.DateTimeField()
 
 class Reward(models.Model):
     name = models.CharField(max_length=20)
@@ -73,32 +75,32 @@ class Reward(models.Model):
 
 # 업적 만들기 (현재는 예시임 테스트용)
 def initializeReward():
-        Reward.objects.create(name = '총 좋아요 수 2개 달성',
-                info = '총 좋아요 수 2개 달성',
-                type = 'total_like', criteria = 2)
-        Reward.objects.create(name = '게시글 좋아요 수 2개 달성',
-                info = '게시글 좋아요 수 2개 달성',
-                type = 'question_like', criteria = 2)
-        Reward.objects.create(name = '댓글 좋아요 수 2개 달성',
-                info = '댓글 좋아요 수 2개 달성',
-                type = 'comment_like', criteria = 2)
-        Reward.objects.create(name = '총 질문 수 2개 달성',
-                info = '총 질문 수 2개 달성',
-                type = 'total_question', criteria = 2)
-        Reward.objects.create(name = '총 답변 수 2개 달성',
-                info = '총 답변 수 2개 달성',
-                type = 'total_answer', criteria = 2)
-        Reward.objects.create(name = '총 댓글 수 2개 달성',
-                info = '총 댓글 수 2개 달성',
-                type = 'total_comment', criteria = 2)
+    Reward.objects.create(name = '총 좋아요 수 2개 달성',
+        info = '총 좋아요 수 2개 달성',
+        type = 'total_like', criteria = 2)
+    Reward.objects.create(name = '게시글 좋아요 수 2개 달성',
+        info = '게시글 좋아요 수 2개 달성',
+        type = 'question_like', criteria = 2)
+    Reward.objects.create(name = '댓글 좋아요 수 2개 달성',
+        info = '댓글 좋아요 수 2개 달성',
+        type = 'comment_like', criteria = 2)
+    Reward.objects.create(name = '총 질문 수 2개 달성',
+        info = '총 질문 수 2개 달성',
+        type = 'total_question', criteria = 2)
+    Reward.objects.create(name = '총 답변 수 2개 달성',
+        info = '총 답변 수 2개 달성',
+        type = 'total_answer', criteria = 2)
+    Reward.objects.create(name = '총 댓글 수 2개 달성',
+        info = '총 댓글 수 2개 달성',
+        type = 'total_comment', criteria = 2)
                 
 class GetReward(models.Model):
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
-    reward_id =  models.ForeignKey(Reward, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    reward =  models.ForeignKey(Reward, on_delete=models.CASCADE)
     get_date = models.DateTimeField()
 
 class Alert(models.Model):
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     content = models.CharField(max_length=100)
     alert_type = models.IntegerField()
     time = models.DateTimeField()
