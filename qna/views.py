@@ -173,7 +173,7 @@ def question_create(request):
             error_dict = {}
             for k in error_data:
                 error_dict[k] = error_data[k][0].message
-            print(error_dict)
+            
             return render(request, 'qna/question_form.html', context={'form': form,})
     else:
         form = QuestionForm()
@@ -275,12 +275,6 @@ class QuestionDetailView(HitCountDetailView):
         context['answers_count']= answers_count
         context['answers_reply_dict']= answers_reply_dict
         context['is_liked']= is_liked
-        
-        print(self.object.attached_file)
-        print(self.object.attached_file.name)
-        print(self.object.attached_file.path)
-        print(self.object.attached_file.url)
-        print(self.object.attached_file.name.split('.')[-1])
 
         return context
 
