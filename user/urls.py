@@ -13,4 +13,6 @@ urlpatterns = [
   path('mypage/revise/', views.my_page_revise, name="mypage_revise"),
   path('mypage/question/', views.QuestionView.as_view(), name="mypage_question"),
   path('mypage/answer/', views.AnswerView.as_view(), name="mypage_answer"),
+  path('mypage/reward/', views.RewardView.as_view(), name="mypage_reward"),
+  path('mypage/point/', views.PointView.as_view(), name="mypage_point"),
 ]

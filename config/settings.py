@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     'user',
     'qna',
     'six',
+    'hitcount',
 ]
 
 MIDDLEWARE = [
@@ -86,6 +87,9 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
+            'libraries':{
+            'my_tags': 'qna.templatetags.my_tags',  
+            }
         },
     },
 ]

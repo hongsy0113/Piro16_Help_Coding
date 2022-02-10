@@ -7,6 +7,8 @@ header{
     border-bottom: 1px solid #E5E5E5;
     background-color: white;
     position: sticky;
+    top: 0;
+    z-index: 20;   /* 그룹 홈 게시판 - position으로 인해 헤더가 밑으로 깔리는 오류 수정 */
 }
 
 .header__nav-container {
@@ -56,6 +58,7 @@ header li, header a {
     padding-bottom: 60px;
     margin-top: 60px;
 }
+
 .header__mypagebtn {
     width: 40px;
     height: 40px;
@@ -67,12 +70,6 @@ header li, header a {
     justify-content: center;
     border: 1px solid #C4C4C4;
 }
-
-section{
-    width: 100%;
-    margin: 0 auto;
-}
-
 
 .header__mypage-dropdown {
     display: none;
@@ -137,7 +134,7 @@ section{
     color: #828282;
     margin: 0;
 }
-    
+
 .header__mypage-dropdown a {
     width: 100%;
     padding: 15px 20px;
@@ -161,3 +158,8 @@ section{
     color: #EB6464;
 }
 
+section{
+    width: 1080px;
+    margin: 0 auto;
+    padding-top: 60px;
+}

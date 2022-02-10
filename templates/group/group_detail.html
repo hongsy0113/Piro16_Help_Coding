@@ -39,7 +39,6 @@
             </div>
             <nav>
                 <a href="{% url 'group:group_home' %}">그룹 홈</a>
-                <a href="#">그룹 커뮤니티</a>
                 {% if group.mode == 'PRIVATE' %}
                     {% if maker == user %}
                     <!-- 그룹 초대코드 생성 modal -->
@@ -52,6 +51,7 @@
                     <button class="group__code--btn btn btn-dark">친구 초대하기</button>
 
                     {% endif %}
+            <a href="{% url 'group:post_list' group.pk %}">그룹 커뮤니티</a>
                 {% endif %}
                 {% if group.mode == 'PUBLIC' %}
                     {% if maker == user %}

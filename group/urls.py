@@ -21,4 +21,7 @@ urlpatterns = [
     path('create_code_ajax/', view=views.create_code_ajax, name='create_code_ajax'),
     path('wait_list_ajax/', view=views.wait_list_ajax, name='wait_list_ajax'),
     # path('<int:pk>/member_thumbnail/', view=views.member_thumbnail, name='member_thumbnail'),
+    path('<int:pk>/post_list/', view=views.post_list, name='post_list'),
+    path('<int:pk>/post_create/', view=views.post_create, name='post_create'),
+    path('search_list/', view=views.search_result, name='search_result'),
 ]

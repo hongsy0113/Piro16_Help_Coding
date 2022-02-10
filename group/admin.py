@@ -9,4 +9,3 @@ admin.site.register(GroupPostReaction)
 admin.site.register(GroupAnswerReaction)
 
 admin.site.register(GroupTag)
-admin.site.register(GroupTagging)

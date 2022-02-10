@@ -12,8 +12,10 @@ from django.core.paginator import Paginator
 from django.db.models import Count
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.db.models import Q
 from .models import *
 from .forms import *
+from django.core.paginator import Paginator 
 
 ######## 그룹 메인 페이지 ########
 
@@ -86,7 +88,6 @@ def group_search_public(request):
 def group_create(request):
     user = request.user
     groups = Group.objects.values('name')
-    print(groups)
 
     if request.method == 'POST':
         form = GroupForm(request.POST, request.FILES)
@@ -118,14 +119,12 @@ def group_create(request):
 
             group = form.save()
             group.mode = request.POST.get('group-mode__tag')
-            # image = request.FILES.get('image')
-            # group.image = image
+        # image = request.FILES.get('image')
+        # group.image = image
             print(group.mode)
             group.maker = user    # 방장 = 접속한 유저
             group.members.add(user)  # 방장도 그룹의 멤버로 추가
             group.save()
-
-            print(group.members)
 
             return redirect('group:group_home')
     else:
@@ -206,12 +205,9 @@ def group_drop(request, pk):
     if len(members) > 1:
         if user == group.maker:
             # group.members.remove(user)
-            print(members)
             group.members.remove(user)
             # group.maker = members[0]   #랜덤하게 지정해야 하나..?
             group.save()
-
-            print(group.maker)
             # group.maker = members[0]
             # group.save()
 
