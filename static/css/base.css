@@ -7,6 +7,7 @@ header{
     border-bottom: 1px solid #E5E5E5;
     background-color: white;
     position: sticky;
+    top: 0;
 }
 
 .header__nav-container {
@@ -56,6 +57,7 @@ header li, header a {
     padding-bottom: 60px;
     margin-top: 60px;
 }
+
 .header__mypagebtn {
     width: 40px;
     height: 40px;
@@ -67,8 +69,6 @@ header li, header a {
     justify-content: center;
     border: 1px solid #C4C4C4;
 }
-
-
 
 .header__mypage-dropdown {
     display: none;
@@ -158,6 +158,7 @@ header li, header a {
 }
 
 section{
-    width: 100%;
+    width: 1080px;
     margin: 0 auto;
+    padding-top: 60px;
 }
