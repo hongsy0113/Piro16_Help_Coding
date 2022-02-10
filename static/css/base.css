@@ -7,6 +7,7 @@ header{
     border-bottom: 1px solid #E5E5E5;
     background-color: white;
     position: sticky;
+    top: 0;
 }
 
 .header__nav-container {
@@ -158,6 +159,7 @@ header li, header a {
 }
 
 section{
-    width: 100%;
+    width: 1080px;
     margin: 0 auto;
+    padding-top: 60px;
 }
