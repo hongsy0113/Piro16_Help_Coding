@@ -10,6 +10,7 @@ import json
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator 
+from user.update import *
 
 def question_list(request):
     question = Question.objects.all()
@@ -104,6 +105,7 @@ def question_create(request):
             question.tags.add(newtag)
 
         question.save()
+        update_question(request.user)
 
         return redirect('qna:question_list')
 
@@ -151,6 +153,7 @@ def question_detail(request, pk):
 def question_delete(request, pk):
     question = get_object_or_404(Question, pk=pk)
     question.delete()
+    update_question_cancel(request.user)
     return redirect('qna:question_list')
 
 ############### ajax 관련 view 합수들

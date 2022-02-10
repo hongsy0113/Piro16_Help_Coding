@@ -6,6 +6,7 @@ from django.views.generic import ListView
 from .forms import LoginForm, SignupForm, MypageReviseForm
 from .models import *
 from .constants import *
+from .update import *
 from qna.models import Question, Answer
 from django.contrib import messages
 from django.contrib.sites.shortcuts import get_current_site
@@ -111,7 +112,11 @@ def sign_up(request):
                 birth = request.POST['birth'],
                 img = request.FILES.get('img'),
                 introduction = request.POST['introduction'],
-                total_like = 0, total_question = 0, total_answer = 0, total_answer_reply = 0,
+                total_question_like = 0,
+                total_comment_like = 0,
+                total_question = 0,
+                total_answer = 0,
+                total_answer_reply = 0,
                 job = request.POST['job'],
             )
             user.is_active = True  # 이메일 인증 기능 구현 시에는 False로 바꿀 것
@@ -165,6 +170,7 @@ def my_page_revise(request):
     if user == AnonymousUser():
         return redirect('user:login')
     if request.method == 'POST':
+        update_question_like(user, user)
         form = MypageReviseForm(request.POST)
         command = ['mypage_revise']
         if request.POST['current_password'] or request.POST['new_password1'] or request.POST['new_password2']:

@@ -23,7 +23,8 @@ class User(AbstractUser):
     birth = models.DateField(null=True, blank=True)
     img = models.ImageField(upload_to=user_thumbnail_path, null=True, blank=True)
     introduction = models.TextField(null=True, blank=True)
-    total_like = models.IntegerField(null=True, blank=True)
+    total_question_like = models.IntegerField(null=True, blank=True)
+    total_comment_like = models.IntegerField(null=True, blank=True)
     total_question = models.IntegerField(null=True, blank=True)
     total_answer = models.IntegerField(null=True, blank=True)
     total_answer_reply = models.IntegerField(null=True, blank=True)
@@ -36,12 +37,19 @@ class User(AbstractUser):
     def points(self):
         for category in JOB_CATEGORY:
             if self.job in JOB_CATEGORY[category]:
-                return (self.total_like * POINT[category]['like']
+                return (self.total_question_like * POINT[category]['question_like']
+                + self.total_comment_like * POINT[category]['comment_like']
                 + self.total_question * POINT[category]['question']
                 + self.total_answer * POINT[category]['answer']
                 + self.total_answer_reply * POINT[category]['answer_reply'])
         return 0
     
+    def total_like(self):
+        return self.total_question_like + self.total_comment_like
+
+    def total_comment(self):
+        return self.total_answer + self.total_answer_reply
+
     def get_level(self):
         for category in JOB_CATEGORY:
             if self.job in JOB_CATEGORY[category]:
@@ -51,6 +59,7 @@ class User(AbstractUser):
         self.level = level[0]
         self.save()
         return level[1]
+        
 
 class Reward(models.Model):
     name = models.CharField(max_length=20)
@@ -62,6 +71,27 @@ class Reward(models.Model):
     def __str__(self):
         return self.name
 
+# 업적 만들기 (현재는 예시임 테스트용)
+def initializeReward():
+        Reward.objects.create(name = '총 좋아요 수 2개 달성',
+                info = '총 좋아요 수 2개 달성',
+                type = 'total_like', criteria = 2)
+        Reward.objects.create(name = '게시글 좋아요 수 2개 달성',
+                info = '게시글 좋아요 수 2개 달성',
+                type = 'question_like', criteria = 2)
+        Reward.objects.create(name = '댓글 좋아요 수 2개 달성',
+                info = '댓글 좋아요 수 2개 달성',
+                type = 'comment_like', criteria = 2)
+        Reward.objects.create(name = '총 질문 수 2개 달성',
+                info = '총 질문 수 2개 달성',
+                type = 'total_question', criteria = 2)
+        Reward.objects.create(name = '총 답변 수 2개 달성',
+                info = '총 답변 수 2개 달성',
+                type = 'total_answer', criteria = 2)
+        Reward.objects.create(name = '총 댓글 수 2개 달성',
+                info = '총 댓글 수 2개 달성',
+                type = 'total_comment', criteria = 2)
+                
 class GetReward(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     reward_id =  models.ForeignKey(Reward, on_delete=models.CASCADE)
