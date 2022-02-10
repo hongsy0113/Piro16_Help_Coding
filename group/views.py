@@ -280,14 +280,26 @@ def get_invite_code(length=6):
     ).decode()[:length]
 
 # 초대 코드 공개(from 그룹 상세 페이지)
-def create_code(request, pk):
-    group = get_object_or_404(Group, pk=pk)
+@csrf_exempt
+def create_code(request):
+    req = json.loads(request.body)
+    group_id = req['id']
+    group = get_object_or_404(Group, pk=group_id)
     group.code = get_invite_code()
     group.save()
     # 여기서 3분 제한 둘 것
-    ctx = { 'group': group }
+    code = group.code
+    print(code)
+    
+    ctx = { 
+        'id': group_id,
+        'code': code,
+        'name': group.name
+    }
 
-    return render(request, template_name='group/create_code.html', context=ctx)
+    return render(request, template_name='group/group_detail.html', context=ctx)
+
+    # return render(request, template_name='group/group_detail.html', context=ctx)
 
 # 초대 코드 입력(from 그룹 메인 페이지 / 비공개 그룹 가입)
 def join_group(request):    
@@ -306,7 +318,7 @@ def join_group(request):
                 message = "이미 가입된 그룹입니다."
                 ctx = { 'message': message }
 
-                return render(request, template_name='group/join_group.html', context=ctx)
+                return render(request, template_name='group/group_home.html', context=ctx)
 
             else:   # user != 방장
                 # if (group):   #queryset이 비어있을 때 반대로 생각하기
@@ -320,14 +332,14 @@ def join_group(request):
             message = "아무것도 입력하지 않았습니다."
             ctx = { 'message': message }
 
-            return render(request, template_name='group/join_group.html', context=ctx)
+            return render(request, template_name='group/group_home.html', context=ctx)
 
     except:
         print('존재하지 않는 그룹입니다.')
         message = "존재하지 않는 코드입니다."
         ctx = { 'message': message }
 
-        return render(request, template_name='group/join_group.html', context=ctx)
+        return render(request, template_name='group/group_home.html', context=ctx)
 
 # def input_code(request):
 #     input_code = request.GET.get('code')
@@ -442,7 +454,7 @@ def interest_ajax(request):
         interests.remove(request.user)
     else:
         interests.add(request.user)
-    print("test")
+
     total_likes = len(interests.all())
     # group.save()
 

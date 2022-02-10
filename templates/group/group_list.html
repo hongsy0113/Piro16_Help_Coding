@@ -21,11 +21,11 @@
         <a href="{% url 'group:group_home' %}" class="btn btn-danger">나의 그룹</a>
     </nav>
     <div class="all-group__list-page">
-        <form method="get" action="" class="all-group__sort float-end">
+        <form method="get" action="{% url 'group:group_list' %}" class="all-group__sort float-end">
             <select id="sort_select" class="sort_select" onchange="location=this.value; getSelectValue(this.form);">
 
-                <option class="sort-interest" value="?sort=interest">인기순</option>
-                <option class="sort-name" value="?sort=name">이름순</option>
+                <option class="sort-interest" value="?sort=interest" {% if sort_by == 'interest' %} selected {% endif %}>인기순</option>
+                <option class="sort-name" value="?sort=name" {% if sort_by == 'name' %} selected {% endif %}>이름순</option>
             </select>
         </form>
         <div class="all-group__list d-grid align-center">
