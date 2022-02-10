@@ -298,6 +298,17 @@ def create_code(request, pk):
 
     # return render(request, template_name='group/group_detail.html', context=ctx)
 
+@csrf_exempt
+def create_code_ajax(request):
+    req = json.loads(request.body)    
+    group_id = req['groupId']
+    group = get_object_or_404(Group, pk=group_id)
+    group.code = get_invite_code()
+    group.save()
+    code = group.code
+
+    return JsonResponse({ 'name': group.name, 'code': code })
+
 # 초대 코드 입력(from 그룹 메인 페이지 / 비공개 그룹 가입)
 def join_group(request):    
     user = request.user

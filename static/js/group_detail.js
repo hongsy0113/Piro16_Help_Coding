@@ -41,9 +41,11 @@ onClickLike = async(groupId) => {
     likeHandleResponse(data.groupId, data.total_likes, data.is_liked);
 }
 
-heartBtn.addEventListener('click', function(){
-    onClickLike(group_id);
-})
+if(heartBtn) {
+    heartBtn.addEventListener('click', function(){
+        onClickLike(group_id);
+    })
+}
 
 likeHandleResponse = (groupId, total_likes, is_liked) => {
 
@@ -61,4 +63,42 @@ likeHandleResponse = (groupId, total_likes, is_liked) => {
     }
 };
 
-// 초대 코드 생성 Modal
+// 초대 코드 생성 창 & Modal
+const createCodeBtn = document.querySelector('.group__code--btn');
+const closeCodeBtn = document.querySelector('.group__code--close');
+
+// function showCreateCode() {
+//     const createCodeAlert = document.getElementById('create-code');
+//     createCodeAlert.style.display = 'block';
+// }
+
+function closeCreateCode() {
+    const createCodeAlert = document.getElementById('create-code');
+    createCodeAlert.style.display = 'none';
+}
+
+createCodeBtn.addEventListener('click', function() {
+    console.log('!')
+    onClickCreateCode(group_id);
+})
+
+const onClickCreateCode = async(groupId) => {
+    const url = '/group/create_code_ajax/';
+    const { data } = await axios.post(url, {
+        groupId
+    });
+    createCodeHandleResonse(data.code, data.name);
+}
+
+const createCodeHandleResonse = (code, name) => {
+    const createCodeAlert = document.getElementById('create-code');
+    const createCodeAlertText = document.querySelector('.code_box');
+
+    createCodeAlertText.innerHTML = `
+        <h3>그룹명: ${ name }</h3>
+        <h3>다음 코드로 친구를 초대하세요!</h3>
+        <h1>${ code }</h1>
+    `;
+    createCodeAlert.style.display = 'block';
+}
+

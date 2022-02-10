@@ -52,7 +52,6 @@ const groupCodeSubmitButton = document.querySelector('.group-code__submit');
 const groupCodeInput = document.querySelector('.group-code__input');
 
 groupCodeSubmitButton.addEventListener('click', function() {
-    console.log(groupCodeInput.value);
     onClickGroupCodeSubmit(groupCodeInput.value);
 });
 

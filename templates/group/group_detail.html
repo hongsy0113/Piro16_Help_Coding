@@ -41,20 +41,14 @@
                 <a href="#">그룹 커뮤니티</a>
                 {% if group.mode == 'PRIVATE' %}
                     {% if maker == user %}
-                    <a href="{% url 'group:create_code' group.pk %}">친구 초대하기</a>
-
                     <!-- 그룹 초대코드 생성 modal -->
                     <div class="group__code--alert-box" id="create-code">
-                        Alert 친구 초대 
+                        친구 초대 
                         <div class="code_box">
-                            <h3>그룹명: {{ name }}</h3>
-                            <h3>다음 코드로 친구를 초대하세요!</h3>
-                            <h1>{{ code }}</h1>
                         </div>
-                        <!-- <a href="{% url 'group:group_home' %}">홈으로</a> -->
                         <button class="group__code--close btn btn-dark" onclick="closeCreateCode()">닫기</button>
                     </div>
-                    <button class="group__code--btn btn btn-dark" onclick="showCreateCode()">친구 초대하기</button>
+                    <button class="group__code--btn btn btn-dark">친구 초대하기</button>
 
                     {% endif %}
                 {% endif %}
