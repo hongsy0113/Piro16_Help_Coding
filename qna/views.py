@@ -39,31 +39,55 @@ from hitcount.views import HitCountDetailView
 #         page_range = paginator.page_range[start_index:end_index]
 #         context['page_range'] = page_range
 #         return context
+## filter 함수
+## 아무래도 s or e 랑 답변여부는 따로 관리하는 게 맞을 듯
+def question_tag_filter(questions, tag_filter_by_list):
+    num = len(tag_filter_by_list)
+    if num == 1:
+        questions= questions.filter(s_or_e_tag=tag_filter_by_list[0]) 
+    elif num == 2:
+        questions= questions.filter(Q(s_or_e_tag=tag_filter_by_list[0]) | Q(s_or_e_tag=tag_filter_by_list[1]))
+    elif num==3:
+        pass
+    return questions
+
+def question_answer_filter(questions, answer_filter_by):
+    if answer_filter_by == 'NOT_ANSWERED':
+        questions= questions.filter(answer = None)
+    else:
+        questions = questions.annotate(answer_count=models.Count("answer")).filter(answer_count__gt = 0)
+    return questions
 
 def question_list(request):
     questions = Question.objects.all().order_by('-created_at')
     page = request.GET.get('page', '1')    # 페이지
     #questions = Question.objects.order_by('-created_at')   # [기본 정렬] 최신순으로 정렬
 
+    # 게시글 필터
+    tag_filter_by = request.GET.getlist('tag_filter_by')
+    if tag_filter_by:
+        questions = question_tag_filter(questions, tag_filter_by)
+    answer_filter_by = request.GET.get('answer_filter_by')
+    if answer_filter_by:
+        questions = question_answer_filter(questions, answer_filter_by)
+
     # 게시물 정렬
-
-    sort = request.GET.get('sort', 'recent')
-    if sort == 'recent':    # 최신순
-        questions = Question.objects.order_by('-created_at')
-    elif sort == 'liked':   # 좋아요순
+    sort_by = request.GET.get('sort', 'recent')
+    if sort_by == 'recent':    # 최신순
+        questions = questions.order_by('-created_at')
+    elif sort_by == 'liked':   # 좋아요순
         #questions = Question.objects.order_by('-like_user')
-        questions = Question.objects.all().annotate(total_likes=Count('like_user')).order_by('-total_likes')
-    elif sort == 'view':    # 조회수순
-        questions = Question.objects.order_by('-hit_count_generic__hits')
-        
-
+        questions = questions.annotate(total_likes=Count('like_user')).order_by('-total_likes')
+    elif sort_by == 'view':    # 조회수순
+        questions = questions.order_by('-hit_count_generic__hits')
     # 페이징 처리
     paginator = Paginator(questions, 5)    # 페이지당 5개씩 보여주기
     page_obj = paginator.get_page(page)
-
+    print(sort_by)
     ctx = {
         'questions': page_obj,
-        'sort_by':sort
+        'sort_by':sort_by,
+        'filter_by':tag_filter_by+[answer_filter_by],
     }
 
     return render(request, 'qna/question_list.html', context=ctx)
@@ -390,7 +414,7 @@ def question_like_ajax(request):
     req = json.loads(request.body)
     # user id 는 요청 안 보내도 됐을 수도
     question_id = req['questionId']
-    
+
     question = get_object_or_404(Question, pk=question_id)
     liked_users = question.like_user
 

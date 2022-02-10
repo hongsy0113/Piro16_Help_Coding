@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load hitcount_tags %}
+{% load my_tags %}
 
 {% block css %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/question_list.css' %}">
@@ -27,23 +28,58 @@
     </div>
 </div>
 
-<div class="sortbox">
+<div class="qna__sortbox">
     <form method="get" action="{% url 'qna:question_list' %}" class="float-end">
         <!-- <select class="select_sort" onchange=""> -->
-        <select class="select_sort" onchange="location=this.value; getSelectValue(this.form);">
-    
-            <option class="sort-recent" value="?sort=recent" {% if sort_by == 'recent' %} selected {% endif %}>최신순</option>
-            <option class="sort-liked" value="?sort=liked" {% if sort_by == 'liked' %} selected {% endif %}>좋아요순</option>
-            <option class="sort-view" value="?sort=view" {% if sort_by == 'view' %} selected {% endif %}>조회수순</option>
+        <select class="qna__select-sort" onchange="location=this.value; getSelectValue(this.form);">
+            <option class="qna__sort-option qna__sort-option--recent" value="?{% param_replace sort='recent' %}" {% if sort_by == 'recent' %} selected {% endif %}>최신순</option>
+            <option class="qna__sort-option qna__sort-option--liked" value="?{% param_replace sort='liked' %}" {% if sort_by == 'liked' %} selected {% endif %}>좋아요순</option>
+            <option class="qna__sort-option qna__sort-option--view" value="?{% param_replace sort='view' %}" {% if sort_by == 'view' %} selected {% endif %}>조회수순</option>
         </select>
     </form>
 </div>
+
+<div class="qna__filterbox">
+    <form method="GET" action="{% url 'qna:question_list' %}" class="qna__filterbox--form" >
+        <!-- <select class="select_sort" onchange=""> -->
+        <p>필터 선택 </p>
+        <input type="radio" name="answer_filter_by" value="NOT_ANSWERED" id="filter_by-not-answered" class="tag" {% if 'NOT_ANSWERED' in filter_by %} checked {% endif %}/>
+        <label for="motion">답변 없는 글</label>
+        <input type="radio" name="answer_filter_by" value="ANSWERED" id="filter_by-answered" class="tag" {% if 'ANSWERED' in filter_by %} checked {% endif %}//>
+        <label for="motion">답변 완료</label>
+        <input type="checkbox" name="tag_filter_by" value="S" id="filter_by-scratch" class="tag" {% if 'S' in filter_by %} checked {% endif %}/ />
+        <label for="motion">스크래치</label>
+        <input type="checkbox" name="tag_filter_by" value="E" id="filter_by-entry" class="tag"{% if 'E' in filter_by %} checked {% endif %}/  />
+        <label for="looks">엔트리</label>
+        <input type="checkbox" name="tag_filter_by" value="ETC" id="filter_by-etc" class="tag"{% if 'ETC' in filter_by %} checked {% endif %}//>
+        <label for="sound">기타</label>
+
+        <button type="submit" class="qna__filterbox--btn">필터</button>
+        
+    </form>
+    <a href="{% url 'qna:question_list' %}"><button type="" class="qna__filterbox--reset">초기화</button></a>
+</div>
+
+{% comment %}
+<div class="qna__filterbox">
+    <form method="get" action="{% url 'qna:question_list' %}" class="float-end">
+        <!-- <select class="select_sort" onchange=""> -->
+        <select class="qna__select-filter" onchange="location=this.value; getSelectValue(this.form);">
+            <option class="qna__filter-option qna__filter-option--answered" value="?filter=answered">답변완료된 글</option>
+            <option class="qna__filter-option qna__filter-option--not_answered" value="?filter=not_answered" >답변 없는 글</option>
+            <option class="qna__filter-option qna__filter-option--scratch" value="?filter=scratch">스크래치</option>
+            <option class="qna__filter-option qna__filter-option--entry" value="?filter=scratch">엔트리</option>
+            <option class="qna__filter-option qna__filter-option--etc" value="?filter=scratch">기타</option>
+        </select>
+    </form>
+</div>
+{% endcomment %}
 
 <div class="question__list-container">
     {% for question in questions %}
     <div class="question__container">
         <div class="question__cont-left">
-            <a class="list__title" href = "{% url 'qna:question_detail' question.pk %} ">{{ question.title }}</a>
+            <a class="list__title" href = "{% url 'qna:question_detail' question.pk %}?{% param_replace %}">{{ question.title }}</a>
             <div class="question__tag-info">
                 <div class="question__tag">
                     {% if question.s_or_e_tag == 'S' %}
@@ -77,7 +113,7 @@
 <ul class="pagination justify-content-center">
     {% if questions.has_previous %}
     <li class="page-item">
-        <a class="page-link" href="?page={{ questions.previous_page_number }}&sort={{ sort_by }}">이전</a>
+        <a class="page-link" href="?{% param_replace page=questions.previous_page_number %}">이전</a>
     </li>
     {% else %}
     <li class="page-item disabled">
@@ -88,21 +124,21 @@
     {% for page_number in questions.paginator.page_range %}
         {% if page_number == questions.number %}
         <li class="page-item active" aria-current="page">
-            <a class="page-link" href="?page={{ page_number }}&sort={{ sort_by }}">{{ page_number }}</a>
+            <a class="page-link" href="?{% param_replace page=page_number %}">{{ page_number }}</a>
         </li>
         {% else %}
         <li class="page-item">
-            <a class="page-link" href="?page={{ page_number }}&sort={{ sort_by }}">{{ page_number }}</a>
+            <a class="page-link" href="?{% param_replace page=page_number %}">{{ page_number }}</a>
         </li>
         {% endif %}
     {% endfor %}
 
     {% if questions.has_next %}
     <li class="page-item">
-        <a class="page-link" href="?page={{ questions.next_page_number }}&sort={{ sort_by }}">다음</a>
+        <a class="page-link" href="?{% param_replace page=questions.next_page_number %}">다음</a>
     </li>
     {% else %}
-    <li class="page-item">
+    <li class="page-item disabled">
         <a class="page-link" tabindex="-1" aria-disabled="true" href="#">다음</a>
     </li>
     {% endif %}

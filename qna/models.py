@@ -31,7 +31,10 @@ class Question(models.Model, HitCountMixin):
 
     def __str__(self):
         return self.title
-        
+
+    def is_answered(self):
+        return self.answer_set.count() > 0
+
     hit_count_generic = GenericRelation(
         HitCount, object_id_field='object_pk',
         related_query_name='hit_count_generic_relation'
