@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     'user',
     'qna',
     'six',
+    'hitcount',
 ]
 
 MIDDLEWARE = [

@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load hitcount_tags %}
 
 {% block css %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/question_list.css' %}">
@@ -54,7 +55,7 @@
                     {% endif %}
                 </div>
                 <div class="question__info">
-                    <span>{{ question.user }} · 조회 {{ question.hit }} · 좋아요 {{ question.like_user.all | length }} · {{ question.created_at | date:'y.m.d' }}</span>
+                    <span>{{ question.user }} · 조회 {% get_hit_count for question %} · 좋아요 {{ question.like_user.all | length }} · {{ question.created_at | date:'y.m.d' }}</span>
                 </div>
             </div>
             <div class="question__content">

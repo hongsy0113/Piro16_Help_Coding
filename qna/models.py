@@ -1,9 +1,11 @@
 from django.db import models
 from user.models  import User
 from group.models  import *
+from django.contrib.contenttypes.fields import GenericRelation
+from hitcount.models import HitCountMixin, HitCount
 
 # Create your models here.
-class Question(models.Model):
+class Question(models.Model, HitCountMixin):
     title = models.CharField(verbose_name='제목', max_length=30)
     content = models.TextField(verbose_name='내용')
 
@@ -29,6 +31,11 @@ class Question(models.Model):
 
     def __str__(self):
         return self.title
+        
+    hit_count_generic = GenericRelation(
+        HitCount, object_id_field='object_pk',
+        related_query_name='hit_count_generic_relation'
+    )
 
 class Answer(models.Model):
     #####

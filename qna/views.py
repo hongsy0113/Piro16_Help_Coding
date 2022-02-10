@@ -13,6 +13,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator 
 from django.db.models import Count
 from django.views.generic import ListView
+from hitcount.views import HitCountDetailView
 
 # class QuestionView(ListView):
 #     model = Question
@@ -53,7 +54,7 @@ def question_list(request):
         #questions = Question.objects.order_by('-like_user')
         questions = Question.objects.all().annotate(total_likes=Count('like_user')).order_by('-total_likes')
     elif sort == 'view':    # 조회수순
-        questions = Question.objects.order_by('-hit')
+        questions = Question.objects.order_by('-hit_count_generic__hits')
         
 
     # 페이징 처리
@@ -144,53 +145,106 @@ def question_create(request):
         return render(request, 'qna/question_form.html', context=ctx)
         
         
-def question_detail(request, pk):
-    question = get_object_or_404(Question, pk=pk)
+# def question_detail(request, pk):
+#     question = get_object_or_404(Question, pk=pk)
     
-    try:
-        previous_pk = Question.get_previous_by_created_at(question).pk
-    except:
-        # 이전글 없을 때
-        previous_pk = -1
-        print('not exist')
-    try:
-        next_pk = Question.get_next_by_created_at(question).pk
-    except:
-        # 이전글 없을 때
-        next_pk = -1
-        print('not exist')
-    # 해당 게시글에 대한 tag, 유저, 좋아요 수 등 가져오기
-    # 이외에 필드들은 template 에서 {{question.필드 }} 로 접근
-    tags = question.tags.all()
-    username = question.user.nickname
-    total_likes = len(question.like_user.all())
+#     try:
+#         previous_pk = Question.get_previous_by_created_at(question).pk
+#     except:
+#         # 이전글 없을 때
+#         previous_pk = -1
+#         print('not exist')
+#     try:
+#         next_pk = Question.get_next_by_created_at(question).pk
+#     except:
+#         # 이전글 없을 때
+#         next_pk = -1
+#         print('not exist')
+#     # 해당 게시글에 대한 tag, 유저, 좋아요 수 등 가져오기
+#     # 이외에 필드들은 template 에서 {{question.필드 }} 로 접근
+#     tags = question.tags.all()
+#     username = question.user.nickname
+#     total_likes = len(question.like_user.all())
     
-    # 해당 게시글에 대한 답변 가져오기
-    answers = Answer.objects.filter(question_id = question.id, parent_answer__isnull=True).order_by('answer_order')   #  나중에 답변 정렬도 고려. 최신순 또는 좋아요 순
-    answers_count = len(answers)
+#     # 해당 게시글에 대한 답변 가져오기
+#     answers = Answer.objects.filter(question_id = question.id, parent_answer__isnull=True).order_by('answer_order')   #  나중에 답변 정렬도 고려. 최신순 또는 좋아요 순
+#     answers_count = len(answers)
     
-    answers_reply_dict ={}
-    for answer in answers:
-        replies =  Answer.objects.filter(parent_answer= answer).order_by('answer_order')
-        answers_reply_dict[answer] = replies
+#     answers_reply_dict ={}
+#     for answer in answers:
+#         replies =  Answer.objects.filter(parent_answer= answer).order_by('answer_order')
+#         answers_reply_dict[answer] = replies
 
-    # 좋아요 눌렀는지 안 눌렀는지
-    is_liked = request.user in  question.like_user.all()
+#     # 좋아요 눌렀는지 안 눌렀는지
+#     is_liked = request.user in  question.like_user.all()
 
-    ctx = {
-        'question':question,
-        'username': username,
-        'tags' : tags,
-        'total_likes' : total_likes,
-        'answers' : answers,
-        'answers_count' : answers_count,
-        'answers_reply_dict' : answers_reply_dict,
-        'is_liked': is_liked,
-        'next_pk':next_pk,
-        'previous_pk':previous_pk,
-    }
-    # answer 와 reply로 이루어진 dictionary를 context로 넘길 예정
-    return render(request, template_name='qna/detail.html', context=ctx)
+#     ctx = {
+#         'question':question,
+#         'username': username,
+#         'tags' : tags,
+#         'total_likes' : total_likes,
+#         'answers' : answers,
+#         'answers_count' : answers_count,
+#         'answers_reply_dict' : answers_reply_dict,
+#         'is_liked': is_liked,
+#         'next_pk':next_pk,
+#         'previous_pk':previous_pk,
+#     }
+#     # answer 와 reply로 이루어진 dictionary를 context로 넘길 예정
+#     return render(request, template_name='qna/detail.html', context=ctx)
+
+class QuestionDetailView(HitCountDetailView):
+    model = Question
+    template_name = 'qna/detail.html'
+    count_hit = True
+    context_object_name = 'question'
+
+    def get_context_data(self, **kargs):
+        context = super().get_context_data(**kargs)
+        # self.object로 question 객체에 접근할 수 있음
+        try:
+            previous_pk = Question.get_previous_by_created_at(self.object).pk
+        except:
+            # 이전글 없을 때
+            previous_pk = -1
+        try:
+            next_pk = Question.get_next_by_created_at(self.object).pk
+        except:
+            # 이전글 없을 때
+            next_pk = -1
+        context['next_pk'] = next_pk
+        context['previous_pk'] = previous_pk
+
+        tags = self.object.tags.all()
+        username = self.object.user.nickname
+        total_likes = len(self.object.like_user.all())
+        
+        # 해당 게시글에 대한 답변 가져오기
+        answers = Answer.objects.filter(question_id = self.object.id, parent_answer__isnull=True).order_by('answer_order')   #  나중에 답변 정렬도 고려. 최신순 또는 좋아요 순
+        answers_count = len(answers)
+        
+        answers_reply_dict ={}
+        for answer in answers:
+            replies =  Answer.objects.filter(parent_answer= answer).order_by('answer_order')
+            answers_reply_dict[answer] = replies
+
+        # 좋아요 눌렀는지 안 눌렀는지
+        is_liked = self.request.user in  self.object.like_user.all()
+
+        context['username']= username
+        context['tags'] = tags
+        context['total_likes'] = total_likes
+        context['answers']= answers
+        context['answers_count']= answers_count
+        context['answers_reply_dict']= answers_reply_dict
+        context['is_liked']= is_liked
+        
+
+        return context
+
+
+
+
 
 def question_update(request,pk):
     question = get_object_or_404(Question, pk=pk)
