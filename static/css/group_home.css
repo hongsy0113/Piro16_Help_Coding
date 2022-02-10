@@ -29,7 +29,6 @@
     color: #FFFFFF;
     font-size: 24px;
     line-height: 105%;
-
     margin-right: 30px;
 }
 
@@ -49,7 +48,6 @@
     font-size: 24px;
     line-height: 105%;
 }
-
 
 /* 내 그룹 목록 */
 .gridbox {
@@ -75,7 +73,6 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 0;
 }
 
 .img__group-img {
