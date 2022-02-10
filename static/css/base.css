@@ -68,10 +68,6 @@ header li, header a {
     border: 1px solid #C4C4C4;
 }
 
-section{
-    width: 100%;
-    margin: 0 auto;
-}
 
 
 .header__mypage-dropdown {
@@ -137,7 +133,7 @@ section{
     color: #828282;
     margin: 0;
 }
-    
+
 .header__mypage-dropdown a {
     width: 100%;
     padding: 15px 20px;
@@ -161,3 +157,7 @@ section{
     color: #EB6464;
 }
 
+section{
+    width: 100%;
+    margin: 0 auto;
+}
