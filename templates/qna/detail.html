@@ -90,6 +90,10 @@
                     <h2>{{ answer.user }}</h2>
                     <p>{{ answer.created_at|date:'y.m.d  H:i'}}</p>
                     <div>
+                        {% if answer.user.id == user.id %}
+                        <span>(작성자)</span>
+                        {% endif %}
+
                         <p class="answer__content answer__content--{{ answer.id }}">{{ answer.content }}</p>
 
                         <div class="answer__like-btn answer__like-btn--{{ answer.id }} btn"  id="answer-like-{{ answer.id }}">
@@ -130,6 +134,11 @@
                                 <p>
                                     {{ reply.user }}   {{ reply.created_at|date:'y.m.d  H:i' }}
                                     <br>
+
+                                    {% if reply.user.id == user.id %}
+                                    <span>(작성자)</span>
+                                    {% endif %}
+
                                     <p class= "answer__content answer__content--{{ reply.id }}"> {{ reply.content }}</p>
                                     <br>
                                 </p>

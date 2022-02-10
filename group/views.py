@@ -86,7 +86,6 @@ def group_search_public(request):
 def group_create(request):
     user = request.user
     groups = Group.objects.values('name')
-    print(groups)
 
     if request.method == 'POST':
         form = GroupForm(request.POST, request.FILES)
@@ -102,12 +101,9 @@ def group_create(request):
             group.mode = request.POST.get('group-mode__tag')
         # image = request.FILES.get('image')
         # group.image = image
-            print(group.mode)
             group.maker = user    # 방장 = 접속한 유저
             group.members.add(user)  # 방장도 그룹의 멤버로 추가
             group.save()
-
-            print(group.members)
 
             return redirect('group:group_home')
     else:
@@ -178,12 +174,9 @@ def group_drop(request, pk):
     if len(members) > 1:
         if user == group.maker:
             # group.members.remove(user)
-            print(members)
             group.members.remove(user)
             # group.maker = members[0]   #랜덤하게 지정해야 하나..?
             group.save()
-
-            print(group.maker)
             # group.maker = members[0]
             # group.save()
 
@@ -209,11 +202,6 @@ def group_detail(request, pk):
 
     # if groups.mode == 'PUBLIC':
     #     modes = groups.mode
-
-    print(members)
-    print(maker)
-    print(groups.mode)
-    print(members.filter(nickname__contains=maker.nickname))
 
     ctx = { 
         'group': groups, 
@@ -259,13 +247,12 @@ def create_code(request, pk):
 def join_group(request):    
     user = request.user
     input_code = request.GET.get('code')
-    print(input_code)
 
     mygroup = list(Group.objects.filter(members__nickname__contains=user))
     try:
         if input_code != None:
             group = get_object_or_404(Group, code=input_code)
-            print(group)
+
             # 예외처리 or 조건문
             if group in mygroup:
                 message = "이미 가입된 그룹입니다."
@@ -288,7 +275,6 @@ def join_group(request):
             return render(request, template_name='group/join_group.html', context=ctx)
 
     except:
-        print('존재하지 않는 그룹입니다.')
         message = "존재하지 않는 코드입니다."
         ctx = { 'message': message }
 
@@ -320,8 +306,6 @@ def group_list(request):
 
     pagintor = Paginator(groups, 6)
     page_obj = pagintor.get_page(page)
-    print(group)
-    print(groups)
     ctx = { 
         'groups': page_obj,
         'sort_by': sort,
@@ -353,8 +337,7 @@ def join_list(request, pk):
 
     for wait in waits:
         # result = request.GET.get('is_accept')  # 수락/거절 중 user가 선책한 값
-        # print(result)
-        print(wait)
+
         if request.GET.get('accept'):
             group.waits.remove(wait)
             group.members.add(wait)
@@ -362,8 +345,7 @@ def join_list(request, pk):
         elif request.GET.get('reject'):
             group.waits.remove(wait)
             group.save()
-    
-    print(members)
+
     if user == group.maker:
 
         ctx = { 
@@ -435,7 +417,6 @@ def post_create(request, pk):
     if request.method == 'POST':
         form = PostForm(request.POST, request.FILES)
 
-        print(form.errors)
         if form.is_valid():
             post = form.save(commit=False)
             post.group = get_object_or_404(Group, pk=pk)   # 그룹 pk로 받아오기
