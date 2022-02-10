@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/group.css' %}" />
+{% endblock %}
+{% block title %} Group Form {% endblock %}
+
+{% block content %}
+
+    <form method="POST" class="post-form" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="select__group-mode">
+            <p>그룹 공개 여부 선택</p>
+            <input type="radio" name="group-mode__tag" value="PUBLIC" id="public" class="tag" {% if group.mode == 'PUBLIC' %} checked {% endif %}>
+            <label for="public">공개</label>
+            <input type="radio" name="group-mode__tag" value="PRIVATE" id="private" class="tag" {% if group.mode == 'PRIVATE' %} checked {% endif %}>
+            <label for="private">비공개</label>
+        </div>
+        <div class="group__create--info">
+            <p>
+                <label>그룹명: </label>
+                <input class="form-input" name="name" type="text" maxlength="30" value="{% if group.name %} {{ group.name }} {% endif %}">
+                {% if error %}
+                <p style="color:red;">{{ error }}</p>
+                {% endif %}
+            </p>
+            <p>
+                <label for="image">대표이미지 </label>
+                <p>{{ form.image }}</p>
+                <!-- <input class="form-input" name="image" type="file" maxlength="255" value="{% if group.image %} {{ group.image.url }} {% endif %}"> -->
+            </p>
+            <p>
+                <label>그룹 소개 </label>
+                <textarea class="form-input" cols="63" rows="10" name="intro">{% if group.intro %} {{ group.intro }} {% endif %}</textarea>
+            </p>
+        </div>
+        
+        <!-- <table>
+            {{ form.as_table }}
+        </table> -->
+        <button type="submit" class="save btn">생성</button>
+        <!-- <a href="{% url 'group:group_home' %}">취소</a> -->
+    </form>
+    <div>도움말</div>
+
+{% endblock %}

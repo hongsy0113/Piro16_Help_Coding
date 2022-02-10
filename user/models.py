@@ -2,37 +2,27 @@ from cmath import pi
 from django.db import models
 # from django.contrib.auth.models import User
 from group.models import *
-
-#from qna.models import *
-
+# from qna.models import *
+from django.contrib.auth.models import AbstractUser
 
 #######################################
 # 파일 저장 경로 지정하기 위한 함수들
-# group 대표 이미지
+# user 대표 이미지
 def user_thumbnail_path(instance, filename):
-    # file will be uploaded to MEDIA_ROOT/group_<group.id>/<filename>
-    return 'group_{0}/thumbnail/{1}'.format(instance.id, filename)
-
-
+    # file will be uploaded to MEDIA_ROOT/user_<email>/<filename>
+    return 'user_{0}/thumbnail/{1}'.format(instance.email, filename)
 ######################################
 
-
-class Job(models.Model):
-    school_company = models.CharField(max_length=50)
-    def __str__(self):
-        return self.school_company
-    
-class User(models.Model):
-    # 장고 모델 상속하는 걸로 해야 함
-    email = models.CharField(max_length=50)
+class User(AbstractUser):
+    email = models.EmailField(verbose_name='email')
     password = models.CharField(max_length=50)
     nickname = models.CharField(max_length=50)
     birth = models.DateField(null=True, blank=True)
-    # 유저 대표 이미지 
     img = models.ImageField(upload_to=user_thumbnail_path, null=True, blank=True)
     introduction = models.TextField(null=True, blank=True)
     total_like = models.IntegerField(null=True, blank=True)
-    job = models.ForeignKey(Job, on_delete=models.CASCADE)
+    JOB_CHOICE = (('elementary_school', '초등학생'), ('middle_school', '중학생'), ('high_school', '고등학생'), ('university', '대학생'), ('programmer', '개발자'), ('parents', '학부모'), ('etc', '기타'))
+    job = models.CharField(max_length=50, choices=JOB_CHOICE, default='etc')
 
     def __str__(self):
         return self.nickname
@@ -44,7 +34,6 @@ class Reward(models.Model):
 
     def __str__(self):
         return self.name
-
 
 class GetReward(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)

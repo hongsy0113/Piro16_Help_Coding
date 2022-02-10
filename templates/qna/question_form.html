@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/question_create.css' %}">
+{% endblock %}
+
+{% block js %}
+    <script type="text/javascript" src="/static/js/qna_create.js" defer></script>
+{% endblock %} 
+
+{% block content %}
+<div>
+    <h3>질문 등록</h3>
+    <h4>질문 게시글 등록 페이지입니다.</h4>
+</div>
+
+<form action="" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div>
+        <label for="title">질문 제목</label><br />
+        <input type="text" name="title" id="title" value="{{ question.title }}"/>
+    </div>
+    <div>
+        <label for="content">질문 내용</label><br />
+        <textarea name="content" id="content" cols="30" rows="10">{% if question.content %}{{ question.content }}{% endif %}</textarea>
+    </div>
+    <div>
+        <label for="image">이미지 업로드</label><br />
+        <p>{{ form.image }}</p>
+    </div>
+    <div>
+        <label for="attached_file">파일 업로드</label><br />
+        <p>{{ form.attached_file }}</p>
+    </div>
+    <div class="select__category">
+        <p>카테고리 선택</p>
+        <input type="radio" name="s_or_e_tag" value="S" id="scratch" class="tag" {% if question.s_or_e_tag == 'S' %} checked {% endif %}/>
+        <label for="scratch">스크래치</label>
+        <input type="radio" name="s_or_e_tag" value="E" id="entry" class="tag" {% if question.s_or_e_tag == 'E' %} checked {% endif %}/>
+        <label for="entry">엔트리</label>
+        <input type="radio" name="s_or_e_tag" value="ETC" id="etc" class="tag" {% if question.s_or_e_tag == 'ETC' %} checked {% endif %}/>
+        <label for="etc">기타</label>
+    </div>
+    <div class="select__tag">
+        <p>상세 태그 선택</p>
+        <input type="checkbox" name="detail_tag" value="MOTION" id="motion" class="tag" {% if 'MOTION' in basic_tag_names %} checked {% endif %} />
+        <label for="motion">동작</label>
+        <input type="checkbox" name="detail_tag" value="LOOKS" id="looks" class="tag"  {% if 'LOOKS' in basic_tag_names %} checked {% endif %} />
+        <label for="looks">형태</label>
+        <input type="checkbox" name="detail_tag" value="SOUND" id="sound" class="tag" {% if 'SOUND' in basic_tag_names %} checked  {% endif %}/>
+        <label for="sound">소리</label>
+        <input type="checkbox" name="detail_tag" value="EVENTS" id="events" class="tag"{% if 'EVENTS' in basic_tag_names %} checked {% endif %} />
+        <label for="events">이벤트</label>
+        <input type="checkbox" name="detail_tag" value="CONTROL" id="control" class="tag" {% if 'CONTROL' in basic_tag_names %} checked  {% endif %}/>
+        <label for="control">제어</label>
+        <input type="checkbox" name="detail_tag" value="SENSING" id="sensing" class="tag" {% if 'SENSING' in basic_tag_names %} checked  {% endif %}/>
+        <label for="sensing">감지</label>
+        <input type="checkbox" name="detail_tag" value="OPERATORS" id="operators" class="tag "{% if 'OPERATORS' in basic_tag_names %} checked  {% endif %}/>
+        <label for="operators">연산</label>
+        <input type="checkbox" name="detail_tag" value="VARIABLES" id="variables" class="tag" {% if 'VARIABLES' in basic_tag_names %} checked  {% endif %}/>
+        <label for="variables">변수</label>
+        <input type="checkbox" name="detail_tag" value="MY" id="my" class="tag" {% if 'MY' in basic_tag_names %} checked {% endif %}/>
+        <label for="my">내 블록</label>
+        <input type="checkbox" name="detail_tag" value="DETAIL_ETC" id="detail_etc" class="tag" {% if 'DETAIL_ETC' in basic_tag_names %} checked {% endif %}/>
+        <label for="detail_etc">기타</label>
+
+        {% for extra_tag in extra_tag_names %}
+        <input type="checkbox" name="detail_tag" value="{{ extra_tag }}" id="{{ extra_tag }}" class="tag" checked/>
+        <label for="{{ extra_tag }}">{{ extra_tag }}</label>
+        {% endfor %}
+         
+        <input type="checkbox" name="add_tag" value="ADD_TAG" id="add_tag" class="tag" />
+        <label for="add_tag">태그 추가</label>
+    </div>
+    <div class="tag_input_box"></div>
+    <div>
+        <button type="submit">질문 등록</button>
+        <a href="{% url 'qna:question_list' %}">취소</a>
+    </div>
+</form>
+
+{% endblock %}

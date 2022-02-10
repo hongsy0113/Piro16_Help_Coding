@@ -1,0 +1,43 @@
+.select__category input {
+    display: none;
+}
+
+.select__category label {
+    display: inline-block;
+    border-radius: 20px;
+    text-align: center;
+    text-decoration: none;
+    border: solid 1px #ccc;
+    transition: 0.25s;
+    padding: 6px 18px;
+    cursor: pointer;
+    font-size: 14px;
+    margin: 3px;
+}
+
+.select__category > input:checked + label {
+    background: #4cc4d4;
+    color: #fff;
+}
+
+.select__tag input {
+    display: none;
+}
+
+.select__tag label {
+    display: inline-block;
+    border-radius: 20px;
+    text-align: center;
+    text-decoration: none;
+    border: solid 1px #ccc;
+    transition: 0.25s;
+    padding: 6px 18px;
+    cursor: pointer;
+    font-size: 14px;
+    margin: 3px;
+}
+
+.select__tag > input:checked + label {
+    background: #78e68f;
+    color: #fff;
+}
