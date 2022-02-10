@@ -326,7 +326,7 @@ def question_update(request,pk):
         # TODO : 선택 태그 뭘 선택했었는 지를 ctx로 넘겨주자
         # 기본 태그와 추가 태그 다르게 넘기자
         # TODO :  기본 태그 가 바뀌게 된다면 아래 리스트 수정해야 됨.
-        basic_tags = ['MOTION', 'LOOKS', 'SOUND', 'EVENTS', 'CONTROL', 'SENSING', 'OPERATORS','VARIABLES', 'MY', 'ETC', ]
+        basic_tags = ['동작', '형태', '소리', '이벤트', '제어',' 감지', '연산','변수', '내 블록', '기타']
         tags = question.tags.all()
         basic_tag_names = []
         extra_tag_names = []
