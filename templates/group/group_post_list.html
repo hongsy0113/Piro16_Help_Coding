@@ -27,6 +27,16 @@
     </div>
 </div>
 
+<div class="sortbox">
+    <form method="get" action="{% url 'group:post_list' group.pk %}" class="float-end">
+        <!-- <select class="select_sort" onchange=""> -->
+        <select class="select_sort" onchange="location=this.value; getSelectValue(this.form);">
+            <option class="sort-recent" value="?sort=recent" {% if sort_by == 'recent' %} selected {% endif %}>최신순</option>
+            <option class="sort-view" value="?sort=view" {% if sort_by == 'view' %} selected {% endif %}>조회수순</option>
+        </select>
+    </form>
+</div>
+
 <div class="group_post__list-container">
     {% for post in posts %}
     <div class="group_post__container">
@@ -64,7 +74,7 @@
 <ul class="pagination justify-content-center">
     {% if posts.has_previous %}
     <li class="page-item">
-        <a class="page-link" href="?page={{ post.previous_page_number }}">이전</a>
+        <a class="page-link" href="?page={{ post.previous_page_number }}&sort={{ sort_by }}">이전</a>
     </li>
     {% else %}
     <li class="page-item disabled">
@@ -75,18 +85,18 @@
     {% for page_number in posts.paginator.page_range %}
         {% if page_number == posts.number %}
         <li class="page-item active" aria-current="page">
-            <a class="page-link" href="?page={{ page_number }}">{{ page_number }}</a>
+            <a class="page-link" href="?page={{ page_number }}&sort={{ sort_by }}">{{ page_number }}</a>
         </li>
         {% else %}
         <li class="page-item">
-            <a class="page-link" href="?page={{ page_number }}">{{ page_number }}</a>
+            <a class="page-link" href="?page={{ page_number }}&sort={{ sort_by }}">{{ page_number }}</a>
         </li>
         {% endif %}
     {% endfor %}
 
     {% if posts.has_next %}
     <li class="page-item">
-        <a class="page-link" href="?page={{ posts.next_page_number }}">다음</a>
+        <a class="page-link" href="?page={{ posts.next_page_number }}&sort={{ sort_by }}">다음</a>
     </li>
     {% else %}
     <li class="page-item">

@@ -396,9 +396,16 @@ def group_list(request):
 ####### 그룹 내 커뮤니티 게시판 ########
 # 게시글 목록
 def post_list(request, pk):
-    posts = GroupPost.objects.filter(group__pk=pk)
+    posts = GroupPost.objects.filter(group__pk=pk).order_by('-created_at')
     group = Group.objects.get(pk=pk)
     page = request.GET.get('page', '1')    # 페이지
+
+    # 게시물 정렬
+    sort = request.GET.get('sort', 'recent')
+    if sort == 'recent':    # 최신순
+        posts = GroupPost.objects.order_by('-created_at')
+    elif sort == 'view':    # 조회수순
+        posts = GroupPost.objects.order_by('-hit')
 
     # 페이징 처리
     paginator = Paginator(posts, 5)    # 페이지당 5개씩 보여주기
@@ -407,6 +414,7 @@ def post_list(request, pk):
     ctx = {
         'posts': page_obj,
         'group': group,
+        'sort_by': sort
     }
 
     return render(request, 'group/group_post_list.html', context=ctx)
