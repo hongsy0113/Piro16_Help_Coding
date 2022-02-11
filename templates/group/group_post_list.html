@@ -1,108 +1,166 @@
 {% extends 'base.html' %}
+{% load hitcount_tags %}
 {% load static %}
+
 
 {% block css %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/group_post_list.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}">
 {% endblock %}
 
+{% block title %} 그룹 커뮤니티 {% endblock %}
 
 {% block content %}
-<div class="group_post__top-search-container">
-    <div class="group_post__top">
-        <span class="group_post__top-title">그룹 게시판</span>
-        <span class="group_post__top-info">그룹원들과 내가 만든 작품을 공유하고 이야기를 나누세요!</span>
+<div class="group-post-board"> <!-- 그룹 내 커뮤니티 게시판 시작 -->
+
+    <div class="group-post__top">   <!-- 게시판 상단 -->
+        <div class="group-post__top-left">
+            <div class="group-post__top--title">{{ group.name }}</div>
+            <div class="group-post__top--intro">{{ group.intro }}</div>
+        </div>
+        <div class="group-post__top--info">
+            <a href="{% url 'group:group_detail' group.pk %}">그룹 정보</a>
+        </div>
     </div>
-    <div class="group_post__search-container">
+
+    <div class="list-sort">    <!-- 최신순 인기순 댓글순 -->
+        <!-- 피그마 디자인 구현 -->
+        <span class="list-sort__btn">최신순</span>
+        <span class="list-sort__btn">조회수순</span>
+        <span class="list-sort__btn">좋아요순</span>
+
+        <!-- select box -->
+        <form method="get" action="{% url 'group:post_list' group.pk %}">
+            <select class="select_sort" onchange="location=this.value; getSelectValue(this.form);">
+                <option class="sort-recent" value="?sort=recent" {% if sort_by == 'recent' %} selected {% endif %}>최신순</option>
+                <option class="sort-view" value="?sort=view" {% if sort_by == 'view' %} selected {% endif %}>조회수순</option>
+            </select>
+        </form>
+    </div>
+
+    <div class="group-post__list">  <!-- 게시글 목록 시작 -->
+
+        <div class="gridbox">  
+            {% for post in posts %}
+            <div class="gridbox__item-post">    <!-- 그룹 게시글 하나 시작 -->
+                <div class="img__post">
+                    {% if post.image %}
+                    <img src="{{ post.image.url }}" height="200" width="200" class="img__post-img" />
+                    {% else %}
+                    <img src="../../static/image/none_image_group_post.jpeg" height="200" width="200" class="img__post-img" />
+                    {% endif %}
+                </div>
+
+                <div class="group_post-tag">   <!-- 게시글 태그 수정 여기서 해주세요 -->
+                    {% if post.category_tag == 'S' %}
+                    <span class="post-tag">자랑하기</span>
+                    {% elif post.category_tag == 'Q' %}
+                    <span class="post-tag">질문하기</span>
+                    {% else %}
+                    <span class="post-tag">기타</span>
+                    {% endif %}
+                </div>
+
+                <div class="comment__post">   <!-- 댓글 개수 -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M13.1592 0.505859H1.90918C0.875 0.505859 0.0341797 1.34668 0.0341797 2.38086V10.8184C0.0341797 11.8525 0.875 12.6934 1.90918 12.6934H4.72168V15.1543C4.72168 15.4414 5.0498 15.6084 5.28125 15.4385L8.94043 12.6934H13.1592C14.1934 12.6934 15.0342 11.8525 15.0342 10.8184V2.38086C15.0342 1.34668 14.1934 0.505859 13.1592 0.505859Z" fill="white"/>
+                    </svg>
+                    <span> 1 </span>    <!-- 댓글 개수 수정 여기서 해주세요 -->
+                </div>
+
+                <div class="content__post">
+                    <!-- 그룹 이름 -->
+                    <div class="content__post-titlebox">
+                        <!-- 그룹 게시글 디테일 페이지로 이동 (후에 수정 필요) -->
+                        <a href="{% url 'group:group_detail' group.pk %}" class="content__post-title">
+                            {{ post.title }}
+                        </a>
+                    </div>
+                    <!-- 작품 소개글 -->
+                    <div class="content__post-intro">
+                        <span class="post-intro">{{ post.content }}</span>
+                    </div>
+                    <!-- 글 정보 -->
+                    <div class="content__post-info">
+                        <span class="post-info">{{ post.created_at | date:'y.m.d' }} · {{ post.user }} · 조회  {% get_hit_count for post %}</span>
+                        <!-- <div class="info-like">좋아요 {{ post.hit }}</div> --> <!-- 좋아요 구현 X -->
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+
+    <div class="group_post__search-container">  <!-- 게시글 검색 -->
         <form class="group_post__search-box" action="{% url 'group:search_result' %}" method="get">
             {% csrf_token %}
-            <input type="search" placeholder="원하는 글을 찾아보세요!" name="search" />
+            <input type="search" placeholder="작품을 검색해보세요!" name="search" />
             <button type="submit">
                 <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M25.1504 22.115L20.2822 17.2468C20.0625 17.0271 19.7646 16.905 19.4521 16.905H18.6562C20.0039 15.1814 20.8047 13.0134 20.8047 10.655C20.8047 5.04468 16.2588 0.498779 10.6484 0.498779C5.03809 0.498779 0.492188 5.04468 0.492188 10.655C0.492188 16.2654 5.03809 20.8113 10.6484 20.8113C13.0068 20.8113 15.1748 20.0105 16.8984 18.6628V19.4587C16.8984 19.7712 17.0205 20.0691 17.2402 20.2888L22.1084 25.157C22.5674 25.616 23.3096 25.616 23.7637 25.157L25.1455 23.7751C25.6045 23.3162 25.6045 22.574 25.1504 22.115ZM10.6484 16.905C7.19629 16.905 4.39844 14.1121 4.39844 10.655C4.39844 7.20288 7.19141 4.40503 10.6484 4.40503C14.1006 4.40503 16.8984 7.198 16.8984 10.655C16.8984 14.1072 14.1055 16.905 10.6484 16.905Z" fill="#4E4E4E"/>
                 </svg>
                 </button>
         </form>
-        <a class="group_post__ask-btn" href="{% url 'group:post_create' group.pk %}">게시글 작성</a>
+        <a class="group_post__ask-btn" href="{% url 'group:post_create' group.pk %}">내 작품 공유</a>
     </div>
 </div>
 
-<div class="sortbox">
-    <form method="get" action="{% url 'group:post_list' group.pk %}" class="float-end">
-        <!-- <select class="select_sort" onchange=""> -->
-        <select class="select_sort" onchange="location=this.value; getSelectValue(this.form);">
-            <option class="sort-recent" value="?sort=recent" {% if sort_by == 'recent' %} selected {% endif %}>최신순</option>
-            <option class="sort-view" value="?sort=view" {% if sort_by == 'view' %} selected {% endif %}>조회수순</option>
-        </select>
-    </form>
-</div>
-
-<div class="group_post__list-container">
-    {% for post in posts %}
-    <div class="group_post__container">
-        <div class="group_post__cont-left">
-            <a class="list__title" href = "">{{ post.title }}</a>
-            <div class="group_post__tag-info">
-                <div class="group_post__tag">
-                    {% if post.category_tag == 'S' %}
-                    <span class="tag__scratch">자랑하기</span>
-                    {% elif post.category_tag == 'Q' %}
-                    <span class="tag__entry">질문하기</span>
-                    {% else %}
-                    <span class="tag__etc">기타</span>
-                    {% endif %}
-                </div>
-                <div class="group_post__info">
-                    <span>{{ post.user }} · 조회 {{ post.hit }} · {{ post.created_at | date:'y.m.d' }}</span>
-                </div>
-            </div>
-            <div class="group_post__content">
-                <span>{{ post.content }}</span>
-            </div>
-        </div>
-        <div class="group_post__cont-right">
-            <div>답변</div>
-            <div>
-                <!-- 답변 개수 -->
-                1
-            </div> 
-        </div>
-    </div>
-    {% endfor %}
-</div>
-
-<ul class="pagination justify-content-center">
+<!-- 페이지네이션 -->
+<div class="pagination-box">
+<ul class="all__pagination">
     {% if posts.has_previous %}
-    <li class="page-item">
-        <a class="page-link" href="?page={{ post.previous_page_number }}&sort={{ sort_by }}">이전</a>
+    <li class="all__page-item">
+        <a class="all__page-sign" href="?page={{ post.previous_page_number }}&sort={{ sort_by }}">
+            <!-- 이전페이지 -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="24" viewBox="0 0 14 24" fill="none">
+            <path d="M12.7688 22.5918L2.02827 11.8513L12.7688 1.11076" stroke="#C4C4C4" stroke-width="2"/>
+            </svg>
+        </a>
     </li>
     {% else %}
-    <li class="page-item disabled">
-        <a class="page-link" tabindex="-1" aria-disabled="true" href="#">이전</a>
+    <li class="all__page-item">
+        <a class="all__page-sign" href="#">
+            <!-- 이전페이지 -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="24" viewBox="0 0 14 24" fill="none">
+            <path d="M12.7688 22.5918L2.02827 11.8513L12.7688 1.11076" stroke="#C4C4C4" stroke-width="2"/>
+            </svg>
+        </a>
     </li>
     {% endif %}
 
     {% for page_number in posts.paginator.page_range %}
         {% if page_number == posts.number %}
-        <li class="page-item active" aria-current="page">
-            <a class="page-link" href="?page={{ page_number }}&sort={{ sort_by }}">{{ page_number }}</a>
+        <li class="all__page-item">
+            <a class="all__page-item-active" href="?page={{ page_number }}&sort={{ sort_by }}">{{ page_number }}</a>
         </li>
         {% else %}
-        <li class="page-item">
-            <a class="page-link" href="?page={{ page_number }}&sort={{ sort_by }}">{{ page_number }}</a>
+        <li class="all__page-item">
+            <a class="all__page-link" href="?page={{ page_number }}&sort={{ sort_by }}">{{ page_number }}</a>
         </li>
         {% endif %}
     {% endfor %}
 
     {% if posts.has_next %}
-    <li class="page-item">
-        <a class="page-link" href="?page={{ posts.next_page_number }}&sort={{ sort_by }}">다음</a>
+    <li class="all__page-item">
+        <a class="all__page-sign sign-next" href="?page={{ posts.next_page_number }}&sort={{ sort_by }}">
+            <!-- 다음페이지 -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="24" viewBox="0 0 14 24" fill="none">
+            <path d="M1.23096 1.11035L11.9715 11.8509L1.23096 22.5914" stroke="#C4C4C4" stroke-width="2"/>
+            </svg>
+        </a>
     </li>
     {% else %}
-    <li class="page-item">
-        <a class="page-link" tabindex="-1" aria-disabled="true" href="#">다음</a>
+    <li class="all__page-item">
+        <a class="all__page-sign sign-next" href="#">
+            <!-- 다음페이지 -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="24" viewBox="0 0 14 24" fill="none">
+            <path d="M1.23096 1.11035L11.9715 11.8509L1.23096 22.5914" stroke="#C4C4C4" stroke-width="2"/>
+            </svg>
+        </a>
     </li>
     {% endif %}
 </ul>
+</div>
 
 {% endblock %}

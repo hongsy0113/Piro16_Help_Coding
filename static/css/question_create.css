@@ -1,8 +1,10 @@
-.select__category input {
+.select__category input,
+.select__group-mode input {
     display: none;
 }
 
-.select__category label {
+.select__category label, 
+.select__group-mode label {
     display: inline-block;
     border-radius: 20px;
     text-align: center;
@@ -15,7 +17,8 @@
     margin: 3px;
 }
 
-.select__category > input:checked + label {
+.select__category > input:checked + label,
+.select__group-mode > input:checked + label {
     background: #4cc4d4;
     color: #fff;
 }

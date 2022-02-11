@@ -1,3 +1,4 @@
+from email import message
 import re
 from tokenize import blank_re
 import uuid
@@ -8,6 +9,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.templatetags.static import static
 from django.db.models import Q
 from django.core.paginator import Paginator
+from django.db.models import Count
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q
@@ -22,13 +24,13 @@ def group_home(request):
     user = request.user  # 현재 접속한 사용자
 
     # 해당 유저의 그룹 리스트
-    groups = Group.objects.filter(members__nickname__contains=user.nickname)
+    groups = user.group_set.all()
     
     # 페이징 처리
     page = request.GET.get('page', '1')
 
     # 정렬하기
-    sort = request.GET.get('sort', '')
+    sort = request.GET.get('sort', 'star')
     if sort == 'name':
         groups = groups.order_by('name')
     elif sort == 'star':
@@ -92,20 +94,53 @@ def group_create(request):
 
         if form.is_valid():
             name = request.POST.get('name')
-            if Group.objects.filter(name=name):  # 그룹명은 식별자 => 이미 존재하는 이름이면 생성된 그룹 삭제
-                error = '이미 존재하는 이름입니다.'
-                ctx = { 'error': error }
+            intro = request.POST.get('intro')
+
+            if not name:
+                error_name = '그룹명을 입력하세요.'
+
+                ctx = { 
+                        'error_name': error_name,
+                        'name': name,
+                        'intro': intro
+                    }
 
                 return render(request, template_name='group/group_form.html', context=ctx)
+            else:
+                if Group.objects.filter(name=name):  # 그룹명은 식별자 => 이미 존재하는 이름이면 생성된 그룹 삭제
+                    error_name = '이미 존재하는 이름입니다.'
+
+                    ctx = { 
+                        'error_name': error_name,
+                        'name': name,
+                        'intro': intro
+                    }
+
+                    return render(request, template_name='group/group_form.html', context=ctx)
+
+    
+            if not request.POST.get('group-mode__tag'):
+                error_mode = '그룹 공개모드를 선택하세요.'
+
+                ctx = {
+                    'error_mode': error_mode,
+                    'name': name,
+                    'intro': intro
+                }
+
+                return render(request, template_name='group/group_form.html', context=ctx)
+
             group = form.save()
             group.mode = request.POST.get('group-mode__tag')
         # image = request.FILES.get('image')
         # group.image = image
+
             group.maker = user    # 방장 = 접속한 유저
             group.members.add(user)  # 방장도 그룹의 멤버로 추가
             group.save()
 
             return redirect('group:group_home')
+            
     else:
         form = GroupForm()
         users = User.objects.all()
@@ -125,25 +160,35 @@ def group_update(request, pk):
         group.name = request.POST.get('name')
         if group.name != prev_name:
             if Group.objects.filter(name=group.name).exclude(name=prev_name):  # 그룹명은 식별자 => 이미 존재하는 이름이면 생성된 그룹 삭제
-                error = '이미 존재하는 이름입니다.'
-                ctx = { 'error': error }
+                error_name = '이미 존재하는 이름입니다.'
+                ctx = { 
+                    'error_name': error_name 
+                }
 
                 return render(request, template_name='group/group_form.html', context=ctx)
-        
+
+
+        if not request.POST.get('group-mode__tag'):
+            error_mode = '그룹 공개모드를 선택하세요.'
+
+            ctx = {
+                'error_mode': error_mode
+            }
+
+            return render(request, template_name='group/group_form.html', context=ctx)
+
+
         if form.is_valid():
             group = form.save()
             # 이미지 수정 -> 파일 탐색기
             group.mode = request.POST.get('group-mode__tag')
-            image = request.FILES.get('image')
-            group.image = image
+            # 기존 이미지는 유지
+            if request.FILES.get('image'):
+                image = request.FILES.get('image')
+                group.image = image
             group.intro = request.POST.get('intro')
             
             group.save()
-
-        # if form.is_valid():
-        #     group = form.save()
-        #     group.user = request.user
-        #     group.save()
 
         return redirect('group:group_detail', pk)
     else:
@@ -161,9 +206,9 @@ def group_delete(request, pk):
         group.delete()
 
         return redirect('group:group_home')
-    else:
-        ### 알림 창 하나 띄우기(alert) "방장만 그룹을 삭제할 수 있습니다."
-        return redirect('group:group_detail', pk)
+    # else:
+    #     ### 알림 창 하나 띄우기(alert) "방장만 그룹을 삭제할 수 있습니다."
+    #     return redirect('group:group_detail', pk)
 
 # 그룹 탈퇴
 def group_drop(request, pk):
@@ -193,21 +238,28 @@ def group_drop(request, pk):
 # 그룹 상세 페이지
 def group_detail(request, pk):
     user = request.user
-    groups = get_object_or_404(Group, pk=pk)
-    mygroup = Group.objects.filter(members__nickname__contains=user)
-    members = groups.members.all()
-    groups.maker = members[0]
-    maker = groups.maker
-    groups.save()
+    group = get_object_or_404(Group, pk=pk)
 
-    # if groups.mode == 'PUBLIC':
-    #     modes = groups.mode
+    mygroup = user.group_set.all()
+    members = group.members.all()
+    group.maker = members[0]
+    maker = group.maker
+    group.save()
+
+    total_likes = len(group.interests.all())
+    is_liked = user in group.interests.all()
+
+    print(group.interests.all())
+    print(is_liked)
+    print(total_likes)
 
     ctx = { 
-        'group': groups, 
+        'group': group, 
         'mygroup': mygroup,
         'members': members,
         'maker': maker,
+        'total_likes': total_likes,
+        'is_liked': is_liked,
         'user': user,
         'ani_image': static('image/helphelp.png'),    
         'profile_img': static('image/none_image_user.jpeg'),
@@ -218,73 +270,51 @@ def group_detail(request, pk):
 
 ######## 초대 코드 ########
 
-# def group_status(group, login_user):
-#     if group.status == 'false':
-#         if group.maker == login_user:
-#             return 2  # 초대 수락 여부 결정
-#         else:
-#             return 1  # 수락을 기다리는 중
-#     else:
-#         return 3  # 가입 완료
-
 # 초대 코드 발급
 def get_invite_code(length=6):
     return base64.urlsafe_b64encode(
         codecs.encode(uuid.uuid4().bytes, 'base64').rstrip()
     ).decode()[:length]
 
-# 초대 코드 공개(from 그룹 상세 페이지)
-def create_code(request, pk):
-    group = get_object_or_404(Group, pk=pk)
+# 초대 코드 생성 (from 상세 페이지)
+@csrf_exempt
+def create_code_ajax(request):
+    req = json.loads(request.body)    
+    group_id = req['groupId']
+    group = get_object_or_404(Group, pk=group_id)
     group.code = get_invite_code()
     group.save()
-    # 여기서 3분 제한 둘 것
-    ctx = { 'group': group }
+    code = group.code
 
-    return render(request, template_name='group/create_code.html', context=ctx)
+    return JsonResponse({ 'name': group.name, 'code': code })
 
-# 초대 코드 입력(from 그룹 메인 페이지 / 비공개 그룹 가입)
-def join_group(request):    
+
+# 초대 코드 입력하기 (나의 그룹 홈페이지)
+@csrf_exempt
+def join_code_ajax(request):
+    req = json.loads(request.body)
+    
     user = request.user
-    input_code = request.GET.get('code')
+    input_code = req['code']
+    mygroup = list(user.group_set.all())
 
-    mygroup = list(Group.objects.filter(members__nickname__contains=user))
     try:
         if input_code != None:
             group = get_object_or_404(Group, code=input_code)
-
-            # 예외처리 or 조건문
             if group in mygroup:
-                message = "이미 가입된 그룹입니다."
-                ctx = { 'message': message }
-
-                return render(request, template_name='group/join_group.html', context=ctx)
-
-            else:   # user != 방장
-                # if (group):   #queryset이 비어있을 때 반대로 생각하기
+                message = '이미 가입된 그룹입니다.'
+            else:
                 group.members.add(user)
                 group.save()
-                # status = group_status(group, user)
+                message = '가입에 성공했습니다.'
 
-                
-                return redirect('group:group_home')
         else:
-            message = "아무것도 입력하지 않았습니다."
-            ctx = { 'message': message }
-
-            return render(request, template_name='group/join_group.html', context=ctx)
+            message = '가입에 성공했습니다.'
 
     except:
-        message = "존재하지 않는 코드입니다."
-        ctx = { 'message': message }
+        message = '존재하지 않는 코드입니다.'
 
-        return render(request, template_name='group/join_group.html', context=ctx)
-
-# def input_code(request):
-#     input_code = request.GET.get('code')
-#     ctx = { 'input': input_code }
-
-#     return render(request, template_name='group/input_code.html', context=ctx)
+    return JsonResponse({ 'message': message })
 
 
 ######## 공개 그룹 ########
@@ -293,19 +323,20 @@ def join_group(request):
 def group_list(request):
     group = Group.objects.filter(mode='PUBLIC')
     # group = Group.objects.all()
-    groups = Group.objects.order_by('name')
+    groups = group.order_by('name')
     # 페이징 처리
     page = request.GET.get('page', '1')
 
 
-    sort = request.GET.get('sort', '')
+    sort = request.GET.get('sort', 'interest')
     if sort == 'name':
-        groups = groups.order_by('name')
+        groups = group.order_by('name')
     elif sort == 'interest':
-        groups = groups.order_by('-interest')
+        groups = group.annotate(total_likes=Count('interests')).order_by('-total_likes')
 
     pagintor = Paginator(groups, 6)
     page_obj = pagintor.get_page(page)
+
     ctx = { 
         'groups': page_obj,
         'sort_by': sort,
@@ -336,8 +367,6 @@ def join_list(request, pk):
     maker = group.maker
 
     for wait in waits:
-        # result = request.GET.get('is_accept')  # 수락/거절 중 user가 선책한 값
-
         if request.GET.get('accept'):
             group.waits.remove(wait)
             group.members.add(wait)
@@ -345,7 +374,7 @@ def join_list(request, pk):
         elif request.GET.get('reject'):
             group.waits.remove(wait)
             group.save()
-
+    
     if user == group.maker:
 
         ctx = { 
@@ -361,21 +390,33 @@ def join_list(request, pk):
         # alert 창 띄우기 (방장이 아니므로 열람할 수 없습니다)
         return redirect('group:group_detail', pk)
 
-######## 공개 그룹 ########
+# 그룹 가입 대기자 명단
+@csrf_exempt
+def wait_list_ajax(request):
+    req = json.loads(request.body)
+    group_id = req['id']
+    group = get_object_or_404(Group, pk=group_id)
+    waits = group.waits.all()
+    waits_img = group.waits.get('image')
+    
+    for wait in waits:
+        if request.GET.get('accept'):
+            group.waits.remove(wait)
+            group.members.add(wait)
+            group.save()
+        elif request.GET.get('reject'):
+            group.waits.remove(wait)
+            group.save()
+    print(waits)
+    JsonResponse({
+        'groupName': group.name,
+        'waits': waits,
+        'waits_img': waits_img
+    })
 
-# 그룹 모아보기 게시판(그룹 찾기)
-def group_list(request):
-    group = Group.objects.all()
-    ctx = { 
-        'groups': group,
-        'ani_image': static('image/helphelp.png')    
-    }
-
-    return render(request, template_name='group/group_list.html', context=ctx)
 
 
-
-####### 그룹 내 커뮤니티 게시판 ########
+######################### 그룹 내 커뮤니티 게시판 ##############################
 # 게시글 목록
 def post_list(request, pk):
     posts = GroupPost.objects.filter(group__pk=pk).order_by('-created_at')
@@ -385,12 +426,12 @@ def post_list(request, pk):
     # 게시물 정렬
     sort = request.GET.get('sort', 'recent')
     if sort == 'recent':    # 최신순
-        posts = GroupPost.objects.order_by('-created_at')
+        posts = posts.order_by('-created_at')
     elif sort == 'view':    # 조회수순
-        posts = GroupPost.objects.order_by('-hit')
+        posts = posts.order_by('-hit')
 
     # 페이징 처리
-    paginator = Paginator(posts, 5)    # 페이지당 5개씩 보여주기
+    paginator = Paginator(posts, 6)    # 페이지당 5개씩 보여주기
     page_obj = paginator.get_page(page)
 
     ctx = {
@@ -420,17 +461,46 @@ def post_create(request, pk):
         if form.is_valid():
             post = form.save(commit=False)
             post.group = get_object_or_404(Group, pk=pk)   # 그룹 pk로 받아오기
-            # post.category_tag = request.POST.get('category_choice')  # 그룹게시글 카테고리 (대분류)
+            post.category = request.POST.get('category')  # 그룹게시글 카테고리 (대분류)
             post.user = request.user
             post = form.save()
-
+            ### TODO
+            # 게시글 디테일 페이지로 이동
+        else:
+            ctx = {'form': form, 'category_error': '기본 카테고리를 선택해주세요!'}
+            return render(request, 'group/group_post_form.html', context=ctx)
         return redirect('group:post_list', pk=pk)
 
     else:
         form = PostForm()
         ctx = {'form': form}
 
-        return render(request, 'group/group_post_create.html', context=ctx)
+        return render(request, 'group/group_post_form.html', context=ctx)
+
+
+def post_update(request,pk ,post_pk):
+    post = get_object_or_404(GroupPost, pk=post_pk)
+    if request.method == "POST":
+        form = PostForm(request.POST, request.FILES, instance = post)
+
+        if form.is_valid():
+            ost = form.save()  
+
+            return redirect('group:post_detail', pk, post_pk)
+        else:
+            ctx = {'form': form,}
+            return render(request, 'group/group_post_form.html', context=ctx)
+    else:
+        form = PostForm(instance=post)
+
+        ctx = {'form': form, 'post': post}
+
+        return render(request, template_name="group/group_post_form.html", context=ctx)        
+
+def post_detail(request, pk, post_pk):
+    return redirect('group:post_list', pk=pk)
+
+############################################################################
 
 ## Ajax
 # 내 그룹 - 찜 기능 ajax
@@ -451,14 +521,24 @@ def star_ajax(request):
 
     return JsonResponse({ 'id': group_id, 'is_star': is_stared })
 
-# 공개 그룹 좋아요 수 = 인기 그룹 선정 기준
+# 공개 그룹 좋아요 수 
 @csrf_exempt
-def group_interest_ajax(request):
+def interest_ajax(request):
     req = json.loads(request.body)
-    group_id = req['id']
-    group = Group.objects.get(id=group_id)
+    group_id = req['groupId']
+    group = get_object_or_404(Group, pk=group_id)
+    interests = group.interests
 
-    group.like += 1
-    group.save()
+    is_liked = request.user in interests.all()
 
-    return JsonResponse({ 'id': group_id })
+    if is_liked:
+        interests.remove(request.user)
+    else:
+        interests.add(request.user)
+
+    total_likes = len(interests.all())
+    # group.save()
+
+    return JsonResponse({ 'groupId': group_id, 'total_likes': total_likes, 'is_liked': not(is_liked) })
+
+

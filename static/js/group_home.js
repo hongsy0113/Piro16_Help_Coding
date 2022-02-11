@@ -1,6 +1,7 @@
 const user_id = JSON.parse(document.getElementById('user_id').textContent);
 const group_id = JSON.parse(document.getElementById('group_id').textContent);
 
+// 나의 그룹 찜 기능 ajax
 const onClickStar = async (id) => {
     const url = '/group/star_ajax/';
     const {data} = await axios.post(url, {
@@ -29,33 +30,44 @@ const starHandleResponse = (groupId, is_star) => {
     }
 };
 
-const createCodeBtn = document.querySelector('.group__code--btn');
-const closeCodeBtn = document.querySelector('.group__code--close');
-const groupJoinBtn = document.querySelector('.group-join__btn');
+// 초대 코드 입력 창 
+const groupJoinBtn = document.querySelector('.right__joinbtn');
 const closeJoinBtn = document.querySelector('.group-join__close');
 
-function createCode() {
-    const createCodeAlert = document.getElementById('create-code');
-    createCodeAlert.style.display = 'block';
-}
-
-function closeCode() {
-    const createCodeAlert = document.getElementById('create-code');
-    createCodeAlert.style.display = 'none';
-}
-
-function groupJoin() {
+function showGroupJoin() {
     const groupJoinAlert = document.getElementById('join-group');
     groupJoinAlert.style.display = 'block';
 }
 
-function closeJoin() {
+function closeGroupJoin() {
     const closeJoinAlert = document.getElementById('join-group');
     closeJoinAlert.style.display = 'none';
 }
 
-// createCodeBtn.onclick = () => {
-//     createCode();
-// }
+// groupJoinBtn.addEventListener('click', showGroupJoin);
+// closeJoinBtn.addEventListener('click', closeGroupJoin);
 
-// closeCodeBtn.addEventListener('click', closeCode);
+// 초대 코드 입력 Modal 
+const groupCodeSubmitButton = document.querySelector('.group-code__submit');
+const groupCodeInput = document.querySelector('.group-code__input');
+
+groupCodeSubmitButton.addEventListener('click', function() {
+    onClickGroupCodeSubmit(groupCodeInput.value);
+});
+
+const onClickGroupCodeSubmit = async(code) => {
+    const url = '/group/join_code_ajax/';
+    const { data } = await axios.post(url, {
+        code
+    });
+
+    groupCodeHandleResponse(data.message);
+}
+
+const groupCodeHandleResponse = (message) => {
+    const groupCodeAlert = document.querySelector('.group-join__alert-box');
+    const groupCodeAlertText = document.querySelector('.group-code__text');
+    
+    groupCodeAlertText.innerHTML = message;
+    groupCodeAlert.style.display = 'block';
+}
