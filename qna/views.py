@@ -147,10 +147,6 @@ def question_create(request):
         
         if form.is_valid():
             question = form.save(commit=False)  # 넘겨진 데이터 form에 바로 저장 X
-            if request.POST.get('s_or_e_tag', '') == '':
-                error = '기본 카테고리를 선택해주세요!'
-                ctx = {'form': form, 's_or_e_error': error, 'question':question}
-                return render(request, 'qna/question_form.html', context=ctx)
             question.s_or_e_tag = request.POST.get('s_or_e_tag')  # 카테고리 (스크래치, 엔트리, 기타) 중 1 선택
             question.user = request.user
             question.save() 
@@ -170,12 +166,12 @@ def question_create(request):
 
             return redirect('qna:question_detail', question.pk)
         else:
-            error_data = (form.errors.as_data())
-            error_dict = {}
-            for k in error_data:
-                error_dict[k] = error_data[k][0].message
-            
-            return render(request, 'qna/question_form.html', context={'form': form,})
+            # error_data = (form.errors.as_data())
+            # error_dict = {}
+            # for k in error_data:
+            #     error_dict[k] = error_data[k][0].message
+            ctx = {'form': form, 's_or_e_error': '기본 카테고리를 선택해주세요!'}
+            return render(request, 'qna/question_form.html', context=ctx)
     else:
         form = QuestionForm()
         ctx = {'form': form}

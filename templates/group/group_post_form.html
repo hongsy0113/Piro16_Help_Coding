@@ -21,6 +21,7 @@
         <label for="content">게시글 내용</label><br />
         <p>{{ form.content }}</p>
     </div>
+    {% comment %}
     <div>
         <label for="image">이미지 업로드</label><br />
         <p>{{ form.image }}</p>
@@ -29,15 +30,26 @@
         <label for="attached_file">파일 업로드</label><br />
         <p>{{ form.attached_file }}</p>
     </div>
+    {% endcomment %}
+    <div>
+        <label>사진: </label> 
+        <input class="group-post__form-input group-post__form-input--image" name="image" type="file" maxlength="255" value="{% if group_post.image %}{{group_post.image.url}}{% endif %}">
+    </div>
+    <div>
+        <label>첨부파일: </label> 
+        <input class="group-post__form-input group-post__form-input--file" name="attached_file" type="file" maxlength="255" value="{% if group_post.attached_file %}{{group_post.attached_file.name}}{% endif %}">
+    </div>
+    
     <div class="select__category">
         <p>카테고리 선택</p>
-        <input type="radio" name="category_tag" value="S" id="show" class="tag" />
+        <input type="radio" name="category" value="S" id="show" class="tag" {% if group_post.category == 'S' %} checked {% endif %}/>
         <label for="show">자랑하기</label>
-        <input type="radio" name="category_tag" value="Q" id="question" class="tag" />
+        <input type="radio" name="category" value="Q" id="question" class="tag" {% if group_post.category == 'Q' %} checked {% endif %} />
         <label for="question">질문하기</label>
-        <input type="radio" name="category_tag" value="ETC" id="etc" class="tag" />
+        <input type="radio" name="category" value="ETC" id="etc" class="tag"  {% if group_post.category == 'ETC' %} checked {% endif %}/>
         <label for="etc">기타</label>
     </div>
+    <span style="color: red;">{{ category_error }}</span>
     <div>
         <button type="submit">게시글 등록</button>
         <a href="{% url 'group:group_list' %}">취소</a>

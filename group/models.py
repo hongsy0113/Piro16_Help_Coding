@@ -59,7 +59,7 @@ class GroupPost(models.Model, HitCountMixin):
     tags = models.ManyToManyField('GroupTag', blank=True)
 
     GROUP_POST_CATE_CHOICES = (
-        ('BOAST', '자랑'),
+        ('S', '자랑'),
         ('Q', '질문'),
         ('ETC', '기타'),
     )

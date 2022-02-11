@@ -134,7 +134,7 @@ def group_create(request):
             group.mode = request.POST.get('group-mode__tag')
         # image = request.FILES.get('image')
         # group.image = image
-            print(group.mode)
+
             group.maker = user    # 방장 = 접속한 유저
             group.members.add(user)  # 방장도 그룹의 멤버로 추가
             group.save()
@@ -461,17 +461,21 @@ def post_create(request, pk):
         if form.is_valid():
             post = form.save(commit=False)
             post.group = get_object_or_404(Group, pk=pk)   # 그룹 pk로 받아오기
-            # post.category_tag = request.POST.get('category_choice')  # 그룹게시글 카테고리 (대분류)
+            post.category = request.POST.get('category')  # 그룹게시글 카테고리 (대분류)
             post.user = request.user
             post = form.save()
-
+            ### TODO
+            # 게시글 디테일 페이지로 이동
+        else:
+            ctx = {'form': form, 'category_error': '기본 카테고리를 선택해주세요!'}
+            return render(request, 'group/group_post_form.html', context=ctx)
         return redirect('group:post_list', pk=pk)
 
     else:
         form = PostForm()
         ctx = {'form': form}
 
-        return render(request, 'group/group_post_create.html', context=ctx)
+        return render(request, 'group/group_post_form.html', context=ctx)
 
 
 ############################################################################
