@@ -126,13 +126,16 @@ form input::placeholder, form textarea::placeholder {
 
 .signup__error {
     background-color: #FFE6E6;
-    border: 2px solid #eb6464;
+    border: 1px solid #eb6464;
     color: #eb6464;
     border-radius: 5px;
     box-sizing: border-box;
     font-weight: bold;
     font-size: 18px;
-    padding: 10px 12px;
-    margin: 10px 0;
+    padding: 10px 20px;
+    /* margin: 10px 0; */
     width: 540px;
+    display: flex;
+    gap: 15px;
+    align-items: center;
 }
