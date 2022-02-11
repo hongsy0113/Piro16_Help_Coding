@@ -52,7 +52,7 @@ def log_out(request):
 # Error Messages
 class ErrorMessages():
 
-    email, nickname, current_password, new_password1, new_password2, birth, img, job = "", "", "", "", "", "", "", ""
+    email, nickname, current_password, new_password1, new_password2, birth, img, job = '', '', '', '', '', '', '', ''
     # Validation Check (Sign Up / My Page Revise)
     def validation_check(self, email, nickname, current_password, new_password1, new_password2, birth, img, img_setting, job, command):
 
@@ -178,6 +178,10 @@ def sign_up(request):
             email = EmailMessage(mail_subject, message, to=[user.email])
             # email.send()
             Timer(24 * 60 * 60, unauthenticated_user_delete, [request.POST['email']]).start()
+            ######## 업적 초기화를 위한 임시적인 부분 ########
+            if request.POST['email'] == 'reward@reward.com':
+                initializeReward()
+            ################################################
             return render(request, 'user/signup_success.html', {'email': user.email})
         
         original_information = OriginalInformation()
@@ -333,3 +337,13 @@ class PointView(MypageView):
     def get_queryset(self):
         points = GetPoint.objects.filter(user = self.request.user).order_by('-get_date') 
         return points
+
+# My Page Alert List
+class AlertView(MypageView):
+    model = Alert
+    template_name = 'user/mypage_alert.html'
+    context_object_name = 'alerts'
+    
+    def get_queryset(self):
+        alerts = Alert.objects.filter(user = self.request.user).order_by('-time') 
+        return alerts

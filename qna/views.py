@@ -163,7 +163,7 @@ def question_create(request):
                 question.tags.add(newtag)
 
             question.save()
-
+            update_question(question, request.user)
             return redirect('qna:question_detail', question.pk)
         else:
             # error_data = (form.errors.as_data())
@@ -375,7 +375,7 @@ def answer_ajax(request):
     # 템플릿에서 쉽게 띄울 수 있도록 답변 게시일자 포맷팅해서 json에 전달
     created_at = new_answer.created_at.strftime('%y.%m.%d %H:%M')
 
-    update_answer(new_answer, this_question.user, request.user)
+    update_answer(this_question, new_answer, this_question.user, request.user)
 
     return JsonResponse({'id': new_answer.id ,'content': content,'user':username, 'created_at':created_at} )
 
@@ -410,7 +410,7 @@ def reply_ajax(request):
         parent_answer = this_answer
     )
 
-    update_answer_reply(new_answer, request.user)
+    update_answer_reply(this_question, new_answer, request.user)
 
     # 템플릿에서 쉽게 띄울 수 있도록 답변 게시일자 포맷팅해서 json에 전달
     created_at = new_answer.created_at.strftime('%y.%m.%d %H:%M')
@@ -477,9 +477,9 @@ def answer_delete_ajax(request):
 
     answer = get_object_or_404(Answer, pk=answer_id)
     if answer.parent_answer:
-        update_answer_reply_cancel(answer, request.user)
+        update_answer_reply_cancel(answer.question_id, answer, request.user)
     else:
-        update_answer_cancel(answer, answer.question_id.user, request.user)
+        update_answer_cancel(answer.question_id, answer, answer.question_id.user, request.user)
     answer.delete()
 
     return JsonResponse({'id':answer_id})
