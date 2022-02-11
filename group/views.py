@@ -82,12 +82,11 @@ def group_create(request):
         mode = request.POST.get('group-mode__tag')
 
         origin_group = Group.objects.filter(name=name)
+
+        # 에러 메세지 
         error = validation_group(origin_group, name, '', mode)
-        print(error)
         error_name = error[0]
         error_mode = error[1]
-        print(error_name)
-        print(error_mode)
         
         if error_name != '' or error_mode !='' :
             ctx = { 
@@ -106,7 +105,7 @@ def group_create(request):
 
             group = form.save()
             group.mode = mode
-            # image = request.FILES.get('image')
+            image = request.FILES.get('image')
             group.image = image
             group.maker = user    # 방장 = 접속한 유저
             group.members.add(user)  # 방장도 그룹의 멤버로 추가
@@ -129,39 +128,45 @@ def group_update(request, pk):
     prev_name = group.name
 
     if request.method == 'POST':
-        form = GroupForm(request.POST, request.FILES, instance=group)
+        form = GroupForm(request.POST, instance=group)
 
-        # group.name = request.POST.get('name')
-        # name = group.name
+        group.name = request.POST.get('name')
+        name = group.name
 
-        # group.intro = request.POST.get('intro')
-        # intro = group.intro
+        group.intro = request.POST.get('intro')
+        intro = group.intro
 
-        # image = request.FILES.get('image')
-        # group.image = image
-        name = request.POST.get('name')
-        mode = request.POST.get('group-mode__tag')
-
-        origin_group = Group.objects.filter(name=name)
-        error_name = validation_group_name(origin_group, name, ' ')
-        error_mode = validation_group_mode(mode)
-
-        if error_name or error_mode:
-            ctx = { 
-                    'error_name': error_name,
-                    'error_mode': error_mode,
-                    'name': name,
-            }
-
-            return render(request, template_name='group/group_form.html', context=ctx)
-            
+        image = group.image
         # 기존 이미지는 유지
         if request.FILES.get('image'):
             image = request.FILES.get('image')
             group.image = image
         
+        # group.image = image
+
+        mode = request.POST.get('group-mode__tag')
+        group.mode = mode
+
         group.save()
 
+        origin_group = Group.objects.filter(name=name)
+
+        # 에러 메세지
+        error = validation_group(origin_group, name, prev_name, mode)
+        error_name = error[0]
+        error_mode = error[1]
+
+        if error_name != '' or error_mode != '':
+            ctx = { 
+                'error_name': error_name,
+                'error_mode': error_mode,
+                'name': name,
+                'intro': intro,
+                'mode': mode
+            }
+
+            return render(request, template_name='group/group_form.html', context=ctx)
+            
         return redirect('group:group_detail', pk)
 
     else:
@@ -256,34 +261,7 @@ def validation_group(origin_group, name, prev, mode):
     if not (mode in ['PUBLIC', 'PRIVATE']):
         error[1] = '그룹 공개모드를 선택하세요.'
 
-    print(error)
     return error
-
-def validation_group_name(origin_group, name, prev):
-    
-    if name != prev:
-        # 1. 이름 입력 칸이 비어 있는 경우
-        if not name:
-            error_name = '그룹명을 입력하세요.'
-        
-        # 2. 이미 존재하는 그룹명인 경우
-        elif origin_group:
-            error_name = '이미 존재하는 이름입니다.'
-        
-
-    else:
-        error_name = '그룹명을 입력하세요.'
-
-    return error_name
-
-
-def validation_group_mode(mode):
-
-    # 그룹 모드를 선택하지 않은 경우
-    if not (mode in ['PUBLIC', 'PRIVATE']):
-        error_mode = '그룹 공개모드를 선택하세요.'
-    
-    return error_mode
 
 
 ######## 초대 코드 ########
