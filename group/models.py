@@ -49,7 +49,7 @@ class GroupPost(models.Model, HitCountMixin):
     user = models.ForeignKey(User, on_delete=models.CASCADE ,related_name='group_writer_person')
     group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name= 'this_group')
 
-    title = models.CharField(verbose_name='제목', max_length=30)
+    title = models.CharField(verbose_name='제목', max_length=50)
     content = models.TextField(verbose_name='내용')
     # 코드 캡쳐, 실행창 캡쳐와 같은 이미지 업로드
     image = models.ImageField(upload_to=group_post_img_path, null=True, blank=True)

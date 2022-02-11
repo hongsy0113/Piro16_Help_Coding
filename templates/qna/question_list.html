@@ -108,39 +108,61 @@
     {% endfor %}
 </div>
 
-
-<ul class="pagination justify-content-center">
-    {% if questions.has_previous %}
-    <li class="page-item">
-        <a class="page-link" href="?{% param_replace page=questions.previous_page_number %}">이전</a>
-    </li>
-    {% else %}
-    <li class="page-item disabled">
-        <a class="page-link" tabindex="-1" aria-disabled="true" href="#">이전</a>
-    </li>
-    {% endif %}
-
-    {% for page_number in questions.paginator.page_range %}
-        {% if page_number == questions.number %}
-        <li class="page-item active" aria-current="page">
-            <a class="page-link" href="?{% param_replace page=page_number %}">{{ page_number }}</a>
+<!-- 페이지네이션 -->
+<div class="pagination-box">
+    <ul class="all__pagination">
+        {% if questions.has_previous %}
+        <li class="all__page-item">
+            <!-- 이전페이지 -->
+            <a class="all__page-sign" href="?{% param_replace page=questions.previous_page_number %}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="24" viewBox="0 0 14 24" fill="none">
+                <path d="M12.7688 22.5918L2.02827 11.8513L12.7688 1.11076" stroke="#C4C4C4" stroke-width="2"/>
+                </svg>
+            </a>
         </li>
         {% else %}
-        <li class="page-item">
-            <a class="page-link" href="?{% param_replace page=page_number %}">{{ page_number }}</a>
+        <li class="all__page-item">
+            <a class="all__page-sign" href="#">
+                <!-- 이전페이지 -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="24" viewBox="0 0 14 24" fill="none">
+                <path d="M12.7688 22.5918L2.02827 11.8513L12.7688 1.11076" stroke="#C4C4C4" stroke-width="2"/>
+                </svg>
+            </a>
         </li>
         {% endif %}
-    {% endfor %}
 
-    {% if questions.has_next %}
-    <li class="page-item">
-        <a class="page-link" href="?{% param_replace page=questions.next_page_number %}">다음</a>
-    </li>
-    {% else %}
-    <li class="page-item disabled">
-        <a class="page-link" tabindex="-1" aria-disabled="true" href="#">다음</a>
-    </li>
-    {% endif %}
-</ul>
+        {% for page_number in questions.paginator.page_range %}
+            {% if page_number == questions.number %}
+            <li class="all__page-item">
+                <a class="all__page-item-active" href="?{% param_replace page=page_number %}">{{ page_number }}</a>
+            </li>
+            {% else %}
+            <li class="all__page-item">
+                <a class="all__page-link" href="?{% param_replace page=page_number %}">{{ page_number }}</a>
+            </li>
+            {% endif %}
+        {% endfor %}
+
+        {% if questions.has_next %}
+        <li class="all__page-item">
+            <a class="all__page-sign sign-next" href="?{% param_replace page=questions.next_page_number %}">
+                <!-- 다음페이지 -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="24" viewBox="0 0 14 24" fill="none">
+                <path d="M1.23096 1.11035L11.9715 11.8509L1.23096 22.5914" stroke="#C4C4C4" stroke-width="2"/>
+                </svg>
+            </a>
+        </li>
+        {% else %}
+        <li class="all__page-item">
+            <a class="all__page-sign sign-next" tabindex="-1" aria-disabled="true" href="#">
+                <!-- 다음페이지 -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="24" viewBox="0 0 14 24" fill="none">
+                <path d="M1.23096 1.11035L11.9715 11.8509L1.23096 22.5914" stroke="#C4C4C4" stroke-width="2"/>
+                </svg>
+            </a>
+        </li>
+        {% endif %}
+    </ul>
+</div>
 
 {% endblock %}
