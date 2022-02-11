@@ -2,51 +2,46 @@
 {% load hitcount_tags %}
 
 {% block js %}
-<script type="text/javascript" src="/static/js/qna_detail.js" defer></script>
+<script type="text/javascript" src="/static/js/group_post_detail.js" defer></script>
 {% endblock %}
-
 {% block content %}
 {{ request.user.id|json_script:"user_id" }}
-{{ question.id|json_script:"question_id" }}
+{{ post.id|json_script:"post_id" }}
+
 <main>
-    <h1>{{ question.title }}</h1>
+    <h1>{{ post.title }}</h1>
     <hr>
-    <p>{{ question.created_at|date:'y.m.d'}}
-    조회 {% get_hit_count for question %}
+    <p>{{ post.created_at|date:'y.m.d'}}
+    조회 {% get_hit_count for post %}
     좋아요 {{ total_likes }}
     {{ username }}</p>
-    {% if question.s_or_e_tag == 'S' %}
-    <div class="btn btn-success">스크래치</div>
-    {% elif question.s_or_e_tag == 'E' %}
-    <div class="btn btn-danger">엔트리</div>
+    {% if post.category == 'S' %}
+    <div class="btn btn-success">자랑</div>
+    {% elif post.category == 'Q' %}
+    <div class="btn btn-danger">질문</div>
     {% else %}
     <div class="btn btn-secondary">기타</div>
     {% endif %}
 
-    {% for tag in tags %}
-        <div class="btn btn-info">
-            {{ tag.tag_name }}
-        </div>
-    {% endfor %}
-
-    <h3>{{ question.content }}</h3>
+    <h3>{{ post.content }}</h3>
     
-    {% if question.image %}<img src="{{ question.image.url }}" height="100">{% endif %}
+    {% if post.image %}<img src="{{ post.image.url }}" height="100">{% endif %}
     
-    {% if question.attached_file %}
+    {% if post.attached_file %}
     <div>
         <label>첨부 파일</label>
-        <div>{{ question.get_filename }}</div>
+        <div>{{ post.get_filename }}</div>
+        {% comment %}
         <form action="{% url 'qna:download' question.id %}">
             <button type="submit">
             다운로드
             </button>
-        </form>
+        </form>{% endcomment %}
     </div>
     {% endif %}
-    
+
     <hr>
-    <div class="question__like-btn btn btn-secondary">
+    <div class="post__like-btn btn btn-secondary">
         {% if is_liked %}
         <i class="fas fa-heart"></i>
         {% else %}
@@ -57,32 +52,32 @@
 
     <hr>
 
-    <div class="question__buttons">
-        {% if question.user.id == user.id %}
-        <a href="{% url 'qna:question_update' question.pk %}" class="btn btn-success">수정</a>
-        <a href="{% url 'qna:question_delete' question.pk %}" class="btn btn-success">삭제</a>
+    <div class="post__buttons">
+        {% if post.user.id == user.id %}
+        <a href="{% url 'group:post_update' group.pk post.pk %}" class="btn btn-success">수정</a>
+        <a href="" class="btn btn-success">삭제</a>
         {% endif %}
-        <a href="{% url 'qna:question_list' %}" class="btn btn-info">목록보기</a>
+        <a href="{% url 'group:post_list' group.pk %}" class="btn btn-info">목록보기</a>
         {% if previous_pk != -1 %}
-        <a href="{% url 'qna:question_detail' previous_pk %}" class="btn btn-info">이전글</a>
+        <a href="" class="btn btn-info">이전글</a>
         {% endif %}
         {% if next_pk != -1 %}
-        <a href="{% url 'qna:question_detail' next_pk %}" class="btn btn-info">다음글</a>
+        <a href="" class="btn btn-info">다음글</a>
         {% endif %}
     </div>
-    <hr>
-    
+
     {% if user.is_authenticated %}
     <input type="textarea" name="new_answer" placeholder="답변을 입력하세요" class="answer__input" style="width:600px; height:220px;">    
     <input type="button" value = "작성" class="answer__submit">
     {% endif %}
+
 
     <hr>
     <p class="answer__total-count">답변 {{ answers_count }} 개 </p>
     <div class="answer__list">
         <!-- 답변 부분 -->
         {% for answer, replies in answers_reply_dict.items %}
-            <div class="answer__container answer__container--{{answer.id}}">
+            <div class="answer__container answer__container--{{ answer.id }}">
                 <div class="answer__content-container answer__content-container--{{ answer.id }}">
                     {% if answer.user.img %}
                     <img src= '{{ answer.user.img.url }}'' height="220" width="160">
@@ -183,5 +178,5 @@
     </div>
 
 
-</main>
 {% endblock %}
+

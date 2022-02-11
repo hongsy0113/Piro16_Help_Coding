@@ -61,7 +61,7 @@
                     <!-- 그룹 이름 -->
                     <div class="content__post-titlebox">
                         <!-- 그룹 게시글 디테일 페이지로 이동 (후에 수정 필요) -->
-                        <a href="{% url 'group:group_detail' group.pk %}" class="content__post-title">
+                        <a href="{% url 'group:post_detail' group.pk post.pk %}" class="content__post-title">
                             {{ post.title }}
                         </a>
                     </div>

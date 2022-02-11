@@ -1,3 +1,4 @@
+from calendar import c
 from email import message
 import re
 from tokenize import blank_re
@@ -16,6 +17,11 @@ from django.db.models import Q
 from .models import *
 from .forms import *
 from django.core.paginator import Paginator 
+from hitcount.views import HitCountDetailView
+from django.views.generic.detail import SingleObjectMixin
+from django.core.files.storage import FileSystemStorage
+import mimetypes
+from user.update import *
 
 ######## 그룹 메인 페이지 ########
 
@@ -497,8 +503,201 @@ def post_update(request,pk ,post_pk):
 
         return render(request, template_name="group/group_post_form.html", context=ctx)        
 
-def post_detail(request, pk, post_pk):
-    return redirect('group:post_list', pk=pk)
+class GroupPostDetailView(HitCountDetailView):
+    model = GroupPost
+    template_name = 'group/group_post_detail.html'
+    count_hit = True
+    context_object_name = 'post'
+
+    def get_context_data(self, **kargs):
+        context = super().get_context_data(**kargs)
+        # self.object로 question 객체에 접근할 수 있음
+        post = self.object
+        username = post.user.nickname
+        total_likes = len(post.like_user.all())
+        is_liked = self.request.user in  post.like_user.all()
+
+        # 해당 게시글에 대한 답변 가져오기
+        answers = GroupAnswer.objects.filter(post_id = post.id, parent_answer__isnull=True).order_by('answer_order')   #  나중에 답변 정렬도 고려. 최신순 또는 좋아요 순
+        answers_count = len(answers)
+        
+        answers_reply_dict ={}
+        for answer in answers:
+            replies =  GroupAnswer.objects.filter(parent_answer= answer).order_by('answer_order')
+            answers_reply_dict[answer] = replies
+
+        context['group'] = post.group
+        context['username']= username
+        context['total_likes'] = total_likes
+        context['is_liked']= is_liked
+        context['answers']= answers
+        context['answers_count']= answers_count
+        context['answers_reply_dict']= answers_reply_dict
+        return context
+
+@csrf_exempt
+def answer_ajax(request):
+    req = json.loads(request.body)
+    post_id = req['postId']
+    content = req['content']
+    user_id = req['user']
+    user = get_object_or_404(User, pk=user_id)
+    username = user.nickname
+    
+    #### TODO ##########
+    ## user 대표이미지 넘겨주는 건 유저 조금 구체화 된 다음에 추가
+
+    ## 새 답변의 order 필드를 정해주기 위한 부분. 
+    current_answers = GroupAnswer.objects.filter(post_id=post_id).order_by('answer_order')
+    if len(current_answers)==0:
+        new_order = 1
+    else:
+        new_order = current_answers.last().answer_order + 1
+
+    this_post = get_object_or_404(GroupPost, pk=post_id)
+
+    ## 새로운 답변
+    new_answer = GroupAnswer.objects.create(post_id=this_post, content=content, answer_order=new_order, user = user)
+    # 템플릿에서 쉽게 띄울 수 있도록 답변 게시일자 포맷팅해서 json에 전달
+    created_at = new_answer.created_at.strftime('%y.%m.%d %H:%M')
+
+    update_answer(new_answer, this_post.user, request.user)
+
+    return JsonResponse({'id': new_answer.id ,'content': content,'user':username, 'created_at':created_at} )
+
+# 대댓글 작성
+@csrf_exempt
+def reply_ajax(request):
+    req = json.loads(request.body)
+
+    answer_id = req['answerId']
+    content = req['content']
+    user_id = req['user']
+    user = get_object_or_404(User, pk=user_id)
+    username = user.nickname
+
+    # 작성하려는 대댓글이 속한 질문 구하기
+    this_answer = get_object_or_404(GroupAnswer, pk=answer_id)
+    this_post = this_answer.post_id
+    
+    ## 새 답변의 order 필드를 정해주기 위한 부분. 
+    current_answers = GroupAnswer.objects.filter(post_id=this_post.id).order_by('answer_order')
+    if len(current_answers)==0:
+        new_order = 1
+    else:
+        new_order = current_answers.last().answer_order + 1
+
+    ## 새로운 대댓글
+    new_answer = GroupAnswer.objects.create(
+        post_id=this_post, 
+        content=content, 
+        answer_order=new_order, 
+        user = user,
+        parent_answer = this_answer
+    )
+
+    update_answer_reply(new_answer, request.user)
+
+    # 템플릿에서 쉽게 띄울 수 있도록 답변 게시일자 포맷팅해서 json에 전달
+    created_at = new_answer.created_at.strftime('%y.%m.%d %H:%M')
+
+    response = JsonResponse({
+        'reply_id': new_answer.id,
+        'answer_id' : this_answer.id,
+        'content': content,
+        'user':username, 
+        'created_at':created_at,
+    })
+
+    return response
+
+
+# 게시글(질문) 좋아요 기능
+@csrf_exempt
+def post_like_ajax(request):
+    req = json.loads(request.body)
+    # user id 는 요청 안 보내도 됐을 수도
+    post_id = req['postId']
+
+    post = get_object_or_404(GroupPost, pk=post_id)
+    liked_users = post.like_user
+
+    is_liked = request.user in  liked_users.all()
+
+    if is_liked:
+        liked_users.remove(request.user)
+        update_question_like_cancel(post, post.user, request.user)
+    else:
+        liked_users.add(request.user)
+        update_question_like(post, post.user, request.user)
+
+    total_likes = len(liked_users.all())
+    return JsonResponse({'post_id':post_id, 'total_likes':total_likes, 'is_liking': not(is_liked)})
+
+# 답변 (대댓글 포함) 좋아요 기능
+@csrf_exempt
+def answer_like_ajax(request):
+    req = json.loads(request.body)
+    answer_id = req['id']
+
+    answer = get_object_or_404(GroupAnswer, pk=answer_id)
+    liked_users = answer.like_user
+
+    is_liked = request.user in liked_users.all()
+    
+    if is_liked:
+        liked_users.remove(request.user)
+        update_comment_like_cancel(answer, answer.user, request.user)
+    else:
+        liked_users.add(request.user)
+        update_comment_like(answer, answer.user, request.user)
+
+    total_likes = len(liked_users.all())
+
+    return JsonResponse({'answer_id':answer_id, 'total_likes':total_likes,  'is_liking': not(is_liked)})
+
+
+# 답변(대댓글 포함) 삭제
+@csrf_exempt
+def answer_delete_ajax(request):
+    req = json.loads(request.body)
+    answer_id = req['id']
+
+    answer = get_object_or_404(GroupAnswer, pk=answer_id)
+    if answer.parent_answer:
+        update_answer_reply_cancel(answer, request.user)
+    else:
+        update_answer_cancel(answer, answer.post_id.user, request.user)
+    answer.delete()
+
+    return JsonResponse({'id':answer_id})
+
+# 답변(대댓글 포함) 수정
+# 수정버튼 눌렀을 때 해당하는 폼 띄우는 기능
+@csrf_exempt
+def answer_edit_ajax(request):
+    req = json.loads(request.body)
+    answer_id = req['id']
+
+    answer = get_object_or_404(GroupAnswer, pk=answer_id)
+    # TODO : 고려해볼 사항. 원래 작성되어 있던 내용을 지금은 db에서 찾아서 넘겨주고 있는데
+    # 그렇게 말고 data전송을 최소화화면서 프론트 단에서 그냥 현재 입력된 내용 받앙오기
+    
+
+    return JsonResponse({'id':answer_id})
+
+# 답변(대댓글 포함) 수정
+# 수정할 내용 입력 후 버튼 눌렀을 때 수정 내용 적용하는 기능
+@csrf_exempt
+def answer_edit_submit_ajax(request):
+    req = json.loads(request.body)
+    answer_id = req['id']
+    new_content = req['content']
+    answer = get_object_or_404(GroupAnswer, pk=answer_id)
+    answer.content = new_content
+    answer.save()
+
+    return JsonResponse({'id':answer_id, 'content':new_content})
 
 ############################################################################
 
