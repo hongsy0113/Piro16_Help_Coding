@@ -44,7 +44,9 @@ function closeGroupJoin() {
     closeJoinAlert.style.display = 'none';
 }
 
-// groupJoinBtn.addEventListener('click', showGroupJoin);
+// groupJoinBtn.addEventListener('click', function() {
+//     showGroupJoin();
+// });
 // closeJoinBtn.addEventListener('click', closeGroupJoin);
 
 // 초대 코드 입력 Modal 

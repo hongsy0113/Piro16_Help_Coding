@@ -96,7 +96,18 @@ def group_create(request):
             name = request.POST.get('name')
             intro = request.POST.get('intro')
 
-            if not name:
+            if Group.objects.filter(name=name):  # 그룹명은 식별자 => 이미 존재하는 이름이면 생성된 그룹 삭제
+                error_name = '이미 존재하는 이름입니다.'
+
+                ctx = { 
+                    'error_name': error_name,
+                    'name': name,
+                    'intro': intro
+                }
+
+                return render(request, template_name='group/group_form.html', context=ctx)
+
+            if not request.POST.get('name'):
                 error_name = '그룹명을 입력하세요.'
 
                 ctx = { 
@@ -106,17 +117,6 @@ def group_create(request):
                     }
 
                 return render(request, template_name='group/group_form.html', context=ctx)
-            else:
-                if Group.objects.filter(name=name):  # 그룹명은 식별자 => 이미 존재하는 이름이면 생성된 그룹 삭제
-                    error_name = '이미 존재하는 이름입니다.'
-
-                    ctx = { 
-                        'error_name': error_name,
-                        'name': name,
-                        'intro': intro
-                    }
-
-                    return render(request, template_name='group/group_form.html', context=ctx)
 
     
             if not request.POST.get('group-mode__tag'):
@@ -132,8 +132,8 @@ def group_create(request):
 
             group = form.save()
             group.mode = request.POST.get('group-mode__tag')
-        # image = request.FILES.get('image')
-        # group.image = image
+            # image = request.FILES.get('image')
+            # group.image = image
             print(group.mode)
             group.maker = user    # 방장 = 접속한 유저
             group.members.add(user)  # 방장도 그룹의 멤버로 추가
@@ -154,16 +154,31 @@ def group_create(request):
 def group_update(request, pk):
     group = get_object_or_404(Group, pk=pk)
     prev_name = group.name
-
+    
     if request.method == 'POST':
         form = GroupForm(request.POST, instance=group)
         group.name = request.POST.get('name')
-        if group.name != prev_name:
-            if Group.objects.filter(name=group.name).exclude(name=prev_name):  # 그룹명은 식별자 => 이미 존재하는 이름이면 생성된 그룹 삭제
+        group.intro = request.POST.get('intro')
+
+        name = group.name
+        intro = group.intro
+
+        if name != prev_name:
+            if Group.objects.filter(name=name).exclude(name=prev_name):  # 그룹명은 식별자 => 이미 존재하는 이름이면 생성된 그룹 삭제
                 error_name = '이미 존재하는 이름입니다.'
                 ctx = { 
                     'error_name': error_name 
                 }
+
+                return render(request, template_name='group/group_form.html', context=ctx)
+            if not group.name:
+                error_name = '그룹명을 입력하세요.'
+
+                ctx = { 
+                        'error_name': error_name,
+                        'name': name,
+                        'intro': intro
+                    }
 
                 return render(request, template_name='group/group_form.html', context=ctx)
 
@@ -186,7 +201,6 @@ def group_update(request, pk):
             if request.FILES.get('image'):
                 image = request.FILES.get('image')
                 group.image = image
-            group.intro = request.POST.get('intro')
             
             group.save()
 
@@ -396,10 +410,14 @@ def wait_list_ajax(request):
     req = json.loads(request.body)
     group_id = req['id']
     group = get_object_or_404(Group, pk=group_id)
-    waits = group.waits.all()
-    waits_img = group.waits.get('image')
-    
+    waits = list(group.waits.all())
+    print(waits)
+    if(waits):
+        wait = waits[0]
+        wait_img = wait.get('image')
+    print(waits)
     for wait in waits:
+
         if request.GET.get('accept'):
             group.waits.remove(wait)
             group.members.add(wait)
@@ -408,10 +426,11 @@ def wait_list_ajax(request):
             group.waits.remove(wait)
             group.save()
     print(waits)
-    JsonResponse({
+        
+    return JsonResponse({
         'groupName': group.name,
-        'waits': waits,
-        'waits_img': waits_img
+        'wait': wait,
+        'wait_img': wait_img
     })
 
 
