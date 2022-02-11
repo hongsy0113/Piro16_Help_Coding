@@ -8,6 +8,7 @@ header{
     background-color: white;
     position: sticky;
     top: 0;
+    z-index: 21;
 }
 
 .header__nav-container {
@@ -162,4 +163,10 @@ section{
     width: 1080px;
     margin: 0 auto;
     padding-top: 60px;
+}
+
+footer {
+    height: 100px;
+    background-color: #E5E5E5;
+    padding: 20px;
 }
