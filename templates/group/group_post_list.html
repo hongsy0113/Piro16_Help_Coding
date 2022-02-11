@@ -23,11 +23,22 @@
         </div>
     </div>
 
+    <div class="list-sort">    <!-- 최신순 인기순 댓글순 -->
+        <!-- 피그마 디자인 구현 -->
+        <span class="list-sort__btn">최신순</span>
+        <span class="list-sort__btn">조회수순</span>
+        <span class="list-sort__btn">좋아요순</span>
+
+        <!-- select box -->
+        <form method="get" action="{% url 'group:post_list' group.pk %}">
+            <select class="select_sort" onchange="location=this.value; getSelectValue(this.form);">
+                <option class="sort-recent" value="?sort=recent" {% if sort_by == 'recent' %} selected {% endif %}>최신순</option>
+                <option class="sort-view" value="?sort=view" {% if sort_by == 'view' %} selected {% endif %}>조회수순</option>
+            </select>
+        </form>
+    </div>
+
     <div class="group-post__list">  <!-- 게시글 목록 시작 -->
-
-        <div class="list-sort">    <!-- 최신순 인기순 댓글순 -->
-
-        </div>
 
         <div class="gridbox">  
             {% for post in posts %}
@@ -95,48 +106,61 @@
     </div>
 </div>
 
-<div class="sortbox">
-    <form method="get" action="{% url 'group:post_list' group.pk %}" class="float-end">
-        <select class="select_sort" onchange="location=this.value; getSelectValue(this.form);">
-            <option class="sort-recent" value="?sort=recent" {% if sort_by == 'recent' %} selected {% endif %}>최신순</option>
-            <option class="sort-view" value="?sort=view" {% if sort_by == 'view' %} selected {% endif %}>조회수순</option>
-        </select>
-    </form>
-</div>
-
 <!-- 페이지네이션 -->
-<ul class="pagination justify-content-center">
+<div class="pagination-box">
+<ul class="all__pagination">
     {% if posts.has_previous %}
-    <li class="page-item">
-        <a class="page-link" href="?page={{ post.previous_page_number }}&sort={{ sort_by }}">이전</a>
+    <li class="all__page-item">
+        <a class="all__page-sign" href="?page={{ post.previous_page_number }}&sort={{ sort_by }}">
+            <!-- 이전페이지 -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="24" viewBox="0 0 14 24" fill="none">
+            <path d="M12.7688 22.5918L2.02827 11.8513L12.7688 1.11076" stroke="#C4C4C4" stroke-width="2"/>
+            </svg>
+        </a>
     </li>
     {% else %}
-    <li class="page-item disabled">
-        <a class="page-link" tabindex="-1" aria-disabled="true" href="#">이전</a>
+    <li class="all__page-item">
+        <a class="all__page-sign" href="#">
+            <!-- 이전페이지 -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="24" viewBox="0 0 14 24" fill="none">
+            <path d="M12.7688 22.5918L2.02827 11.8513L12.7688 1.11076" stroke="#C4C4C4" stroke-width="2"/>
+            </svg>
+        </a>
     </li>
     {% endif %}
 
     {% for page_number in posts.paginator.page_range %}
         {% if page_number == posts.number %}
-        <li class="page-item active" aria-current="page">
-            <a class="page-link" href="?page={{ page_number }}&sort={{ sort_by }}">{{ page_number }}</a>
+        <li class="all__page-item">
+            <a class="all__page-item-active" href="?page={{ page_number }}&sort={{ sort_by }}">{{ page_number }}</a>
         </li>
         {% else %}
-        <li class="page-item">
-            <a class="page-link" href="?page={{ page_number }}&sort={{ sort_by }}">{{ page_number }}</a>
+        <li class="all__page-item">
+            <a class="all__page-link" href="?page={{ page_number }}&sort={{ sort_by }}">{{ page_number }}</a>
         </li>
         {% endif %}
     {% endfor %}
 
     {% if posts.has_next %}
-    <li class="page-item">
-        <a class="page-link" href="?page={{ posts.next_page_number }}&sort={{ sort_by }}">다음</a>
+    <li class="all__page-item">
+        <a class="all__page-sign sign-next" href="?page={{ posts.next_page_number }}&sort={{ sort_by }}">
+            <!-- 다음페이지 -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="24" viewBox="0 0 14 24" fill="none">
+            <path d="M1.23096 1.11035L11.9715 11.8509L1.23096 22.5914" stroke="#C4C4C4" stroke-width="2"/>
+            </svg>
+        </a>
     </li>
     {% else %}
-    <li class="page-item">
-        <a class="page-link" tabindex="-1" aria-disabled="true" href="#">다음</a>
+    <li class="all__page-item">
+        <a class="all__page-sign sign-next" href="#">
+            <!-- 다음페이지 -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="24" viewBox="0 0 14 24" fill="none">
+            <path d="M1.23096 1.11035L11.9715 11.8509L1.23096 22.5914" stroke="#C4C4C4" stroke-width="2"/>
+            </svg>
+        </a>
     </li>
     {% endif %}
 </ul>
+</div>
 
 {% endblock %}
