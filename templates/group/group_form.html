@@ -24,23 +24,24 @@
         <!-- 그룹 생성 form -->
         <div class="group-create-form">
             <div class="group-create__input">
-                <input class="input-name" placeholder="그룹 이름을 입력하세요." name="name" type="text" maxlength="30" value="{% if group.name %} {{ group.name }} {% endif %}">
+                <input class="input-name" placeholder="그룹 이름을 입력하세요." name="name" type="text" maxlength="30" value="{% if group.name %} {{ group.name }} {% elif name %} {{ name }} {% endif %}">
                 <div>
-                    {% if error %}
-                    <p style="color:red;">{{ error }}</p>
+                    {% if error_name %}
+                    <p style="color:red;">{{ error_name }}</p>
                     {% endif %}
                 </div>
             </div>
 
             <div class="group-create__input">
-                <textarea class="input-intro" placeholder="그룹에 대한 설명을 입력하세요." cols="63" rows="10" name="intro">{% if group.intro %} {{ group.intro }} {% endif %}</textarea>
+                <textarea class="input-intro" placeholder="그룹에 대한 설명을 입력하세요." cols="63" rows="10" name="intro">{% if group.intro %} {{ group.intro }} {% elif intro %} {{ intro }} {% endif %}</textarea>
             </div>
 
             <div class="group-create__img">
                 <div class="text-container">
                 <label for="image">대표이미지</label>
                 </div>
-                <p class="img-form">{{ form.image }}</p>
+                <p>{% if group.image %} {{ group.image.url }} {% endif %}</p> 
+                <p class="img-form">{{ form.image }} </p>
             </div>
 
             <div class="group-crate__mode select__group-mode">
@@ -48,11 +49,14 @@
                     <span>그룹 공개 여부</span>
                 </div>
                 <div class="group-create__mode-select">
-                    <input type="radio" name="group-mode__tag" value="PUBLIC" id="public" class="mode-select__tag" {% if group.mode == 'PUBLIC' %} checked {% endif %}>
+                    <input type="radio" name="group-mode__tag" value="PUBLIC" id="public" class="mode-select__tag" {% if group.mode == 'PUBLIC' or mode == 'PUBLIC' %} checked {% endif %}>
                     <label for="public">공개</label>
-                    <input type="radio" name="group-mode__tag" value="PRIVATE" id="private" class="mode-select__tag" {% if group.mode == 'PRIVATE' %} checked {% endif %}>
+                    <input type="radio" name="group-mode__tag" value="PRIVATE" id="private" class="mode-select__tag" {% if group.mode == 'PRIVATE' or mode == 'PRIVATE' %} checked {% endif %}>
                     <label for="private">비공개</label>
                 </div>
+                {% if error_mode %}
+                <p style="color:red;">{{ error_mode }}</p>
+                {% endif %}
             </div>
         </div>
 

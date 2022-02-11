@@ -59,21 +59,6 @@ def group_home(request):
 
     return render(request, template_name='group/group_home.html', context=ctx)
 
-# 그룹 검색하기(나의 그룹 홈)
-def group_search(request):
-    if 'search' in request.GET:
-        query = request.GET.get('search')
-        groups = Group.objects.filter(
-            name__icontains=query
-            # Q(members__nickname__icontains=query)
-        )
-        ctx = { 
-            'groups': groups,
-            'query': query, 
-            'ani_image': static('image/helphelp.png')    
-        }
-
-    return render(request, 'group/group_search.html', context=ctx)
 
 # 그룹 검색하기(공개 그룹 찾기)
 def group_search_public(request):
@@ -94,54 +79,41 @@ def group_search_public(request):
 # 그룹 생성
 def group_create(request):
     user = request.user
-    groups = Group.objects.values('name')
 
     if request.method == 'POST':
         form = GroupForm(request.POST, request.FILES)
 
-        if form.is_valid():
-            name = request.POST.get('name')
-            intro = request.POST.get('intro')
+        name = request.POST.get('name')
+        intro = request.POST.get('intro')
+        image = request.FILES.get('image')
+        mode = request.POST.get('group-mode__tag')
 
-            if not name:
-                error_name = '그룹명을 입력하세요.'
+        origin_group = Group.objects.filter(name=name)
 
-                ctx = { 
-                        'error_name': error_name,
-                        'name': name,
-                        'intro': intro
-                    }
+        # 에러 메세지 
+        error = validation_group(origin_group, name, '', mode)
+        error_name = error[0]
+        error_mode = error[1]
+        
+        if error_name != '' or error_mode !='' :
+            ctx = { 
+                'error_name': error_name,
+                'error_mode': error_mode,
+                'name': name,
+                'mode': mode,
+                'intro': intro,
+                'image': image
+            }
+            
+            return render(request, template_name='group/group_form.html', context=ctx)
 
-                return render(request, template_name='group/group_form.html', context=ctx)
-            else:
-                if Group.objects.filter(name=name):  # 그룹명은 식별자 => 이미 존재하는 이름이면 생성된 그룹 삭제
-                    error_name = '이미 존재하는 이름입니다.'
-
-                    ctx = { 
-                        'error_name': error_name,
-                        'name': name,
-                        'intro': intro
-                    }
-
-                    return render(request, template_name='group/group_form.html', context=ctx)
-
-    
-            if not request.POST.get('group-mode__tag'):
-                error_mode = '그룹 공개모드를 선택하세요.'
-
-                ctx = {
-                    'error_mode': error_mode,
-                    'name': name,
-                    'intro': intro
-                }
-
-                return render(request, template_name='group/group_form.html', context=ctx)
+            
+        else:
 
             group = form.save()
-            group.mode = request.POST.get('group-mode__tag')
-        # image = request.FILES.get('image')
-        # group.image = image
-
+            group.mode = mode
+            image = request.FILES.get('image')
+            group.image = image
             group.maker = user    # 방장 = 접속한 유저
             group.members.add(user)  # 방장도 그룹의 멤버로 추가
             group.save()
@@ -164,40 +136,46 @@ def group_update(request, pk):
 
     if request.method == 'POST':
         form = GroupForm(request.POST, instance=group)
+
         group.name = request.POST.get('name')
-        if group.name != prev_name:
-            if Group.objects.filter(name=group.name).exclude(name=prev_name):  # 그룹명은 식별자 => 이미 존재하는 이름이면 생성된 그룹 삭제
-                error_name = '이미 존재하는 이름입니다.'
-                ctx = { 
-                    'error_name': error_name 
-                }
+        name = group.name
 
-                return render(request, template_name='group/group_form.html', context=ctx)
+        group.intro = request.POST.get('intro')
+        intro = group.intro
 
+        image = group.image
+        # 기존 이미지는 유지
+        if request.FILES.get('image'):
+            image = request.FILES.get('image')
+            group.image = image
+        
+        # group.image = image
 
-        if not request.POST.get('group-mode__tag'):
-            error_mode = '그룹 공개모드를 선택하세요.'
+        mode = request.POST.get('group-mode__tag')
+        group.mode = mode
 
-            ctx = {
-                'error_mode': error_mode
+        group.save()
+
+        origin_group = Group.objects.filter(name=name)
+
+        # 에러 메세지
+        error = validation_group(origin_group, name, prev_name, mode)
+        error_name = error[0]
+        error_mode = error[1]
+
+        if error_name != '' or error_mode != '':
+            ctx = { 
+                'error_name': error_name,
+                'error_mode': error_mode,
+                'name': name,
+                'intro': intro,
+                'mode': mode
             }
 
             return render(request, template_name='group/group_form.html', context=ctx)
-
-
-        if form.is_valid():
-            group = form.save()
-            # 이미지 수정 -> 파일 탐색기
-            group.mode = request.POST.get('group-mode__tag')
-            # 기존 이미지는 유지
-            if request.FILES.get('image'):
-                image = request.FILES.get('image')
-                group.image = image
-            group.intro = request.POST.get('intro')
             
-            group.save()
-
         return redirect('group:group_detail', pk)
+
     else:
         form = GroupForm(instance=group)
         ctx = { 'group': group, 'form': form }
@@ -256,10 +234,6 @@ def group_detail(request, pk):
     total_likes = len(group.interests.all())
     is_liked = user in group.interests.all()
 
-    print(group.interests.all())
-    print(is_liked)
-    print(total_likes)
-
     ctx = { 
         'group': group, 
         'mygroup': mygroup,
@@ -273,6 +247,28 @@ def group_detail(request, pk):
     }
 
     return render(request, template_name='group/group_detail.html', context=ctx)
+
+
+######## 그룹 생성 Form 오류 사항 체크 ########
+def validation_group(origin_group, name, prev, mode):
+    error = ['', '']  # 이름, 모드에 대한 에러 메세지
+
+    if name != prev:
+        # 1. 이름 입력 칸이 비어 있는 경우
+        if not name:
+            error[0] = '그룹명을 입력하세요.'
+        
+        # 2. 이미 존재하는 그룹명인 경우
+        elif origin_group:
+            error[0] = '이미 존재하는 이름입니다.'
+    else:
+        error[0] = '그룹명을 입력하세요.'
+
+    # 그룹 모드를 선택하지 않은 경우
+    if not (mode in ['PUBLIC', 'PRIVATE']):
+        error[1] = '그룹 공개모드를 선택하세요.'
+
+    return error
 
 
 ######## 초대 코드 ########
@@ -397,7 +393,7 @@ def join_list(request, pk):
         # alert 창 띄우기 (방장이 아니므로 열람할 수 없습니다)
         return redirect('group:group_detail', pk)
 
-# 그룹 가입 대기자 명단
+# 그룹 가입 대기자 명단 [미완]
 @csrf_exempt
 def wait_list_ajax(request):
     req = json.loads(request.body)
@@ -414,7 +410,7 @@ def wait_list_ajax(request):
         elif request.GET.get('reject'):
             group.waits.remove(wait)
             group.save()
-    print(waits)
+
     JsonResponse({
         'groupName': group.name,
         'waits': waits,

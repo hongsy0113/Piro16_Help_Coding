@@ -81,8 +81,7 @@
 
                             <!-- 비공개 / 공개 그룹 (자물쇠) -->
                             <div class="content__group-mode">
-                                {% if group.mode == 'PUBLIC' %}
-                                {% else %}
+                                {% if group.mode == 'PRIVATE' %}
                                 <i class="ri-lock-2-fill"></i>
                                 {% endif %}
                             </div> 
