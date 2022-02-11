@@ -41,8 +41,7 @@
                 <label for="image">대표이미지</label>
                 </div>
                 <p>{% if group.image %} {{ group.image.url }} {% endif %}</p> 
-                <!-- <p class="img-form">{% block comment %}{{ form.image }} {% endblock %}</p> -->
-                <input class="img-form" name="image" type="file" value="{% if group.image %} {{ group.image.url }} {% elif image %} {{ image.url }} {% endif %}" />
+                <p class="img-form">{{ form.image }} </p>
             </div>
 
             <div class="group-crate__mode select__group-mode">
