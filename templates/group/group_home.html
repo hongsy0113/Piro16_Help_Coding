@@ -43,6 +43,21 @@
         <button class="join__code--close btn btn-dark" onclick="closeGroupJoin()">닫기</button>
     </div>    
 
+    <!-- 그룹 정렬 (sort) -->
+    <div class="list-sort">  
+        <!-- 피그마 디자인 구현 -->
+        <span class="list-sort__btn">찜하기순</span>
+        <span class="list-sort__btn">이름순</span>
+
+        <!-- select box -->
+        <form method="get" action="{% url 'group:group_home' %}" class="group_sort float-end me-4">
+            <select id="sort_select" class="sort_select" onchange="location=this.value; getSelectValue(this.form);">
+                <option class="sort-star" value="?sort=star" {% if sort_by == 'star' %} selected {% endif %}>찜하기순</option>
+                <option class="sort-name" value="?sort=name" {% if sort_by == 'name' %} selected {% endif %}>이름순</option>
+            </select>
+        </form>
+    </div>
+
     <!-- 내 그룹 목록 -->
     <div class="gridbox">
         {% for group in groups %}
@@ -73,9 +88,7 @@
                             <!-- 그룹 이름 -->
                             <div class="content__group-namebox">
                                 <a href="{% url 'group:group_detail' group.pk %}" class="content__group-name">
-                                    <span class="group-name-text">
-                                    {{ group.name }}
-                                    </span>
+                                    <span class="group-name-text">{{ group.name }}</span>
                                 </a>
                             </div>
 
@@ -107,50 +120,62 @@
     </div>
         
 </div>  <!-- 그룹 컨테이너 끝 -->
-    
-<form method="get" action="{% url 'group:group_home' %}" class="group_sort float-end me-4">
-    <select id="sort_select" class="sort_select" onchange="location=this.value; getSelectValue(this.form);">
-
-        <option class="sort-star" value="?sort=star" {% if sort_by == 'star' %} selected {% endif %}>찜하기순</option>
-        <option class="sort-name" value="?sort=name" {% if sort_by == 'name' %} selected {% endif %}>이름순</option>
-    </select>
-</form>
 
 <!-- 페이지네이션 -->
-<ul class="pagination justify-content-center">
-    {% if groups.has_previous %}
-    <li class="page-item">
-        <a class="page-link" href="?page={{ groups.previous_page_number }}&sort={{ sort_by }}">이전</a>
-    </li>
-    {% else %}
-    <li class="page-item disabled">
-        <a class="page-link" tabindex="-1" aria-disabled="true" href="#">이전</a>
-    </li>
-    {% endif %}
-
-    {% for page_number in groups.paginator.page_range %}
-        {% if page_number == groups.number %}
-        <li class="page-item active" aria-current="page">
-            <a class="page-link" href="?page={{ page_number }}&sort={{ sort_by }}">{{ page_number }}</a>
+<div class="pagination-box">
+    <ul class="all__pagination">
+        {% if groups.has_previous %}
+        <li class="all__page-item">
+            <a class="all__page-sign" href="?page={{ groups.previous_page_number }}&sort={{ sort_by }}">
+                <!-- 이전페이지 -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="24" viewBox="0 0 14 24" fill="none">
+                <path d="M12.7688 22.5918L2.02827 11.8513L12.7688 1.11076" stroke="#C4C4C4" stroke-width="2"/>
+                </svg>
+            </a>
         </li>
         {% else %}
-        <li class="page-item">
-            <a class="page-link" href="?page={{ page_number }}&sort={{ sort_by }}">{{ page_number }}</a>
+        <li class="all__page-item">
+            <a class="all__page-sign" href="#">
+                <!-- 이전페이지 -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="24" viewBox="0 0 14 24" fill="none">
+                <path d="M12.7688 22.5918L2.02827 11.8513L12.7688 1.11076" stroke="#C4C4C4" stroke-width="2"/>
+                </svg>
+            </a>
         </li>
         {% endif %}
-    {% endfor %}
-    </div>
-    
 
-    {% if groups.has_next %}
-    <li class="page-item">
-        <a class="page-link" href="?page={{ groups.next_page_number }}&sort={{ sort_by }}">다음</a>
-    </li>
-    {% else %}
-    <li class="page-item">
-        <a class="page-link" tabindex="-1" aria-disabled="true" href="#">다음</a>
-    </li>
-    {% endif %}
-</ul>
+        {% for page_number in groups.paginator.page_range %}
+            {% if page_number == groups.number %}
+            <li class="all__page-item">
+                <a class="all__page-item-active" href="?page={{ page_number }}&sort={{ sort_by }}">{{ page_number }}</a>
+            </li>
+            {% else %}
+            <li class="all__page-item">
+                <a class="all__page-link" href="?page={{ page_number }}&sort={{ sort_by }}">{{ page_number }}</a>
+            </li>
+            {% endif %}
+        {% endfor %}
+        
+        {% if groups.has_next %}
+        <li class="all__page-item">
+            <a class="all__page-sign sign-next" href="?page={{ groups.next_page_number }}&sort={{ sort_by }}">
+                <!-- 다음페이지 -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="24" viewBox="0 0 14 24" fill="none">
+                <path d="M1.23096 1.11035L11.9715 11.8509L1.23096 22.5914" stroke="#C4C4C4" stroke-width="2"/>
+                </svg>
+            </a>
+        </li>
+        {% else %}
+        <li class="all__page-item">
+            <a class="all__page-sign sign-next" href="#">
+                <!-- 다음페이지 -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="24" viewBox="0 0 14 24" fill="none">
+                <path d="M1.23096 1.11035L11.9715 11.8509L1.23096 22.5914" stroke="#C4C4C4" stroke-width="2"/>
+                </svg>
+            </a>
+        </li>
+        {% endif %}
+    </ul>
+</div>
 
 {% endblock %}

@@ -42,6 +42,7 @@
     line-height: 100%;
 }
 
+/* 게시물 정렬 (sort) */
 .list-sort {
     display: flex;
 }
@@ -150,20 +151,28 @@
     color: #000000;
 }
 
+.content__post-title span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-wrap: break-word;
+    display : -webkit-box;
+    -webkit-line-clamp: 2;  /* 줄 개수 설정 */
+    -webkit-box-orient: vertical;
+}
+
 .post-intro {
     width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
     word-wrap: break-word;
     display : -webkit-box;
-    -webkit-line-clamp: 2;  
+    -webkit-line-clamp: 2;  /* 줄 개수 설정 */
     -webkit-box-orient: vertical;
 
     font-family: Noto Sans CJK KR;
     font-size: 15px;
     line-height: 130%;
     color: #4E4E4E; 
-
 }
 
 .content__post-info {
