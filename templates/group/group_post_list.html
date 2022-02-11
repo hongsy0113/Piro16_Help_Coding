@@ -74,7 +74,7 @@
                     <div class="content__post-titlebox">
                         <!-- 그룹 게시글 디테일 페이지로 이동 (후에 수정 필요) -->
                         <a href="{% url 'group:post_detail' group.pk post.pk %}" class="content__post-title">
-                            {{ post.title }}
+                            <span class="post-title">{{ post.title }}</span>
                         </a>
                     </div>
                     <!-- 작품 소개글 -->
