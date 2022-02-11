@@ -79,7 +79,6 @@ def question_list(request):
     if sort_by == 'recent':    # 최신순
         questions = questions.order_by('-created_at')
     elif sort_by == 'liked':   # 좋아요순
-        #questions = Question.objects.order_by('-like_user')
         questions = questions.annotate(total_likes=Count('like_user')).order_by('-total_likes')
     elif sort_by == 'view':    # 조회수순
         questions = questions.order_by('-hit_count_generic__hits')
@@ -147,10 +146,6 @@ def question_create(request):
         
         if form.is_valid():
             question = form.save(commit=False)  # 넘겨진 데이터 form에 바로 저장 X
-            if request.POST.get('s_or_e_tag', '') == '':
-                error = '기본 카테고리를 선택해주세요!'
-                ctx = {'form': form, 's_or_e_error': error, 'question':question}
-                return render(request, 'qna/question_form.html', context=ctx)
             question.s_or_e_tag = request.POST.get('s_or_e_tag')  # 카테고리 (스크래치, 엔트리, 기타) 중 1 선택
             question.user = request.user
             question.save() 
@@ -167,15 +162,15 @@ def question_create(request):
                 question.tags.add(newtag)
 
             question.save()
-
+            update_question(question, request.user)
             return redirect('qna:question_detail', question.pk)
         else:
-            error_data = (form.errors.as_data())
-            error_dict = {}
-            for k in error_data:
-                error_dict[k] = error_data[k][0].message
-            
-            return render(request, 'qna/question_form.html', context={'form': form,})
+            # error_data = (form.errors.as_data())
+            # error_dict = {}
+            # for k in error_data:
+            #     error_dict[k] = error_data[k][0].message
+            ctx = {'form': form, 's_or_e_error': '기본 카테고리를 선택해주세요!'}
+            return render(request, 'qna/question_form.html', context=ctx)
     else:
         form = QuestionForm()
         ctx = {'form': form}
@@ -379,7 +374,7 @@ def answer_ajax(request):
     # 템플릿에서 쉽게 띄울 수 있도록 답변 게시일자 포맷팅해서 json에 전달
     created_at = new_answer.created_at.strftime('%y.%m.%d %H:%M')
 
-    update_answer(new_answer, this_question.user, request.user)
+    update_answer(this_question, new_answer, this_question.user, request.user)
 
     return JsonResponse({'id': new_answer.id ,'content': content,'user':username, 'created_at':created_at} )
 
@@ -414,7 +409,7 @@ def reply_ajax(request):
         parent_answer = this_answer
     )
 
-    update_answer_reply(new_answer, request.user)
+    update_answer_reply(this_question, new_answer, request.user)
 
     # 템플릿에서 쉽게 띄울 수 있도록 답변 게시일자 포맷팅해서 json에 전달
     created_at = new_answer.created_at.strftime('%y.%m.%d %H:%M')
@@ -481,9 +476,9 @@ def answer_delete_ajax(request):
 
     answer = get_object_or_404(Answer, pk=answer_id)
     if answer.parent_answer:
-        update_answer_reply_cancel(answer, request.user)
+        update_answer_reply_cancel(answer.question_id, answer, request.user)
     else:
-        update_answer_cancel(answer, answer.question_id.user, request.user)
+        update_answer_cancel(answer.question_id, answer, answer.question_id.user, request.user)
     answer.delete()
 
     return JsonResponse({'id':answer_id})

@@ -41,7 +41,7 @@
             </div>
             <div class="header__nav-right">
             {% if user.is_authenticated %}
-                <a class="header__alertbtn" href="#"><svg width="21" height="24" viewBox="0 0 21 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <a class="header__alertbtn" href="{% url 'user:mypage_alert' %}"><svg width="21" height="24" viewBox="0 0 21 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M10.6597 23.25C12.2118 23.25 13.4709 21.991 13.4709 20.4375H7.84852C7.84852 21.991 9.10755 23.25 10.6597 23.25ZM20.1251 16.6709C19.2761 15.7586 17.6874 14.3862 17.6874 9.89062C17.6874 6.47607 15.2933 3.74268 12.0651 3.07207V2.15625C12.0651 1.37974 11.4358 0.75 10.6597 0.75C9.88362 0.75 9.25433 1.37974 9.25433 2.15625V3.07207C6.0261 3.74268 3.63196 6.47607 3.63196 9.89062C3.63196 14.3862 2.04334 15.7586 1.19432 16.6709C0.930646 16.9544 0.813751 17.2932 0.815948 17.625C0.820782 18.3457 1.38636 19.0312 2.22659 19.0312H19.0928C19.933 19.0312 20.4991 18.3457 20.5034 17.625C20.5056 17.2932 20.3887 16.954 20.1251 16.6709V16.6709Z" fill="#4E4E4E"/>
                     </svg>                    
                     </a>
@@ -81,6 +81,9 @@
         {% block content %}
         {% endblock %}
     </section>
+    <footer>
+        도와줘코딩 짱짱
+    </footer>
 
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>

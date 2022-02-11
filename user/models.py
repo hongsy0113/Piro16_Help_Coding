@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from .constants import *
+from datetime import datetime
 
 # user 대표 이미지
 def user_thumbnail_path(instance, filename):
@@ -47,15 +48,30 @@ class User(AbstractUser):
         return self.total_answer + self.total_answer_reply
 
     def get_level(self):
+        current_level = self.level
+
         for category in JOB_CATEGORY:
             if self.job in JOB_CATEGORY[category]:
                 for index in range(len(LEVEL_UP_BOUNDARY[category])):
                     if self.points() >= LEVEL_UP_BOUNDARY[category][index]:
                         level = LEVEL[index]
-        # 등급 상승/하락 시 알림
+        
+        if level[0] != current_level:
+            if LEVEL_STEP.index(current_level) < LEVEL_STEP.index(level[0]):
+                Alert.objects.create(user=self, content="짝짝짝! 레벨이 '{}'로 올라갔어요!".format(LEVEL[LEVEL_STEP.index(level[0])][1]), alert_type="level_up", time=datetime.now())
+            else:
+                Alert.objects.create(user=self, content="레벨이 '{}'로 변경되었어요.".format(LEVEL[LEVEL_STEP.index(level[0])][1]), alert_type="level_change", time=datetime.now())
+
         self.level = level[0]
         self.save()
         return level[1]
+    
+    def has_new_alert(self):
+        new_alert_num = 0
+        for alert in Alert.objects.filter(user = self):
+            if not alert.checked:
+                new_alert_num += 1
+        return new_alert_num
         
 class GetPoint(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -93,6 +109,24 @@ def initializeReward():
     Reward.objects.create(name = '총 댓글 수 2개 달성',
         info = '총 댓글 수 2개 달성',
         type = 'total_comment', criteria = 2)
+    Reward.objects.create(name = '총 좋아요 수 5개 달성',
+        info = '총 좋아요 수 5개 달성',
+        type = 'total_like', criteria = 5)
+    Reward.objects.create(name = '게시글 좋아요 수 5개 달성',
+        info = '게시글 좋아요 수 5개 달성',
+        type = 'question_like', criteria = 5)
+    Reward.objects.create(name = '댓글 좋아요 수 5개 달성',
+        info = '댓글 좋아요 수 5개 달성',
+        type = 'comment_like', criteria = 5)
+    Reward.objects.create(name = '총 질문 수 5개 달성',
+        info = '총 질문 수 5개 달성',
+        type = 'total_question', criteria = 5)
+    Reward.objects.create(name = '총 답변 수 5개 달성',
+        info = '총 답변 수 5개 달성',
+        type = 'total_answer', criteria = 5)
+    Reward.objects.create(name = '총 댓글 수 5개 달성',
+        info = '총 댓글 수 5개 달성',
+        type = 'total_comment', criteria = 5)
                 
 class GetReward(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -102,5 +136,13 @@ class GetReward(models.Model):
 class Alert(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     content = models.CharField(max_length=100)
-    alert_type = models.IntegerField()
+    alert_type = models.CharField(max_length=50, choices=ALERT_TYPE, default='etc')
     time = models.DateTimeField()
+    related_id = models.CharField(max_length=100, default='')
+    checked = models.BooleanField(default = False)
+
+    def related_url(self):
+        if self.alert_type in ['new_comment', 'new_reply']:
+            return '/qna/{}/'.format(self.related_id)  # related_id : question id
+        else:
+            return '#'
