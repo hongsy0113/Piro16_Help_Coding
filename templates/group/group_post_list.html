@@ -3,6 +3,10 @@
 {% load hitcount_tags %}
 {% load my_tags %}
 
+{% block js %}
+    <script type="text/javascript" src="/static/js/group_post_list.js" defer></script>
+{% endblock %}
+
 {% block css %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/group_post_list.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}">
@@ -25,18 +29,38 @@
 
     <div class="list-sort">    <!-- 최신순 인기순 댓글순 -->
         <!-- 피그마 디자인 구현 -->
-        <span class="list-sort__btn">최신순</span>
-        <span class="list-sort__btn">조회수순</span>
-        <span class="list-sort__btn">좋아요순</span>
+        <span class="list-sort__btn">
+            {% if sort_by != 'recent' %}
+            <a href="{% url 'group:post_list' group.pk %}?{% param_replace sort='recent' %}">최신순</a>
+            {% else %}
+            최신순
+            {% endif %}
+        </span>
+        <span class="list-sort__btn">
+            {% if sort_by != 'view' %}
+            <a href="{% url 'group:post_list' group.pk %}?{% param_replace sort='view' %}">조회수순</a>
+            {% else %}
+            조회수순
+            {% endif %}
+        </span>
+        <span class="list-sort__btn">
+            {% if sort_by != 'liked' %}
+            <a href="{% url 'group:post_list' group.pk %}?{% param_replace sort='liked' %}">좋아요순</a>
+            {% else %}
+            좋아요순
+            {% endif %}
+        </span>
 
+        {% comment %}
         <!-- select box -->
         <form method="get" action="{% url 'group:post_list' group.pk %}">
-            <select class="select_sort" onchange="location=this.value; getSelectValue(this.form);">
+            <select id="select_sort-test"class="select_sort" onchange="location=this.value; getSelectValue(this.form); ">
                 <option class="sort-recent" value="?{% param_replace sort='recent' %}" {% if sort_by == 'recent' %} selected {% endif %}>최신순</option>
-                <option class="sort-recent" value="?{% param_replace sort='liked' %}" {% if sort_by == 'liked' %} selected {% endif %}>좋아요순</option>
+                <option class="sort-liked" value="?{% param_replace sort='liked' %}" {% if sort_by == 'liked' %} selected {% endif %}>좋아요순</option>
                 <option class="sort-view" value="?{% param_replace sort='view' %}" {% if sort_by == 'view' %} selected {% endif %}>조회수순</option>
             </select>
         </form>
+        {% endcomment %}    
     </div>
 
     <div class="group-post__list">  <!-- 게시글 목록 시작 -->
