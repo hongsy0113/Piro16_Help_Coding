@@ -11,13 +11,14 @@ from django.templatetags.static import static
 from django.db.models import Q
 from django.core.paginator import Paginator
 from django.db.models import Count
-from django.http import JsonResponse
+from django.http import JsonResponse, FileResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q
 from .models import *
 from .forms import *
 from django.core.paginator import Paginator 
 from hitcount.views import HitCountDetailView
+from django.views.generic import ListView, View
 from django.views.generic.detail import SingleObjectMixin
 from django.core.files.storage import FileSystemStorage
 import mimetypes
@@ -534,6 +535,21 @@ class GroupPostDetailView(HitCountDetailView):
         context['answers_count']= answers_count
         context['answers_reply_dict']= answers_reply_dict
         return context
+
+class FileDownloadView(SingleObjectMixin, View):
+    queryset = GroupPost.objects.all()
+
+    def get(self, request, pk):
+        object = get_object_or_404(GroupPost, pk=pk)
+        
+        file_path = object.attached_file.path
+        file_type, _ = mimetypes.guess_type(file_path)
+        #file_type = object.attached_file.name.split('.')[-1]  # django file object에 content type 속성이 없어서 따로 저장한 필드
+        fs = FileSystemStorage(file_path)
+        response = FileResponse(fs.open(file_path, 'rb'), content_type=file_type)
+        response['Content-Disposition'] = f'attachment; filename={object.get_filename()}'
+        
+        return response
 
 @csrf_exempt
 def answer_ajax(request):

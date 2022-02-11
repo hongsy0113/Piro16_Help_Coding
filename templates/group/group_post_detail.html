@@ -8,6 +8,8 @@
 {{ request.user.id|json_script:"user_id" }}
 {{ post.id|json_script:"post_id" }}
 
+<h2>{{ post.group }}      게시판</h2>
+
 <main>
     <h1>{{ post.title }}</h1>
     <hr>
@@ -31,14 +33,17 @@
     <div>
         <label>첨부 파일</label>
         <div>{{ post.get_filename }}</div>
-        {% comment %}
-        <form action="{% url 'qna:download' question.id %}">
+        <form action="{% url 'group:download' post.id %}">
             <button type="submit">
             다운로드
             </button>
-        </form>{% endcomment %}
+        </form>
     </div>
     {% endif %}
+    <div>
+        <label>첨부 링크</label>
+        <div>{{ post.attached_link }}</div>
+    </div>
 
     <hr>
     <div class="post__like-btn btn btn-secondary">

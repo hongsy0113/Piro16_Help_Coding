@@ -80,7 +80,9 @@ class GroupPost(models.Model, HitCountMixin):
 
     def __str__(self):
         return self.title
-    
+
+    def get_filename(self):
+        return os.path.basename(self.attached_file.name)    
 
 
 # 편의상 댓글, 답변 모두 answer
