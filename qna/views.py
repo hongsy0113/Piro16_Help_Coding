@@ -79,7 +79,6 @@ def question_list(request):
     if sort_by == 'recent':    # 최신순
         questions = questions.order_by('-created_at')
     elif sort_by == 'liked':   # 좋아요순
-        #questions = Question.objects.order_by('-like_user')
         questions = questions.annotate(total_likes=Count('like_user')).order_by('-total_likes')
     elif sort_by == 'view':    # 조회수순
         questions = questions.order_by('-hit_count_generic__hits')

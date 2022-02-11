@@ -7,7 +7,7 @@ import os
 
 # Create your models here.
 class Question(models.Model, HitCountMixin):
-    title = models.CharField(verbose_name='제목', max_length=30)
+    title = models.CharField(verbose_name='제목', max_length=50)
     content = models.TextField(verbose_name='내용')
 
     # 코드 캡쳐, 실행창 캡쳐와 같은 이미지 업로드

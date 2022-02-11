@@ -49,7 +49,7 @@ class GroupPost(models.Model, HitCountMixin):
     user = models.ForeignKey(User, on_delete=models.CASCADE ,related_name='group_writer_person')
     group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name= 'this_group')
 
-    title = models.CharField(verbose_name='제목', max_length=30)
+    title = models.CharField(verbose_name='제목', max_length=50)
     content = models.TextField(verbose_name='내용')
     # 코드 캡쳐, 실행창 캡쳐와 같은 이미지 업로드
     image = models.ImageField(upload_to=group_post_img_path, null=True, blank=True)
@@ -80,7 +80,9 @@ class GroupPost(models.Model, HitCountMixin):
 
     def __str__(self):
         return self.title
-    
+
+    def get_filename(self):
+        return os.path.basename(self.attached_file.name)    
 
 
 # 편의상 댓글, 답변 모두 answer
@@ -95,11 +97,11 @@ class GroupAnswer(models.Model):
     updated_at = models.DateTimeField(verbose_name='수정일자', auto_now=True)
 
     answer_order = models.IntegerField(verbose_name='답변순서')
-    answer_depth = models.IntegerField(verbose_name='답변깊이')
+    answer_depth = models.IntegerField(verbose_name='답변깊이', default=0)
 
     post_id = models.ForeignKey(GroupPost, on_delete=models.CASCADE,)
 
-    parent_answer = models.ForeignKey('self', on_delete=models.CASCADE,)
+    parent_answer = models.ForeignKey('self', on_delete=models.CASCADE,  null=True, blank=True)
     like_user = models.ManyToManyField('user.User', blank=True)
 
 class GroupTag(models.Model):
