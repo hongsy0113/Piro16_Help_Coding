@@ -429,13 +429,15 @@ def post_list(request, pk):
     posts = GroupPost.objects.filter(group__pk=pk).order_by('-created_at')
     group = Group.objects.get(pk=pk)
     page = request.GET.get('page', '1')    # 페이지
-
+    
     # 게시물 정렬
-    sort = request.GET.get('sort', 'recent')
-    if sort == 'recent':    # 최신순
+    sort_by = request.GET.get('sort', 'recent')
+    if sort_by == 'recent':    # 최신순
         posts = posts.order_by('-created_at')
-    elif sort == 'view':    # 조회수순
-        posts = posts.order_by('-hit')
+    elif sort_by == 'liked':   # 좋아요순
+        questions = posts.annotate(total_likes=Count('like_user')).order_by('-total_likes')
+    elif sort_by == 'view':    # 조회수순
+        posts = posts.order_by('-hit_count_generic__hits')
 
     # 페이징 처리
     paginator = Paginator(posts, 6)    # 페이지당 5개씩 보여주기
@@ -444,7 +446,7 @@ def post_list(request, pk):
     ctx = {
         'posts': page_obj,
         'group': group,
-        'sort_by': sort
+        'sort_by': sort_by
     }
 
     return render(request, 'group/group_post_list.html', context=ctx)
@@ -577,8 +579,6 @@ def answer_ajax(request):
     # 템플릿에서 쉽게 띄울 수 있도록 답변 게시일자 포맷팅해서 json에 전달
     created_at = new_answer.created_at.strftime('%y.%m.%d %H:%M')
 
-    update_answer(new_answer, this_post.user, request.user)
-
     return JsonResponse({'id': new_answer.id ,'content': content,'user':username, 'created_at':created_at} )
 
 # 대댓글 작성
@@ -612,8 +612,6 @@ def reply_ajax(request):
         parent_answer = this_answer
     )
 
-    update_answer_reply(new_answer, request.user)
-
     # 템플릿에서 쉽게 띄울 수 있도록 답변 게시일자 포맷팅해서 json에 전달
     created_at = new_answer.created_at.strftime('%y.%m.%d %H:%M')
 
@@ -642,10 +640,8 @@ def post_like_ajax(request):
 
     if is_liked:
         liked_users.remove(request.user)
-        update_question_like_cancel(post, post.user, request.user)
     else:
         liked_users.add(request.user)
-        update_question_like(post, post.user, request.user)
 
     total_likes = len(liked_users.all())
     return JsonResponse({'post_id':post_id, 'total_likes':total_likes, 'is_liking': not(is_liked)})
@@ -663,10 +659,8 @@ def answer_like_ajax(request):
     
     if is_liked:
         liked_users.remove(request.user)
-        update_comment_like_cancel(answer, answer.user, request.user)
     else:
         liked_users.add(request.user)
-        update_comment_like(answer, answer.user, request.user)
 
     total_likes = len(liked_users.all())
 
@@ -680,10 +674,7 @@ def answer_delete_ajax(request):
     answer_id = req['id']
 
     answer = get_object_or_404(GroupAnswer, pk=answer_id)
-    if answer.parent_answer:
-        update_answer_reply_cancel(answer, request.user)
-    else:
-        update_answer_cancel(answer, answer.post_id.user, request.user)
+
     answer.delete()
 
     return JsonResponse({'id':answer_id})

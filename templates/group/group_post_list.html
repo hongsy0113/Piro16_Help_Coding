@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
-{% load hitcount_tags %}
 {% load static %}
-
+{% load hitcount_tags %}
+{% load my_tags %}
 
 {% block css %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/group_post_list.css' %}">
@@ -32,8 +32,9 @@
         <!-- select box -->
         <form method="get" action="{% url 'group:post_list' group.pk %}">
             <select class="select_sort" onchange="location=this.value; getSelectValue(this.form);">
-                <option class="sort-recent" value="?sort=recent" {% if sort_by == 'recent' %} selected {% endif %}>최신순</option>
-                <option class="sort-view" value="?sort=view" {% if sort_by == 'view' %} selected {% endif %}>조회수순</option>
+                <option class="sort-recent" value="?{% param_replace sort='recent' %}" {% if sort_by == 'recent' %} selected {% endif %}>최신순</option>
+                <option class="sort-recent" value="?{% param_replace sort='liked' %}" {% if sort_by == 'liked' %} selected {% endif %}>좋아요순</option>
+                <option class="sort-view" value="?{% param_replace sort='view' %}" {% if sort_by == 'view' %} selected {% endif %}>조회수순</option>
             </select>
         </form>
     </div>
@@ -52,10 +53,10 @@
                 </div>
 
                 <div class="group_post-tag">   <!-- 게시글 태그 수정 여기서 해주세요 -->
-                    {% if post.category_tag == 'S' %}
-                    <span class="post-tag">자랑하기</span>
-                    {% elif post.category_tag == 'Q' %}
-                    <span class="post-tag">질문하기</span>
+                    {% if post.category == 'S' %}
+                    <span class="post-tag">자랑</span>
+                    {% elif post.category == 'Q' %}
+                    <span class="post-tag">질문</span>
                     {% else %}
                     <span class="post-tag">기타</span>
                     {% endif %}
@@ -65,7 +66,7 @@
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
                     <path d="M13.1592 0.505859H1.90918C0.875 0.505859 0.0341797 1.34668 0.0341797 2.38086V10.8184C0.0341797 11.8525 0.875 12.6934 1.90918 12.6934H4.72168V15.1543C4.72168 15.4414 5.0498 15.6084 5.28125 15.4385L8.94043 12.6934H13.1592C14.1934 12.6934 15.0342 11.8525 15.0342 10.8184V2.38086C15.0342 1.34668 14.1934 0.505859 13.1592 0.505859Z" fill="white"/>
                     </svg>
-                    <span> 1 </span>    <!-- 댓글 개수 수정 여기서 해주세요 -->
+                    <span> {{ post.groupanswer_set.all | length }} </span>    <!-- 댓글 개수 수정 여기서 해주세요 -->
                 </div>
 
                 <div class="content__post">
@@ -82,8 +83,8 @@
                     </div>
                     <!-- 글 정보 -->
                     <div class="content__post-info">
-                        <span class="post-info">{{ post.created_at | date:'y.m.d' }} · {{ post.user }} · 조회  {% get_hit_count for post %}</span>
-                        <!-- <div class="info-like">좋아요 {{ post.hit }}</div> --> <!-- 좋아요 구현 X -->
+                        <span class="post-info">{{ post.created_at | date:'y.m.d' }} · {{ post.user }} · 조회  {% get_hit_count for post %} · 좋아요 {{ post.like_user.all | length }}</span>
+                        <!-- <div class="info-like post-info"> · 좋아요 {{ post.like_user.all | length }}</div>  -->
                     </div>
                 </div>
             </div>
@@ -111,7 +112,7 @@
 <ul class="all__pagination">
     {% if posts.has_previous %}
     <li class="all__page-item">
-        <a class="all__page-sign" href="?page={{ post.previous_page_number }}&sort={{ sort_by }}">
+        <a class="all__page-sign" href="?{% param_replace page=posts.previous_page_number %}">
             <!-- 이전페이지 -->
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="24" viewBox="0 0 14 24" fill="none">
             <path d="M12.7688 22.5918L2.02827 11.8513L12.7688 1.11076" stroke="#C4C4C4" stroke-width="2"/>
@@ -132,18 +133,18 @@
     {% for page_number in posts.paginator.page_range %}
         {% if page_number == posts.number %}
         <li class="all__page-item">
-            <a class="all__page-item-active" href="?page={{ page_number }}&sort={{ sort_by }}">{{ page_number }}</a>
+            <a class="all__page-item-active" href="?{% param_replace page=page_number %}">{{ page_number }}</a>
         </li>
         {% else %}
         <li class="all__page-item">
-            <a class="all__page-link" href="?page={{ page_number }}&sort={{ sort_by }}">{{ page_number }}</a>
+            <a class="all__page-link" href="?{% param_replace page=page_number %}">{{ page_number }}</a>
         </li>
         {% endif %}
     {% endfor %}
 
     {% if posts.has_next %}
     <li class="all__page-item">
-        <a class="all__page-sign sign-next" href="?page={{ posts.next_page_number }}&sort={{ sort_by }}">
+        <a class="all__page-sign sign-next" href="?{% param_replace page=posts.next_page_number %}">
             <!-- 다음페이지 -->
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="24" viewBox="0 0 14 24" fill="none">
             <path d="M1.23096 1.11035L11.9715 11.8509L1.23096 22.5914" stroke="#C4C4C4" stroke-width="2"/>
