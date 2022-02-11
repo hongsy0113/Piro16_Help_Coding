@@ -12,7 +12,7 @@ BASE_IMAGES = ('base1.png', 'base2.jpg')
 JOB_CHOICE = (('elementary_school', '초등학생'), ('middle_school', '중학생'), ('high_school', '고등학생'),
         ('university', '대학생'), ('programmer', '개발자'), ('parents', '학부모'), ('teacher', '교사'), ('etc', '기타'))
 JOB_CATEGORY = {'student': ['elementary_school', 'middle_school', 'high_school'],
-        'adult': ['university', 'programmer', 'parents', 'etc']}
+        'adult': ['university', 'programmer', 'parents', 'teacher', 'etc']}
 
 # 레벨 체계
 LEVEL = (('level_1', '1단계'), ('level_2', '2단계'), ('level_3', '3단계'), ('level_4', '4단계'), ('level_5', '5단계'))
