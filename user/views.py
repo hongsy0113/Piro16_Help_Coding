@@ -170,7 +170,7 @@ def my_page_revise(request):
     if user == AnonymousUser():
         return redirect('user:login')
     if request.method == 'POST':
-        update_question_like(user, user)
+        
         form = MypageReviseForm(request.POST)
         command = ['mypage_revise']
         if request.POST['current_password'] or request.POST['new_password1'] or request.POST['new_password2']:
