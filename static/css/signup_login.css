@@ -1,9 +1,9 @@
-.signup__container {
+.signup__container, .login__container {
     margin: 0 auto;
     width: 540px;
 }
 
-.signup__container h1 {
+.signup__container h1, .login__container h1 {
     font-size: 36px;
     font-weight: bold;
     line-height: 150%;
@@ -13,7 +13,7 @@
 }
 
 
-.signup__page1, .signup__page2 {
+.signup__page1, .signup__page2, .login__innercontainer {
     display: flex;
     flex-direction: column;
     gap: 30px;
@@ -24,13 +24,17 @@
 .signup__page2 {
     /* display: none; */
 }
+
+.signup__page1 > div, .signup__page2 > div {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
 form label {
     font-weight: bold;
     font-size: 24px;
     line-height: 150%;
     color: #4f4f4f;
-    margin-bottom: 15px;
-    
 }
 
 form input, form textarea {
@@ -61,14 +65,22 @@ form input::placeholder, form textarea::placeholder {
     flex-wrap: wrap;
 }
 
+.signup__job__inputcontainer > div {
+    display: flex;
+    gap: 15px;
+}
+
 .signup__image__inputcontainer input, .signup__job__inputcontainer input {
     width: 20px;
+    height: 20px;
 }
 
 .signup__job__inputcontainer p {
-    font-size: 18px;
+    font-size: 22px;
     color: #4f4f4f;
-    width: 50px;
+    width: 80px;
+    line-height: 100%;
+    margin-bottom: 8px;
 }
 
 .signup__btncontainer {
@@ -77,7 +89,7 @@ form input::placeholder, form textarea::placeholder {
     gap: 10px;
     align-self: center;
 }
-.signup__nextpagebtn, .signup__sumbitbtn {
+.signup__nextpagebtn, .signup__sumbitbtn, .login__loginbtn {
     width: 180px;
     height: 75px;
     background: #37C6E6;
@@ -93,8 +105,9 @@ form input::placeholder, form textarea::placeholder {
     cursor: pointer;
 }
 
-.signup__nextpagebtn {
+.signup__nextpagebtn, .login__loginbtn {
     align-self: center;
+    margin: 0 auto;
 }
 
 .signup__prevpagebtn {
@@ -109,4 +122,17 @@ form input::placeholder, form textarea::placeholder {
     text-align: center;
     line-height: 100%;
     cursor: pointer;
+}
+
+.signup__error {
+    background-color: #FFE6E6;
+    border: 2px solid #eb6464;
+    color: #eb6464;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-weight: bold;
+    font-size: 18px;
+    padding: 10px 12px;
+    margin: 10px 0;
+    width: 540px;
 }
