@@ -403,9 +403,9 @@ def post_list(request, pk):
     # 게시물 정렬
     sort = request.GET.get('sort', 'recent')
     if sort == 'recent':    # 최신순
-        posts = GroupPost.objects.order_by('-created_at')
+        posts = posts.order_by('-created_at')
     elif sort == 'view':    # 조회수순
-        posts = GroupPost.objects.order_by('-hit')
+        posts = posts.order_by('-hit')
 
     # 페이징 처리
     paginator = Paginator(posts, 5)    # 페이지당 5개씩 보여주기

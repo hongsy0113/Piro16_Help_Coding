@@ -101,6 +101,7 @@ html, body, section {
     justify-content: center;
     align-items: center;
     margin-top: 30px;
+    margin-bottom: 30px;
 }
 
 .btn-save {
