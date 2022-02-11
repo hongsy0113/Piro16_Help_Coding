@@ -1,0 +1,111 @@
+.signup__container {
+    margin: 0 auto;
+    width: 540px;
+}
+
+.signup__container h1 {
+    font-size: 36px;
+    font-weight: bold;
+    line-height: 150%;
+    margin-bottom: 50px;
+    width: 100%;
+    text-align: center;
+}
+
+
+.signup__page1, .signup__page2 {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    align-items: flex-start;
+}
+
+.signup__page2 {
+    display: none;
+}
+form label {
+    font-weight: bold;
+    font-size: 24px;
+    line-height: 150%;
+    color: #4f4f4f;
+    margin-bottom: 15px;
+    
+}
+
+form input, form textarea {
+    width: 540px;
+    height: 60px;
+    font-size: 18px;
+    line-height: 150%;
+    padding-left: 24px;
+    border: 1px solid #bdbdbd;
+    border-radius: 5px;
+}
+form input::placeholder, form textarea::placeholder {
+    color: #828282;
+}
+
+.signup__birth__inputcontainer {
+    display: flex;
+    gap: 10px;
+}
+
+.signup__birth__inputcontainer input {
+    width: 100%;
+}
+
+.signup__job__inputcontainer {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.signup__image__inputcontainer input, .signup__job__inputcontainer input {
+    width: 20px;
+}
+
+.signup__job__inputcontainer p {
+    font-size: 18px;
+    color: #4f4f4f;
+    width: 50px;
+}
+
+.signup__btncontainer {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    align-self: center;
+}
+.signup__nextpagebtn, .signup__sumbitbtn {
+    width: 180px;
+    height: 75px;
+    background: #37C6E6;
+    border: 2px solid #37C6E6;
+    box-sizing: border-box;
+    border-radius: 37.5px;
+    font-weight: bold;
+    font-size: 30px;
+    padding: 20px 24px 24px 24px;
+    color: #fff;
+    text-align: center;
+    line-height: 100%;
+    cursor: pointer;
+}
+
+.signup__nextpagebtn {
+    align-self: center;
+}
+
+.signup__prevpagebtn {
+    width: 180px;
+    height: 75px;
+    border: 2px solid #828282;
+    border-radius: 37.5px;
+    font-weight: bold;
+    font-size: 30px;
+    padding: 20px 24px 24px 24px;
+    color: #828282;
+    text-align: center;
+    line-height: 100%;
+    cursor: pointer;
+}

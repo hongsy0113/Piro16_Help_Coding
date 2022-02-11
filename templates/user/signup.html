@@ -1,59 +1,101 @@
 {% extends 'base.html' %}
 
+{% load static %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/signup.css' %}">
+{% endblock css %}
+
 {% block content %}
-<form method="POST" enctype="multipart/form-data" action="">
-    {% csrf_token %}
-    <div>
-        <label for="email">이메일</label><br />
-        <input type="text" name="email" id="email" value="{{ original_information.email }}" placeholder="이메일 주소"/>
-        {% if sign_up_error %}<span>{{ sign_up_error.email }}</span>{% endif %}
-    </div>
-    <div>
-        <label for="new_password1">비밀번호</label><br />
-        <input type="password" name="new_password1" id="new_password1" value="{{ original_information.new_password1 }}" placeholder="영문자, 숫자 혼합 8자리 이상"/>
-        {% if sign_up_error %}<span>{{ sign_up_error.new_password1 }}</span>{% endif %}
-    </div>
-    <div>
-        <label for="new_password2">비밀번호 확인</label><br />
-        <input type="password" name="new_password2" id="new_password2" value="{{ original_information.new_password2 }}" placeholder="비밀번호 다시 한 번 입력"/>
-        {% if sign_up_error %}<span>{{ sign_up_error.new_password2 }}</span>{% endif %}
-    </div>
-    <div>
-        <label for="nickname">닉네임</label><br />
-        <input type="text" name="nickname" id="nickname" value="{{ original_information.nickname }}"/>
-        {% if sign_up_error %}<span>{{ sign_up_error.nickname }}</span>{% endif %}
-    </div>
-    <div>
-        <label for="birth">생년월일</label><br />
-        <input type="text" name="birth-y" id="birth-y" value="{{ original_information.birth_y }}"/>년
-        <input type="text" name="birth-m" id="birth-m" value="{{ original_information.birth_m }}"/>월
-        <input type="text" name="birth-d" id="birth-d" value="{{ original_information.birth_d }}"/>일
-        {% if sign_up_error %}<span>{{ sign_up_error.birth }}</span>{% endif %}
-    </div>
-    <div>
-        <label for="img">이미지 업로드</label><br />
-        {% for base_image in base_images %}
-        <img src="/static/img/{{ base_image }}" height="50">
-        <input type="radio" name="img_setting" value="{{ base_image }}" {% if original_information.img_setting == base_image %}checked{% endif %}>
-        {% endfor %}
-        <label>직접 설정하기 <input type="radio" name="img_setting" value="own_img" {% if original_information.img_setting == "own_img" or not original_information.img_setting%}checked{% endif %}></label>
-        <input name="img" type="file" value="{{ original_information.img.url }}"></input>
-        {% if sign_up_error %}<span>{{ sign_up_error.img }}</span>{% endif %}
-    </div>
-    <div>
-        <label for="introduction">소개</label><br />
-        <textarea name="introduction" id="introduction" cols="30" rows="10">{{ original_information.introduction }}</textarea>
-    </div>
-    <div>
-        <label for="job">직업</label><br />
-        {% for job in job_choice %}
-        <input type="radio" name="job" value="{{ job.0 }}" {% if original_information.job == job.0 %}checked{% endif %}
-        {% if not original_information.job and job.0 == "etc" %}checked{% endif %}/>{{ job.1 }}
-        {% endfor %}
-        {% if sign_up_error %}<span>{{ sign_up_error.job }}</span>{% endif %}
-    </div>
+<div class="signup__container">
+    <h1>도와줘코딩 가입하기</h1>
+    <form method="POST" enctype="multipart/form-data" action="">
+        {% csrf_token %}
+        <div class="signup__page1">
+            <div>
+                <label for="email">이메일</label><br />
+                <input type="text" name="email" id="email" value="{{ original_information.email }}" placeholder="이메일 주소를 입력하세요."/>
+                {% if sign_up_error %}<span>{{ sign_up_error.email }}</span>{% endif %}
+            </div>
+            <div>
+                <label for="new_password1">비밀번호</label><br />
+                <input type="password" name="new_password1" id="new_password1" value="{{ original_information.new_password1 }}" placeholder="영문자, 숫자 혼합 8자리 이상 입력하세요."/>
+                {% if sign_up_error %}<span>{{ sign_up_error.new_password1 }}</span>{% endif %}
+            </div>
+            <div>
+                <label for="new_password2">비밀번호 확인</label><br />
+                <input type="password" name="new_password2" id="new_password2" value="{{ original_information.new_password2 }}" placeholder="비밀번호를 다시 한 번 입력하세요."/>
+                {% if sign_up_error %}<span>{{ sign_up_error.new_password2 }}</span>{% endif %}
+            </div>
+            <div class="signup__nextpagebtn">다음</div>
+        </div>
+        <div class="signup__page2">
+            <div>
+                <label for="nickname">닉네임</label><br />
+                <input type="text" name="nickname" id="nickname" value="{{ original_information.nickname }}"/>
+                {% if sign_up_error %}<span>{{ sign_up_error.nickname }}</span>{% endif %}
+            </div>
+            <div class="signup__birth">
+                <label for="birth">생년월일</label><br />
+                <div class="signup__birth__inputcontainer">
+                    <input type="text" name="birth-y" id="birth-y" value="{{ original_information.birth_y }}" placeholder="년"/>
+                    <input type="text" name="birth-m" id="birth-m" value="{{ original_information.birth_m }}" placeholder="월"/>
+                    <input type="text" name="birth-d" id="birth-d" value="{{ original_information.birth_d }}" placeholder="일"/>
+                </div>
+                {% if sign_up_error %}<span>{{ sign_up_error.birth }}</span>{% endif %}
+            </div>
+            <div>
+                <div class="signup__image__inputcontainer">
+                    <label for="img">이미지 업로드</label><br />
+                    {% for base_image in base_images %}
+                    <img src="/static/img/{{ base_image }}" height="50">
+                    <input type="radio" name="img_setting" value="{{ base_image }}" {% if original_information.img_setting == base_image %}checked{% endif %}>
+                    {% endfor %}
+                    <label>직접 설정하기 <input type="radio" name="img_setting" value="own_img" {% if original_information.img_setting == "own_img" or not original_information.img_setting%}checked{% endif %}></label>
+                    <input name="img" type="file" value="{{ original_information.img.url }}"></input>
+                </div>
+                    {% if sign_up_error %}<span>{{ sign_up_error.img }}</span>{% endif %}
+            </div>
+            <div>
+                <label for="introduction">소개</label><br />
+                <textarea name="introduction" id="introduction" cols="30" rows="10">{{ original_information.introduction }}</textarea>
+            </div>
+            <div>
+                <label for="job">직업</label><br />
+                <div class="signup__job__inputcontainer">
+                    {% for job in job_choice %}
+                    <input type="radio" name="job" value="{{ job.0 }}" {% if original_information.job == job.0 %}checked{% endif %}
+                    {% if not original_information.job and job.0 == "etc" %}checked{% endif %}/>
+                    <p>{{ job.1 }}</p>
+                    {% endfor %}
+                </div>
+                {% if sign_up_error %}<span>{{ sign_up_error.job }}</span>{% endif %}
+            </div>
+            <div class="signup__btncontainer">
+                <div class="signup__prevpagebtn">이전</div>
+                <input type="submit" value="가입하기" class="signup__sumbitbtn">
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    const page1 = document.querySelector('.signup__page1');
+    const page2 = document.querySelector('.signup__page2');
+    const nextPageBtn = document.querySelector('.signup__nextpagebtn');
+    const prevPageBtn = document.querySelector('.signup__prevpagebtn');
     
+    nextPageBtn.addEventListener('click', showSecondPage);
+    prevPageBtn.addEventListener('click', showFirstPage);
+
+    function showSecondPage(){
+        page1.style.display = "none";
+        page2.style.display = "flex";
+    };
+    function showFirstPage(){
+        page1.style.display = "flex";
+        page2.style.display = "none";
+    };
     
-    <input type="submit" value="SignUp">
-</form>
-{% endblock content %}
+
+</script>
+    {% endblock content %}
