@@ -5,17 +5,17 @@
     {% csrf_token %}
     <div>
         <label for="email">이메일</label><br />
-        <input type="text" name="email" id="email" value="{{ original_information.email }}"/>
+        <input type="text" name="email" id="email" value="{{ original_information.email }}" placeholder="이메일 주소"/>
         {% if sign_up_error %}<span>{{ sign_up_error.email }}</span>{% endif %}
     </div>
     <div>
         <label for="new_password1">비밀번호</label><br />
-        <input type="password" name="new_password1" id="new_password1" value="{{ original_information.new_password1 }}"/>
+        <input type="password" name="new_password1" id="new_password1" value="{{ original_information.new_password1 }}" placeholder="영문자, 숫자 혼합 8자리 이상"/>
         {% if sign_up_error %}<span>{{ sign_up_error.new_password1 }}</span>{% endif %}
     </div>
     <div>
         <label for="new_password2">비밀번호 확인</label><br />
-        <input type="password" name="new_password2" id="new_password2" value="{{ original_information.new_password2 }}"/>
+        <input type="password" name="new_password2" id="new_password2" value="{{ original_information.new_password2 }}" placeholder="비밀번호 다시 한 번 입력"/>
         {% if sign_up_error %}<span>{{ sign_up_error.new_password2 }}</span>{% endif %}
     </div>
     <div>
