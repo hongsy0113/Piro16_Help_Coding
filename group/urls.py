@@ -5,7 +5,6 @@ app_name = 'group'
 
 urlpatterns = [
     path('', view=views.group_home, name='group_home'),
-    path('group_search/', view=views.group_search, name='group_search'),
     path('group_search_public/', view=views.group_search_public, name='group_search_public'),
     path('group_create/', view=views.group_create, name='group_create'),
     path('<int:pk>/group_update/', view=views.group_update, name='group_update'),
