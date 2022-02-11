@@ -80,7 +80,9 @@ class GroupPost(models.Model, HitCountMixin):
 
     def __str__(self):
         return self.title
-    
+
+    def get_filename(self):
+        return os.path.basename(self.attached_file.name)    
 
 
 # 편의상 댓글, 답변 모두 answer
@@ -95,11 +97,11 @@ class GroupAnswer(models.Model):
     updated_at = models.DateTimeField(verbose_name='수정일자', auto_now=True)
 
     answer_order = models.IntegerField(verbose_name='답변순서')
-    answer_depth = models.IntegerField(verbose_name='답변깊이')
+    answer_depth = models.IntegerField(verbose_name='답변깊이', default=0)
 
     post_id = models.ForeignKey(GroupPost, on_delete=models.CASCADE,)
 
-    parent_answer = models.ForeignKey('self', on_delete=models.CASCADE,)
+    parent_answer = models.ForeignKey('self', on_delete=models.CASCADE,  null=True, blank=True)
     like_user = models.ManyToManyField('user.User', blank=True)
 
 class GroupTag(models.Model):

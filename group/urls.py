@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from .views import FileDownloadView
 
 app_name = 'group'
 
@@ -21,9 +22,18 @@ urlpatterns = [
     path('create_code_ajax/', view=views.create_code_ajax, name='create_code_ajax'),
     path('wait_list_ajax/', view=views.wait_list_ajax, name='wait_list_ajax'),
     # path('<int:pk>/member_thumbnail/', view=views.member_thumbnail, name='member_thumbnail'),
+    #### 게시판 관련 url
     path('<int:pk>/post_list/', view=views.post_list, name='post_list'),
     path('<int:pk>/post_create/', view=views.post_create, name='post_create'),
     path('<int:pk>/post_update/<int:post_pk>', view=views.post_update, name='post_update'),
-    path('<int:pk>/post_detail/<int:post_pk>', view=views.post_detail, name='post_detail'),
+    path('<int:group_pk>/post_detail/<int:pk>', view=views.GroupPostDetailView.as_view(), name='post_detail'),
     path('search_list/', view=views.search_result, name='search_result'),
+    path('answer_ajax/', view=views.answer_ajax, name='answer_ajax'),
+    path('reply_ajax/', view=views.reply_ajax, name='reply_ajax'),
+    path('post_like_ajax/', view=views.post_like_ajax, name='post_like_ajax'),
+    path('answer_like_ajax/', view=views.answer_like_ajax, name='answer_like_ajax'),
+    path('answer_delete_ajax/', view=views.answer_delete_ajax, name='answer_delete_ajax'),
+    path('answer_edit_ajax/', view=views.answer_edit_ajax, name='answer_edit_ajax'),
+    path('answer_edit_submit_ajax/', view=views.answer_edit_submit_ajax, name='answer_edit_submit_ajax'),
+    path('<int:pk>/download/', FileDownloadView.as_view(), name="download"),
 ]

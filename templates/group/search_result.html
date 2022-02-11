@@ -15,7 +15,7 @@
 {% for post in posts %}
     <div>
         <div>
-        <h4><a href="">{{ post.title }} </a></h4>
+        <h4><a href="{% url 'group:post_detail' post.group.pk post.pk %}">{{ post.title }} </a></h4>
         <p>{{ post.content }}</p>
         <p>{{ post.user }}</p>
         </div>
