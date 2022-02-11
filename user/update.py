@@ -75,7 +75,7 @@ def update_answer(question, answer, posted_user, answered_user):
     update_reward(answered_user, 'total_comment', posted_user.total_comment())
     update_reward(answered_user, 'total_answer', posted_user.total_answer)
     if answered_user != posted_user:
-        Alert.objects.create(user = posted_user, content = "[{}] 질문글에 댓글이 달렸어요.".format(question.title), alert_type="new_comment", time=datetime.now())
+        Alert.objects.create(user = posted_user, content = "[{}] 질문글에 댓글이 달렸어요.".format(question.title), alert_type="new_comment", related_id=question.id, time=datetime.now())
 
 # 질문에 답변을 삭제했을 때
 def update_answer_cancel(question, answer, posted_user, answered_user):
@@ -100,10 +100,10 @@ def update_answer_reply(question, reply, replied_user):
     update_point_history(replied_user, 'answer_reply')
     update_reward(replied_user, 'total_comment', replied_user.total_comment())
     if replied_user != question.user:
-        Alert.objects.create(user = question.user, content = "[{}] 질문글에 댓글이 달렸어요.".format(question.title), alert_type="new_comment", time=datetime.now())
+        Alert.objects.create(user = question.user, content = "[{}] 질문글에 댓글이 달렸어요.".format(question.title), alert_type="new_comment", related_id=question.id, time=datetime.now())
     if replied_user != reply.parent_answer.user:
         # 댓글을 삭제한 경우 고려해야 함
-        Alert.objects.create(user = reply.parent_answer.user, content = "[{}] 댓글에 대댓글이 달렸어요.".format(reply.parent_answer.content), alert_type="new_reply", time=datetime.now())
+        Alert.objects.create(user = reply.parent_answer.user, content = "[{}] 댓글에 대댓글이 달렸어요.".format(reply.parent_answer.content), alert_type="new_reply", related_id=question.id, time=datetime.now())
 
 # 질문에 대댓글을 삭제했을 때
 def update_answer_reply_cancel(question, reply, replied_user):

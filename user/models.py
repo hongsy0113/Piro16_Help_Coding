@@ -138,5 +138,11 @@ class Alert(models.Model):
     content = models.CharField(max_length=100)
     alert_type = models.CharField(max_length=50, choices=ALERT_TYPE, default='etc')
     time = models.DateTimeField()
-    #related_url = models.CharField(max_length=100, default='')
+    related_id = models.CharField(max_length=100, default='')
     checked = models.BooleanField(default = False)
+
+    def related_url(self):
+        if self.alert_type in ['new_comment', 'new_reply']:
+            return '/qna/{}/'.format(self.related_id)  # related_id : question id
+        else:
+            return '#'

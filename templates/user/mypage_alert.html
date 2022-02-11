@@ -7,7 +7,7 @@
   {% for alert in alerts %}
   <div>
     <p>{% if not alert.checked %}※※※※{% endif %}</p>
-    <p>{{ alert.content }}</p>
+    <a href="{{ alert.related_url }}">{{ alert.content }}</a>
     <p>{{ alert.time }}</p>
   </div>
     {% endfor %}
