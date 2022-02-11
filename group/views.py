@@ -478,6 +478,28 @@ def post_create(request, pk):
         return render(request, 'group/group_post_form.html', context=ctx)
 
 
+def post_update(request,pk ,post_pk):
+    post = get_object_or_404(GroupPost, pk=post_pk)
+    if request.method == "POST":
+        form = PostForm(request.POST, request.FILES, instance = post)
+
+        if form.is_valid():
+            ost = form.save()  
+
+            return redirect('group:post_detail', pk, post_pk)
+        else:
+            ctx = {'form': form,}
+            return render(request, 'group/group_post_form.html', context=ctx)
+    else:
+        form = PostForm(instance=post)
+
+        ctx = {'form': form, 'post': post}
+
+        return render(request, template_name="group/group_post_form.html", context=ctx)        
+
+def post_detail(request, pk, post_pk):
+    return redirect('group:post_list', pk=pk)
+
 ############################################################################
 
 ## Ajax

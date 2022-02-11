@@ -23,5 +23,7 @@ urlpatterns = [
     # path('<int:pk>/member_thumbnail/', view=views.member_thumbnail, name='member_thumbnail'),
     path('<int:pk>/post_list/', view=views.post_list, name='post_list'),
     path('<int:pk>/post_create/', view=views.post_create, name='post_create'),
+    path('<int:pk>/post_update/<int:post_pk>', view=views.post_update, name='post_update'),
+    path('<int:pk>/post_detail/<int:post_pk>', view=views.post_detail, name='post_detail'),
     path('search_list/', view=views.search_result, name='search_result'),
 ]

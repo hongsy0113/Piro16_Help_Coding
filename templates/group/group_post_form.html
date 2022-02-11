@@ -33,12 +33,21 @@
     {% endcomment %}
     <div>
         <label>사진: </label> 
-        <input class="group-post__form-input group-post__form-input--image" name="image" type="file" maxlength="255" value="{% if group_post.image %}{{group_post.image.url}}{% endif %}">
+        <input class="group-post__form-input group-post__form-input--image" name="image" type="file" maxlength="255" value="{% if post.image %}{{ post.image.url }}{% endif %}}">
+    </div>
+    <div>
+        <label>링크: </label> 
+        <input class="group-post__form-input group-post__form-input--link" name="attached_link" type="url" maxlength="255" value="
+        {% if form.atta_attached_link %}
+        {{ form.attached_link.value }}
+        {% endif %}
+        ">
     </div>
     <div>
         <label>첨부파일: </label> 
-        <input class="group-post__form-input group-post__form-input--file" name="attached_file" type="file" maxlength="255" value="{% if group_post.attached_file %}{{group_post.attached_file.name}}{% endif %}">
+        <input class="group-post__form-input group-post__form-input--file" name="attached_file" type="file" maxlength="255" value="{{ form.attached_file.url }}">
     </div>
+
     
     <div class="select__category">
         <p>카테고리 선택</p>
