@@ -26,8 +26,8 @@
             <div class="group-create__input">
                 <input class="input-name" placeholder="그룹 이름을 입력하세요." name="name" type="text" maxlength="30" value="{% if group.name %} {{ group.name }} {% elif name %} {{ name }} {% endif %}">
                 <div>
-                    {% if error_name %}
-                    <p style="color:red;">{{ error_name }}</p>
+                    {% if error %}
+                    <p style="color:red;">{{ error.name }}</p>
                     {% endif %}
                 </div>
             </div>
@@ -41,7 +41,8 @@
                 <label for="image">대표이미지</label>
                 </div>
                 <p>{% if group.image %} {{ group.image.url }} {% endif %}</p> 
-                <p class="img-form">{{ form.image }} </p>
+                <p class="img-form">{{ form.image }}</p>
+                <!-- <input class="img-form" name="image" type="file" value="{% if group.image %} {{ group.image.url }} {% elif image %} {{ image.url }} {% endif %}" /> -->
             </div>
 
             <div class="group-crate__mode select__group-mode">
@@ -54,8 +55,8 @@
                     <input type="radio" name="group-mode__tag" value="PRIVATE" id="private" class="mode-select__tag" {% if group.mode == 'PRIVATE' or mode == 'PRIVATE' %} checked {% endif %}>
                     <label for="private">비공개</label>
                 </div>
-                {% if error_mode %}
-                <p style="color:red;">{{ error_mode }}</p>
+                {% if error %}
+                <p style="color:red;">{{ error.mode }}</p>
                 {% endif %}
             </div>
         </div>

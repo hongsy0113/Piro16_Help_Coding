@@ -21,6 +21,7 @@ from hitcount.views import HitCountDetailView
 from django.views.generic import ListView, View
 from django.views.generic.detail import SingleObjectMixin
 from django.core.files.storage import FileSystemStorage
+from config.settings import MEDIA_ROOT
 import mimetypes
 from user.update import *
 
@@ -76,6 +77,7 @@ def group_search_public(request):
 
 ######## 그룹 CRUD ########
 
+command = []
 # 그룹 생성
 def group_create(request):
     user = request.user
@@ -89,27 +91,14 @@ def group_create(request):
         mode = request.POST.get('group-mode__tag')
 
         origin_group = Group.objects.filter(name=name)
+        global command
+        command += ['group_create']
 
         # 에러 메세지 
-        error = validation_group(origin_group, name, '', mode)
-        error_name = error[0]
-        error_mode = error[1]
+        error = GroupErrorMessage()
+        error.validation_group(name, mode, '', command)
         
-        if error_name != '' or error_mode !='' :
-            ctx = { 
-                'error_name': error_name,
-                'error_mode': error_mode,
-                'name': name,
-                'mode': mode,
-                'intro': intro,
-                'image': image
-            }
-            
-            return render(request, template_name='group/group_form.html', context=ctx)
-
-            
-        else:
-
+        if not error.has_error_group():
             group = form.save()
             group.mode = mode
             image = request.FILES.get('image')
@@ -119,7 +108,17 @@ def group_create(request):
             group.save()
 
             return redirect('group:group_home')
-            
+
+        ctx = { 
+            'error': error,
+            'name': name,
+            'mode': mode,
+            'intro': intro,
+            'image': image
+        }
+        
+        return render(request, template_name='group/group_form.html', context=ctx)
+        
     else:
         form = GroupForm()
         users = User.objects.all()
@@ -136,6 +135,8 @@ def group_update(request, pk):
 
     if request.method == 'POST':
         form = GroupForm(request.POST, instance=group)
+        global command
+        command += ['group_create']
 
         group.name = request.POST.get('name')
         name = group.name
@@ -143,7 +144,8 @@ def group_update(request, pk):
         group.intro = request.POST.get('intro')
         intro = group.intro
 
-        image = group.image
+        if group.image:
+            image = group.image
         # 기존 이미지는 유지
         if request.FILES.get('image'):
             image = request.FILES.get('image')
@@ -154,30 +156,27 @@ def group_update(request, pk):
         mode = request.POST.get('group-mode__tag')
         group.mode = mode
 
-        group.save()
-
-        origin_group = Group.objects.filter(name=name)
-
         # 에러 메세지
-        error = validation_group(origin_group, name, prev_name, mode)
-        error_name = error[0]
-        error_mode = error[1]
+        error = GroupErrorMessage()
+        error.validation_group(name, mode, prev_name, command)
 
-        if error_name != '' or error_mode != '':
-            ctx = { 
-                'error_name': error_name,
-                'error_mode': error_mode,
-                'name': name,
-                'intro': intro,
-                'mode': mode
-            }
+        if not error.has_error_group():
+            group.save()
 
-            return render(request, template_name='group/group_form.html', context=ctx)
-            
-        return redirect('group:group_detail', pk)
+            return redirect('group:group_detail', pk)
+
+        ctx = { 
+            'error': error,
+            'name': name,
+            'intro': intro,
+            'mode': mode
+        }
+
+        return render(request, template_name='group/group_form.html', context=ctx)
 
     else:
         form = GroupForm(instance=group)
+
         ctx = { 'group': group, 'form': form }
 
         return render(request, template_name='group/group_form.html', context=ctx)
@@ -250,25 +249,29 @@ def group_detail(request, pk):
 
 
 ######## 그룹 생성 Form 오류 사항 체크 ########
-def validation_group(origin_group, name, prev, mode):
-    error = ['', '']  # 이름, 모드에 대한 에러 메세지
+class GroupErrorMessage():
 
-    if name != prev:
-        # 1. 이름 입력 칸이 비어 있는 경우
-        if not name:
-            error[0] = '그룹명을 입력하세요.'
+    name, mode = '', ''
+
+    def validation_group(self, name, mode, prev, command):
+
+        # 미입력 시 에러 메세지
+        if 'group_create' in command or 'group_update' in command:
+            if not name:       
+                self.name = '그룹명을 입력하세요.'
+            if not (mode in ['PUBLIC', 'PRIVATE']):    
+                self.mode = '그룹 공개모드를 선택하세요.'
         
-        # 2. 이미 존재하는 그룹명인 경우
-        elif origin_group:
-            error[0] = '이미 존재하는 이름입니다.'
-    else:
-        error[0] = '그룹명을 입력하세요.'
+        # 기존에 있던 입력과 비교
+        if 'group_update' in command:
+            if Group.objects.filter(name=name) and name != prev:
+                self.name = '이미 사용 중인 그룹명입니다.'
+        else:
+            if Group.objects.filter(name=name):
+                self.name = '이미 사용 중인 그룹명입니다.'
 
-    # 그룹 모드를 선택하지 않은 경우
-    if not (mode in ['PUBLIC', 'PRIVATE']):
-        error[1] = '그룹 공개모드를 선택하세요.'
-
-    return error
+    def has_error_group(self):
+        return self.name or self.mode
 
 
 ######## 초대 코드 ########
