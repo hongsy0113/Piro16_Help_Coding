@@ -19,7 +19,8 @@ from .tokens import user_activation_token
 from django.utils.encoding import force_bytes, force_str
 from datetime import date, datetime
 from config.settings import MEDIA_ROOT
-import re, shutil, os
+import re, shutil, os, time
+from threading import Timer
 
 # Main
 def main(request):
@@ -176,6 +177,7 @@ def sign_up(request):
             mail_subject = '[도와줘, 코딩] 회원가입 인증 메일입니다.'
             email = EmailMessage(mail_subject, message, to=[user.email])
             # email.send()
+            Timer(24 * 60 * 60, unauthenticated_user_delete, [request.POST['email']]).start()
             return render(request, 'user/signup_success.html', {'email': user.email})
         
         original_information = OriginalInformation()
@@ -199,6 +201,15 @@ def activate(request, uid64, token):
         return redirect('user:main')
     else:
         return HttpResponse('비정상적인 접근입니다.')
+
+# Remove Unauthenticated User
+def unauthenticated_user_delete(email):
+    try:
+        user = User.objects.get(email = email)
+        if not user.is_active:
+            user.delete()
+    except:
+        pass
 
 # My Page
 def my_page(request):
