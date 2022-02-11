@@ -26,7 +26,7 @@
                 <input type="password" name="new_password2" id="new_password2" value="{{ original_information.new_password2 }}" placeholder="비밀번호를 다시 한 번 입력하세요."/>
                 {% if sign_up_error %}<span>{{ sign_up_error.new_password2 }}</span>{% endif %}
             </div>
-            <div class="signup__nextpagebtn">다음</div>
+            <!-- <div class="signup__nextpagebtn">다음</div> -->
         </div>
         <div class="signup__page2">
             <div>
@@ -71,14 +71,14 @@
                 {% if sign_up_error %}<span>{{ sign_up_error.job }}</span>{% endif %}
             </div>
             <div class="signup__btncontainer">
-                <div class="signup__prevpagebtn">이전</div>
+                <!-- <div class="signup__prevpagebtn">이전</div> -->
                 <input type="submit" value="가입하기" class="signup__sumbitbtn">
             </div>
         </div>
     </form>
 </div>
 
-<script>
+<!-- <script>
     const page1 = document.querySelector('.signup__page1');
     const page2 = document.querySelector('.signup__page2');
     const nextPageBtn = document.querySelector('.signup__nextpagebtn');
@@ -95,7 +95,5 @@
         page1.style.display = "flex";
         page2.style.display = "none";
     };
-    
-
-</script>
+</script> -->
     {% endblock content %}
