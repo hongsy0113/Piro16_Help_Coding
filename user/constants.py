@@ -5,6 +5,9 @@
 (4) comment : 모든 댓글 (answer + answer_reply)
 '''
 
+# 기본 이미지 선택지
+BASE_IMAGES = ('base1.png', 'base2.jpg')
+
 # 직업 선택지
 JOB_CHOICE = (('elementary_school', '초등학생'), ('middle_school', '중학생'), ('high_school', '고등학생'),
         ('university', '대학생'), ('programmer', '개발자'), ('parents', '학부모'), ('teacher', '교사'), ('etc', '기타'))
