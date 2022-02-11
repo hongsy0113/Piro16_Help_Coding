@@ -1,6 +1,9 @@
+from unicodedata import category
 from django.db import models
 from user.models import User
-#from qna.models import *
+from django.contrib.contenttypes.fields import GenericRelation
+from hitcount.models import HitCountMixin, HitCount
+import os
 
 #######################################
 # 파일 저장 경로 지정하기 위한 함수들
@@ -42,7 +45,7 @@ class Group(models.Model):
         return self.name
 
 # 그룹 게시글
-class GroupPost(models.Model):
+class GroupPost(models.Model, HitCountMixin):
     user = models.ForeignKey(User, on_delete=models.CASCADE ,related_name='group_writer_person')
     group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name= 'this_group')
 
@@ -55,10 +58,25 @@ class GroupPost(models.Model):
 
     tags = models.ManyToManyField('GroupTag', blank=True)
 
-    hit = models.IntegerField(verbose_name='조회수', default=0)
+    GROUP_POST_CATE_CHOICES = (
+        ('BOAST', '자랑'),
+        ('Q', '질문'),
+        ('ETC', '기타'),
+    )
+
+    category = models.CharField(verbose_name='기본 카테고리',choices=GROUP_POST_CATE_CHOICES, max_length=20, default='기타')
+
+    attached_link = models.URLField(verbose_name='첨부된 링크', null=True, blank=True)
 
     created_at = models.DateTimeField(verbose_name='게시일자', auto_now_add=True)
     updated_at = models.DateTimeField(verbose_name='수정일자', auto_now=True)
+
+    like_user = models.ManyToManyField('user.User', blank=True)
+
+    hit_count_generic = GenericRelation(
+        HitCount, object_id_field='object_pk',
+        related_query_name='hit_count_generic_relation'
+    )
 
     def __str__(self):
         return self.title
@@ -82,21 +100,7 @@ class GroupAnswer(models.Model):
     post_id = models.ForeignKey(GroupPost, on_delete=models.CASCADE,)
 
     parent_answer = models.ForeignKey('self', on_delete=models.CASCADE,)
-
-
-class GroupPostReaction(models.Model):
-    post = models.ForeignKey(GroupPost, on_delete=models.CASCADE, related_name='reacted_post')
-
-    # 리액션한 사람
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='post_react_person') 
-
-
-# 답변 리액션
-class GroupAnswerReaction(models.Model):
-    post = models.ForeignKey(GroupPost, on_delete=models.CASCADE, related_name='reacted_group_answer')
-
-    # 리액션한 사람
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='group_answer_react_person') 
+    like_user = models.ManyToManyField('user.User', blank=True)
 
 class GroupTag(models.Model):
 
