@@ -64,7 +64,7 @@
                                 <p>{{user.email}}</p>
                             </div>
                         </a>
-                        <a href="{% url 'user:mypage' %}" class="mypage-dropdown__mypagebtn">마이페이지</a>
+                        <a href="{% url 'user:mypage' %}" class="mypage-dropdown__mypagebtn">마이페이지{{ user.has_new_alert }}</a>
                         <a href="{% url 'user:logout' %}" class="mypage-dropdown__logoutbtn">로그아웃</a>
                     </div>
                 </div>

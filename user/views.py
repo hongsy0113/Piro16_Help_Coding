@@ -84,10 +84,11 @@ class ErrorMessages():
         if not re.compile('^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$').match(birth):  # 예외5) 잘못된 생년월일 형식
             self.birth = '생년월일을 2022-02-22 형식으로 입력해주세요.'
 
-        if img_setting == 'own_img' and not img:
-            self.img = '이미지를 업로드하거나 기본 이미지를 선택해주세요.'
+        if 'signup' in command or 'image_change' in command:
+            if img_setting == 'own_img' and not img:  # 예외6) 이미지 선택 안 함
+                self.img = '이미지를 업로드하거나 기본 이미지를 선택해주세요.'
 
-        if 'signup' in command:  # 예외6) 직업 미선택
+        if 'signup' in command:  # 예외7) 직업 미선택
             if not job:
                 self.job = '직업을 선택해주세요.'
         
@@ -97,9 +98,11 @@ class ErrorMessages():
 # Original Information (Forms)
 class OriginalInformation():
 
-    def remember(self, request):
-        self.email = request.POST['email']
-        #self.current_password = request.POST['current_password']
+    def remember(self, request, command):
+        if 'signup' in command:
+            self.email = request.POST['email']
+        else:
+            self.current_password = request.POST['current_password']
         self.new_password1 = request.POST['new_password1']
         self.new_password2 = request.POST['new_password2']
         self.nickname = request.POST['nickname']
@@ -185,7 +188,7 @@ def sign_up(request):
             return render(request, 'user/signup_success.html', {'email': user.email})
         
         original_information = OriginalInformation()
-        original_information.remember(request)
+        original_information.remember(request, ['signup'])
         return render(request, 'user/signup.html', {'form': form, 'sign_up_error': sign_up_error,
         'base_images': BASE_IMAGES, 'original_information': original_information, 'job_choice': JOB_CHOICE})
             
@@ -236,7 +239,7 @@ def my_page_revise(request):
         command = ['mypage_revise']
         if request.POST['current_password'] or request.POST['new_password1'] or request.POST['new_password2']:
             command += ['password_change']
-        if request.FILES.get('img') or request.POST.get('img_setting') != 'own_img':
+        if request.POST.get('img_setting') != 'no_change_img':
             command += ['image_change']
         birth = birth_format(request.POST['birth-y'], request.POST['birth-m'], request.POST['birth-d'])
         revise_error = ErrorMessages()
@@ -252,7 +255,7 @@ def my_page_revise(request):
             request.POST.get('job'),
             command
         )
-        if not revise_error.has_error:
+        if not revise_error.has_error():
             updated = '프로필이 성공적으로 수정되었습니다.'
             if 'password_change' in command:
                 user.set_password(request.POST['new_password1'])
@@ -272,11 +275,13 @@ def my_page_revise(request):
             login(request, user)
             messages.success(request, updated)
             return redirect('user:mypage')
-        ctx = {'user': user, 'form': form, 'revise_error': revise_error}
+        original_information = OriginalInformation()
+        original_information.remember(request, command)
+        ctx = {'user': user, 'form': form, 'revise_error': revise_error, 'base_images': BASE_IMAGES, 'job_choice': JOB_CHOICE, 'original_information': original_information}
         return render(request, template_name = 'user/mypage_revise.html', context = ctx)
     else:
         form = MypageReviseForm(instance = user)
-        ctx = {'user': user, 'form': form}
+        ctx = {'user': user, 'form': form, 'base_images': BASE_IMAGES, 'job_choice': JOB_CHOICE, 'current_image': user.img.url.split('/')[-1]}
         return render(request, template_name = 'user/mypage_revise.html', context = ctx)
 
 # List View (Question, Answer, Reward, Point)
