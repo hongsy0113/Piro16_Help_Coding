@@ -69,10 +69,10 @@
         {% endif %}
         <a href="{% url 'group:post_list' group.pk %}" class="btn btn-info">목록보기</a>
         {% if previous_pk != -1 %}
-        <a href="" class="btn btn-info">이전글</a>
+        <a href="{% url 'group:post_detail' group.pk previous_pk %}" class="btn btn-info">이전글</a>
         {% endif %}
         {% if next_pk != -1 %}
-        <a href="" class="btn btn-info">다음글</a>
+        <a href="{% url 'group:post_detail' group.pk next_pk %}" class="btn btn-info">다음글</a>
         {% endif %}
     </div>
 
