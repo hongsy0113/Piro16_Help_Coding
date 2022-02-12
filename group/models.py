@@ -9,18 +9,18 @@ import os
 # 파일 저장 경로 지정하기 위한 함수들
 # group 대표 이미지
 def group_thumbnail_path(instance, filename):
-    # file will be uploaded to MEDIA_ROOT/group_<group.id>/<filename>
+    # file will be uploaded to MEDIA_ROOT/group_<group.name>/<filename>
     return 'group_{0}/thumbnail/{1}'.format(instance.name, filename)
 
 # group 게시판 이미지
 def group_post_img_path(instance, filename):
-    # file will be uploaded to MEDIA_ROOT/group_<group.id>/<filename>
-    return 'group_{0}/image/{1}'.format(instance.id, filename)
+    # file will be uploaded to MEDIA_ROOT/group_<group.name>/post/image/<filename>
+    return 'group_{0}/post/image/{1}'.format(instance.group.name, filename)
 
 # group 게시판 첨부코드
 def group_post_code_path(instance, filename):
-    # file will be uploaded to MEDIA_ROOT/group_<group.id>/<filename>
-    return 'group_{0}/code/{1}'.format(instance.id, filename)
+    # file will be uploaded to MEDIA_ROOT/group_<group.name>/post/file/<filename>
+    return 'group_{0}/post/file/{1}'.format(instance.group.name, filename)
 ######################################
 
 # 그룹
@@ -39,10 +39,17 @@ class Group(models.Model):
     )
     mode = models.CharField(verbose_name='공개 여부', choices=MODE_CHOICES, max_length=20, default=0)
     interests = models.ManyToManyField('user.User', blank=True, related_name='interests')
-    is_star = models.BooleanField(verbose_name="찜하기", default=False)
     
     def __str__(self):
         return self.name
+
+# 그룹 찜 기능
+class GroupStar(models.Model):
+    user = models.ForeignKey(User, verbose_name='사용자', on_delete=models.CASCADE, related_name='star_user')
+    group = models.ForeignKey(Group, verbose_name='그룹', on_delete=models.CASCADE, related_name='star_group')
+
+    def __str__(self):
+        return self.user.nickname +  self.group.name
 
 # 그룹 게시글
 class GroupPost(models.Model, HitCountMixin):

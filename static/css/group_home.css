@@ -2,6 +2,7 @@
 .mygroup__top {
     display: flex;
     justify-content: space-between;
+    margin-bottom: 60px;
 }
 
 .mygroup__top-left {
@@ -25,7 +26,7 @@
     text-align: center;
     font-family: Noto Sans CJK KR;
     text-decoration: none;
-    /* font-weight: bold; */
+    font-weight: bold;
     color: #FFFFFF;
     font-size: 24px;
     line-height: 105%;
@@ -43,15 +44,30 @@
     text-align: center;
     font-family: Noto Sans CJK KR;
     text-decoration: none;
-    /* font-weight: bold; */
+    font-weight: bold;
     color: #FFFFFF;
     font-size: 24px;
     line-height: 105%;
 }
 
+/* 게시물 정렬 */
+.list-sort {
+    display: flex;
+}
+
+.list-sort__btn {
+    font-family: Noto Sans CJK KR;
+    font-weight: bold;
+    font-size: 18px;
+    line-height: 150%;
+    display: flex;
+    color: #000000;
+    margin-right: 10px;
+}
+
 /* 내 그룹 목록 */
 .gridbox {
-    margin-top: 60px;
+    margin-top: 24px;
     margin-bottom: 20px;
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
@@ -107,11 +123,22 @@
 .content__group-top-left {
     display: flex;
     align-items: center;
+    width: 215px;
+}
+
+.content__group-namebox {
+    display: flex;
+    align-items: center;
 }
 
 /* 그룹 이름 두 줄 이상 넘어가지 않도록 설정 */
-.content__group-namebox {
-    
+.content__group-namebox span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-wrap: break-word;
+    display : -webkit-box;
+    -webkit-line-clamp: 1;  /* 줄 개수 설정 */
+    -webkit-box-orient: vertical;
 }
 
 .content__group-name {
@@ -151,4 +178,75 @@
     display : -webkit-box;
     -webkit-line-clamp: 2;  /* 줄 개수 설정 */
     -webkit-box-orient: vertical;
+}
+
+/* 페이지네이션 */
+.pagination-box {
+    display: flex;
+    justify-content: center;
+    padding-top: 20px;
+    padding-bottom: 30px;
+}
+
+.all__pagination {
+    display: flex;
+    list-style: none;
+}
+
+/* 현재 페이지가 아닐 경우 */
+.all__page-link {
+    border: 1px solid #37C6E6;
+    box-sizing: border-box;
+    text-decoration: none;
+    font-family: Noto Sans CJK KR;
+    font-weight: bold;
+    font-size: 18px;
+    line-height: 150%;
+    text-align: center;
+    color: #37C6E5;
+    padding: 6px 14px;
+    background-color: #ffffff;
+    border-radius: 100%;
+    margin-right: 10px;
+    box-sizing: border-box;
+}
+
+/* 현재 페이지 표시 */
+.all__page-link:hover {
+    text-decoration: none;
+    font-family: Noto Sans CJK KR;
+    font-weight: bold;
+    font-size: 18px;
+    line-height: 150%;
+    text-align: center;
+    color: #FFFFFF;
+    padding: 6px 14px;
+    background-color: #37C6E5;
+    border-radius: 100%;
+    margin-right: 10px;
+    box-sizing: border-box;
+}
+
+.all__page-item-active {
+    text-decoration: none;
+    font-family: Noto Sans CJK KR;
+    font-weight: bold;
+    font-size: 18px;
+    line-height: 150%;
+    text-align: center;
+    color: #FFFFFF;
+    padding: 6px 14px;
+    background-color: #37C6E5;
+    border-radius: 100%;
+    margin-right: 10px;
+    box-sizing: border-box;
+}
+
+.all__page-sign {
+    background-color: none;
+    margin-right: 20px;
+}
+
+.sign-next {
+    margin-left: 10px;
 }

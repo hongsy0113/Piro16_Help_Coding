@@ -44,7 +44,7 @@
 {% endfor %}
 
 <div class="group__search-container text-center">
-    <form class="group__search-box" action="{% url 'group:group_search' %}" method="get">
+    <form class="group__search-box" action="{% url 'group:group_search_public' %}" method="get">
         {% csrf_token %}
         <input type="search" placeholder="그룹명을 검색하세요" name="search" style="width:43em;"/>
         <button type="submit">

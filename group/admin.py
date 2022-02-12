@@ -12,3 +12,8 @@ admin.site.register(Group)
 admin.site.register(GroupAnswer)
 
 admin.site.register(GroupTag)
+
+@admin.register(GroupStar)
+class GroupStarAdmin(admin.ModelAdmin):
+    list_display = ['id', 'group', 'user']
+    list_display_links = ['id', 'group', 'user']

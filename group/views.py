@@ -1,6 +1,7 @@
 from calendar import c
 from email import message
 import re
+from tkinter import E
 from tokenize import blank_re
 import uuid
 import base64
@@ -21,6 +22,7 @@ from hitcount.views import HitCountDetailView
 from django.views.generic import ListView, View
 from django.views.generic.detail import SingleObjectMixin
 from django.core.files.storage import FileSystemStorage
+from config.settings import MEDIA_ROOT
 import mimetypes
 from user.update import *
 
@@ -32,6 +34,19 @@ def group_home(request):
 
     # 해당 유저의 그룹 리스트
     groups = user.group_set.all()
+    group = Group.objects.filter(star_group__user=user)
+    # group_star = GroupStar.objects.filter(group=groups)
+    is_star = []
+    if group in groups:
+        is_star += ['True']
+    else:
+        is_star += ['False']
+    print(group)
+    print(is_star)
+    
+
+    grouppp = GroupStar.objects.all()
+    print(grouppp)
     
     # 페이징 처리
     page = request.GET.get('page', '1')
@@ -40,8 +55,9 @@ def group_home(request):
     sort = request.GET.get('sort', 'star')
     if sort == 'name':
         groups = groups.order_by('name')
-    elif sort == 'star':
-        groups = groups.order_by('-is_star')
+    # elif sort == 'star':
+    #     groups = groups.aggregate(is_star=Sum('group')).order_by('-is_star')
+        # groups = groups.annotate(total_likes=Count('interests')).order_by('-total_likes')order_by('-is_star')
     # elif sort == 'member':
     #     groups = groups.order_by('-members')
     # elif sort == 'date':  # django에서 기본 제공하는 create날짜 있는지 체크
@@ -53,6 +69,7 @@ def group_home(request):
     ctx = { 
         'user': user,  #나중에는 쓸모 X 
         'groups': page_obj,
+        'is_star': is_star,
         'sort_by': sort,
         'ani_image': static('image/helphelp.png')    
     }
@@ -84,32 +101,14 @@ def group_create(request):
         form = GroupForm(request.POST, request.FILES)
 
         name = request.POST.get('name')
-        intro = request.POST.get('intro')
         image = request.FILES.get('image')
         mode = request.POST.get('group-mode__tag')
 
-        origin_group = Group.objects.filter(name=name)
-
         # 에러 메세지 
-        error = validation_group(origin_group, name, '', mode)
-        error_name = error[0]
-        error_mode = error[1]
+        error = GroupErrorMessage()
+        error.validation_group(name, mode, '', 'group_create')
         
-        if error_name != '' or error_mode !='' :
-            ctx = { 
-                'error_name': error_name,
-                'error_mode': error_mode,
-                'name': name,
-                'mode': mode,
-                'intro': intro,
-                'image': image
-            }
-            
-            return render(request, template_name='group/group_form.html', context=ctx)
-
-            
-        else:
-
+        if not error.has_error_group():
             group = form.save()
             group.mode = mode
             image = request.FILES.get('image')
@@ -119,7 +118,18 @@ def group_create(request):
             group.save()
 
             return redirect('group:group_home')
-            
+
+        
+        original_info = OriginalGroupInfo()
+        original_info.remember(request)
+
+        ctx = { 
+            'error': error,
+            'origin': original_info
+        }
+        
+        return render(request, template_name='group/group_form.html', context=ctx)
+        
     else:
         form = GroupForm()
         users = User.objects.all()
@@ -140,45 +150,44 @@ def group_update(request, pk):
         group.name = request.POST.get('name')
         name = group.name
 
-        group.intro = request.POST.get('intro')
-        intro = group.intro
-
-        image = group.image
         # 기존 이미지는 유지
+        if group.image:
+            image = request.POST.get('image')
+
         if request.FILES.get('image'):
             image = request.FILES.get('image')
             group.image = image
+            group.save()
         
-        # group.image = image
-
         mode = request.POST.get('group-mode__tag')
         group.mode = mode
 
-        group.save()
-
-        origin_group = Group.objects.filter(name=name)
+        original_info = OriginalGroupInfo()
+        original_info.remember(request)
 
         # 에러 메세지
-        error = validation_group(origin_group, name, prev_name, mode)
-        error_name = error[0]
-        error_mode = error[1]
+        error = GroupErrorMessage()
+        error.validation_group(name, mode, prev_name, 'group_update')
+        print(error.has_error_group())
+        if not error.has_error_group():
+            group.save()
 
-        if error_name != '' or error_mode != '':
-            ctx = { 
-                'error_name': error_name,
-                'error_mode': error_mode,
-                'name': name,
-                'intro': intro,
-                'mode': mode
-            }
+            return redirect('group:group_detail', pk)
 
-            return render(request, template_name='group/group_form.html', context=ctx)
-            
-        return redirect('group:group_detail', pk)
+        ctx = { 
+            'error': error,
+            'origin': original_info
+        }
+
+        return render(request, template_name='group/group_form.html', context=ctx)
 
     else:
         form = GroupForm(instance=group)
-        ctx = { 'group': group, 'form': form }
+
+        ctx = { 
+            'group': group, 
+            'form': form 
+        }
 
         return render(request, template_name='group/group_form.html', context=ctx)
 
@@ -224,7 +233,7 @@ def group_drop(request, pk):
 def group_detail(request, pk):
     user = request.user
     group = get_object_or_404(Group, pk=pk)
-
+    
     mygroup = user.group_set.all()
     members = group.members.all()
     group.maker = members[0]
@@ -250,25 +259,41 @@ def group_detail(request, pk):
 
 
 ######## 그룹 생성 Form 오류 사항 체크 ########
-def validation_group(origin_group, name, prev, mode):
-    error = ['', '']  # 이름, 모드에 대한 에러 메세지
+class GroupErrorMessage():
 
-    if name != prev:
-        # 1. 이름 입력 칸이 비어 있는 경우
-        if not name:
-            error[0] = '그룹명을 입력하세요.'
+    name, mode = '', ''
+
+    def validation_group(self, name, mode, prev, command):
+
+        # 미입력 시 에러 메세지
+        if 'group_create' == command or 'group_update' == command:
+            if not name:       
+                self.name = '그룹명을 입력하세요.'
+            if not (mode in ['PUBLIC', 'PRIVATE']):    
+                self.mode = '그룹 공개모드를 선택하세요.'
         
-        # 2. 이미 존재하는 그룹명인 경우
-        elif origin_group:
-            error[0] = '이미 존재하는 이름입니다.'
-    else:
-        error[0] = '그룹명을 입력하세요.'
+        # 기존에 있던 입력과 비교
+        if 'group_update' == command:
+            if name != prev:
+                if Group.objects.filter(name=name):
+                    self.name = '이미 사용 중인 그룹명입니다.'
+        elif 'group_create' == command:
+            if Group.objects.filter(name=name):
+                print(name, prev)
+                self.name = '이미 사용 중인 그룹명입니다.'
 
-    # 그룹 모드를 선택하지 않은 경우
-    if not (mode in ['PUBLIC', 'PRIVATE']):
-        error[1] = '그룹 공개모드를 선택하세요.'
+    def has_error_group(self):
+        return self.name or self.mode
 
-    return error
+# Group Form에서 오류 발생 시 남아있는 정보
+class OriginalGroupInfo():
+
+    def remember(self, request):
+        self.name = request.POST['name']
+        self.intro = request.POST['intro']
+        self.image = request.FILES.get('image')
+        self.mode = request.POST.get('group-mode__tag')
+
 
 
 ######## 초대 코드 ########
@@ -420,6 +445,41 @@ def wait_list_ajax(request):
 
 
 ######################### 그룹 내 커뮤니티 게시판 ##############################
+### Error messages
+from django.core.validators import URLValidator
+from django.core.exceptions import ValidationError
+class ErrorMessages():
+    title, content, image, attached_file, attached_link, category = '', '', '', '', '', ''
+    def validation_check(self,title, content, image, attached_file, attached_link, category, command):
+        if 'create' in command or 'update' in command:
+            if not title:
+                self.title = '제목을 입력해주세요'
+            elif len(title)>50:
+                self.title = '제목은 50자 이내로 입력해주세요'
+            if not content:
+                self.content = '내용을 입력해주세요'
+            if not category:
+                self.category = '카테고리를 선택해주세요'
+            if attached_link:
+                val = URLValidator()
+                try:
+                    val(attached_link)
+                except:
+                    self.attached_link = '잘못된 링크입니다.'
+
+    def has_error(self):
+        return self.title or self.content or self.image or self.attached_file or self.attached_link or self.category
+
+class OriginalInformation():
+    def remember(self, request, command):
+        self.title = request.POST.get('title')
+        self.content = request.POST.get('content')
+        self.image = request.FILES.get('image')
+        self.attached_file = request.FILES.get('attached_file')
+        self.category = request.POST.get('category')
+        self.attached_link = request.POST.get('attached_link')
+        self.command = command
+
 # 게시글 목록
 def post_list(request, pk):
     posts = GroupPost.objects.filter(group__pk=pk).order_by('-created_at')
@@ -431,12 +491,12 @@ def post_list(request, pk):
     if sort_by == 'recent':    # 최신순
         posts = posts.order_by('-created_at')
     elif sort_by == 'liked':   # 좋아요순
-        questions = posts.annotate(total_likes=Count('like_user')).order_by('-total_likes')
+        posts = posts.annotate(total_likes=Count('like_user')).order_by('-total_likes')
     elif sort_by == 'view':    # 조회수순
         posts = posts.order_by('-hit_count_generic__hits')
 
     # 페이징 처리
-    paginator = Paginator(posts, 6)    # 페이지당 5개씩 보여주기
+    paginator = Paginator(posts, 6)    # 페이지당 6개씩 보여주기
     page_obj = paginator.get_page(page)
 
     ctx = {
@@ -460,45 +520,100 @@ def search_result(request):
 
 # 게시글 작성
 def post_create(request, pk):
+    group = get_object_or_404(Group, pk=pk)
     if request.method == 'POST':
         form = PostForm(request.POST, request.FILES)
-
-        if form.is_valid():
-            post = form.save(commit=False)
-            post.group = get_object_or_404(Group, pk=pk)   # 그룹 pk로 받아오기
-            post.category = request.POST.get('category')  # 그룹게시글 카테고리 (대분류)
-            post.user = request.user
-            post = form.save()
+        error_messages = ErrorMessages()
+        error_messages.validation_check(
+            request.POST.get('title'),
+            request.POST.get('content'),
+            request.FILES.get('image'),
+            request.FILES.get('attached_file'),
+            request.POST.get('attached_link'),
+            request.POST.get('category'),
+            'create'
+        )
+        if not error_messages.has_error():
+            post = GroupPost.objects.create(
+                title=request.POST.get('title'),
+                content=request.POST.get('content'),
+                image=request.FILES.get('image'),
+                attached_file=request.FILES.get('attached_file'),
+                attached_link=request.POST.get('attached_link'),
+                category=request.POST.get('category'),
+                user=request.user,
+                group=group
+            )
+            post.save()
+            return redirect ('group:post_detail', pk, post.pk)
+        # if form.is_valid():
+        #     post = form.save(commit=False)
+        #     post.group = get_object_or_404(Group, pk=pk)   # 그룹 pk로 받아오기
+        #     post.category = request.POST.get('category')  # 그룹게시글 카테고리 (대분류)
+        #     post.user = request.user
+        #     post = form.save()
             ### TODO
             # 게시글 디테일 페이지로 이동
         else:
-            ctx = {'form': form, 'category_error': '기본 카테고리를 선택해주세요!'}
+            original_information = OriginalInformation()
+            original_information.remember(request, ['create'])
+            
+            ctx = {
+                'form': form, 
+                'error_messages': error_messages,
+                'original_information': original_information,
+                'group': group
+                }
             return render(request, 'group/group_post_form.html', context=ctx)
-        return redirect('group:post_list', pk=pk)
 
     else:
         form = PostForm()
-        ctx = {'form': form}
+        ctx = {'form': form, 'group': group}
 
         return render(request, 'group/group_post_form.html', context=ctx)
 
 
 def post_update(request,pk ,post_pk):
     post = get_object_or_404(GroupPost, pk=post_pk)
+    group = get_object_or_404(Group, pk=pk)
     if request.method == "POST":
         form = PostForm(request.POST, request.FILES, instance = post)
 
-        if form.is_valid():
-            ost = form.save()  
-
-            return redirect('group:post_detail', pk, post_pk)
+        error_messages = ErrorMessages()
+        error_messages.validation_check(
+            request.POST.get('title'),
+            request.POST.get('content'),
+            request.FILES.get('image'),
+            request.FILES.get('attached_file'),
+            request.POST.get('attached_link'),
+            request.POST.get('category'),
+            ['update']
+        )
+        if not error_messages.has_error():
+            post = form.save()
+            return redirect('group:post_detail', pk, post.pk)
         else:
-            ctx = {'form': form,}
+            original_information = OriginalInformation()
+            original_information.remember(request, ['update'])
+
+            ctx = {
+                'form': form, 
+                'error_messages': error_messages,
+                'original_information': original_information,
+                'group': group,
+                }
             return render(request, 'group/group_post_form.html', context=ctx)
+        # if form.is_valid():
+        #     post = form.save()  
+
+        #     return redirect('group:post_detail', pk, post_pk)
+        # else:
+        #     ctx = {'form': form,}
+        #     return render(request, 'group/group_post_form.html', context=ctx)
     else:
         form = PostForm(instance=post)
 
-        ctx = {'form': form, 'post': post}
+        ctx = {'form': form, 'post': post, 'group': group,}
 
         return render(request, template_name="group/group_post_form.html", context=ctx)        
 
@@ -510,7 +625,20 @@ class GroupPostDetailView(HitCountDetailView):
 
     def get_context_data(self, **kargs):
         context = super().get_context_data(**kargs)
-        # self.object로 question 객체에 접근할 수 있음
+        # self.object로 GroupPost 객체에 접근할 수 있음
+        try:
+            previous_pk = GroupPost.get_previous_by_created_at(self.object, group=self.object.group).pk
+        except:
+            # 이전글 없을 때
+            previous_pk = -1
+        try:
+            next_pk =  GroupPost.get_next_by_created_at(self.object, group=self.object.group).pk
+        except:
+            # 이전글 없을 때
+            next_pk = -1
+        context['next_pk'] = next_pk
+        context['previous_pk'] = previous_pk
+
         post = self.object
         username = post.user.nickname
         total_likes = len(post.like_user.all())
@@ -701,6 +829,34 @@ def answer_edit_submit_ajax(request):
     answer.save()
 
     return JsonResponse({'id':answer_id, 'content':new_content})
+
+
+# star 클릭 시 
+@csrf_exempt
+def group_star_ajax(request):
+    req = json.loads(request.body)
+    group_id = req['id']
+
+    user = request.user
+    group = get_object_or_404(Group, id=group_id)
+    # 1. 그룹 -> 2. 사용자 
+    if GroupStar.objects.filter(Q(group=group) & Q(user=user)):
+        is_star = True
+    else:
+        is_star = False
+
+    print(is_star)
+    if is_star == True:
+        GroupStar.objects.delete(group=group, user=user)
+        is_star = False
+    else:
+        if not GroupStar.objects.filter(Q(group=group) & Q(user=user)):
+            GroupStar.objects.create(group=group, user=user)
+            is_star = True
+
+    is_stared = is_star
+
+    return JsonResponse({ 'id': group_id, 'is_star': is_stared })
 
 ############################################################################
 
