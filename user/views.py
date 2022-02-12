@@ -54,7 +54,7 @@ class ErrorMessages():
 
     email, nickname, current_password, new_password1, new_password2, birth, img, job = '', '', '', '', '', '', '', ''
     # Validation Check (Sign Up / My Page Revise)
-    def validation_check(self, email, nickname, current_password, new_password1, new_password2, birth, img, img_setting, job, command):
+    def validation_check(self, email, nickname, current_password, new_password1, new_password2, birth, img, img_setting, img_recent, job, command):
 
         if 'signup' in command:
             if not re.compile('^[a-zA-Z0-9]+@[a-zA-Z0-9.]+$').match(email):  # 예외1-1) 잘못된 이메일 형식
@@ -88,7 +88,7 @@ class ErrorMessages():
             self.birth = '유효한 생년월일을 입력해주세요.'
 
         if 'signup' in command or 'image_change' in command:
-            if img_setting == 'own_img' and not img:  # 예외6) 이미지 선택 안 함
+            if img_setting == 'own_img' and not img and not img_recent:  # 예외6) 이미지 선택 안 함
                 self.img = '이미지를 업로드하거나 기본 이미지를 선택해주세요.'
 
         if 'signup' in command:
@@ -143,6 +143,7 @@ def sign_up(request):
             birth,
             request.FILES.get('img'),
             request.POST.get('img_setting'),
+            request.POST['img_recent'],
             request.POST.get('job'),
             ['signup']
         )
@@ -163,7 +164,13 @@ def sign_up(request):
                 job = request.POST.get('job'),
             )
             if request.POST.get('img_setting') == 'own_img':
-                user.img = request.FILES.get('img')
+                if request.FILES.get('img'):
+                    user.img = request.FILES.get('img')
+                else:
+                    os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
+                    shutil.copyfile('./media/temp/{}'.format(request.POST['img_recent']),
+                    './media/user_{}/thumbnail/{}'.format(user.email, request.POST['img_recent']))
+                    user.img = '/user_{}/thumbnail/{}'.format(user.email, request.POST['img_recent'])
             else:
                 shutil.copyfile('./static/img/{}'.format(request.POST.get('img_setting')),
                 './media/user_{}/thumbnail/{}'.format(user.email, request.POST.get('img_setting')))
@@ -189,9 +196,14 @@ def sign_up(request):
                 initializeReward()
             ################################################
             return render(request, 'user/signup_success.html', {'email': user.email})
-        
+
         original_information = OriginalInformation()
         original_information.remember(request, ['signup'])
+        if request.FILES.get('img'):
+            with open('./media/temp/{}'.format(request.FILES.get('img')), 'wb+') as destination:
+                for chunk in request.FILES['img'].chunks():
+                    destination.write(chunk)
+        original_information.img = request.POST['img_recent']
         return render(request, 'user/signup.html', {'form': form, 'sign_up_error': sign_up_error,
         'base_images': BASE_IMAGES, 'original_information': original_information, 'job_choice': JOB_CHOICE})
             
