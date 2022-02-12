@@ -62,12 +62,15 @@ class ErrorMessages():
             elif User.objects.filter(email = email):  # 예외1-2) 이미 가입된 유저
                 self.email = '이미 가입된 유저입니다.'
 
-        if 'signup' in command:  # 예외2-1) 이미 사용 중인 닉네임 (회원 가입 시)
-            if User.objects.filter(nickname = nickname) or not nickname:
-                self.nickname = '이미 사용 중인 닉네임입니다.'
-        else:  # 예외2-2) 이미 사용 중인 닉네임 (닉네임 수정 시)
-            if User.objects.filter(nickname = nickname) and User.objects.get(nickname = nickname).email != email:
-                self.nickname = '이미 사용 중인 닉네임입니다.'
+        if not nickname:  # 예외2-1) 닉네임 입력하지 않음
+            self.nickname = '닉네임을 입력해주세요.'
+        else:
+            if 'signup' in command:  # 예외2-2) 이미 사용 중인 닉네임 (회원 가입 시)
+                if User.objects.filter(nickname = nickname):
+                    self.nickname = '이미 사용 중인 닉네임입니다.'
+            else:  # 예외2-3) 이미 사용 중인 닉네임 (닉네임 수정 시)
+                if User.objects.filter(nickname = nickname) and User.objects.get(nickname = nickname).email != email:
+                    self.nickname = '이미 사용 중인 닉네임입니다.'
 
         if 'password_change' in command:
             if not check_password(current_password, User.objects.get(email = email).password):  # 예외3-1) 현재 비밀번호 오류
@@ -82,14 +85,14 @@ class ErrorMessages():
                 self.new_password2 = '비밀번호가 일치하지 않습니다.'
 
         if not re.compile('^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$').match(birth):  # 예외5) 잘못된 생년월일 형식
-            self.birth = '생년월일을 2022-02-22 형식으로 입력해주세요.'
+            self.birth = '유효한 생년월일을 입력해주세요.'
 
         if 'signup' in command or 'image_change' in command:
             if img_setting == 'own_img' and not img:  # 예외6) 이미지 선택 안 함
                 self.img = '이미지를 업로드하거나 기본 이미지를 선택해주세요.'
 
-        if 'signup' in command:  # 예외7) 직업 미선택
-            if not job:
+        if 'signup' in command:
+            if not job:  # 예외7) 직업 미선택
                 self.job = '직업을 선택해주세요.'
         
     def has_error(self):
