@@ -17,6 +17,9 @@ from django.views.generic.detail import SingleObjectMixin
 from django.core.files.storage import FileSystemStorage
 import mimetypes
 from user.update import *
+from django.forms import formset_factory
+from django.views.generic.edit import FormView
+from .forms import FileFieldForm
 
 basic_tags = ['동작', '형태', '소리', '이벤트', '제어',' 감지', '연산','변수', '내 블록', '기타']
 
@@ -127,11 +130,22 @@ def question_create(request):
             question = Question.objects.create(
                 title=form.data['title'],
                 content=form.data['content'],
-                image=form.data['image'],
+                image=request.FILES.get('image'),
                 attached_file=form.data['attached_file'],
                 s_or_e_tag=request.POST.get('s_or_e_tag'),
                 user=request.user
             )
+            # file
+
+            # print(formset.data)
+            # if formset.is_valid():
+            #     print(formset.cleaned_data)
+            #     for form in formset.cleaned_data:
+            #         x = form['attached_file']
+            #         print(x)
+            #         attached_file = QuestionFiles.objects.create(question = question, attached_file = x)
+            #         attached_file.save()
+
             tags = request.POST.getlist('detail_tag')
             for tag in tags:
                 if len(QnaTag.objects.filter(tag_name=tag)) == 0:
@@ -146,12 +160,6 @@ def question_create(request):
             question.save()
             update_question(question, request.user)
             return redirect('qna:question_detail', question.pk)
-
-        # if form.is_valid():
-        #     question = form.save(commit=False)  # 넘겨진 데이터 form에 바로 저장 X
-        #     question.s_or_e_tag = request.POST.get('s_or_e_tag')  # 카테고리 (스크래치, 엔트리, 기타) 중 1 선택
-        #     question.user = request.user
-        #     question.save() 
 
         else:
             global basic_tags
@@ -249,12 +257,12 @@ def question_update(request,pk):
     question = get_object_or_404(Question, pk=pk)
     global basic_tags
     if request.method == "POST":
-        form = QuestionForm(request.POST, request.FILES, instance =question)
+        form = QuestionForm(request.POST, request.FILES, instance = question)
 
         error_messages = ErrorMessages()
         error_messages.validation_check(
-            form.data['title'],
-            form.data['content'],
+            request.POST.get('title'),
+            request.POST.get('content'),
             request.FILES.get('image'),
             request.FILES.get('attached_file'),
             request.POST.get('s_or_e_tag'),
@@ -262,7 +270,8 @@ def question_update(request,pk):
             ['update']
         )
         if not error_messages.has_error():
-            question = form.save()
+            if form.is_valid():
+                question = form.save()
 
             tags = request.POST.getlist('detail_tag')
             for tag in tags:
@@ -290,7 +299,7 @@ def question_update(request,pk):
                 else:
                     extra_tag_names.append(tag)
             original_information = OriginalInformation()
-            original_information.remember(request, ['create'])
+            original_information.remember(request, ['update'])
             ctx = {
                 'form': form, 
                 'error_messages': error_messages,

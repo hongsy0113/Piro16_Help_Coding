@@ -98,3 +98,10 @@ class QnaTag(models.Model):
 
     def __str__(self):
         return self.tag_name
+
+##################
+## 첨부파일, 첨부이미지 
+
+class QuestionFiles(models.Model):
+    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='question_files')
+    attached_file = models.FileField(verbose_name='첨부파일', upload_to='qna/file')
