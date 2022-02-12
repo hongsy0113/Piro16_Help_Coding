@@ -34,6 +34,19 @@ def group_home(request):
 
     # 해당 유저의 그룹 리스트
     groups = user.group_set.all()
+    group = Group.objects.filter(star_group__user=user)
+    # group_star = GroupStar.objects.filter(group=groups)
+    is_star = []
+    if group in groups:
+        is_star += ['True']
+    else:
+        is_star += ['False']
+    print(group)
+    print(is_star)
+    
+
+    grouppp = GroupStar.objects.all()
+    print(grouppp)
     
     # 페이징 처리
     page = request.GET.get('page', '1')
@@ -42,8 +55,9 @@ def group_home(request):
     sort = request.GET.get('sort', 'star')
     if sort == 'name':
         groups = groups.order_by('name')
-    elif sort == 'star':
-        groups = groups.order_by('-is_star')
+    # elif sort == 'star':
+    #     groups = groups.aggregate(is_star=Sum('group')).order_by('-is_star')
+        # groups = groups.annotate(total_likes=Count('interests')).order_by('-total_likes')order_by('-is_star')
     # elif sort == 'member':
     #     groups = groups.order_by('-members')
     # elif sort == 'date':  # django에서 기본 제공하는 create날짜 있는지 체크
@@ -55,6 +69,7 @@ def group_home(request):
     ctx = { 
         'user': user,  #나중에는 쓸모 X 
         'groups': page_obj,
+        'is_star': is_star,
         'sort_by': sort,
         'ani_image': static('image/helphelp.png')    
     }
@@ -78,7 +93,6 @@ def group_search_public(request):
 
 ######## 그룹 CRUD ########
 
-command = []
 # 그룹 생성
 def group_create(request):
     user = request.user
@@ -87,17 +101,12 @@ def group_create(request):
         form = GroupForm(request.POST, request.FILES)
 
         name = request.POST.get('name')
-        intro = request.POST.get('intro')
         image = request.FILES.get('image')
         mode = request.POST.get('group-mode__tag')
 
-        origin_group = Group.objects.filter(name=name)
-        global command
-        command += ['group_create']
-
         # 에러 메세지 
         error = GroupErrorMessage()
-        error.validation_group(name, mode, '', command)
+        error.validation_group(name, mode, '', 'group_create')
         
         if not error.has_error_group():
             group = form.save()
@@ -110,12 +119,13 @@ def group_create(request):
 
             return redirect('group:group_home')
 
+        
+        original_info = OriginalGroupInfo()
+        original_info.remember(request)
+
         ctx = { 
             'error': error,
-            'name': name,
-            'mode': mode,
-            'intro': intro,
-            'image': image
+            'origin': original_info
         }
         
         return render(request, template_name='group/group_form.html', context=ctx)
@@ -136,31 +146,29 @@ def group_update(request, pk):
 
     if request.method == 'POST':
         form = GroupForm(request.POST, instance=group)
-        global command
-        command += ['group_create']
 
         group.name = request.POST.get('name')
         name = group.name
 
-        group.intro = request.POST.get('intro')
-        intro = group.intro
-
-        if group.image:
-            image = group.image
         # 기존 이미지는 유지
+        if group.image:
+            image = request.POST.get('image')
+
         if request.FILES.get('image'):
             image = request.FILES.get('image')
             group.image = image
+            group.save()
         
-        # group.image = image
-
         mode = request.POST.get('group-mode__tag')
         group.mode = mode
 
+        original_info = OriginalGroupInfo()
+        original_info.remember(request)
+
         # 에러 메세지
         error = GroupErrorMessage()
-        error.validation_group(name, mode, prev_name, command)
-
+        error.validation_group(name, mode, prev_name, 'group_update')
+        print(error.has_error_group())
         if not error.has_error_group():
             group.save()
 
@@ -168,9 +176,7 @@ def group_update(request, pk):
 
         ctx = { 
             'error': error,
-            'name': name,
-            'intro': intro,
-            'mode': mode
+            'origin': original_info
         }
 
         return render(request, template_name='group/group_form.html', context=ctx)
@@ -178,7 +184,10 @@ def group_update(request, pk):
     else:
         form = GroupForm(instance=group)
 
-        ctx = { 'group': group, 'form': form }
+        ctx = { 
+            'group': group, 
+            'form': form 
+        }
 
         return render(request, template_name='group/group_form.html', context=ctx)
 
@@ -224,7 +233,7 @@ def group_drop(request, pk):
 def group_detail(request, pk):
     user = request.user
     group = get_object_or_404(Group, pk=pk)
-
+    
     mygroup = user.group_set.all()
     members = group.members.all()
     group.maker = members[0]
@@ -257,22 +266,34 @@ class GroupErrorMessage():
     def validation_group(self, name, mode, prev, command):
 
         # 미입력 시 에러 메세지
-        if 'group_create' in command or 'group_update' in command:
+        if 'group_create' == command or 'group_update' == command:
             if not name:       
                 self.name = '그룹명을 입력하세요.'
             if not (mode in ['PUBLIC', 'PRIVATE']):    
                 self.mode = '그룹 공개모드를 선택하세요.'
         
         # 기존에 있던 입력과 비교
-        if 'group_update' in command:
-            if Group.objects.filter(name=name) and name != prev:
-                self.name = '이미 사용 중인 그룹명입니다.'
-        else:
+        if 'group_update' == command:
+            if name != prev:
+                if Group.objects.filter(name=name):
+                    self.name = '이미 사용 중인 그룹명입니다.'
+        elif 'group_create' == command:
             if Group.objects.filter(name=name):
+                print(name, prev)
                 self.name = '이미 사용 중인 그룹명입니다.'
 
     def has_error_group(self):
         return self.name or self.mode
+
+# Group Form에서 오류 발생 시 남아있는 정보
+class OriginalGroupInfo():
+
+    def remember(self, request):
+        self.name = request.POST['name']
+        self.intro = request.POST['intro']
+        self.image = request.FILES.get('image')
+        self.mode = request.POST.get('group-mode__tag')
+
 
 
 ######## 초대 코드 ########
@@ -808,6 +829,34 @@ def answer_edit_submit_ajax(request):
     answer.save()
 
     return JsonResponse({'id':answer_id, 'content':new_content})
+
+
+# star 클릭 시 
+@csrf_exempt
+def group_star_ajax(request):
+    req = json.loads(request.body)
+    group_id = req['id']
+
+    user = request.user
+    group = get_object_or_404(Group, id=group_id)
+    # 1. 그룹 -> 2. 사용자 
+    if GroupStar.objects.filter(Q(group=group) & Q(user=user)):
+        is_star = True
+    else:
+        is_star = False
+
+    print(is_star)
+    if is_star == True:
+        GroupStar.objects.delete(group=group, user=user)
+        is_star = False
+    else:
+        if not GroupStar.objects.filter(Q(group=group) & Q(user=user)):
+            GroupStar.objects.create(group=group, user=user)
+            is_star = True
+
+    is_stared = is_star
+
+    return JsonResponse({ 'id': group_id, 'is_star': is_stared })
 
 ############################################################################
 

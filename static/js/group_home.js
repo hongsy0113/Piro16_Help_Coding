@@ -3,7 +3,7 @@ const group_id = JSON.parse(document.getElementById('group_id').textContent);
 
 // 나의 그룹 찜 기능 ajax
 const onClickStar = async (id) => {
-    const url = '/group/star_ajax/';
+    const url = '/group/group_star_ajax/';
     const {data} = await axios.post(url, {
         id
     });

@@ -39,10 +39,17 @@ class Group(models.Model):
     )
     mode = models.CharField(verbose_name='공개 여부', choices=MODE_CHOICES, max_length=20, default=0)
     interests = models.ManyToManyField('user.User', blank=True, related_name='interests')
-    is_star = models.BooleanField(verbose_name="찜하기", default=False)
     
     def __str__(self):
         return self.name
+
+# 그룹 찜 기능
+class GroupStar(models.Model):
+    user = models.ForeignKey(User, verbose_name='사용자', on_delete=models.CASCADE, related_name='star_user')
+    group = models.ForeignKey(Group, verbose_name='그룹', on_delete=models.CASCADE, related_name='star_group')
+
+    def __str__(self):
+        return self.user.nickname +  self.group.name
 
 # 그룹 게시글
 class GroupPost(models.Model, HitCountMixin):
