@@ -536,7 +536,7 @@ def post_create(request, pk):
         else:
             original_information = OriginalInformation()
             original_information.remember(request, ['create'])
-
+            
             ctx = {
                 'form': form, 
                 'error_messages': error_messages,
@@ -604,7 +604,20 @@ class GroupPostDetailView(HitCountDetailView):
 
     def get_context_data(self, **kargs):
         context = super().get_context_data(**kargs)
-        # self.object로 question 객체에 접근할 수 있음
+        # self.object로 GroupPost 객체에 접근할 수 있음
+        try:
+            previous_pk = GroupPost.get_previous_by_created_at(self.object, group=self.object.group).pk
+        except:
+            # 이전글 없을 때
+            previous_pk = -1
+        try:
+            next_pk =  GroupPost.get_next_by_created_at(self.object, group=self.object.group).pk
+        except:
+            # 이전글 없을 때
+            next_pk = -1
+        context['next_pk'] = next_pk
+        context['previous_pk'] = previous_pk
+
         post = self.object
         username = post.user.nickname
         total_likes = len(post.like_user.all())
