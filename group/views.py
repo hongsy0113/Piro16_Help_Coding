@@ -436,7 +436,7 @@ def post_list(request, pk):
         posts = posts.order_by('-hit_count_generic__hits')
 
     # 페이징 처리
-    paginator = Paginator(posts, 6)    # 페이지당 5개씩 보여주기
+    paginator = Paginator(posts, 6)    # 페이지당 6개씩 보여주기
     page_obj = paginator.get_page(page)
 
     ctx = {
