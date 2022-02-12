@@ -1,11 +1,14 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div>
+<div> <!-- Ajax 때문에 id는 유지해주세요! -->
   <h3>○ 알림 내역 ( {{ user.email }} )</h3>
+  {% if user.has_new_alert %}
   <h3 id="alert-count">새로운 알림이 {{ user.has_new_alert }}개 있어요.</h3>
-  {% if alerts %}
-  <button onclick="checkAllAlert()">전체 확인</button>
+  <button id="check-all-alert-button" onclick="checkAllAlert()">전체 확인</button>
+  {% else %}
+  <h3 id="alert-count">새로운 알림이 없어요.</h3>
+  {% endif %}
   {% for alert in alerts %}
   <div>
     {% if not alert.checked %}
@@ -13,11 +16,25 @@
       <p>새로운 알림!</p>
       <button onclick="checkAlert({{ alert.id }})">확인</button>
     </div>
-    {% endif %}
-    <a href="{{ alert.related_url }}">{{ alert.content }}</a>
+    {% endif %} <!-- 새 알림만 강조하고 싶으면 밑에 처럼 인라인 스타일 하나씩 넣어줘도 될 듯...? 임시로 넣어봤어! 근데 Ajax로 스타일 빼는 것도 구현해야 할 듯... (나중에) -->
+    <a href="{{ alert.related_url }}" onclick="viewAlert({{ alert.id }})" {% if not alert.checked %}style="color: red;"{% endif %}>{{ alert.content }}</a>
     <p>{{ alert.time }}</p>
   </div>
     {% endfor %}
+    <script>
+        const requestViewAlert = new XMLHttpRequest();
+  
+        const viewAlert = (id) => {
+            const url = "/mypage/alert/check_ajax/";
+            requestViewAlert.open("POST", url, true);
+            requestViewAlert.setRequestHeader(
+                "Content-Type",
+                "application/x-www-form-urlencoded"
+            );
+            requestViewAlert.send(JSON.stringify({id: id}));
+        };
+    </script>
+
     <script>
       const requestCheckAlert = new XMLHttpRequest();
 
@@ -37,7 +54,13 @@
               const newAlertMessage = document.querySelector(`#alert-${alert_id}`);
               newAlertMessage.remove();
               const alertNumDisplay = document.querySelector(`#alert-count`);
-              alertNumDisplay.innerHTML = `새로운 알림이 ${new_alert_num}개 있어요.`;
+              if (new_alert_num != 0) {
+                  alertNumDisplay.innerHTML = `새로운 알림이 ${new_alert_num}개 있어요.`;
+              } else {
+                  alertNumDisplay.innerHTML = `새로운 알림이 없어요.`;
+                  const checkAllAlertButton = document.querySelector(`#check-all-alert-button`);
+                  checkAllAlertButton.remove();
+              }
           }
       };
 
@@ -69,7 +92,9 @@
                   newAlertMessage.remove();
               }
               const alertNumDisplay = document.querySelector(`#alert-count`);
-              alertNumDisplay.innerHTML = `새로운 알림이 0개 있어요.`;
+              alertNumDisplay.innerHTML = `새로운 알림이 없어요.`;
+              const checkAllAlertButton = document.querySelector(`#check-all-alert-button`);
+              checkAllAlertButton.remove();
           }
       };
 
@@ -79,9 +104,6 @@
           }
       };
     </script>
-  {% else %}
-  <p>- 알림이 없습니다.</p>
-  {% endif %}
 
   {% if is_paginated %}
   <ul class="pagination">

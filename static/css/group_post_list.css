@@ -16,10 +16,11 @@
     line-height: 150%;
     font-weight: bold;
     margin-right: 25px;
+    width: 230px;
 }
 
 .group-post__top--intro {
-    width: 690px;
+    width: 680px;
     font-family: Noto Sans CJK KR;
     font-size: 15px;
     line-height: 150%;
