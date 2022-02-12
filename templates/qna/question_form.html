@@ -19,41 +19,62 @@
     {% csrf_token %}
     <div>
         <label for="title">질문 제목</label><br />
-        {% comment %}
-        <input type="text" name="title" id="title" value="{{ question.title }}"/>
-        {{ form.title.errors }}
-        {% endcomment %}
-        {{ form.title }}
-        
+        <input type="text" name="title" id="title" 
+        value="{% if original_information %}{{ original_information.title }}{% else %}{{ question.title }}{% endif %}"/>
+        {{ error_messages.title }}
+
     </div>
     <div>
         <label for="content">질문 내용</label><br />
-        {{form.content}}
-
-        {% comment %}
-        <textarea name="content" id="content" cols="30" rows="10">{% if question.content %}{{ question.content }}{% endif %}</textarea>
-        {{ form.content.errors }}
-        {% endcomment %}
-        
+        <textarea name="content" id="content" cols="30" rows="10">{% if original_information %}{{ original_information.content }}{% else %}{{ question.content }}{% endif %}</textarea>
+        {{ error_messages.content }}
     </div>
+    <div class="post-create__img post-create__form">
+        <div class="text-container">
+            <span>사진</span>
+        </div>
+        <div class="group-post__form-box">
+            <input class="group-post__form-input group-post__form-input--image" placeholder="첨부파일">
+            <label for="image" class="group-post__form-label">사진 올리기</label>
+            <input type="file" id="image" class="form__input--file" name="image" value="{% if post.image %}{{ post.image.url }}{% endif %}">
+        </div>
+    </div>
+    <div class="post-create__attached-file post-create__form">
+        <div class="text-container">
+            <span>파일</span>
+        </div>
+        <div class="group-post__form-box">
+            <input class="group-post__form-input group-post__form-input--file"  placeholder="첨부파일" >
+            <label for="attached_file" class="group-post__form-label">파일 올리기</label>
+            <input type="file" class="form__input--file" id="attached_file" name="attached_file" value="{{ form.attached_file.url }}">
+        </div>
+    </div>
+    {% comment %}
+    
     <div>
         <label for="image">이미지 업로드</label><br />
         <p>{{ form.image }}</p>
+        {{ original_information.image }}
     </div>
+    
     <div>
         <label for="attached_file">파일 업로드</label><br />
         <p>{{ form.attached_file }}</p>
     </div>
+    {% endcomment %}
     <div class="select__category">
         <p>카테고리 선택</p>
-        <input type="radio" name="s_or_e_tag" value="S" id="scratch" class="tag" {% if question.s_or_e_tag == 'S' %} checked {% endif %}/>
+        <input type="radio" name="s_or_e_tag" value="S" id="scratch" class="tag" 
+        {% if original_information.s_or_e_tag == 'S' or question.s_or_e_tag == 'S' %} checked {% endif %}/>
         <label for="scratch">스크래치</label>
-        <input type="radio" name="s_or_e_tag" value="E" id="entry" class="tag" {% if question.s_or_e_tag == 'E' %} checked {% endif %}/>
+        <input type="radio" name="s_or_e_tag" value="E" id="entry" class="tag" 
+        {% if original_information.s_or_e_tag == 'E' or question.s_or_e_tag == 'E'%} checked {% endif %}/>
         <label for="entry">엔트리</label>
-        <input type="radio" name="s_or_e_tag" value="ETC" id="etc" class="tag" {% if question.s_or_e_tag == 'ETC' %} checked {% endif %}/>
+        <input type="radio" name="s_or_e_tag" value="ETC" id="etc" class="tag" 
+        {% if original_information.s_or_e_tag == 'ETC' or question.s_or_e_tag == 'ETC' %} checked {% endif %}/>
         <label for="etc">기타</label>
     </div>
-    <span style="color: red;">{{ s_or_e_error }}</span>
+    <span style="color: red;">{{ error_messages.s_or_e_tag }}</span>
     <div class="select__tag">
         <p>상세 태그 선택</p>
         <input type="checkbox" name="detail_tag" value="동작" id="motion" class="tag" {% if '동작' in basic_tag_names %} checked {% endif %} />

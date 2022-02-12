@@ -200,6 +200,7 @@ def sign_up(request):
         original_information = OriginalInformation()
         original_information.remember(request, ['signup'])
         if request.FILES.get('img'):
+            os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
             with open('./media/temp/{}'.format(request.FILES.get('img')), 'wb+') as destination:
                 for chunk in request.FILES['img'].chunks():
                     destination.write(chunk)

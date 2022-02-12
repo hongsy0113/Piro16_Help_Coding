@@ -18,32 +18,8 @@ from django.core.files.storage import FileSystemStorage
 import mimetypes
 from user.update import *
 
-# class QuestionView(ListView):
-#     model = Question
-#     paginate_by = 5
-#     template_name = 'qna/question_list.html'
-#     context_object_name = 'questions'
-    
-#     def get_queryset(self):
-#         questions = Question.objects.order_by('-updated_at') 
-#         return questions
+basic_tags = ['동작', '형태', '소리', '이벤트', '제어',' 감지', '연산','변수', '내 블록', '기타']
 
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         paginator = context['paginator']
-#         page_numbers_range = 5
-#         max_index = len(paginator.page_range)
-#         page = self.request.GET.get('page')
-#         current_page = int(page) if page else 1
-#         start_index = int((current_page - 1) / page_numbers_range) * page_numbers_range
-#         end_index = start_index + page_numbers_range
-#         if end_index >= max_index:
-#             end_index = max_index
-#         page_range = paginator.page_range[start_index:end_index]
-#         context['page_range'] = page_range
-#         return context
-## filter 함수
-## 아무래도 s or e 랑 답변여부는 따로 관리하는 게 맞을 듯
 def question_tag_filter(questions, tag_filter_by_list):
     num = len(tag_filter_by_list)
     if num == 1:
@@ -60,6 +36,35 @@ def question_answer_filter(questions, answer_filter_by):
     else:
         questions = questions.annotate(answer_count=models.Count("answer")).filter(answer_count__gt = 0)
     return questions
+
+### Error messages
+class ErrorMessages():
+    title, content, image, attached_file, s_or_e_tag, tags = '', '', '', '', '', ''
+    def validation_check(self,title, content, image, attached_file, s_or_e_tag, tags, command):
+        if 'create' in command or 'update' in command:
+            if not title:
+                self.title = '제목을 입력해주세요'
+            elif len(title)>50:
+                self.title = '제목은 50자 이내로 입력해주세요'
+            if not content:
+                self.content = '내용을 입력해주세요'
+            if not s_or_e_tag:
+                self.s_or_e_tag = '카테고리를 선택해주세요'
+
+    def has_error(self):
+        return self.title or self.content or self.image or self.attached_file or self.s_or_e_tag or self.tags
+
+class OriginalInformation():
+    def remember(self, request, command):
+        self.title = request.POST.get('title')
+        self.content = request.POST.get('content')
+        self.image = request.FILES.get('image')
+        self.attached_file = request.FILES.get('attached_file')
+        self.s_or_e_tag = request.POST.get('s_or_e_tag')
+        self.tags = request.POST.getlist('detail_tag')
+        self.command = command
+
+##### view 시작
 
 def question_list(request):
     questions = Question.objects.all().order_by('-created_at')
@@ -94,42 +99,6 @@ def question_list(request):
 
     return render(request, 'qna/question_list.html', context=ctx)
 
-# # 검색 조건
-# def search_condition(self):
-#     search_keyword = self.request.GET.get('query', '')
-#     search_type = self.request.GET.get('type', '')
-#     questions = Question.objects.order_by('-id')
-
-#     if search_keyword :
-#         if len(search_keyword) > 1:
-#             if search_type == 'all':
-#                 search_questions = questions.filter(Q (title__icontains=search_keyword) | Q (content__icontains=search_keyword) | Q (writer__user_id__icontains=search_keyword))
-#             elif search_type == 'title_content':    # 제목, 내용
-#                 search_questions = questions.filter(Q (title__icontains=search_keyword) | Q (content__icontains=search_keyword))
-#             elif search_type == 'title':    # 제목
-#                 search_questions = questions.filter(title__icontains=search_keyword)    
-#             elif search_type == 'content':  # 내용
-#                 search_questions = questions.filter(content__icontains=search_keyword)    
-#             elif search_type == 'writer':   # 작성자
-#                 search_questions = questions.filter(writer__user_id__icontains=search_keyword)
-            
-#             return search_questions
-
-#         else:
-#             messages.error(self.request, '검색어는 2글자 이상 입력해주세요.')
-
-#     return questions
-
-# def search_result(self, **kwargs):
-#     search_keyword = self.request.GET.get('search', '')
-#     search_type = self.request.GET.get('type', '')
-
-#     if len(search_keyword) > 1:
-#         context['search'] = search_keyword
-#         context['type'] = search_type
-
-#     return context
-
 def search_result(request):
     if 'search' in request.GET:
         query = request.GET.get('search')
@@ -144,12 +113,25 @@ def question_create(request):
     if request.method == 'POST':
         form = QuestionForm(request.POST, request.FILES)
         
-        if form.is_valid():
-            question = form.save(commit=False)  # 넘겨진 데이터 form에 바로 저장 X
-            question.s_or_e_tag = request.POST.get('s_or_e_tag')  # 카테고리 (스크래치, 엔트리, 기타) 중 1 선택
-            question.user = request.user
-            question.save() 
-        # 상세 태그 (기능) 선택
+        error_messages = ErrorMessages()
+        error_messages.validation_check(
+            form.data['title'],
+            form.data['content'],
+            request.FILES.get('image'),
+            request.FILES.get('attached_file'),
+            request.POST.get('s_or_e_tag'),
+            request.POST.getlist('detail_tag'),
+            ['create']
+        )
+        if not error_messages.has_error():
+            question = Question.objects.create(
+                title=form.data['title'],
+                content=form.data['content'],
+                image=form.data['image'],
+                attached_file=form.data['attached_file'],
+                s_or_e_tag=request.POST.get('s_or_e_tag'),
+                user=request.user
+            )
             tags = request.POST.getlist('detail_tag')
             for tag in tags:
                 if len(QnaTag.objects.filter(tag_name=tag)) == 0:
@@ -164,67 +146,39 @@ def question_create(request):
             question.save()
             update_question(question, request.user)
             return redirect('qna:question_detail', question.pk)
+
+        # if form.is_valid():
+        #     question = form.save(commit=False)  # 넘겨진 데이터 form에 바로 저장 X
+        #     question.s_or_e_tag = request.POST.get('s_or_e_tag')  # 카테고리 (스크래치, 엔트리, 기타) 중 1 선택
+        #     question.user = request.user
+        #     question.save() 
+
         else:
-            # error_data = (form.errors.as_data())
-            # error_dict = {}
-            # for k in error_data:
-            #     error_dict[k] = error_data[k][0].message
-            ctx = {'form': form, 's_or_e_error': '기본 카테고리를 선택해주세요!'}
+            global basic_tags
+            tags = request.POST.getlist('detail_tag')
+
+            basic_tag_names = []
+            extra_tag_names = []
+            for tag in tags:
+                if tag in basic_tags:
+                    basic_tag_names.append(tag)
+                else:
+                    extra_tag_names.append(tag)
+            original_information = OriginalInformation()
+            original_information.remember(request, ['create'])
+            ctx = {
+                'form': form, 
+                'error_messages': error_messages,
+                'original_information': original_information,
+                'basic_tag_names': basic_tag_names,  
+                'extra_tag_names': extra_tag_names,
+                }
             return render(request, 'qna/question_form.html', context=ctx)
     else:
         form = QuestionForm()
         ctx = {'form': form}
         
         return render(request, 'qna/question_form.html', context=ctx)
-        
-        
-# def question_detail(request, pk):
-#     question = get_object_or_404(Question, pk=pk)
-    
-#     try:
-#         previous_pk = Question.get_previous_by_created_at(question).pk
-#     except:
-#         # 이전글 없을 때
-#         previous_pk = -1
-#         print('not exist')
-#     try:
-#         next_pk = Question.get_next_by_created_at(question).pk
-#     except:
-#         # 이전글 없을 때
-#         next_pk = -1
-#         print('not exist')
-#     # 해당 게시글에 대한 tag, 유저, 좋아요 수 등 가져오기
-#     # 이외에 필드들은 template 에서 {{question.필드 }} 로 접근
-#     tags = question.tags.all()
-#     username = question.user.nickname
-#     total_likes = len(question.like_user.all())
-    
-#     # 해당 게시글에 대한 답변 가져오기
-#     answers = Answer.objects.filter(question_id = question.id, parent_answer__isnull=True).order_by('answer_order')   #  나중에 답변 정렬도 고려. 최신순 또는 좋아요 순
-#     answers_count = len(answers)
-    
-#     answers_reply_dict ={}
-#     for answer in answers:
-#         replies =  Answer.objects.filter(parent_answer= answer).order_by('answer_order')
-#         answers_reply_dict[answer] = replies
-
-#     # 좋아요 눌렀는지 안 눌렀는지
-#     is_liked = request.user in  question.like_user.all()
-
-#     ctx = {
-#         'question':question,
-#         'username': username,
-#         'tags' : tags,
-#         'total_likes' : total_likes,
-#         'answers' : answers,
-#         'answers_count' : answers_count,
-#         'answers_reply_dict' : answers_reply_dict,
-#         'is_liked': is_liked,
-#         'next_pk':next_pk,
-#         'previous_pk':previous_pk,
-#     }
-#     # answer 와 reply로 이루어진 dictionary를 context로 넘길 예정
-#     return render(request, template_name='qna/detail.html', context=ctx)
 
 class QuestionDetailView(HitCountDetailView):
     model = Question
@@ -293,35 +247,84 @@ class FileDownloadView(SingleObjectMixin, View):
 
 def question_update(request,pk):
     question = get_object_or_404(Question, pk=pk)
+    global basic_tags
     if request.method == "POST":
         form = QuestionForm(request.POST, request.FILES, instance =question)
 
-        question = form.save()  
-        question.s_or_e_tag = request.POST.get('s_or_e_tag')  # 카테고리 (스크래치, 엔트리, 기타) 중 1 선택
+        error_messages = ErrorMessages()
+        error_messages.validation_check(
+            form.data['title'],
+            form.data['content'],
+            request.FILES.get('image'),
+            request.FILES.get('attached_file'),
+            request.POST.get('s_or_e_tag'),
+            request.POST.getlist('detail_tag'),
+            ['update']
+        )
+        if not error_messages.has_error():
+            question = form.save()
 
-        # 상세 태그 (기능) 선택
-        tags = request.POST.getlist('detail_tag')
-        for tag in tags:
-            if len(QnaTag.objects.filter(tag_name=tag)) == 0:
-                QnaTag.objects.create(
-                    tag_name = tag,
-                )
+            tags = request.POST.getlist('detail_tag')
+            for tag in tags:
+                if len(QnaTag.objects.filter(tag_name=tag)) == 0:
+                    QnaTag.objects.create(
+                        tag_name = tag,
+                    )
 
-            # QnaTag db에 없으면 오류 발생
-            newtag = get_object_or_404(QnaTag, tag_name=tag)
-            question.tags.add(newtag)
+                # QnaTag db에 없으면 오류 발생
+                newtag = get_object_or_404(QnaTag, tag_name=tag)
+                question.tags.add(newtag)
 
-        question.save()
-        update_question(question, request.user)
+            question.save()
+            update_question(question, request.user)
+            return redirect('qna:question_detail', question.pk)
+        else:
+            
+            tags = request.POST.getlist('detail_tag')
 
-        return redirect('qna:question_detail', pk)
+            basic_tag_names = []
+            extra_tag_names = []
+            for tag in tags:
+                if tag in basic_tags:
+                    basic_tag_names.append(tag)
+                else:
+                    extra_tag_names.append(tag)
+            original_information = OriginalInformation()
+            original_information.remember(request, ['create'])
+            ctx = {
+                'form': form, 
+                'error_messages': error_messages,
+                'original_information': original_information,
+                'basic_tag_names': basic_tag_names,  
+                'extra_tag_names': extra_tag_names,
+                }
+            return render(request, 'qna/question_form.html', context=ctx)
+        # question = form.save()  
+        # question.s_or_e_tag = request.POST.get('s_or_e_tag')  # 카테고리 (스크래치, 엔트리, 기타) 중 1 선택
+
+        # # 상세 태그 (기능) 선택
+        # tags = request.POST.getlist('detail_tag')
+        # for tag in tags:
+        #     if len(QnaTag.objects.filter(tag_name=tag)) == 0:
+        #         QnaTag.objects.create(
+        #             tag_name = tag,
+        #         )
+
+        #     # QnaTag db에 없으면 오류 발생
+        #     newtag = get_object_or_404(QnaTag, tag_name=tag)
+        #     question.tags.add(newtag)
+
+        # question.save()
+        # update_question(question, request.user)
+
+        # return redirect('qna:question_detail', pk)
 
     else:
         form = QuestionForm(instance=question)
         # TODO : 선택 태그 뭘 선택했었는 지를 ctx로 넘겨주자
         # 기본 태그와 추가 태그 다르게 넘기자
         # TODO :  기본 태그 가 바뀌게 된다면 아래 리스트 수정해야 됨.
-        basic_tags = ['동작', '형태', '소리', '이벤트', '제어',' 감지', '연산','변수', '내 블록', '기타']
+        
         tags = question.tags.all()
         basic_tag_names = []
         extra_tag_names = []
