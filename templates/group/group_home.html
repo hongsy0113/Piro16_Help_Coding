@@ -4,10 +4,11 @@
 {% block css %}
     <link rel="stylesheet" href="{% static 'css/base.css' %}" />
     <link rel="stylesheet" href="{% static 'css/group_home.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/group.css' %}" />
 {% endblock %}
 
 {% block js %}
-    <script src="{% static 'js/group_star.js' %}" defer></script>
+    <script src="{% static 'js/group_home.js' %}" defer></script>
 {% endblock %}
 
 {% block title %} 나의 그룹 {% endblock %}
@@ -25,8 +26,36 @@
         </div>
         <div class="mygroup__top-right">
             <a href="{% url 'group:group_create' %}" class="right__makebtn">그룹 만들기</a>
-            <a href="{% url 'group:join_group' %}" class="right__joinbtn">그룹 가입하기</a>
+            <a class="right__joinbtn" onclick="showGroupJoin()">그룹 가입하기</a>
         </div>
+    </div>
+
+    <!-- 그룹 초대 modal -->
+    <div class="group-join__alert-box" id="join-group">
+        <div class="group-join__box">
+            <input type="text" name="group_code" placeholder="초대코드를 입력하세요!" class="group-code__input">
+            <input type="submit" value="입력" class="group-code__submit">
+
+            <div class="group-code__text">
+                <h4>{{ message }}</h4>
+            </div>
+        </div>
+        <button class="join__code--close btn btn-dark" onclick="closeGroupJoin()">닫기</button>
+    </div>    
+
+    <!-- 그룹 정렬 (sort) -->
+    <div class="list-sort">  
+        <!-- 피그마 디자인 구현 -->
+        <span class="list-sort__btn">찜하기순</span>
+        <span class="list-sort__btn">이름순</span>
+
+        <!-- select box -->
+        <form method="get" action="{% url 'group:group_home' %}" class="group_sort float-end me-4">
+            <select id="sort_select" class="sort_select" onchange="location=this.value; getSelectValue(this.form);">
+                <option class="sort-star" value="?sort=star" {% if sort_by == 'star' %} selected {% endif %}>찜하기순</option>
+                <option class="sort-name" value="?sort=name" {% if sort_by == 'name' %} selected {% endif %}>이름순</option>
+            </select>
+        </form>
     </div>
 
     <!-- 내 그룹 목록 -->
@@ -59,21 +88,18 @@
                             <!-- 그룹 이름 -->
                             <div class="content__group-namebox">
                                 <a href="{% url 'group:group_detail' group.pk %}" class="content__group-name">
-                                    <span class="group-name-text">
-                                    {{ group.name }}
-                                    </span>
+                                    <span class="group-name-text">{{ group.name }}</span>
                                 </a>
                             </div>
 
                             <!-- 비공개 / 공개 그룹 (자물쇠) -->
                             <div class="content__group-mode">
-                                {% if group.mode == 'PUBLIC' %}
-                                {% else %}
+                                {% if group.mode == 'PRIVATE' %}
                                 <i class="ri-lock-2-fill"></i>
                                 {% endif %}
-                            </div>
-                        </div>
-
+                            </div> 
+                        </div>    
+                        
                         <!-- 그룹인원수 -->
                         <div class="content__group-member">
                             <span>{{ group.members.all | length }}명</span>
@@ -92,69 +118,64 @@
             </div>
         {% endfor %}
     </div>
-    
+        
 </div>  <!-- 그룹 컨테이너 끝 -->
-    
-    <!-- <div class="group-join__alert-box" id="join-group">
-        <div class="group-join__box">
-            <form method="GET" class="group-join__code">
-                <input placeholder="초대 코드 입력" type="text" name="code" />
-                <a href="{% url 'group:join_group' %}"><button>Submit</button> </a>
-            </form>
-            <div class="group-join__message">
-                <h4>{{ message }}</h4>
-    
-            </div>
-        </div>
-        <button class="join__code--close btn btn-dark" onclick="closeJoin()">닫기</button>
-    </div>
-    <button class="group-join__btn btn btn-dark" onclick="groupJoin()">그룹 가입하기</button> -->
-
-    <!-- 그룹 정렬 -->
-    <!-- <form method="get" action="" class="movie_sort float-end me-4">
-            <select id="sort_select" class="sort_select" onchange="location=this.value; getSelectValue(this.form);">
-                <option class="sort-name" value="/">--정렬기준--</option>
-                <option class="sort-name" value="?sort=name" {% if sort_by == 'name' %} selected {% endif %}>이름순</option>
-                <option class="sort-star" value="?sort=star" {% if sort_by == 'star' %} selected {% endif %}>찜하기순</option>
-                <!-- <option class="sort-member" value="?sort=member">멤버수</option> -->
-            <!-- </select> -->
-    <!-- </form> -->
 
 <!-- 페이지네이션 -->
-<ul class="pagination justify-content-center">
-    {% if groups.has_previous %}
-    <li class="page-item">
-        <a class="page-link" href="?page={{ groups.previous_page_number }}&sort={{ sort_by }}">이전</a>
-    </li>
-    {% else %}
-    <li class="page-item disabled">
-        <a class="page-link" tabindex="-1" aria-disabled="true" href="#">이전</a>
-    </li>
-    {% endif %}
-
-    {% for page_number in groups.paginator.page_range %}
-        {% if page_number == groups.number %}
-        <li class="page-item active" aria-current="page">
-            <a class="page-link" href="?page={{ page_number }}&sort={{ sort_by }}">{{ page_number }}</a>
+<div class="pagination-box">
+    <ul class="all__pagination">
+        {% if groups.has_previous %}
+        <li class="all__page-item">
+            <a class="all__page-sign" href="?page={{ groups.previous_page_number }}&sort={{ sort_by }}">
+                <!-- 이전페이지 -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="24" viewBox="0 0 14 24" fill="none">
+                <path d="M12.7688 22.5918L2.02827 11.8513L12.7688 1.11076" stroke="#C4C4C4" stroke-width="2"/>
+                </svg>
+            </a>
         </li>
         {% else %}
-        <li class="page-item">
-            <a class="page-link" href="?page={{ page_number }}&sort={{ sort_by }}">{{ page_number }}</a>
+        <li class="all__page-item">
+            <a class="all__page-sign" href="#">
+                <!-- 이전페이지 -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="24" viewBox="0 0 14 24" fill="none">
+                <path d="M12.7688 22.5918L2.02827 11.8513L12.7688 1.11076" stroke="#C4C4C4" stroke-width="2"/>
+                </svg>
+            </a>
         </li>
         {% endif %}
-    {% endfor %}
-    </div>
-    
 
-    {% if groups.has_next %}
-    <li class="page-item">
-        <a class="page-link" href="?page={{ groups.next_page_number }}&sort={{ sort_by }}">다음</a>
-    </li>
-    {% else %}
-    <li class="page-item">
-        <a class="page-link" tabindex="-1" aria-disabled="true" href="#">다음</a>
-    </li>
-    {% endif %}
-</ul>
+        {% for page_number in groups.paginator.page_range %}
+            {% if page_number == groups.number %}
+            <li class="all__page-item">
+                <a class="all__page-item-active" href="?page={{ page_number }}&sort={{ sort_by }}">{{ page_number }}</a>
+            </li>
+            {% else %}
+            <li class="all__page-item">
+                <a class="all__page-link" href="?page={{ page_number }}&sort={{ sort_by }}">{{ page_number }}</a>
+            </li>
+            {% endif %}
+        {% endfor %}
+        
+        {% if groups.has_next %}
+        <li class="all__page-item">
+            <a class="all__page-sign sign-next" href="?page={{ groups.next_page_number }}&sort={{ sort_by }}">
+                <!-- 다음페이지 -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="24" viewBox="0 0 14 24" fill="none">
+                <path d="M1.23096 1.11035L11.9715 11.8509L1.23096 22.5914" stroke="#C4C4C4" stroke-width="2"/>
+                </svg>
+            </a>
+        </li>
+        {% else %}
+        <li class="all__page-item">
+            <a class="all__page-sign sign-next" href="#">
+                <!-- 다음페이지 -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="24" viewBox="0 0 14 24" fill="none">
+                <path d="M1.23096 1.11035L11.9715 11.8509L1.23096 22.5914" stroke="#C4C4C4" stroke-width="2"/>
+                </svg>
+            </a>
+        </li>
+        {% endif %}
+    </ul>
+</div>
 
 {% endblock %}

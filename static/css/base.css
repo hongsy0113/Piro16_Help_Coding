@@ -8,6 +8,7 @@ header{
     background-color: white;
     position: sticky;
     top: 0;
+    z-index: 20;   /* 그룹 홈 게시판 - position으로 인해 헤더가 밑으로 깔리는 오류 수정 */
 }
 
 .header__nav-container {
@@ -161,4 +162,5 @@ section{
     width: 1080px;
     margin: 0 auto;
     padding-top: 60px;
+    padding-bottom: 30px;
 }

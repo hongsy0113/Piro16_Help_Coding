@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/group_post_create.css' %}">
+{% endblock %}
+
+{% block js %}
+    <script type="text/javascript" src="/static/js/group_post_create.js" defer></script>
+{% endblock %} 
+
+{% block content %}
+<div class="post-create__container">  
+
+<!-- 게시글 생성 상단 -->
+    <div class="post-create__top">
+        <span>만든 작품을 자랑하거나 궁금한 내용을 물어보세요!</span>
+    </div>
+
+    <!-- 게시글 생성 form -->
+    <div class="post-create-form">
+        <form action="" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="post-create__input">
+                <input class="input-title" placeholder="제목을 50자 이내로 입력하세요." name="title" type="text" />
+            </div>
+
+            <div class="post-create__input">
+                <textarea class="input-content"  placeholder="내용을 입력하세요." name="content"></textarea>
+            </div>
+
+            <div class="post-create__img post-create__form">
+                <div class="text-container">
+                    <span>사진</span>
+                </div>
+                <div class="group-post__form-box">
+                    <!-- <input class="group-post__form-input group-post__form-input--image" type="file" id="image" name="image" placeholder="첨부파일" value="{% if post.image %}{{ post.image.url }}{% endif %}"> -->
+                    <input class="group-post__form-input group-post__form-input--image" placeholder="첨부파일">
+                    <label for="image" class="group-post__form-label">사진 올리기</label>
+                    <input type="file" id="image" class="form__input--file" name="image" value="{% if post.image %}{{ post.image.url }}{% endif %}">
+                </div>
+            </div>
+
+            <div class="post-create__link post-create__form">
+                <div class="text-container">
+                    <span>링크</span>
+                </div>
+                <input class="group-post__form-input--link" placeholder="작품 링크를 추가하세요." name="attached_link" type="url" maxlength="255" value="
+                {% if form.atta_attached_link %}
+                {{ form.attached_link.value }}
+                {% endif %}
+                ">
+            </div>
+
+            <div class="post-create__attached-file post-create__form">
+                <div class="text-container">
+                    <span>파일</span>
+                </div>
+                <div class="group-post__form-box">
+                    <input class="group-post__form-input group-post__form-input--file"  placeholder="첨부파일" >
+                    <label for="attached_file" class="group-post__form-label">파일 올리기</label>
+                    <input type="file" class="form__input--file" id="attached_file" name="attached_file" value="{{ form.attached_file.url }}">
+                </div>
+            </div>
+
+            
+            <div class="post-crate__category">
+                <div class="text-container category-text">
+                    <span>카테고리</span>
+                    <span class="post-crate__error">{{ category_error }}</span>
+                </div>
+                <div class="post-crate__category-select">
+                    <input type="radio" name="category" value="S" id="show" class="tag" {% if group_post.category == 'S' %} checked {% endif %}/>
+                    <label for="show">자랑하기</label>
+                    <input type="radio" name="category" value="Q" id="question" class="tag" {% if group_post.category == 'Q' %} checked {% endif %} />
+                    <label for="question">질문하기</label>
+                    <input type="radio" name="category" value="ETC" id="etc" class="tag"  {% if group_post.category == 'ETC' %} checked {% endif %}/>
+                    <label for="etc">기타</label>
+                </div>
+
+            </div>
+
+            <div class="post-create__btn">
+                <button type="submit" class="btn-save btn-effect">올리기</button>
+                <a href="{% url 'group:group_list' %}" class="btn-return btn-effect">취소</a>
+            </div>
+        </div>
+    </form>
+
+</div>
+{% endblock %}

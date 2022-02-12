@@ -8,11 +8,92 @@
 {% block content %}
 
 {% if user.is_authenticated %}
-<button class="btn btn-primary"><a class="text-white" href="{% url 'user:mypage' %}" style="text-decoration: none">My Page</a></button>
-<button class="btn btn-danger"><a class="text-white" href="{% url 'user:logout' %}" style="text-decoration: none">Logout</a></button>
-<div>
-    <p>로그인 중인 유저 : {{ user.email }}</p>
-    {% if user.img %}<img src="{{ user.img.url }}" height="100">{% else %}<p>사진 없음</p>{% endif %}
+<div class="main__container">
+    <div class="main__element main__search">
+        <h1 style="color: white;">궁금한 내용을 검색해보세요!</h1>
+        <div class="qna__search-container">
+            <form class="qna__search-box" action="{% url 'qna:search_result' %}" method="get">
+                {% csrf_token %}
+                <input type="search" placeholder="엔트리는 뭔가요?" name="search" />
+                <button type="submit">
+                    <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M25.1504 22.115L20.2822 17.2468C20.0625 17.0271 19.7646 16.905 19.4521 16.905H18.6562C20.0039 15.1814 20.8047 13.0134 20.8047 10.655C20.8047 5.04468 16.2588 0.498779 10.6484 0.498779C5.03809 0.498779 0.492188 5.04468 0.492188 10.655C0.492188 16.2654 5.03809 20.8113 10.6484 20.8113C13.0068 20.8113 15.1748 20.0105 16.8984 18.6628V19.4587C16.8984 19.7712 17.0205 20.0691 17.2402 20.2888L22.1084 25.157C22.5674 25.616 23.3096 25.616 23.7637 25.157L25.1455 23.7751C25.6045 23.3162 25.6045 22.574 25.1504 22.115ZM10.6484 16.905C7.19629 16.905 4.39844 14.1121 4.39844 10.655C4.39844 7.20288 7.19141 4.40503 10.6484 4.40503C14.1006 4.40503 16.8984 7.198 16.8984 10.655C16.8984 14.1072 14.1055 16.905 10.6484 16.905Z" fill="#4E4E4E"/>
+                    </svg>
+                    </button>
+                </form>
+        </div>
+    </div>
+</div>
+<div class="main__container">
+    <div class="main__element main__qna">
+        <div class="main__qna__title">
+            <p class="main__title">묻고 답하기</p>
+        </div>
+        <!-- 왼쪽 화살표 -->
+        <svg id="qna__arrow-left" width="17" height="30" viewBox="0 0 17 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M15.8042 28.1117L2.69251 15L15.8042 1.88832" stroke="#C4C4C4" stroke-width="3"/>
+        </svg>
+        <div class="main__qna__slidecontainer">
+            <div class="main__qna__slideinner">
+                <div class="main__qna__box">
+                    <div class="main__qna__question">
+                        <p>Q. 질문입니다.</p>
+                    </div>
+                    <div class="main__qna__answer">
+                        <p>A. 답변입니다.</p>
+                    </div>
+                </div>
+                <div class="main__qna__box">
+                    <div class="main__qna__question">
+                        <p>Q. 질문2입니다.</p>
+                    </div>
+                    <div class="main__qna__answer">
+                        <p>A. 답변2입니다.</p>
+                    </div>
+                </div>
+                <div class="main__qna__box">
+                    <div class="main__qna__question">
+                        <p>Q. 질문3입니다.</p>
+                    </div>
+                    <div class="main__qna__answer">
+                        <p>A. 답변3입니다.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 오른쪽 화살표 -->
+        <svg id="qna__arrow-right" width="17" height="30" viewBox="0 0 17 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M1.65576 1.88831L14.7675 15L1.65576 28.1117" stroke="#C4C4C4" stroke-width="3"/>
+        </svg>            
+    </div>
+</div>
+<div class="main__container">
+    <div class="main__element main__group">
+        <p class="main__title">내 그룹에 올라온 글</p>
+        <div class="landing__group__cardcontainer">
+            <a href="{% url 'group:group_home' %}" class="landing__group__card">
+                <img src="#" alt="">
+                <div class="landing__group__card__text">
+                    <h6>이런 작품을 만들었어요.</h6>
+                    <p>작품 내용</p>
+                </div>
+            </a>
+            <a href="{% url 'group:group_home' %}" class="landing__group__card">
+                <img src="#" alt="">
+                <div class="landing__group__card__text">
+                    <h6>이런 작품을 만들었어요.</h6>
+                    <p>작품 내용</p>
+                </div>
+            </a>
+            <a href="{% url 'group:group_home' %}" class="landing__group__card">
+                <img src="#" alt="">
+                <div class="landing__group__card__text">
+                    <h6>이런 작품을 만들었어요.</h6>
+                    <p>작품 내용</p>
+                </div>
+            </a>
+        </div>
+    </div>
 </div>
 {% else %}
 <div class="landing__container landing__container-first">
@@ -108,5 +189,41 @@
     </div>
 </div>
 {% endif %}
+
+<script>
+    let current = 0;
+    const element = document.querySelector('.main__qna__slideinner');
+    const qnaBox = document.querySelector('.main__qna__box');
+    console.log(element);
+    const leftbtn = document.getElementById('qna__arrow-left');
+    const rightbtn = document.getElementById('qna__arrow-right');
+    const count = 3;
+    let num = (window.innerWidth - 1080) / 2;
+    const width = 1080 + num*2;
+    console.log('innerwidth: ',window.innerWidth);
+    console.log(num);
+    qnaBox.style.marginLeft = `${num}px`;
+    element.style.gap = `${num*2}px`;
+
+    function slideNext() {
+        if (current >= count - 1) {
+            current = 0;
+        } else {
+            current++;
+        }
+        element.style.transform =`translate(-${width * current}px)`;
+    }
+    function slidePrev() {
+        if(current <= 0) {
+            current = count -1;
+        } else {
+            current--;
+        }
+        element.style.transform =`translate(-${width * current}px)`;
+    }
+
+    leftbtn.addEventListener('click', slidePrev);
+    rightbtn.addEventListener('click', slideNext);
+</script>
 
 {% endblock content %}
