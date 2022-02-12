@@ -1,10 +1,10 @@
-.star {
+/* .star, .heart {
     padding: 0;
     border: none;
     background: none;
-}
+} */
 
-.group__code--alert-box, .group-join__alert-box {
+.group__code--alert-box, .group-join__alert-box, .group__member--all {
     background: rgb(195, 195, 247);
     color: rgb(0, 0, 0);
     padding: 20px;
@@ -12,7 +12,7 @@
     display: none;
 }
 
-.hidden {
+/* .hidden {
     display: none;
 }
 
@@ -21,3 +21,13 @@
     place-items: center;
     min-height: 100vh;
 }
+
+.mygroup__list, .all-group__list {
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+.group__wait--member-list, 
+.group__origin--member-list,
+.group-info__intro {
+    border: 1px solid #000;
+} */

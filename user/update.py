@@ -1,4 +1,4 @@
-from .models import User, Reward, GetPoint, GetReward
+from .models import User, Reward, GetPoint, GetReward, Alert
 from .constants import *
 from datetime import datetime
 
@@ -9,10 +9,10 @@ def update_question_like(question, posted_user, liked_user):
     # liked_user : 좋아요 누른 유저
     posted_user.total_question_like += 1
     posted_user.save()
+    posted_user.get_level()
     update_point_history(posted_user, 'question_like')
     update_reward(posted_user, 'total_like', posted_user.total_like())
     update_reward(posted_user, 'question_like', question.like_user.count())
-
 
 # 질문에 좋아요를 취소했을 때
 def update_question_like_cancel(question, posted_user, liked_user):
@@ -21,6 +21,7 @@ def update_question_like_cancel(question, posted_user, liked_user):
     # liked_user : 좋아요 누른 유저
     posted_user.total_question_like -= 1
     posted_user.save()
+    posted_user.get_level()
     update_point_history(posted_user, 'question_like_cancel')
 
 # 댓글에 좋아요를 달았을 때
@@ -30,6 +31,7 @@ def update_comment_like(comment, commented_user, liked_user):
     # liked_user : 좋아요 누른 유저
     commented_user.total_comment_like += 1
     commented_user.save()
+    commented_user.get_level()
     update_point_history(commented_user, 'comment_like')
     update_reward(commented_user, 'total_like', commented_user.total_like())
     update_reward(commented_user, 'comment_like', comment.like_user.count())
@@ -41,6 +43,7 @@ def update_comment_like_cancel(comment, commented_user, liked_user):
     # liked_user : 좋아요 누른 유저
     commented_user.total_comment_like -= 1
     commented_user.save()
+    commented_user.get_level()
     update_point_history(commented_user, 'comment_like_cancel')
 
 # 질문을 작성했을 때
@@ -49,6 +52,7 @@ def update_question(question, posted_user):
     # posted_user : 질문 작성자
     posted_user.total_question += 1
     posted_user.save()
+    posted_user.get_level()
     update_point_history(posted_user, 'question')
     update_reward(posted_user, 'total_question', posted_user.total_question)
 
@@ -58,48 +62,70 @@ def update_question_cancel(question, posted_user):
     # posted_user : 질문 작성자
     posted_user.total_question -= 1
     posted_user.save()
+    posted_user.get_level()
     update_point_history(posted_user, 'question_cancel')
     for num_like in range(question.like_user.count()):
+        posted_user.total_question_like -= 1
         update_point_history(posted_user, 'question_like_cancel')
+    posted_user.save()
 
 # 질문에 답변을 작성했을 때
-def update_answer(answer, posted_user, answered_user):
+def update_answer(question, answer, posted_user, answered_user):
+    # question : 해당 질문
     # answer : 해당 답변
     # posted_user : 질문 작성자
     # answered_user : 답변 작성자
     answered_user.total_answer += 1
     answered_user.save()
+    answered_user.get_level()
     update_point_history(answered_user, 'answer')
     update_reward(answered_user, 'total_comment', posted_user.total_comment())
     update_reward(answered_user, 'total_answer', posted_user.total_answer)
+    if answered_user != posted_user:
+        Alert.objects.create(user = posted_user, content = "[{}] 질문글에 댓글이 달렸어요.".format(question.title), alert_type="new_comment", related_id=question.id, time=datetime.now())
 
 # 질문에 답변을 삭제했을 때
-def update_answer_cancel(answer, posted_user, answered_user):
+def update_answer_cancel(question, answer, posted_user, answered_user):
+    # question : 해당 질문
     # answer : 해당 답변
     # posted_user : 질문 작성자
     # answered_user : 답변 작성자
     answered_user.total_answer -= 1
     answered_user.save()
+    answered_user.get_level()
     update_point_history(answered_user, 'answer_cancel')
     for num_like in range(answer.like_user.count()):
+        answered_user.total_comment_like -= 1
         update_point_history(answered_user, 'comment_like_cancel')
+    answered_user.save()
 
 # 질문에 대댓글을 작성했을 때
-def update_answer_reply(reply, replied_user):
+def update_answer_reply(question, reply, replied_user):
+    # question : 해당 질문
     # reply : 해당 대댓글
     replied_user.total_answer_reply += 1
     replied_user.save()
+    replied_user.get_level()
     update_point_history(replied_user, 'answer_reply')
     update_reward(replied_user, 'total_comment', replied_user.total_comment())
+    if replied_user != question.user:
+        Alert.objects.create(user = question.user, content = "[{}] 질문글에 댓글이 달렸어요.".format(question.title), alert_type="new_comment", related_id=question.id, time=datetime.now())
+    if replied_user != reply.parent_answer.user:
+        # 댓글을 삭제한 경우 고려해야 함
+        Alert.objects.create(user = reply.parent_answer.user, content = "[{}] 댓글에 대댓글이 달렸어요.".format(reply.parent_answer.content), alert_type="new_reply", related_id=question.id, time=datetime.now())
 
 # 질문에 대댓글을 삭제했을 때
-def update_answer_reply_cancel(reply, replied_user):
+def update_answer_reply_cancel(question, reply, replied_user):
+    # question : 해당 질문
     # reply : 해당 대댓글
     replied_user.total_answer_reply -= 1
     replied_user.save()
+    replied_user.get_level()
     update_point_history(replied_user, 'answer_reply_cancel')
     for num_like in range(reply.like_user.count()):
+        replied_user.total_comment_like -= 1
         update_point_history(replied_user, 'comment_like_cancel')
+    replied_user.save()
 
 # 그룹을 만들었을 때
 #def update_group_create(user):
@@ -112,7 +138,7 @@ def update_reward(user, type, current_state):
         reward = Reward.objects.get(type = type, criteria = current_state)
         if not GetReward.objects.filter(user = user, reward = reward):
             GetReward.objects.create(user = user, reward = reward, get_date = datetime.now())
-            # 알림 설정
+            Alert.objects.create(user = user, content = "짝짝짝! [{}] 배지를 획득했어요!".format(reward.name), alert_type="get_reward", time=datetime.now())
 
 def update_point_history(user, type):
     for category in JOB_CATEGORY:

@@ -1,4 +1,4 @@
-from gc import get_objects
+
 from multiprocessing.dummy import JoinableQueue
 import queue
 from django.shortcuts import render, redirect, get_object_or_404
@@ -7,70 +7,100 @@ from .forms import *
 from django.contrib import messages
 from django.db.models import Q
 import json
-from django.http import JsonResponse
+from django.http import JsonResponse, FileResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator 
+from django.db.models import Count
+from django.views.generic import ListView, View
+from hitcount.views import HitCountDetailView
+from django.views.generic.detail import SingleObjectMixin
+from django.core.files.storage import FileSystemStorage
+import mimetypes
 from user.update import *
+from django.forms import formset_factory
+from django.views.generic.edit import FormView
+from .forms import FileFieldForm
+
+basic_tags = ['동작', '형태', '소리', '이벤트', '제어',' 감지', '연산','변수', '내 블록', '기타']
+
+def question_tag_filter(questions, tag_filter_by_list):
+    num = len(tag_filter_by_list)
+    if num == 1:
+        questions= questions.filter(s_or_e_tag=tag_filter_by_list[0]) 
+    elif num == 2:
+        questions= questions.filter(Q(s_or_e_tag=tag_filter_by_list[0]) | Q(s_or_e_tag=tag_filter_by_list[1]))
+    elif num==3:
+        pass
+    return questions
+
+def question_answer_filter(questions, answer_filter_by):
+    if answer_filter_by == 'NOT_ANSWERED':
+        questions= questions.filter(answer = None)
+    else:
+        questions = questions.annotate(answer_count=models.Count("answer")).filter(answer_count__gt = 0)
+    return questions
+
+### Error messages
+class ErrorMessages():
+    title, content, image, attached_file, s_or_e_tag, tags = '', '', '', '', '', ''
+    def validation_check(self,title, content, image, attached_file, s_or_e_tag, tags, command):
+        if 'create' in command or 'update' in command:
+            if not title:
+                self.title = '제목을 입력해주세요'
+            elif len(title)>50:
+                self.title = '제목은 50자 이내로 입력해주세요'
+            if not content:
+                self.content = '내용을 입력해주세요'
+            if not s_or_e_tag:
+                self.s_or_e_tag = '카테고리를 선택해주세요'
+
+    def has_error(self):
+        return self.title or self.content or self.image or self.attached_file or self.s_or_e_tag or self.tags
+
+class OriginalInformation():
+    def remember(self, request, command):
+        self.title = request.POST.get('title')
+        self.content = request.POST.get('content')
+        self.image = request.FILES.get('image')
+        self.attached_file = request.FILES.get('attached_file')
+        self.s_or_e_tag = request.POST.get('s_or_e_tag')
+        self.tags = request.POST.getlist('detail_tag')
+        self.command = command
+
+##### view 시작
 
 def question_list(request):
-    question = Question.objects.all()
+    questions = Question.objects.all().order_by('-created_at')
     page = request.GET.get('page', '1')    # 페이지
-    questions = Question.objects.order_by('-created_at')   # [기본 정렬] 최신순으로 정렬
+    #questions = Question.objects.order_by('-created_at')   # [기본 정렬] 최신순으로 정렬
+
+    # 게시글 필터
+    tag_filter_by = request.GET.getlist('tag_filter_by')
+    if tag_filter_by:
+        questions = question_tag_filter(questions, tag_filter_by)
+    answer_filter_by = request.GET.get('answer_filter_by')
+    if answer_filter_by:
+        questions = question_answer_filter(questions, answer_filter_by)
 
     # 게시물 정렬
-    sort = request.GET.get('sort', '')
-    if sort == 'recent':    # 최신순
-        questions = Question.objects.order_by('-created_at')
-    elif sort == 'liked':   # 좋아요순
-        questions = Question.objects.order_by('-like_user')
-    elif sort == 'view':    # 조회수순
-        questions = Question.objects.order_by('-hit')
-
+    sort_by = request.GET.get('sort', 'recent')
+    if sort_by == 'recent':    # 최신순
+        questions = questions.order_by('-created_at')
+    elif sort_by == 'liked':   # 좋아요순
+        questions = questions.annotate(total_likes=Count('like_user')).order_by('-total_likes')
+    elif sort_by == 'view':    # 조회수순
+        questions = questions.order_by('-hit_count_generic__hits')
     # 페이징 처리
     paginator = Paginator(questions, 5)    # 페이지당 5개씩 보여주기
     page_obj = paginator.get_page(page)
 
     ctx = {
         'questions': page_obj,
+        'sort_by':sort_by,
+        'filter_by':tag_filter_by+[answer_filter_by],
     }
 
     return render(request, 'qna/question_list.html', context=ctx)
-
-# # 검색 조건
-# def search_condition(self):
-#     search_keyword = self.request.GET.get('query', '')
-#     search_type = self.request.GET.get('type', '')
-#     questions = Question.objects.order_by('-id')
-
-#     if search_keyword :
-#         if len(search_keyword) > 1:
-#             if search_type == 'all':
-#                 search_questions = questions.filter(Q (title__icontains=search_keyword) | Q (content__icontains=search_keyword) | Q (writer__user_id__icontains=search_keyword))
-#             elif search_type == 'title_content':    # 제목, 내용
-#                 search_questions = questions.filter(Q (title__icontains=search_keyword) | Q (content__icontains=search_keyword))
-#             elif search_type == 'title':    # 제목
-#                 search_questions = questions.filter(title__icontains=search_keyword)    
-#             elif search_type == 'content':  # 내용
-#                 search_questions = questions.filter(content__icontains=search_keyword)    
-#             elif search_type == 'writer':   # 작성자
-#                 search_questions = questions.filter(writer__user_id__icontains=search_keyword)
-            
-#             return search_questions
-
-#         else:
-#             messages.error(self.request, '검색어는 2글자 이상 입력해주세요.')
-
-#     return questions
-
-# def search_result(self, **kwargs):
-#     search_keyword = self.request.GET.get('search', '')
-#     search_type = self.request.GET.get('type', '')
-
-#     if len(search_keyword) > 1:
-#         context['search'] = search_keyword
-#         context['type'] = search_type
-
-#     return context
 
 def search_result(request):
     if 'search' in request.GET:
@@ -85,73 +115,244 @@ def search_result(request):
 def question_create(request):
     if request.method == 'POST':
         form = QuestionForm(request.POST, request.FILES)
-
-        question = form.save(commit=False)  # 넘겨진 데이터 form에 바로 저장 X
-        question.s_or_e_tag = request.POST.get('s_or_e_tag')  # 카테고리 (스크래치, 엔트리, 기타) 중 1 선택
-        question.user = request.user
-
-        # 상세 태그 (기능) 선택
-        tags = request.POST.getlist('detail_tag')
-        question.save()
         
-        for tag in tags:
-            if len(QnaTag.objects.filter(tag_name=tag)) == 0:
-                QnaTag.objects.create(
-                    tag_name = tag,
-                )
+        error_messages = ErrorMessages()
+        error_messages.validation_check(
+            form.data['title'],
+            form.data['content'],
+            request.FILES.get('image'),
+            request.FILES.get('attached_file'),
+            request.POST.get('s_or_e_tag'),
+            request.POST.getlist('detail_tag'),
+            ['create']
+        )
+        if not error_messages.has_error():
+            question = Question.objects.create(
+                title=form.data['title'],
+                content=form.data['content'],
+                image=request.FILES.get('image'),
+                attached_file=form.data['attached_file'],
+                s_or_e_tag=request.POST.get('s_or_e_tag'),
+                user=request.user
+            )
+            # file
 
-            # QnaTag db에 없으면 오류 발생
-            newtag = get_object_or_404(QnaTag, tag_name=tag)
-            question.tags.add(newtag)
+            # print(formset.data)
+            # if formset.is_valid():
+            #     print(formset.cleaned_data)
+            #     for form in formset.cleaned_data:
+            #         x = form['attached_file']
+            #         print(x)
+            #         attached_file = QuestionFiles.objects.create(question = question, attached_file = x)
+            #         attached_file.save()
 
-        question.save()
-        update_question(question, request.user)
+            tags = request.POST.getlist('detail_tag')
+            for tag in tags:
+                if len(QnaTag.objects.filter(tag_name=tag)) == 0:
+                    QnaTag.objects.create(
+                        tag_name = tag,
+                    )
 
-        return redirect('qna:question_list')
+                # QnaTag db에 없으면 오류 발생
+                newtag = get_object_or_404(QnaTag, tag_name=tag)
+                question.tags.add(newtag)
 
+            question.save()
+            update_question(question, request.user)
+            return redirect('qna:question_detail', question.pk)
+
+        else:
+            global basic_tags
+            tags = request.POST.getlist('detail_tag')
+
+            basic_tag_names = []
+            extra_tag_names = []
+            for tag in tags:
+                if tag in basic_tags:
+                    basic_tag_names.append(tag)
+                else:
+                    extra_tag_names.append(tag)
+            original_information = OriginalInformation()
+            original_information.remember(request, ['create'])
+            ctx = {
+                'form': form, 
+                'error_messages': error_messages,
+                'original_information': original_information,
+                'basic_tag_names': basic_tag_names,  
+                'extra_tag_names': extra_tag_names,
+                }
+            return render(request, 'qna/question_form.html', context=ctx)
     else:
         form = QuestionForm()
         ctx = {'form': form}
         
-        return render(request, 'qna/question_create.html', context=ctx)
+        return render(request, 'qna/question_form.html', context=ctx)
+
+class QuestionDetailView(HitCountDetailView):
+    model = Question
+    template_name = 'qna/detail.html'
+    count_hit = True
+    context_object_name = 'question'
+
+    def get_context_data(self, **kargs):
+        context = super().get_context_data(**kargs)
+        # self.object로 question 객체에 접근할 수 있음
+        try:
+            previous_pk = Question.get_previous_by_created_at(self.object).pk
+        except:
+            # 이전글 없을 때
+            previous_pk = -1
+        try:
+            next_pk = Question.get_next_by_created_at(self.object).pk
+        except:
+            # 이전글 없을 때
+            next_pk = -1
+        context['next_pk'] = next_pk
+        context['previous_pk'] = previous_pk
+
+        tags = self.object.tags.all()
+        username = self.object.user.nickname
+        total_likes = len(self.object.like_user.all())
         
+        # 해당 게시글에 대한 답변 가져오기
+        answers = Answer.objects.filter(question_id = self.object.id, parent_answer__isnull=True).order_by('answer_order')   #  나중에 답변 정렬도 고려. 최신순 또는 좋아요 순
+        answers_count = len(answers)
         
-def question_detail(request, pk):
+        answers_reply_dict ={}
+        for answer in answers:
+            replies =  Answer.objects.filter(parent_answer= answer).order_by('answer_order')
+            answers_reply_dict[answer] = replies
+
+        # 좋아요 눌렀는지 안 눌렀는지
+        is_liked = self.request.user in  self.object.like_user.all()
+
+        context['username']= username
+        context['tags'] = tags
+        context['total_likes'] = total_likes
+        context['answers']= answers
+        context['answers_count']= answers_count
+        context['answers_reply_dict']= answers_reply_dict
+        context['is_liked']= is_liked
+
+        return context
+
+class FileDownloadView(SingleObjectMixin, View):
+    queryset = Question.objects.all()
+
+    def get(self, request, pk):
+        object = get_object_or_404(Question, pk=pk)
+        
+        file_path = object.attached_file.path
+        file_type, _ = mimetypes.guess_type(file_path)
+        #file_type = object.attached_file.name.split('.')[-1]  # django file object에 content type 속성이 없어서 따로 저장한 필드
+        fs = FileSystemStorage(file_path)
+        response = FileResponse(fs.open(file_path, 'rb'), content_type=file_type)
+        response['Content-Disposition'] = f'attachment; filename={object.get_filename()}'
+        
+        return response
+
+
+
+def question_update(request,pk):
     question = get_object_or_404(Question, pk=pk)
+    global basic_tags
+    if request.method == "POST":
+        form = QuestionForm(request.POST, request.FILES, instance = question)
 
-    # 해당 게시글에 대한 tag, 유저, 좋아요 수 등 가져오기
-    # 이외에 필드들은 template 에서 {{question.필드 }} 로 접근
-    tags = question.tags.all()
-    username = question.user.nickname
-    total_likes = len(question.like_user.all())
+        error_messages = ErrorMessages()
+        error_messages.validation_check(
+            request.POST.get('title'),
+            request.POST.get('content'),
+            request.FILES.get('image'),
+            request.FILES.get('attached_file'),
+            request.POST.get('s_or_e_tag'),
+            request.POST.getlist('detail_tag'),
+            ['update']
+        )
+        if not error_messages.has_error():
+            if form.is_valid():
+                question = form.save()
 
-    # 해당 게시글에 대한 답변 가져오기
-    answers = Answer.objects.filter(question_id = question.id, parent_answer__isnull=True).order_by('answer_order')   #  나중에 답변 정렬도 고려. 최신순 또는 좋아요 순
-    answers_count = len(answers)
-    
-    answers_reply_dict ={}
-    for answer in answers:
-        replies =  Answer.objects.filter(parent_answer= answer).order_by('answer_order')
-        answers_reply_dict[answer] = replies
+            tags = request.POST.getlist('detail_tag')
+            for tag in tags:
+                if len(QnaTag.objects.filter(tag_name=tag)) == 0:
+                    QnaTag.objects.create(
+                        tag_name = tag,
+                    )
 
-    # 좋아요 눌렀는지 안 눌렀는지
-    is_liked = request.user in  question.like_user.all()
+                # QnaTag db에 없으면 오류 발생
+                newtag = get_object_or_404(QnaTag, tag_name=tag)
+                question.tags.add(newtag)
 
-    ctx = {
-        'question':question,
-        'username': username,
-        'tags' : tags,
-        'total_likes' : total_likes,
-        'answers' : answers,
-        'answers_count' : answers_count,
-        'answers_reply_dict' : answers_reply_dict,
-        'is_liked': is_liked,
-    }
-    # answer 와 reply로 이루어진 dictionary를 context로 넘길 예정
-    return render(request, template_name='qna/detail.html', context=ctx)
+            question.save()
+            update_question(question, request.user)
+            return redirect('qna:question_detail', question.pk)
+        else:
+            
+            tags = request.POST.getlist('detail_tag')
+
+            basic_tag_names = []
+            extra_tag_names = []
+            for tag in tags:
+                if tag in basic_tags:
+                    basic_tag_names.append(tag)
+                else:
+                    extra_tag_names.append(tag)
+            original_information = OriginalInformation()
+            original_information.remember(request, ['update'])
+            ctx = {
+                'form': form, 
+                'error_messages': error_messages,
+                'original_information': original_information,
+                'basic_tag_names': basic_tag_names,  
+                'extra_tag_names': extra_tag_names,
+                }
+            return render(request, 'qna/question_form.html', context=ctx)
+        # question = form.save()  
+        # question.s_or_e_tag = request.POST.get('s_or_e_tag')  # 카테고리 (스크래치, 엔트리, 기타) 중 1 선택
+
+        # # 상세 태그 (기능) 선택
+        # tags = request.POST.getlist('detail_tag')
+        # for tag in tags:
+        #     if len(QnaTag.objects.filter(tag_name=tag)) == 0:
+        #         QnaTag.objects.create(
+        #             tag_name = tag,
+        #         )
+
+        #     # QnaTag db에 없으면 오류 발생
+        #     newtag = get_object_or_404(QnaTag, tag_name=tag)
+        #     question.tags.add(newtag)
+
+        # question.save()
+        # update_question(question, request.user)
+
+        # return redirect('qna:question_detail', pk)
+
+    else:
+        form = QuestionForm(instance=question)
+        # TODO : 선택 태그 뭘 선택했었는 지를 ctx로 넘겨주자
+        # 기본 태그와 추가 태그 다르게 넘기자
+        # TODO :  기본 태그 가 바뀌게 된다면 아래 리스트 수정해야 됨.
+        
+        tags = question.tags.all()
+        basic_tag_names = []
+        extra_tag_names = []
+        for tag in tags:
+            if tag.tag_name in basic_tags:
+                basic_tag_names.append(tag.tag_name)
+            else:
+                extra_tag_names.append(tag.tag_name)
+        ctx = {'form': form, 'question':question, 'basic_tag_names': basic_tag_names,  'extra_tag_names': extra_tag_names}
+
+        return render(request, template_name="qna/question_form.html", context=ctx)        
 
 def question_delete(request, pk):
     question = get_object_or_404(Question, pk=pk)
+
+    # TODO : 게시글에 댓글이 있는지 확인
+    if len(question.answer_set.all()) > 0:
+        ### 답변이 달려 있어서 삭제 불가능
+        return redirect('qna:question_detail', pk)
     update_question_cancel(question, request.user)
     question.delete()
     return redirect('qna:question_list')
@@ -185,7 +386,7 @@ def answer_ajax(request):
     # 템플릿에서 쉽게 띄울 수 있도록 답변 게시일자 포맷팅해서 json에 전달
     created_at = new_answer.created_at.strftime('%y.%m.%d %H:%M')
 
-    update_answer(new_answer, this_question.user, request.user)
+    update_answer(this_question, new_answer, this_question.user, request.user)
 
     return JsonResponse({'id': new_answer.id ,'content': content,'user':username, 'created_at':created_at} )
 
@@ -220,7 +421,7 @@ def reply_ajax(request):
         parent_answer = this_answer
     )
 
-    update_answer_reply(new_answer, request.user)
+    update_answer_reply(this_question, new_answer, request.user)
 
     # 템플릿에서 쉽게 띄울 수 있도록 답변 게시일자 포맷팅해서 json에 전달
     created_at = new_answer.created_at.strftime('%y.%m.%d %H:%M')
@@ -241,7 +442,7 @@ def question_like_ajax(request):
     req = json.loads(request.body)
     # user id 는 요청 안 보내도 됐을 수도
     question_id = req['questionId']
-    
+
     question = get_object_or_404(Question, pk=question_id)
     liked_users = question.like_user
 
@@ -287,9 +488,9 @@ def answer_delete_ajax(request):
 
     answer = get_object_or_404(Answer, pk=answer_id)
     if answer.parent_answer:
-        update_answer_reply_cancel(answer, request.user)
+        update_answer_reply_cancel(answer.question_id, answer, request.user)
     else:
-        update_answer_cancel(answer, answer.question_id.user, request.user)
+        update_answer_cancel(answer.question_id, answer, answer.question_id.user, request.user)
     answer.delete()
 
     return JsonResponse({'id':answer_id})

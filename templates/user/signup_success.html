@@ -1,6 +1,6 @@
-{% extends 'user/main.html' %}
+{% extends 'base.html' %}
 
 {% block content %}
-<p>{{ email }} 로 회원가입 인증 메일이 발송되었습니다.</p>
+<p>{{ email }} 로 회원가입 인증 메일이 발송되었습니다. 24시간 이내에 인증 메일을 확인해주세요.</p>
 <button class="btn btn-secondary"><a class="text-white" href="{% url 'user:main' %}" style="text-decoration: none">메인으로 돌아가기</a></button>
 {% endblock content %}

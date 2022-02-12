@@ -1,0 +1,195 @@
+{% extends 'base.html' %}
+{% load hitcount_tags %}
+
+{% block js %}
+<script type="text/javascript" src="/static/js/group_post_detail.js" defer></script>
+{% endblock %}
+{% block content %}
+{{ request.user.id|json_script:"user_id" }}
+{{ post.id|json_script:"post_id" }}
+
+<h2>{{ post.group }}      게시판</h2>
+
+<main>
+    <h1>{{ post.title }}</h1>
+    <hr>
+    <p>{{ post.created_at|date:'y.m.d'}}
+    조회 {% get_hit_count for post %}
+    좋아요 {{ total_likes }}
+    {{ username }}</p>
+    {% if post.category == 'S' %}
+    <div class="btn btn-success">자랑</div>
+    {% elif post.category == 'Q' %}
+    <div class="btn btn-danger">질문</div>
+    {% else %}
+    <div class="btn btn-secondary">기타</div>
+    {% endif %}
+
+    <!-- 블록코딩 실행 iframe -->
+    <!-- context에서 iframe으로 태그 전체 접근 가능-->
+    {{ iframe | safe }}
+
+    <h3>{{ post.content }}</h3>
+    
+    {% if post.image %}<img src="{{ post.image.url }}" height="100">{% endif %}
+    
+    {% if post.attached_file %}
+    <div>
+        <label>첨부 파일</label>
+        <div>{{ post.get_filename }}</div>
+        <form action="{% url 'group:download' post.id %}">
+            <button type="submit">
+            다운로드
+            </button>
+        </form>
+    </div>
+    {% endif %}
+    <div>
+        <div>
+            {% if post.attached_link %}
+            <label>첨부 링크</label>
+            <a href="{{ post.attached_link }}">{{ post.attached_link }}</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <hr>
+    <div class="post__like-btn btn btn-secondary">
+        {% if is_liked %}
+        <i class="fas fa-heart"></i>
+        {% else %}
+        <i class="far fa-heart"></i>
+        {% endif %}
+        <span>좋아요 {{ total_likes }}개</span>
+    </div>
+
+    <hr>
+
+    <div class="post__buttons">
+        {% if post.user.id == user.id %}
+        <a href="{% url 'group:post_update' group.pk post.pk %}" class="btn btn-success">수정</a>
+        <a href="" class="btn btn-success">삭제</a>
+        {% endif %}
+        <a href="{% url 'group:post_list' group.pk %}" class="btn btn-info">목록보기</a>
+        {% if previous_pk != -1 %}
+        <a href="{% url 'group:post_detail' group.pk previous_pk %}" class="btn btn-info">이전글</a>
+        {% endif %}
+        {% if next_pk != -1 %}
+        <a href="{% url 'group:post_detail' group.pk next_pk %}" class="btn btn-info">다음글</a>
+        {% endif %}
+    </div>
+
+    {% if user.is_authenticated %}
+    <input type="textarea" name="new_answer" placeholder="답변을 입력하세요" class="answer__input" style="width:600px; height:220px;">    
+    <input type="button" value = "작성" class="answer__submit">
+    {% endif %}
+
+
+    <hr>
+    <p class="answer__total-count">답변 {{ answers_count }} 개 </p>
+    <div class="answer__list">
+        <!-- 답변 부분 -->
+        {% for answer, replies in answers_reply_dict.items %}
+            <div class="answer__container answer__container--{{ answer.id }}">
+                <div class="answer__content-container answer__content-container--{{ answer.id }}">
+                    {% if answer.user.img %}
+                    <img src= '{{ answer.user.img.url }}'' height="220" width="160">
+                    {% endif %}
+                    <h2>{{ answer.user }}</h2>
+                    <p>{{ answer.created_at|date:'y.m.d  H:i'}}</p>
+                    <div>
+                        {% if answer.user.id == user.id %}
+                        <span>(작성자)</span>
+                        {% endif %}
+
+                        <p class="answer__content answer__content--{{ answer.id }}">{{ answer.content }}</p>
+
+                        <div class="answer__like-btn answer__like-btn--{{ answer.id }} btn"  id="answer-like-{{ answer.id }}">
+                            {% if user in answer.like_user.all %}
+                            <i class="fas fa-heart"></i>
+                            {% else %}
+                            <i class="far fa-heart"></i>
+                            {% endif %}
+                            <span>좋아요 {{ answer.like_user.all | length }}개</span>
+                        </div>
+                    </div>
+
+                    {% if answer.user.id == user.id %}
+                    <div>
+                        <button class="btn btn-secondary answer__edit-btn answer__edit-btn--{{ answer.id }} " id="answer-edit-btn-{{ answer.id }}">답변 수정</button>
+                        <button class="btn btn-secondary answer__delete-btn answer__delete-btn--{{ answer.id }} " id="answer-delete-btn-{{ answer.id }}">답변 삭제</button>
+                    </div>
+                    {% endif %}
+                    
+                    <div>
+                        <input type="checkbox" class="answer__write-reply answer__write-reply--{{ answer.id }} btn-check " id="reply-btn-{{ answer.id }}" autocomplete="off">
+                        <label class="btn btn-primary" for="reply-btn-{{ answer.id }}">답글 작성</label>
+                    </div>
+                </div>
+
+                <div class="answer__edit answer__edit--{{ answer.id }}" style=" display: none;">
+                    <input type="text" name="edit_answer_{{ answer.id }}" class="answer__edit-input answer__edit-input--{{ answer.id }}" id = "answer-edit-input-{{ answer.id }}" style="width:200px; height:20px;" value="{{ answer.content }}">    
+                    <input type="button" value = "수정" class="answer__edit-submit answer__edit-submit--{{ answer.id }}" id = "answer-edit-submit-{{ answer.id }}">
+                </div>
+
+                <h6>대댓글</h4>
+                <hr>
+                <div class="reply__list reply__list--{{ answer.id }} ">
+                    <!-- 대댓글 부분 -->
+                    {% for reply in replies %}
+                        <div class="reply__container reply__container--{{reply.id}} answer__container--{{ reply.id }} ">
+                            <div class="answer__content-container answer__content-container--{{ reply.id }}">
+                                <p>
+                                    {{ reply.user }}   {{ reply.created_at|date:'y.m.d  H:i' }}
+                                    <br>
+
+                                    {% if reply.user.id == user.id %}
+                                    <span>(작성자)</span>
+                                    {% endif %}
+
+                                    <p class= "answer__content answer__content--{{ reply.id }}"> {{ reply.content }}</p>
+                                    <br>
+                                </p>
+                                <div class="answer__like-btn answer__like-btn--{{ reply.id }} btn" id="reply-like-{{ reply.id }}">
+                                    {% if user in reply.like_user.all %}
+                                    <i class="fas fa-heart"></i>
+                                    {% else %}
+                                    <i class="far fa-heart"></i>
+                                    {% endif %}
+                                    <span>좋아요 {{ reply.like_user.all | length }}개</span>
+                                </div>
+
+                                {% if reply.user.id == user.id %}
+                                <div>
+                                    <button class="btn btn-sm btn-secondary answer__edit-btn answer__edit-btn--{{ reply.id }} " id="answer-edit-btn-{{ reply.id }}">답변 수정</button>
+                                    <button class="btn btn-sm btn-secondary answer__delete-btn answer__delete-btn--{{ reply.id }} " id="answer-delete-btn-{{ reply.id }}">답변 삭제</button>
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="answer__edit answer__edit--{{ reply.id }}" style=" display: none;">
+                                <input type="text" name="edit_answer_{{ reply.id }}" class="answer__edit-input answer__edit-input--{{ reply.id }}" id = "answer-edit-input-{{ reply.id }}" 
+                                style="width:200px; height:20px;" value="{{ reply.content }}">    
+                                <input type="button" value = "수정" class="answer__edit-submit answer__edit-submit--{{ reply.id }}" id = "answer-edit-submit-{{ reply.id }}">
+                            </div>
+                        </div>
+
+                        
+
+                    {% endfor %}
+                </div>
+
+                <div class="reply__form reply__form--{{ answer.id }}" style="display: none;">
+                    {% if user.is_authenticated %}
+                    <input type="text" name="new_reply_{{ answer.id }}" placeholder="답변을 입력하세요" class="reply__input reply__input--{{ answer.id }}" id = "reply-input-{{ answer.id }}"style="width:200px; height:20px;">    
+                    <input type="button" value = "작성" class="reply__submit reply__submit--{{ answer.id }}" id = "reply-submit-{{ answer.id }}">
+                    {% endif %}
+                </div>
+            </div>
+            <hr>
+        {% endfor %}
+    </div>
+
+
+{% endblock %}
+

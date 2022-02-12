@@ -1,53 +1,72 @@
-{% extends 'user/main.html' %}
+{% extends 'base.html' %}
+
+{% block js %}
+<script type="text/javascript" src="/static/js/user_profile_img.js" defer></script>
+{% endblock %}
 
 {% block content %}
-{% if revise_error %}<span>{{ revise_error }}</span>{% endif %}
 <form method="POST" enctype="multipart/form-data" action="">
     {% csrf_token %}
     <div>
         <label for="nickname">닉네임</label><br />
-        <input type="text" name="nickname" id="nickname" value="{{ user.nickname }}"/>
+        <input type="text" name="nickname" id="nickname" value="{% if original_information %}{{ original_information.nickname }}{% else %}{{ user.nickname }}{% endif %}"/>
+        {% if revise_error %}<span>{{ revise_error.nickname }}</span>{% endif %}
     </div>
     <div>
         <label for="birth">생년월일</label><br />
-        <input type="text" name="birth-y" id="birth-y" value="{{ user.birth.year }}"/>년
-        <input type="text" name="birth-m" id="birth-m" value="{{ user.birth.month }}"/>월
-        <input type="text" name="birth-d" id="birth-d" value="{{ user.birth.day }}"/>일
+        <input type="text" name="birth-y" id="birth-y" value="{% if original_information %}{{ original_information.birth_y }}{% else %}{{ user.birth.year }}{% endif %}"/>년
+        <input type="text" name="birth-m" id="birth-m" value="{% if original_information %}{{ original_information.birth_m }}{% else %}{{ user.birth.month }}{% endif %}"/>월
+        <input type="text" name="birth-d" id="birth-d" value="{% if original_information %}{{ original_information.birth_d }}{% else %}{{ user.birth.day }}{% endif %}"/>일
+        {% if revise_error %}<span>{{ revise_error.birth }}</span>{% endif %}
     </div>
     <div>
-        <label for="image">이미지 업로드</label><br />
-        <p>{{ form.img }}</p>
-        <img src="/static/img/base1.png" height="50">
-        <label><input type="radio" name="img_setting" value="base1.png"> 기본 이미지1</label> <!-- value를 기본 파일 이름으로 설정 -->
-        <img src="/static/img/base2.jpg" height="50">
-        <label><input type="radio" name="img_setting" value="base2.jpg"> 기본 이미지2</input> <!-- value를 기본 파일 이름으로 설정 -->
-        <label><input type="radio" name="img_setting" value="own_img" checked> 직접 설정</label> <!-- value를 기본 파일 이름으로 설정 -->
+        <label for="image">프로필 사진</label><br />
+        {% for base_image in base_images %}<input type="radio" name="img_setting" value="{{ base_image }}" {% if original_information %}{% if original_information.img_setting == base_image %}checked{% endif %}{% else %}{% if current_image == base_image %}checked{% endif %}{% endif %}>
+        <img src="/static/img/{{ base_image }}" height="50" width="50">
+        {% endfor %}
+        <input id="img_setting_own" type="radio" name="img_setting" value="own_img" {% if original_information.img_setting == "own_img" %}checked{% endif %}></label>
+        <img id="img_display" src="" height="50" width="50">
+        <label>직접 설정하기</label>
+        <input id="img_upload" name="img" type="file" onchange="imageChange(event);"></input>
+        <p id="img_upload_name">선택된 이미지 : 없음</p>
+        <input name="img_recent" id="img_recent" value="{{ original_information.img }}" hidden></input>
+        <input id="temp_img_location" value="{{ temp_img_location }}" hidden></input>
+        {% if current_image not in base_images %}
+        <input type="radio" name="img_setting" value="no_change_img" {% if original_information %}{% if original_information.img_setting == "no_change_img" %}checked{% endif %}{% else %}{% if current_image not in base_images %}checked{% endif %}{% endif %}></input>
+        <img src="{{ user.img.url }}" height="50" width="50">
+        <label> 이미지 변경 안 함</label>{% endif %}
+        {% if revise_error %}<span>{{ revise_error.img }}</span>{% endif %}
     </div>
     <div>
         <label for="introduction">소개</label><br />
-        <textarea name="introduction" id="introduction" cols="30" rows="10" value="{{ user.introduction }}"></textarea>
+        <textarea name="introduction" id="introduction" cols="30" rows="10">{% if original_information %}{{ original_information.introduction }}{% else %}{{ user.introduction }}{% endif %}</textarea>
     </div>
     <div>
         <label for="job">직업</label><br />
-        <input type="radio" name="job" value="elementary_school" {% if user.job == 'elementary_school' %}checked{% endif %}/>초등학생
-        <input type="radio" name="job" value="middle_school" {% if user.job == 'middle_school' %}checked{% endif %}/>중학생
-        <input type="radio" name="job" value="high_school" {% if user.job == 'high_school' %}checked{% endif %}/>고등학생
-        <input type="radio" name="job" value="university" {% if user.job == 'university' %}checked{% endif %}/>대학생
-        <input type="radio" name="job" value="programmer" {% if user.job == 'programmer' %}checked{% endif %}/>개발자
-        <input type="radio" name="job" value="parents" {% if user.job == 'parents' %}checked{% endif %}/>학부모
-        <input type="radio" name="job" value="etc" {% if user.job == 'etc' %}checked{% endif %}/>기타
+        {% for job in job_choice %}
+        <input type="radio" name="job" value="{{ job.0 }}" {% if original_information %}{% if original_information.job == job.0 %}checked{% endif %}{% else %}{% if user.job == job.0 %}checked{% endif %}{% endif %}/>{{ job.1 }}
+        {% endfor %}
     </div>
-    <div>
-        <label for="current_password">현재 비밀번호</label><br />
-        <input type="password" name="current_password" id="current_password"/>
-    </div>
-    <div>
-        <label for="new_password1">새 비밀번호</label><br />
-        <input type="password" name="new_password1" id="new_password1"/>
-    </div>
-    <div>
-        <label for="new_password2">새 비밀번호 확인</label><br />
-        <input type="password" name="new_password2" id="new_password2"/>
+    <p id="password_change" onclick="passwordChange()">비밀번호 변경</p> <!-- 버튼 같이 만들어주면 될 듯! -->
+    <input id="password_change_recent_1" value="{{ original_information.current_password }}" hidden></input>
+    <input id="password_change_recent_2" value="{{ original_information.new_password1 }}" hidden></input>
+    <input id="password_change_recent_3" value="{{ original_information.new_password2 }}" hidden></input>
+    <div id="password_change_block">
+        <div>
+            <label for="current_password">현재 비밀번호</label><br />
+            <input type="password" name="current_password" id="current_password" value="{{ original_information.current_password }}"/>
+            {% if revise_error %}<span>{{ revise_error.current_password }}</span>{% endif %}
+        </div>
+        <div>
+            <label for="new_password1">새 비밀번호</label><br />
+            <input type="password" name="new_password1" id="new_password1" value="{{ original_information.new_password1 }}"/>
+            {% if revise_error %}<span>{{ revise_error.new_password1 }}</span>{% endif %}
+        </div>
+        <div>
+            <label for="new_password2">새 비밀번호 확인</label><br />
+            <input type="password" name="new_password2" id="new_password2" value="{{ original_information.new_password2 }}"/>
+            {% if revise_error %}<span>{{ revise_error.new_password2 }}</span>{% endif %}
+        </div>
     </div>
     <input type="submit" value="MypageRevise">
 </form>
