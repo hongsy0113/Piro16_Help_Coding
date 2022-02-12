@@ -33,6 +33,19 @@ def group_home(request):
 
     # 해당 유저의 그룹 리스트
     groups = user.group_set.all()
+    group = Group.objects.filter(star_group__user=user)
+    # group_star = GroupStar.objects.filter(group=groups)
+    is_star = []
+    if group in groups:
+        is_star += ['True']
+    else:
+        is_star += ['False']
+    print(group)
+    print(is_star)
+    
+
+    grouppp = GroupStar.objects.all()
+    print(grouppp)
     
     # 페이징 처리
     page = request.GET.get('page', '1')
@@ -41,8 +54,9 @@ def group_home(request):
     sort = request.GET.get('sort', 'star')
     if sort == 'name':
         groups = groups.order_by('name')
-    elif sort == 'star':
-        groups = groups.order_by('-is_star')
+    # elif sort == 'star':
+    #     groups = groups.aggregate(is_star=Sum('group')).order_by('-is_star')
+        # groups = groups.annotate(total_likes=Count('interests')).order_by('-total_likes')order_by('-is_star')
     # elif sort == 'member':
     #     groups = groups.order_by('-members')
     # elif sort == 'date':  # django에서 기본 제공하는 create날짜 있는지 체크
@@ -54,6 +68,7 @@ def group_home(request):
     ctx = { 
         'user': user,  #나중에는 쓸모 X 
         'groups': page_obj,
+        'is_star': is_star,
         'sort_by': sort,
         'ani_image': static('image/helphelp.png')    
     }
@@ -133,9 +148,6 @@ def group_update(request, pk):
 
         group.name = request.POST.get('name')
         name = group.name
-
-        group.intro = request.POST.get('intro')
-        intro = group.intro
 
         # 기존 이미지는 유지
         if group.image:
@@ -220,7 +232,7 @@ def group_drop(request, pk):
 def group_detail(request, pk):
     user = request.user
     group = get_object_or_404(Group, pk=pk)
-
+    
     mygroup = user.group_set.all()
     members = group.members.all()
     group.maker = members[0]
@@ -713,6 +725,34 @@ def answer_edit_submit_ajax(request):
     answer.save()
 
     return JsonResponse({'id':answer_id, 'content':new_content})
+
+
+# star 클릭 시 
+@csrf_exempt
+def group_star_ajax(request):
+    req = json.loads(request.body)
+    group_id = req['id']
+
+    user = request.user
+    group = get_object_or_404(Group, id=group_id)
+    # 1. 그룹 -> 2. 사용자 
+    if GroupStar.objects.filter(Q(group=group) & Q(user=user)):
+        is_star = True
+    else:
+        is_star = False
+
+    print(is_star)
+    if is_star == True:
+        GroupStar.objects.delete(group=group, user=user)
+        is_star = False
+    else:
+        if not GroupStar.objects.filter(Q(group=group) & Q(user=user)):
+            GroupStar.objects.create(group=group, user=user)
+            is_star = True
+
+    is_stared = is_star
+
+    return JsonResponse({ 'id': group_id, 'is_star': is_stared })
 
 ############################################################################
 
