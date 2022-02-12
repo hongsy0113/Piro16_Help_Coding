@@ -28,6 +28,7 @@ class SignupForm(forms.Form):
     nickname = forms.CharField()
     birth = forms.CharField()
     img = forms.ImageField(required = False)
+    img_recent = forms.CharField(required = False)
     introduction = forms.CharField(required = False)
     JOB_CHOICE = (('elementary_school', '초등학생'), ('middle_school', '중학생'), ('high_school', '고등학생'), ('university', '대학생'), ('programmer', '개발자'), ('parents', '학부모'), ('etc', '기타'))
     job = forms.ChoiceField(choices = JOB_CHOICE)
