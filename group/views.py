@@ -25,6 +25,7 @@ from django.core.files.storage import FileSystemStorage
 from config.settings import MEDIA_ROOT
 import mimetypes
 from user.update import *
+from .iframe import *
 
 ######## 그룹 메인 페이지 ########
 
@@ -652,6 +653,12 @@ class GroupPostDetailView(HitCountDetailView):
         for answer in answers:
             replies =  GroupAnswer.objects.filter(parent_answer= answer).order_by('answer_order')
             answers_reply_dict[answer] = replies
+
+        ### iframe 
+        iframe_url = post.attached_link
+        iframe = get_iframe(iframe_url, 800, 600)
+        context['iframe'] = iframe
+        ####
 
         context['group'] = post.group
         context['username']= username
