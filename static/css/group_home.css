@@ -48,6 +48,7 @@
     color: #FFFFFF;
     font-size: 24px;
     line-height: 105%;
+    cursor: pointer;
 }
 
 /* 게시물 정렬 */
