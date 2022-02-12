@@ -19,7 +19,7 @@
         <div><p>직업</p><p>{{ user.get_job_display }}</p></div>
       </div>
       <div class="mypage__profile__text-content">
-        <div><p>레벨</p><p>{{ user.get_level }}</p></div>
+        <div><p>레벨</p><p>레벨 넣어야 함</p></div>
         <div><p>좋아요 수</p><p>{{ user.total_like }}</p></div>
         <div><p>포인트</p><p>{{ user.points }}</p></div>
       </div>
@@ -27,10 +27,12 @@
     <div class="mypage__profile__text-content">
       <div><p>소개</p><p>{{ user.introduction }}</p></div>
     </div>
+    <div class="mypage__profile__btn">
+      <button class="btn btn-secondary"><a class="text-white" href="{% url 'user:mypage_revise' %}" style="text-decoration: none">개인정보 수정</a></button>
+      <button class="btn btn-secondary"><a class="text-white" href="{% url 'user:mypage_point' %}" style="text-decoration: none">나의 포인트 현황</a></button>
+    </div>
   </div>
 </div>
-  <button class="btn btn-secondary"><a class="text-white" href="{% url 'user:mypage_revise' %}" style="text-decoration: none">개인정보 수정</a></button>
-  <button class="btn btn-secondary"><a class="text-white" href="{% url 'user:mypage_point' %}" style="text-decoration: none">나의 포인트 현황</a></button>
   {% if messages %}{% for message in messages %}<p class="text-danger">{{ message.message }}</p>{% endfor %}{% endif %}
   <div class="mypage__options">
     <h3 class="mypage__options__reward">나의 업적</h3>
@@ -54,16 +56,15 @@
   {% for question in questions %}
   <a href="{% url 'qna:question_detail' question.pk %}" class="mypage__question">
     <div class="mypage__question-left">
-      <p class="mypage__question__title" href="{% url 'qna:question_detail' question.pk %}">{{ question.title }}</p>
+      <p class="mypage__question__title">{{ question.title }}</p>
       <p class="mypage__question__content">{{ question.content }}</p>
     </div>
     <div class="mypage__question-right">
       <div>답변</div>
       <div>
-        {{ question.answer_ser.all | length }}
+        {{ question.answer_set.all | length }}
       </div>
     </div>
-
   </a>
   {% endfor %}
   <button class="btn btn-secondary"><a class="text-white" href="{% url 'user:mypage_question' %}" style="text-decoration: none">전체 질문 보기</a></button>
@@ -75,7 +76,10 @@
 <div class="mypage__answer__container">
   {% if answers %}
   {% for answer in answers %}
-  <p><a class="" href="{% url 'qna:question_detail' answer.question_id.pk %}" style="text-decoration: none">- A> {{ answer.content }}</a></p>
+  <a class="mypage__answer" href="{% url 'qna:question_detail' answer.question_id.pk %}" style="text-decoration: none">
+    <p class="mypage__answer__title">{{ answer.content }}</p>
+    <p class="mypage__answer__question">Q. {{ answer.question_id.title }}</p>
+  </a>
   {% endfor %}
   <button class="btn btn-secondary"><a class="text-white" href="{% url 'user:mypage_answer' %}" style="text-decoration: none">전체 답변 보기</a></button>
   {% else %}
