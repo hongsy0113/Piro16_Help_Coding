@@ -352,3 +352,28 @@ class AlertView(MypageView):
     def get_queryset(self):
         alerts = Alert.objects.filter(user = self.request.user).order_by('-time') 
         return alerts
+
+import json
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+
+# Check Alert (Ajax)
+@csrf_exempt
+def check_alert_ajax(request):
+    req = json.loads(request.body)
+    alert_id = req['id']
+    alert = Alert.objects.get(id = alert_id)
+    alert.checked = True
+    alert.save()
+    return JsonResponse({'alert_id': alert_id, 'new_alert_num': request.user.has_new_alert()})
+
+# Check All Alert (Ajax)
+@csrf_exempt
+def check_all_alert_ajax(request):
+    all_alert_id = []
+    for alert in Alert.objects.filter(user = request.user):
+        if not alert.checked:
+            all_alert_id.append(alert.id)
+            alert.checked = True
+            alert.save()
+    return JsonResponse({'all_alert_id': all_alert_id})
