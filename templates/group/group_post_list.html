@@ -12,7 +12,7 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}">
 {% endblock %}
 
-{% block title %} 그룹 커뮤니티 {% endblock %}
+{% block title %} 도와줘, 코딩 | {{ group.name }} | 커뮤니티 {% endblock %}
 
 {% block content %}
 <div class="group-post-board"> <!-- 그룹 내 커뮤니티 게시판 시작 -->
@@ -90,7 +90,7 @@
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
                     <path d="M13.1592 0.505859H1.90918C0.875 0.505859 0.0341797 1.34668 0.0341797 2.38086V10.8184C0.0341797 11.8525 0.875 12.6934 1.90918 12.6934H4.72168V15.1543C4.72168 15.4414 5.0498 15.6084 5.28125 15.4385L8.94043 12.6934H13.1592C14.1934 12.6934 15.0342 11.8525 15.0342 10.8184V2.38086C15.0342 1.34668 14.1934 0.505859 13.1592 0.505859Z" fill="white"/>
                     </svg>
-                    <span> {{ post.groupanswer_set.all | length }} </span>    <!-- 댓글 개수 수정 여기서 해주세요 -->
+                    <span>{{ post.groupanswer_set.all | length }}</span>    <!-- 댓글 개수 수정 여기서 해주세요 -->
                 </div>
 
                 <div class="content__post">
