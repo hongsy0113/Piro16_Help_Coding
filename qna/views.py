@@ -41,7 +41,7 @@ def question_answer_filter(questions, answer_filter_by):
 class ErrorMessages():
     title, content, image, attached_file, s_or_e_tag, tags = '', '', '', '', '', ''
     def validation_check(self,title, content, image, attached_file, s_or_e_tag, tags, command):
-        if 'create' in command:
+        if 'create' in command or 'update' in command:
             if not title:
                 self.title = '제목을 입력해주세요'
             elif len(title)>50:
@@ -121,7 +121,7 @@ def question_create(request):
             request.FILES.get('attached_file'),
             request.POST.get('s_or_e_tag'),
             request.POST.getlist('detail_tag'),
-            'create'
+            ['create']
         )
         if not error_messages.has_error():
             question = Question.objects.create(
@@ -247,35 +247,84 @@ class FileDownloadView(SingleObjectMixin, View):
 
 def question_update(request,pk):
     question = get_object_or_404(Question, pk=pk)
+    global basic_tags
     if request.method == "POST":
         form = QuestionForm(request.POST, request.FILES, instance =question)
 
-        question = form.save()  
-        question.s_or_e_tag = request.POST.get('s_or_e_tag')  # 카테고리 (스크래치, 엔트리, 기타) 중 1 선택
+        error_messages = ErrorMessages()
+        error_messages.validation_check(
+            form.data['title'],
+            form.data['content'],
+            request.FILES.get('image'),
+            request.FILES.get('attached_file'),
+            request.POST.get('s_or_e_tag'),
+            request.POST.getlist('detail_tag'),
+            ['update']
+        )
+        if not error_messages.has_error():
+            question = form.save()
 
-        # 상세 태그 (기능) 선택
-        tags = request.POST.getlist('detail_tag')
-        for tag in tags:
-            if len(QnaTag.objects.filter(tag_name=tag)) == 0:
-                QnaTag.objects.create(
-                    tag_name = tag,
-                )
+            tags = request.POST.getlist('detail_tag')
+            for tag in tags:
+                if len(QnaTag.objects.filter(tag_name=tag)) == 0:
+                    QnaTag.objects.create(
+                        tag_name = tag,
+                    )
 
-            # QnaTag db에 없으면 오류 발생
-            newtag = get_object_or_404(QnaTag, tag_name=tag)
-            question.tags.add(newtag)
+                # QnaTag db에 없으면 오류 발생
+                newtag = get_object_or_404(QnaTag, tag_name=tag)
+                question.tags.add(newtag)
 
-        question.save()
-        update_question(question, request.user)
+            question.save()
+            update_question(question, request.user)
+            return redirect('qna:question_detail', question.pk)
+        else:
+            
+            tags = request.POST.getlist('detail_tag')
 
-        return redirect('qna:question_detail', pk)
+            basic_tag_names = []
+            extra_tag_names = []
+            for tag in tags:
+                if tag in basic_tags:
+                    basic_tag_names.append(tag)
+                else:
+                    extra_tag_names.append(tag)
+            original_information = OriginalInformation()
+            original_information.remember(request, ['create'])
+            ctx = {
+                'form': form, 
+                'error_messages': error_messages,
+                'original_information': original_information,
+                'basic_tag_names': basic_tag_names,  
+                'extra_tag_names': extra_tag_names,
+                }
+            return render(request, 'qna/question_form.html', context=ctx)
+        # question = form.save()  
+        # question.s_or_e_tag = request.POST.get('s_or_e_tag')  # 카테고리 (스크래치, 엔트리, 기타) 중 1 선택
+
+        # # 상세 태그 (기능) 선택
+        # tags = request.POST.getlist('detail_tag')
+        # for tag in tags:
+        #     if len(QnaTag.objects.filter(tag_name=tag)) == 0:
+        #         QnaTag.objects.create(
+        #             tag_name = tag,
+        #         )
+
+        #     # QnaTag db에 없으면 오류 발생
+        #     newtag = get_object_or_404(QnaTag, tag_name=tag)
+        #     question.tags.add(newtag)
+
+        # question.save()
+        # update_question(question, request.user)
+
+        # return redirect('qna:question_detail', pk)
 
     else:
         form = QuestionForm(instance=question)
         # TODO : 선택 태그 뭘 선택했었는 지를 ctx로 넘겨주자
         # 기본 태그와 추가 태그 다르게 넘기자
         # TODO :  기본 태그 가 바뀌게 된다면 아래 리스트 수정해야 됨.
-        global basic_tags
+        
         tags = question.tags.all()
         basic_tag_names = []
         extra_tag_names = []

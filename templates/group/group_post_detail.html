@@ -41,8 +41,13 @@
     </div>
     {% endif %}
     <div>
-        <label>첨부 링크</label>
-        <div>{{ post.attached_link }}</div>
+        
+        <div>
+            {% if post.attached_link %}
+            <label>첨부 링크</label>
+            <a href="{{ post.attached_link }}">{{ post.attached_link }}</a>
+            {% endif %}
+        </div>
     </div>
 
     <hr>

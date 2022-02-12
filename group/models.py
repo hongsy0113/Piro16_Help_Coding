@@ -15,12 +15,12 @@ def group_thumbnail_path(instance, filename):
 # group 게시판 이미지
 def group_post_img_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/group_<group.id>/<filename>
-    return 'group_{0}/image/{1}'.format(instance.id, filename)
+    return 'group_{0}/image/{1}'.format(instance.name, filename)
 
 # group 게시판 첨부코드
 def group_post_code_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/group_<group.id>/<filename>
-    return 'group_{0}/code/{1}'.format(instance.id, filename)
+    return 'group_{0}/code/{1}'.format(instance.name, filename)
 ######################################
 
 # 그룹
