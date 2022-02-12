@@ -5,6 +5,10 @@
 <link rel="stylesheet" href="{% static 'css/signup_login.css' %}">
 {% endblock css %}
 
+{% block js %}
+<script type="text/javascript" src="/static/js/user_signup.js" defer></script>
+{% endblock %}
+
 {% block content %}
 <div class="signup__container">
     <h1>도와줘코딩 가입하기</h1>
@@ -65,8 +69,11 @@
                     <input type="radio" name="img_setting" value="{{ base_image }}" {% if original_information.img_setting == base_image %}checked{% endif %}>
                     <img src="/static/img/{{ base_image }}" height="50">
                     {% endfor %}
-                    <input name="img" type="file" value="{{ original_information.img.url }}"></input>
-                    <label>직접 설정하기 <input type="radio" name="img_setting" value="own_img" {% if original_information.img_setting == "own_img" or not original_information.img_setting%}checked{% endif %}></label>
+                    <input id="img_setting_own" type="radio" name="img_setting" value="own_img" {% if original_information.img_setting == "own_img" or not original_information.img_setting%}checked{% endif %}>
+                    <label>직접 설정하기</label>
+                    <input id="img_upload" type="file" name="img" onchange="imageChange();"></input>
+                    <p id="img_upload_name">선택된 이미지 : 없음</p>
+                    <input name="img_recent" id="img_recent" value="{{ original_information.img }}" hidden></input>
                 </div>
                     {% if sign_up_error.img %}<span class="signup__error"><svg width="5" height="14" viewBox="0 0 9 26" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M8.3125 21.5825C8.3125 23.7364 6.56016 25.4888 4.40625 25.4888C2.25234 25.4888 0.5 23.7364 0.5 21.5825C0.5 19.4286 2.25234 17.6763 4.40625 17.6763C6.56016 17.6763 8.3125 19.4286 8.3125 21.5825ZM0.952148 1.71919L1.61621 15.0004C1.64741 15.6241 2.16216 16.1138 2.78662 16.1138H6.02588C6.65034 16.1138 7.16509 15.6241 7.19629 15.0004L7.86035 1.71919C7.8938 1.0498 7.36016 0.48877 6.68994 0.48877H2.12256C1.45234 0.48877 0.918701 1.0498 0.952148 1.71919Z" fill="#EB6464"/>

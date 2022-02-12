@@ -14,7 +14,7 @@ class Question(models.Model, HitCountMixin):
     image = models.ImageField(upload_to='qna/image', null=True, blank=True)
 
     # .ent, .sb3 파일 등 소스코드 파일 업로드
-    attached_file = models.FileField(verbose_name='첨부파일', upload_to='qna/code', null=True, blank=True)
+    attached_file = models.FileField(verbose_name='첨부파일', upload_to='qna/file', null=True, blank=True)
     hit = models.IntegerField(verbose_name='조회수', default=0)
     created_at = models.DateTimeField(verbose_name='게시일자', auto_now_add=True)
     updated_at = models.DateTimeField(verbose_name='수정일자', auto_now=True)
@@ -98,3 +98,10 @@ class QnaTag(models.Model):
 
     def __str__(self):
         return self.tag_name
+
+##################
+## 첨부파일, 첨부이미지 
+
+class QuestionFiles(models.Model):
+    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='question_files')
+    attached_file = models.FileField(verbose_name='첨부파일', upload_to='qna/file')

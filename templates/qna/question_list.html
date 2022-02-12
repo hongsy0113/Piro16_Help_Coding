@@ -8,6 +8,9 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}">
 {% endblock %}
 
+{% block title %} 도와줘, 코딩 | 묻고 답하기 {% endblock %}
+
+
 {% block content %}
 <div class="qna__top-search-container">
     <div class="qna__top">
@@ -28,16 +31,30 @@
     </div>
 </div>
 
-<div class="qna__sortbox">
-    <form method="get" action="{% url 'qna:question_list' %}" class="float-end">
-        <!-- <select class="select_sort" onchange=""> -->
-        <select class="qna__select-sort" onchange="location=this.value; getSelectValue(this.form);">
-            <option class="qna__sort-option qna__sort-option--recent" value="?{% param_replace sort='recent' %}" {% if sort_by == 'recent' %} selected {% endif %}>최신순</option>
-            <option class="qna__sort-option qna__sort-option--liked" value="?{% param_replace sort='liked' %}" {% if sort_by == 'liked' %} selected {% endif %}>좋아요순</option>
-            <option class="qna__sort-option qna__sort-option--view" value="?{% param_replace sort='view' %}" {% if sort_by == 'view' %} selected {% endif %}>조회수순</option>
-        </select>
-    </form>
+<div class="list-sort">
+    <span class="list-sort__btn">
+        {% if sort_by != 'recent' %}
+        <a href="{% url 'qna:question_list' %}?{% param_replace sort='recent' page=1 %}">최신순</a>
+        {% else %}
+        최신순
+        {% endif %}
+    </span>
+    <span class="list-sort__btn">
+        {% if sort_by != 'view' %}
+        <a href="{% url 'qna:question_list' %}?{% param_replace sort='view' page=1 %}">조회수순</a>
+        {% else %}
+        조회수순
+        {% endif %}
+    </span>
+    <span class="list-sort__btn">
+        {% if sort_by != 'liked' %}
+        <a href="{% url 'qna:question_list' %}?{% param_replace sort='liked' page=1 %}">좋아요순</a>
+        {% else %}
+        좋아요순
+        {% endif %}
+    </span>
 </div>
+
 
 <div class="qna__filterbox">
     <form method="GET" action="{% url 'qna:question_list' %}" class="qna__filterbox--form" >
@@ -88,8 +105,12 @@
                     <span class="tag__entry">엔트리</span>
                     {% else %}
                     <span class="tag__etc">기타</span>
-                    {% endif %}
+                    {% endif %}      
                 </div>
+                <!-- 상세태그 가져오는 코드입니다. 참고해서 css 완성해주세요. 고마워요 -->
+                {% for tag in question.tags.all %}
+                    <span class="tag__etc">{{ tag }}</span>
+                {% endfor %}
                 <div class="question__info">
                     <span>{{ question.user }} · 조회 {% get_hit_count for question %} · 좋아요 {{ question.like_user.all | length }} · {{ question.created_at | date:'y.m.d' }}</span>
                 </div>

@@ -23,12 +23,15 @@
         <form action="" method="post" enctype="multipart/form-data">
             {% csrf_token %}
             <div class="post-create__input">
-                <input class="input-title" placeholder="제목을 50자 이내로 입력하세요." name="title" type="text" />
+                <input class="input-title" placeholder="제목을 50자 이내로 입력하세요." name="title" type="text"  
+                value="{% if original_information %}{{ original_information.title }}{% else %}{{ post.title }}{% endif %}"/>
             </div>
-
+            {{ error_messages.title }} <!-- 제목 에러 메시지 -->
             <div class="post-create__input">
-                <textarea class="input-content"  placeholder="내용을 입력하세요." name="content"></textarea>
+                <!-- textarea 한줄에 안 쓰면 공백도 계속 추가되어 버림. 이대로 두거나 공백 없애주는 방법 찾거나 -->
+                <textarea class="input-content"  placeholder="내용을 입력하세요." name="content">{% if original_information %}{{ original_information.content }}{% else %}{{ post.content }}{% endif %}</textarea>
             </div>
+            {{ error_messages.content }} <!-- 내용 에러 메시지 -->
 
             <div class="post-create__img post-create__form">
                 <div class="text-container">
@@ -36,9 +39,10 @@
                 </div>
                 <div class="group-post__form-box">
                     <!-- <input class="group-post__form-input group-post__form-input--image" type="file" id="image" name="image" placeholder="첨부파일" value="{% if post.image %}{{ post.image.url }}{% endif %}"> -->
-                    <input class="group-post__form-input group-post__form-input--image" placeholder="첨부파일">
+                    <div class="group-post__form-input group-post__form-input--image">첨부파일</div>
                     <label for="image" class="group-post__form-label">사진 올리기</label>
                     <input type="file" id="image" class="form__input--file" name="image" value="{% if post.image %}{{ post.image.url }}{% endif %}">
+                    <input name="img_recent" id="img_recent" value="{{ original_information.img }}" hidden></input>
                 </div>
             </div>
 
@@ -46,12 +50,12 @@
                 <div class="text-container">
                     <span>링크</span>
                 </div>
-                <input class="group-post__form-input--link" placeholder="작품 링크를 추가하세요." name="attached_link" type="url" maxlength="255" value="
-                {% if form.atta_attached_link %}
-                {{ form.attached_link.value }}
-                {% endif %}
-                ">
+                <input class="group-post__form-input--link" placeholder="작품 링크를 추가하세요." name="attached_link" type="text" maxlength="255" 
+                value="{% if original_information %}{{ original_information.attached_link }}{% else %}{% if post.attached_link %}{{ post.attached_link }}{% endif %}{% endif %}"/>
+                <!-- 여기도 한줄에 안 쓰면 공백도 계속 추가되어 버림. 이대로 두거나 공백 없애주는 방법 찾거나 -->
             </div>
+            <!-- input type 을 url로 하면 자체적으로 url 아니면 제출을 안 받아서 에러메시지 커스톰 하기 위해 text type으로 바꿈 -->
+            {{ error_messages.attached_link }} <!-- 링크 에러 메시지 -->
 
             <div class="post-create__attached-file post-create__form">
                 <div class="text-container">
@@ -71,19 +75,22 @@
                     <span class="post-crate__error">{{ category_error }}</span>
                 </div>
                 <div class="post-crate__category-select">
-                    <input type="radio" name="category" value="S" id="show" class="tag" {% if group_post.category == 'S' %} checked {% endif %}/>
+                    <input type="radio" name="category" value="S" id="show" class="tag" 
+                    {% if original_information.category == 'S' or post.category == 'S' %} checked {% endif %}/>
                     <label for="show">자랑하기</label>
-                    <input type="radio" name="category" value="Q" id="question" class="tag" {% if group_post.category == 'Q' %} checked {% endif %} />
+                    <input type="radio" name="category" value="Q" id="question" class="tag" 
+                    {% if original_information.category == 'Q' or post.category == 'Q' %} checked {% endif %} />
                     <label for="question">질문하기</label>
-                    <input type="radio" name="category" value="ETC" id="etc" class="tag"  {% if group_post.category == 'ETC' %} checked {% endif %}/>
+                    <input type="radio" name="category" value="ETC" id="etc" class="tag"  
+                    {% if original_information.category == 'ETC' or post.category == 'ETC' %} checked {% endif %}/>
                     <label for="etc">기타</label>
                 </div>
-
             </div>
+            {{ error_messages.category }} <!-- 카테고리 에러 메시지 -->
 
             <div class="post-create__btn">
                 <button type="submit" class="btn-save btn-effect">올리기</button>
-                <a href="{% url 'group:group_list' %}" class="btn-return btn-effect">취소</a>
+                <a href="{% url 'group:post_list' group.pk %}" class="btn-return btn-effect">취소</a>
             </div>
         </div>
     </form>
