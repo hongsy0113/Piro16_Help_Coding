@@ -39,9 +39,10 @@
                 </div>
                 <div class="group-post__form-box">
                     <!-- <input class="group-post__form-input group-post__form-input--image" type="file" id="image" name="image" placeholder="첨부파일" value="{% if post.image %}{{ post.image.url }}{% endif %}"> -->
-                    <input class="group-post__form-input group-post__form-input--image" placeholder="첨부파일">
+                    <div class="group-post__form-input group-post__form-input--image">첨부파일</div>
                     <label for="image" class="group-post__form-label">사진 올리기</label>
                     <input type="file" id="image" class="form__input--file" name="image" value="{% if post.image %}{{ post.image.url }}{% endif %}">
+                    <input name="img_recent" id="img_recent" value="{{ original_information.img }}" hidden></input>
                 </div>
             </div>
 
