@@ -72,6 +72,10 @@ class User(AbstractUser):
             if not alert.checked:
                 new_alert_num += 1
         return new_alert_num
+    
+    def get_new_alert(self):
+        return Alert.objects.filter(user = self, checked = False).order_by('-time')[:3]
+
         
 class GetPoint(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -144,5 +148,9 @@ class Alert(models.Model):
     def related_url(self):
         if self.alert_type in ['new_comment', 'new_reply']:
             return '/qna/{}/'.format(self.related_id)  # related_id : question id
+        elif self.alert_type in ['level_up', 'level_change']:
+            return '/mypage/point/'
+        elif self.alert_type in ['get_reward']:
+            return '/mypage/reward/'
         else:
             return '#'
