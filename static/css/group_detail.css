@@ -18,7 +18,7 @@ img {
 .container-top__title--name {
     font-family: Noto Sans CJK KR;
     font-weight: bold;
-    font-size: 48px;
+    font-size: 47px;
     line-height: 150%;
     color: #000000;
 }
@@ -33,12 +33,40 @@ img {
 /* 페이지 이동 버튼 */
 .group-detail__container--button {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
+    align-items: center;
     padding-bottom: 50px;
 }
 
-.container-button {
-    width: 400px;
+.button-left__like {
+    padding: 10px 24px 10px;
+    background: #FF8989;
+    border: 2px solid #FF8989;
+    box-sizing: border-box;
+    border-radius: 26px;
+    cursor: pointer;
+}
+
+.button-left__like--private {
+    display: hidden;
+}
+
+.button-left__like {
+    font-size: 18px;
+    color: #FFFFFF;
+}
+
+.button-left__like span {
+    font-family: Noto Sans CJK KR;
+    font-weight: bold;
+    font-size: 22px;
+    line-height: 105%;
+    color: #FFFFFF;
+    padding-left: 5px;
+}
+
+.container-button__right {
+    width: 100%x;
     display: flex;
     justify-content: space-between;
 }
@@ -54,12 +82,14 @@ img {
 .star__group {
     display: flex;
     align-items: center;
+    margin-right: 30px;
 }
 
 .group__keyword-star svg {
     width: 28px;
     height: 28px;
     margin-right: 5px;
+    cursor: pointer;
 }
 
 .star__group span, .btn-community span {
@@ -167,11 +197,12 @@ img {
 }
 
 .top-right__button {
-    padding: 12px 24px 10px;
+    padding: 12px 20px 10px;
     background: #37C6E6;
     border: 2px solid #37C6E6;
     box-sizing: border-box;
     border-radius: 26px;
+    cursor: pointer;
 }
 
 .top-right__button span {
@@ -247,7 +278,7 @@ img {
 .bottom-btn__box {
     display: flex;
     justify-content: center;
-    padding-top: 30px;
+    padding-top: 50px;
 }
 
 .bottom-btn__box a {
