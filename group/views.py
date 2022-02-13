@@ -85,7 +85,8 @@ def group_search_public(request):
         groups = Group.objects.all().filter(Q(name__icontains=query) & Q(mode='PUBLIC'))
         ctx = { 
             'groups': groups,
-            'query': query
+            'query': query,
+            'ani_image': static('image/helphelp.png'),
         }
 
     return render(request, 'group/group_search_public.html', context=ctx)
