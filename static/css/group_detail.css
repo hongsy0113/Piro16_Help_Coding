@@ -30,7 +30,7 @@ img {
     padding: 5px 0px 0px 10px;
 }
 
-/* 페이지 이동 버튼 */
+/* 페이지 상단 버튼 */
 .group-detail__container--button {
     display: flex;
     justify-content: space-between;
@@ -66,9 +66,9 @@ img {
 }
 
 .container-button__right {
-    width: 100%x;
     display: flex;
-    justify-content: space-between;
+    /* width: 400px; */
+    /* justify-content: space-between; */
 }
 
 .container-button__btn {

@@ -1,3 +1,7 @@
+img {
+    object-fit: cover;
+}
+
 /* 내 그룹 상단 */
 .mygroup__top {
     display: flex;
