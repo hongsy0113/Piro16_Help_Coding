@@ -905,5 +905,3 @@ def interest_ajax(request):
     # group.save()
 
     return JsonResponse({ 'groupId': group_id, 'total_likes': total_likes, 'is_liked': not(is_liked) })
-
-
