@@ -385,3 +385,43 @@ answerEditSubmitHandleResponse = (answerId, content) => {
     const answerEditForm = document.querySelector(`.answer__edit--${answerId}`);
     answerEditForm.style.display = 'none';
 }
+
+//////////////////////////////////////////
+//// iframe fullscreen
+
+const iframeFullscreenButton = document.querySelector('.iframe__fullscreen');
+
+iframeFullscreenButton.addEventListener('click', function() {
+    onClickIframeFullscreen();
+})
+
+const onClickIframeFullscreen =() => {
+    const iframeContainer = document.querySelector('.iframe__container');
+    console.log(iframeContainer)
+    const body= document.body
+    document.querySelector("header").style.display = "none";
+    document.querySelector("section").style.display = "none";
+    iframeContainer.style.display ='block'
+    iframeContainer.style.width ='100%'
+    iframeContainer.style.height ='100%'
+    
+
+    document.body.append(iframeContainer);
+    const iframe = iframeContainer.firstElementChild;
+    iframe.style.width='100%'
+    iframe.style.height ='100%'
+    iframe.style.postion = 'absolute'
+    console.log(body)
+    console.log(iframe)
+}
+
+const fullscreen = element => {
+    if (element.requestFullscreen) return element.requestFullscreen()
+    if (element.webkitRequestFullscreen) return element.webkitRequestFullscreen()
+    if (element.mozRequestFullScreen) return element.mozRequestFullScreen()
+    if (element.msRequestFullscreen) return element.msRequestFullscreen()
+  }
+
+// iframeFullscreenButton.addEventListener('click', e => {
+//     fullscreen(document.querySelector('.iframe__container'));
+// })
