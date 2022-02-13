@@ -121,7 +121,7 @@
 
 
     <div class="group_post__search-container">  <!-- 게시글 검색 -->
-        <form class="group_post__search-box" action="{% url 'group:search_result' %}" method="get">
+        <form class="group_post__search-box" action="{% url 'group:search_result' group.pk %}" method="get">
             {% csrf_token %}
             <input type="search" placeholder="작품을 검색해보세요!" name="search" />
             <button type="submit">

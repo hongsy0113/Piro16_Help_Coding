@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="search-box">
-    <form action="{% url 'group:search_result' %}" method="get">
+    <form action="{% url 'group:search_result' group_pk %}" method="get">
         {% csrf_token %}
         <input type="search" placeholder="검색" name="search" />
         <button type="submit">검색</button>

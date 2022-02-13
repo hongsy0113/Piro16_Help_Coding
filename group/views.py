@@ -513,15 +513,15 @@ def post_list(request, pk):
     return render(request, 'group/group_post_list.html', context=ctx)
 
 # 게시글 검색
-def search_result(request):
+def search_result(request, pk):
     if 'search' in request.GET:
         query = request.GET.get('search')
-        posts = GroupPost.objects.all().filter(
+        posts = GroupPost.objects.filter(group__pk=pk).filter(
             Q(title__icontains=query) | # 제목으로 검색
             Q(content__icontains=query) # 내용으로 검색
         )
 
-    return render(request, 'group/search_result.html', {'query': query, 'posts': posts})
+    return render(request, 'group/search_result.html', {'query': query, 'posts': posts, 'group_pk': pk})
 
 # 게시글 작성
 def post_create(request, pk):
