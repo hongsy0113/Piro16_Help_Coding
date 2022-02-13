@@ -66,13 +66,16 @@
     <div class="group-post__list">  <!-- 게시글 목록 시작 -->
 
         <div class="gridbox">  
-            {% for post in posts %}
+            {% for post, img_src in posts_img_dict.items %}
             <div class="gridbox__item-post">    <!-- 그룹 게시글 하나 시작 -->
                 <div class="img__post">
                     {% if post.image %}
                     <img src="{{ post.image.url }}" height="200" width="200" class="img__post-img" />
+                    {% elif img_src %}
+                    <!-- 스크래치, 엔트리 iframe이 들어가있다면 해당하는 썸네일이 목록에서 보이도록 -->
+                    <img alt="" src="{{ img_src }}" height="200" width="200" class="img__post-img">
                     {% else %}
-                    <img src="../../static/image/none_image_group_post.jpeg" height="200" width="200" class="img__post-img" />
+                    <img src="/static/image/none_image_group_post.jpeg" height="200" width="200" class="img__post-img" />
                     {% endif %}
                 </div>
 

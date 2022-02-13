@@ -105,3 +105,10 @@ class QnaTag(models.Model):
 class QuestionFiles(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='question_files')
     attached_file = models.FileField(verbose_name='첨부파일', upload_to='qna/file')
+
+def group_thumbnail_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/group_<group.name>/<filename>
+    return 'test_{0}/{1}'.format(instance.pk, filename)
+class PkTest(models.Model):
+    auto_increment_id = models.AutoField(primary_key=True)
+    attached_file = models.FileField(verbose_name='첨부파일', upload_to='qna/file')

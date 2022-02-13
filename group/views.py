@@ -42,12 +42,10 @@ def group_home(request):
         is_star += ['True']
     else:
         is_star += ['False']
-    print(group)
-    print(is_star)
-    
+
 
     grouppp = GroupStar.objects.all()
-    print(grouppp)
+
     
     # 페이징 처리
     page = request.GET.get('page', '1')
@@ -169,7 +167,6 @@ def group_update(request, pk):
         # 에러 메세지
         error = GroupErrorMessage()
         error.validation_group(name, mode, prev_name, 'group_update')
-        print(error.has_error_group())
         if not error.has_error_group():
             group.save()
 
@@ -280,7 +277,6 @@ class GroupErrorMessage():
                     self.name = '이미 사용 중인 그룹명입니다.'
         elif 'group_create' == command:
             if Group.objects.filter(name=name):
-                print(name, prev)
                 self.name = '이미 사용 중인 그룹명입니다.'
 
     def has_error_group(self):
@@ -495,17 +491,25 @@ def post_list(request, pk):
         posts = posts.annotate(total_likes=Count('like_user')).order_by('-total_likes')
     elif sort_by == 'view':    # 조회수순
         posts = posts.order_by('-hit_count_generic__hits')
-
+    
     # 페이징 처리
     paginator = Paginator(posts, 6)    # 페이지당 6개씩 보여주기
     page_obj = paginator.get_page(page)
+    
+    ## 각 게시글과 iframe 관련 썸네일의 이미지 경로 딕셔너리 생성
+    dict = {}
+    for page in page_obj:
+        if page.attached_link:
+            dict[page] = get_img_src(page.attached_link)
+        else:
+            dict[page] = None
 
     ctx = {
         'posts': page_obj,
+        'posts_img_dict': dict,
         'group': group,
         'sort_by': sort_by
     }
-
     return render(request, 'group/group_post_list.html', context=ctx)
 
 # 게시글 검색
@@ -658,6 +662,7 @@ class GroupPostDetailView(HitCountDetailView):
         iframe_url = post.attached_link
         iframe = get_iframe(iframe_url, 800, 600)
         context['iframe'] = iframe
+        
         ####
 
         context['group'] = post.group
@@ -852,7 +857,7 @@ def group_star_ajax(request):
     else:
         is_star = False
 
-    print(is_star)
+
     if is_star == True:
         GroupStar.objects.delete(group=group, user=user)
         is_star = False
