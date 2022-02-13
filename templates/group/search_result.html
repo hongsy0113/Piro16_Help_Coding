@@ -1,5 +1,10 @@
 {% extends 'base.html' %}
 
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/base.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/group_search_result.css' %}" />
+{% endblock %}
+
 {% block content %}
 <div class="search-box">
     <form action="{% url 'group:search_result' %}" method="get">
