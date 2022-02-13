@@ -8,6 +8,7 @@ import base64
 import codecs
 import json
 import shutil, os
+import mimetypes
 from django.shortcuts import render, redirect, get_object_or_404
 from django.templatetags.static import static
 from django.db.models import Q
@@ -24,8 +25,8 @@ from django.views.generic import ListView, View
 from django.views.generic.detail import SingleObjectMixin
 from django.core.files.storage import FileSystemStorage
 from config.settings import MEDIA_ROOT
-import mimetypes
 from user.update import *
+from threading import Timer
 
 ######## 그룹 메인 페이지 ########
 
@@ -104,8 +105,8 @@ def group_create(request):
         error.validation_group(name, mode, '', 'group_create')
         
         if not error.has_error_group() and form.is_valid():
-            os.makedirs(MEDIA_ROOT + '/group_{}/thumbnail/'.format(request.POST['name']), exist_ok=True)
             group = form.save()
+            os.makedirs(MEDIA_ROOT + '/group_{}/thumbnail/'.format(group.pk), exist_ok=True)
             group.mode = mode
             group.maker = user    # 방장 = 접속한 유저
             group.members.add(user)  # 방장도 그룹의 멤버로 추가
@@ -115,8 +116,8 @@ def group_create(request):
             else:   # 다른 필드 에러 시(기존 파일 남아있도록)
                 os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
                 shutil.copyfile('./media/temp/{}'.format(request.POST['img_recent']),
-                './media/group_{}/thumbnail/{}'.format(group.name, request.POST['img_recent']))
-                group.image =  './group_{}/thumbnail/{}'.format(group.name, request.POST['img_recent'])
+                './media/group_{}/thumbnail/{}'.format(group.pk, request.POST['img_recent'])) ###
+                group.image =  './group_{}/thumbnail/{}'.format(group.pk, request.POST['img_recent']) ###
             
             group.save()
 
@@ -163,9 +164,9 @@ def group_update(request, pk):
         if request.FILES.get('image'):  # form valid 시
                 group.image = request.FILES.get('image')
         else:   # 다른 필드 에러 시(기존 파일 남아있도록)
-            os.makedirs(MEDIA_ROOT + '/group_{}/thumbnail/'.format(request.POST['name']), exist_ok=True)
+            os.makedirs(MEDIA_ROOT + '/group_{}/thumbnail/'.format(group.pk), exist_ok=True)
             shutil.copyfile('./media/temp/{}'.format(request.POST['img_recent']),
-            './media/group_{}/thumbnail/{}'.format(group.name, request.POST['img_recent']))
+            './media/group_{}/thumbnail/{}'.format(group.pk, request.POST['img_recent']))
             
         # # 기존 이미지는 유지
         # if group.image:
