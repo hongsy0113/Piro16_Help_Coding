@@ -40,10 +40,11 @@ def group_home(request):
     group_star = Group.objects.filter(star_group__user=user)
     # group_star = GroupStar.objects.filter(group=groups)
 
-    groups_star_dict = {}
-    for group_star in groups:
-        is_star = 'True'
-        groups_star_dict[group_star] = is_star
+    
+    
+    # for group_star in groups:
+    #     if is_star = 'True':
+    #         groups_star_dict[group_star] = is_star
 
     # 페이징 처리
     page = request.GET.get('page', '1')
@@ -52,16 +53,19 @@ def group_home(request):
     sort = request.GET.get('sort', 'star')
     if sort == 'name':
         groups = groups.order_by('name')
-    # elif sort == 'star':
-    #     groups = groups.aggregate(is_star=Sum('group')).order_by('-is_star')
-        # groups = groups.annotate(total_likes=Count('interests')).order_by('-total_likes')order_by('-is_star')
-    # elif sort == 'member':
-    #     groups = groups.order_by('-members')
-    # elif sort == 'date':  # django에서 기본 제공하는 create날짜 있는지 체크
-    #     groups = groups.order_by('date')
+    elif sort == 'star':
+        groups = groups.order_by('-star_group')
+        
     ### user의 닉네임이랑 같은 경우에 처리해야 하는 부분 이후 추가
     pagintor = Paginator(groups, 6)
     page_obj = pagintor.get_page(page)
+
+    groups_star_dict = {}
+    for group in page_obj:
+        if group in group_star:
+            groups_star_dict[group] = True
+        else:
+            groups_star_dict[group] = False
 
     ctx = { 
         'user': user,  #나중에는 쓸모 X 
@@ -114,7 +118,7 @@ def group_create(request):
 
             if request.FILES.get('image'):  # form valid 시
                 group.image = request.FILES.get('image')
-            else:   # 다른 필드 에러 시(기존 파일 남아있도록)
+            else:   
                 os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
                 shutil.copyfile('./media/temp/{}'.format(request.POST['img_recent']),
                 './media/group_{}/thumbnail/{}'.format(group.pk, request.POST['img_recent'])) ###
@@ -127,6 +131,7 @@ def group_create(request):
         
         original_info = OriginalGroupInfo()
         original_info.remember(request)
+        # 다른 필드 에러 시(기존 파일 남아있도록)
         if request.FILES.get('image'):
             os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
             with open('./media/temp/{}'.format(request.FILES.get('image')), 'wb+') as destination:
@@ -137,7 +142,8 @@ def group_create(request):
 
         ctx = { 
             'error': error,
-            'origin': original_info
+            'origin': original_info,
+            'temp_img_location': '/media/temp/'
         }
         
         return render(request, template_name='group/group_form.html', context=ctx)
@@ -147,7 +153,7 @@ def group_create(request):
         users = User.objects.all()
         # users = User.objects.exclude(user)
         # form.fields['maker'].queryset = users
-        ctx = { 'form': form }
+        ctx = { 'form': form, 'temp_img_location': '/media/temp/' }
         
         return render(request, 'group/group_form.html', context=ctx)
 
@@ -162,12 +168,9 @@ def group_update(request, pk):
         group.name = request.POST.get('name')
         name = group.name
 
-        if request.FILES.get('image'):  # form valid 시
-                group.image = request.FILES.get('image')
-        else:   # 다른 필드 에러 시(기존 파일 남아있도록)
-            os.makedirs(MEDIA_ROOT + '/group_{}/thumbnail/'.format(group.pk), exist_ok=True)
-            shutil.copyfile('./media/temp/{}'.format(request.POST['img_recent']),
-            './media/group_{}/thumbnail/{}'.format(group.pk, request.POST['img_recent']))
+            #os.makedirs(MEDIA_ROOT + '/group_{}/thumbnail/'.format(group.pk), exist_ok=True)
+            #shutil.copyfile('./media/temp/{}'.format(request.POST['img_recent']),
+            #'./media/group_{}/thumbnail/{}'.format(group.pk, request.POST['img_recent']))
             
         # # 기존 이미지는 유지
         # if group.image:
@@ -183,38 +186,43 @@ def group_update(request, pk):
 
         original_info = OriginalGroupInfo()
         original_info.remember(request)
-
-        if request.FILES.get('imgae'):
-            os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
-            with open('./media/temp/{}'.format(request.FILES.get('image')), 'wb+') as destination:
-                for chunk in request.FILES['image'].chunks():
-                    destination.write(chunk)
-        
-        original_info.image = request.POST['img_recent']
-
         # 에러 메세지
         error = GroupErrorMessage()
         error.validation_group(name, mode, prev_name, 'group_update')
 
         if not error.has_error_group():
+            if request.FILES.get('image'):  # form valid 시
+                group.image = request.FILES.get('image')
+            else:   # 다른 필드 에러 시(기존 파일 남아있도록)
+                    group.image = './media/group_{}/thumbnail/{}'.format(group.pk, request.POST['img_recent'])
             group.save()
 
             return redirect('group:group_detail', pk)
 
+        # 에러 메세지가 존재할 때
+        if request.FILES.get('image'):
+            #os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
+            with open('/media/group_{}/thumbnail/{}'.format(group.pk, request.POST['img_recent']), 'wb+') as destination:
+                for chunk in request.FILES['image'].chunks():
+                    destination.write(chunk)
+        
+            original_info.image = request.POST['img_recent']
+
         ctx = { 
             'error': error,
-            'origin': original_info
+            'origin': original_info,
+            'temp_img_location': '/media/group_{}/thumbnail/'.format(group.pk)
         }
 
         return render(request, template_name='group/group_form.html', context=ctx)
 
     else:
         form = GroupForm(instance=group)
-        print(group.image.url.split('/')[-1])
         ctx = { 
             'group': group, 
             'form': form,
-            'current_image': group.image.url.split('/')[-1]
+            'current_image': group.image.url.split('/')[-1],
+            'temp_img_location': '/media/group_{}/thumbnail/'.format(group.pk)
         }
 
         return render(request, template_name='group/group_form.html', context=ctx)
@@ -263,12 +271,11 @@ def group_detail(request, pk):
     group = get_object_or_404(Group, pk=pk)
 
     group_star = GroupStar.objects.filter(Q(group=group) & Q(user=user))
-
-    if group_star:
-        is_star = 'True'
+    if GroupStar.objects.filter(Q(group=group) & Q(user=user)):
+        is_star = True
     else:
-        is_star = 'False'
-    
+        is_star = False
+
     mygroup = user.group_set.all()
     members = group.members.all()
     group.maker = members[0]
@@ -346,7 +353,7 @@ def create_code_ajax(request):
     req = json.loads(request.body)    
     group_id = req['groupId']
     group = get_object_or_404(Group, pk=group_id)
-    group.code = get_invite_code()
+    # group.code = get_invite_code()
     group.save()
     code = group.code
 

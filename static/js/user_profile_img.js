@@ -18,8 +18,11 @@ function imageChange(event) {
   imageUploadName.innerHTML = '선택된 이미지 : ' + String(imageUpload.value.split('\\').reverse()[0]);
   const imageRecent = document.querySelector('#img_recent');
   imageRecent.value = String(imageUpload.value.split('\\').reverse()[0]);
-  const imageButton = document.querySelector('#img_setting_own');
-  imageButton.checked = true;
+  try {
+    const imageButton = document.querySelector('#img_setting_own');
+    imageButton.checked = true;
+  } catch (e) {
+  }
   const imageDisplay = document.querySelector('#img_display');
   imageDisplay.hidden = false;
   imageDisplay.src = URL.createObjectURL(event.target.files[0]);
@@ -51,6 +54,7 @@ function passwordChange() {
   }
 }
 
+console.log("ffff");
 imageLoad();
 try {
   passwordLoad();
