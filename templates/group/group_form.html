@@ -6,6 +6,10 @@
     <link rel="stylesheet" href="{% static 'css/group_create.css' %}" />
 {% endblock %}
 
+{% block js %}
+    <script src="{% static 'js/user_signup.js' %}" defer></script>
+{% endblock %}
+
 {% block title %} 그룹 만들기 {% endblock %}
 
 {% block content %}
@@ -38,9 +42,9 @@
                 <div class="text-container">
                 <label for="image">대표이미지</label>
                 </div>
-                <p>{% if group.image %}{{ group.image.url }}{% elif origin.image %}{{ origin.image }}{% endif %}</p> 
-                <p class="img-form">{{ form.image }}</p>
-                <input class="img-form" name="image" type="file" value="{% if group.image %} {{ group.image.url }} {% elif origin.image %} {{ origin.image.url }} {% endif %}" />
+                <input id="img_upload" type="file" name="image" onchange="imageChange();"></d>
+                <p id="img_upload_name">선택된 이미지 : 없음</p>
+                <input name="img_recent" id="img_recent" value="{% if current_image %}{{ current_image }}{% else %}{{ origin.image }}{% endif %}" hidden ></input>
             </div>
 
             <div class="group-crate__mode select__group-mode">
