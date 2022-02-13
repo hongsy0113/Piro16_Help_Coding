@@ -26,7 +26,7 @@ def group_post_code_path(instance, filename):
 # 그룹
 class Group(models.Model):
     name = models.CharField(verbose_name='그룹명', max_length=30)
-    intro = models.TextField(verbose_name='그룹 소개', max_length=250, blank=True)
+    intro = models.TextField(verbose_name='그룹 소개', blank=True)
     maker = models.ForeignKey(User, verbose_name='방장', on_delete=models.CASCADE, null=True, related_name='group_maker')
     code = models.CharField(verbose_name='초대 코드', max_length=20, null=True, blank=True)  #랜덤 코드 길이 설정
     image = models.ImageField(upload_to=group_thumbnail_path, null=True, blank=True)
