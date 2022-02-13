@@ -1,4 +1,10 @@
 {% extends 'base.html' %}
+
+{% load static %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/question_detail.css' %}">
+{% endblock css %}
+
 {% load hitcount_tags %}
 
 {% block js %}
@@ -10,51 +16,52 @@
 {{ question.id|json_script:"question_id" }}
 <main>
     <h1>{{ question.title }}</h1>
-    <hr>
     <p>{{ question.created_at|date:'y.m.d'}}
     조회 {% get_hit_count for question %}
     좋아요 {{ total_likes }}
     {{ username }}</p>
-    {% if question.s_or_e_tag == 'S' %}
-    <div class="btn btn-success">스크래치</div>
-    {% elif question.s_or_e_tag == 'E' %}
-    <div class="btn btn-danger">엔트리</div>
-    {% else %}
-    <div class="btn btn-secondary">기타</div>
-    {% endif %}
-
-    {% for tag in tags %}
-        <div class="btn btn-info">
+    <div class="question__detail__tagcontainer">
+        {% if question.s_or_e_tag == 'S' %}
+        <div class="question__detail__tag question__detail__scratchtag">스크래치</div>
+        {% elif question.s_or_e_tag == 'E' %}
+        <div class="question__detail__tag question__detail__entrytag">엔트리</div>
+        {% else %}
+        <div class="question__detail__tag question__detail__etctag">기타</div>
+        {% endif %}
+        
+        {% for tag in tags %}
+        <div class="question__detail__tag">
             {{ tag.tag_name }}
         </div>
-    {% endfor %}
-
-    <h3>{{ question.content }}</h3>
-    
-    {% if question.image %}<img src="{{ question.image.url }}" height="100">{% endif %}
-    
-    {% if question.attached_file %}
-    <div>
-        <label>첨부 파일</label>
-        <div>{{ question.get_filename }}</div>
-        <form action="{% url 'qna:download' question.id %}">
-            <button type="submit">
-            다운로드
-            </button>
-        </form>
+        {% endfor %}
     </div>
-    {% endif %}
-    
     <hr>
-    <div class="question__like-btn btn btn-secondary">
-        {% if is_liked %}
-        <i class="fas fa-heart"></i>
-        {% else %}
-        <i class="far fa-heart"></i>
+    <div class="question__detail__content">
+        <p>{{ question.content }}</p>
+        
+        {% if question.image %}<img src="{{ question.image.url }}" height="100">{% endif %}
+        
+        {% if question.attached_file %}
+        <div>
+            <label>첨부 파일</label>
+            <div>{{ question.get_filename }}</div>
+            <form action="{% url 'qna:download' question.id %}">
+                <button type="submit">
+                    다운로드
+                </button>
+            </form>
+        </div>
         {% endif %}
-        <span>좋아요 {{ total_likes }}개</span>
+        <div class="question__like-btn">
+            {% if is_liked %}
+            <i class="fas fa-heart"></i>
+            {% else %}
+            <i class="far fa-heart"></i>
+            {% endif %}
+            <span>{{ total_likes }}</span>
+        </div>
     </div>
-
+        
     <hr>
 
     <div class="question__buttons">
