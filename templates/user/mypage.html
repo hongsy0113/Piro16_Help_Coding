@@ -19,7 +19,7 @@
         <div><p>직업</p><p>{{ user.get_job_display }}</p></div>
       </div>
       <div class="mypage__profile__text-content">
-        <div><p>레벨</p><p>레벨 넣어야 함</p></div>
+        <div><p>레벨</p><p>{{ user.get_level }}</p></div>
         <div><p>좋아요 수</p><p>{{ user.total_like }}</p></div>
         <div><p>포인트</p><p>{{ user.points }}</p></div>
       </div>
@@ -40,16 +40,27 @@
     <h3 class="mypage__options__answer">최근 답변</h3>
   </div>
 
+
 <div class="mypage__reward__container">
   {% if rewards %}
-  {% for reward in rewards %}
-  <p>- [업적] {{ reward.reward.name }} (달성일 : {{ reward.get_date }})</p>
-  {% endfor %}
+  <div>
+    {% for reward in rewards %}
+    <div class="mypage__reward">
+      <div class="mypage__reward__img__container">
+        <img src="{{ reward.img.url }}" alt="rewardimg">
+      </div>
+      <p class="mypage__reward__name">{{ reward.reward.name }}</p> 
+      <p class="mypage__reward__content">{{ reward.reward.info }}</p> 
+      <p class="mypage__reward__date">{{ reward.get_date | date:'y.m.d' }}</p>
+    </div>
+    {% endfor %}
+  </div>
   <button class="btn btn-secondary"><a class="text-white" href="{% url 'user:mypage_reward' %}" style="text-decoration: none">전체 업적 보기</a></button>
   {% else %}
   <p>- 아직 달성한 업적이 없습니다.</p>
   {% endif %}
 </div>
+
 <div class="mypage__question__container">
   
   {% if questions %}
@@ -73,6 +84,7 @@
   {% endif %}
   <button class="btn btn-secondary"><a class="text-white" href="{% url 'qna:question_list' %}" style="text-decoration: none">질문하러 가기</a></button>
 </div>
+
 <div class="mypage__answer__container">
   {% if answers %}
   {% for answer in answers %}

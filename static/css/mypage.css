@@ -2,6 +2,7 @@
     padding: 30px 75px;
     display: flex;
     justify-content: space-between;
+    margin-bottom: 40px;
 }
 
 .mypage__profile__img {
@@ -69,7 +70,7 @@
     gap: 20px;
     padding-left: 50px;
     margin-bottom: 5px;
-    border-bottom: 1px solid #bdbdbd;
+    border-bottom: 2px solid #bdbdbd;
 }
 
 .mypage__options > h3 {
@@ -83,13 +84,55 @@
     border-bottom: none;
 }
 .mypage__options > h3:first-of-type {
-    color: black;
-    border-bottom: 3px solid #000;
+    color: #4F4f4f;
+    border-bottom: 3px solid #4f4f4f;
 }
 
 .mypage__options > h3:hover, .mypage__options > h3:active {
     color: black;
 }
+.mypage__reward__container> div {
+    padding: 45px 30px;
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 35px;
+}
+
+.mypage__reward {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    margin-bottom: 45px;
+}
+
+.mypage__reward__img__container{
+    width: 175px;
+    height: 175px;
+    border-radius: 16px;
+    background-color: #c4c4c4;
+    margin-bottom: 10px;
+}
+
+.mypage__reward__img__container img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
+.mypage__reward__name {
+    font-size: 24px;
+    line-height: 150%;
+    font-weight: bold;
+    margin: 0;
+}
+
+.mypage__reward__content, .mypage__reward__date {
+    font-size: 14px;
+    line-height: 150%;
+    color: #4e4e4e;
+    margin: 0;
+}
+
 
 .mypage__question__container, .mypage__answer__container {
     display: none;
@@ -100,11 +143,16 @@
     color: black;
     /* height: 211px; */
     padding: 20px 50px;
+    margin: 0 10px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     overflow: hidden;
     border-bottom: 1px solid #bdbdbd;
+}
+
+.mypage__question:last-of-type {
+    margin-bottom: 15px;
 }
 
 .mypage__question-left {
@@ -158,6 +206,11 @@
     margin-bottom: 5px;
     border-bottom: 1px solid #bdbdbd;
     justify-content: space-between;
+    margin: 0 10px ;
+}
+
+.mypage__answer:last-of-type {
+    margin-bottom: 15px;
 }
 
 .mypage__answer :first-child {

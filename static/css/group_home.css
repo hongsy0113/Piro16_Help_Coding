@@ -1,3 +1,7 @@
+img {
+    object-fit: cover;
+}
+
 /* 내 그룹 상단 */
 .mygroup__top {
     display: flex;
@@ -48,6 +52,7 @@
     color: #FFFFFF;
     font-size: 24px;
     line-height: 105%;
+    cursor: pointer;
 }
 
 /* 게시물 정렬 */

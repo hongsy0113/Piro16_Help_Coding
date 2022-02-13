@@ -167,7 +167,6 @@ def sign_up(request):
                 if request.FILES.get('img'):
                     user.img = request.FILES.get('img')
                 else:
-                    os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
                     shutil.copyfile('./media/temp/{}'.format(request.POST['img_recent']),
                     './media/user_{}/thumbnail/{}'.format(user.email, request.POST['img_recent']))
                     user.img = '/user_{}/thumbnail/{}'.format(user.email, request.POST['img_recent'])
@@ -206,12 +205,14 @@ def sign_up(request):
                     destination.write(chunk)
         original_information.img = request.POST['img_recent']
         return render(request, 'user/signup.html', {'form': form, 'sign_up_error': sign_up_error,
-        'base_images': BASE_IMAGES, 'original_information': original_information, 'job_choice': JOB_CHOICE})
+        'base_images': BASE_IMAGES, 'original_information': original_information, 'job_choice': JOB_CHOICE,
+        'temp_img_location': '/media/temp/'})
             
     else:
         form = SignupForm()
         return render(request, 'user/signup.html', {'form': form, 'sign_up_error': '',
-        'base_images': BASE_IMAGES, 'original_information': '', 'job_choice': JOB_CHOICE})
+        'base_images': BASE_IMAGES, 'original_information': '', 'job_choice': JOB_CHOICE,
+        'temp_img_location': '/media/temp/'})
 
 # Activate
 def activate(request, uid64, token):
@@ -252,12 +253,14 @@ def my_page_revise(request):
         return redirect('user:login')
     if request.method == 'POST':
         form = MypageReviseForm(request.POST)
+        birth = birth_format(request.POST['birth-y'], request.POST['birth-m'], request.POST['birth-d'])
         command = ['mypage_revise']
+        print(request.POST['current_password'])
+        print(request.POST['new_password1'])
         if request.POST['current_password'] or request.POST['new_password1'] or request.POST['new_password2']:
             command += ['password_change']
         if request.POST.get('img_setting') != 'no_change_img':
             command += ['image_change']
-        birth = birth_format(request.POST['birth-y'], request.POST['birth-m'], request.POST['birth-d'])
         revise_error = ErrorMessages()
         revise_error.validation_check(
             user.email,
@@ -268,6 +271,7 @@ def my_page_revise(request):
             birth,
             request.FILES.get('img'),
             request.POST.get('img_setting'),
+            request.POST['img_recent'],
             request.POST.get('job'),
             command
         )
@@ -278,7 +282,10 @@ def my_page_revise(request):
                 updated += ' (비밀번호가 성공적으로 변경되었습니다.)'
             if 'image_change' in command:
                 if request.POST.get('img_setting') == 'own_img':
-                    user.img = request.FILES.get('img')
+                    if request.FILES.get('img'):
+                        user.img = request.FILES.get('img')
+                    else:
+                        user.img = '/user_{}/thumbnail/{}'.format(user.email, request.POST['img_recent'])
                 else:
                     shutil.copyfile('./static/img/{}'.format(request.POST.get('img_setting')),
                     './media/user_{}/thumbnail/{}'.format(user.email, request.POST.get('img_setting')))
@@ -293,11 +300,18 @@ def my_page_revise(request):
             return redirect('user:mypage')
         original_information = OriginalInformation()
         original_information.remember(request, command)
-        ctx = {'user': user, 'form': form, 'revise_error': revise_error, 'base_images': BASE_IMAGES, 'job_choice': JOB_CHOICE, 'original_information': original_information}
+        if request.FILES.get('img'):
+            with open('./media/user_{}/thumbnail/{}'.format(user.email, request.FILES.get('img')), 'wb+') as destination:
+                for chunk in request.FILES['img'].chunks():
+                    destination.write(chunk)
+        original_information.img = request.POST['img_recent']
+        ctx = {'user': user, 'form': form, 'revise_error': revise_error, 'base_images': BASE_IMAGES, 'job_choice': JOB_CHOICE,
+        'original_information': original_information, 'temp_img_location': '/media/user_{}/thumbnail/'.format(user.email)}
         return render(request, template_name = 'user/mypage_revise.html', context = ctx)
     else:
         form = MypageReviseForm(instance = user)
-        ctx = {'user': user, 'form': form, 'base_images': BASE_IMAGES, 'job_choice': JOB_CHOICE, 'current_image': user.img.url.split('/')[-1]}
+        ctx = {'user': user, 'form': form, 'base_images': BASE_IMAGES, 'job_choice': JOB_CHOICE,
+        'current_image': user.img.url.split('/')[-1], 'temp_img_location': '/media/user_{}/thumbnail/'.format(user.email)}
         return render(request, template_name = 'user/mypage_revise.html', context = ctx)
 
 # List View (Question, Answer, Reward, Point)
