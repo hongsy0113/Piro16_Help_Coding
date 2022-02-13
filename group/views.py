@@ -467,23 +467,24 @@ def wait_list_ajax(request):
     req = json.loads(request.body)
     group_id = req['id']
     group = get_object_or_404(Group, pk=group_id)
-    waits = group.waits.all()
-    waits_img = group.waits.get('image')
-    
-    for wait in waits:
-        if request.GET.get('accept'):
-            group.waits.remove(wait)
-            group.members.add(wait)
-            group.save()
-        elif request.GET.get('reject'):
-            group.waits.remove(wait)
-            group.save()
+    waits = group.waits.first()
 
-    JsonResponse({
+    return JsonResponse({
         'groupName': group.name,
         'waits': waits,
-        'waits_img': waits_img
     })
+
+# 공개그룹 대기자 수락 여부
+def wait_member_accept(request):
+
+    if request.GET.get('accept'):
+        group.waits.remove(wait)
+        group.members.add(wait)
+        group.save()
+    elif request.GET.get('reject'):
+        group.waits.remove(wait)
+        group.save()
+
 
 
 
