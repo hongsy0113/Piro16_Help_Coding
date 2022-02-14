@@ -40,17 +40,22 @@ def question_answer_filter(questions, answer_filter_by):
     return questions
 
 ### Error messages
-class ErrorMessages():
+# 이름이 user.view에 있는 것과 겹쳐서, 헷갈릴 여지가 있을 것 같습니다.
+# QnaErrorMessages가 좋을 것 같습니다.
+ # TODO : validation 체크할 때 request 객체와 form을 넘겨주는 건 어떨까요?
+# TODO : 넘겨주는 인자가 너무 많고, 순서 헷갈릴 여지도 있어보입니다.
+class QnaErrorMessages():
     title, content, image, attached_file, s_or_e_tag, tags = '', '', '', '', '', ''
-    def validation_check(self,title, content, image, attached_file, s_or_e_tag, tags, command):
+
+    def validation_check(self, request, command):
         if 'create' in command or 'update' in command:
-            if not title:
+            if not request.POST.get('title'):
                 self.title = '제목을 입력해주세요'
-            elif len(title)>50:
+            elif len(request.POST.get('title'))>50:
                 self.title = '제목은 50자 이내로 입력해주세요'
-            if not content:
+            if not request.POST.get('content'):
                 self.content = '내용을 입력해주세요'
-            if not s_or_e_tag:
+            if not request.POST.get('s_or_e_tag'):
                 self.s_or_e_tag = '카테고리를 선택해주세요'
 
     def has_error(self):
@@ -120,35 +125,22 @@ def question_create(request):
     if request.method == 'POST':
         form = QuestionForm(request.POST, request.FILES)
         
-        error_messages = ErrorMessages()
-        error_messages.validation_check(
-            form.data['title'],
-            form.data['content'],
-            request.FILES.get('image'),
-            request.FILES.get('attached_file'),
-            request.POST.get('s_or_e_tag'),
-            request.POST.getlist('detail_tag'),
-            ['create']
-        )
+        error_messages = QnaErrorMessages()
+
+        error_messages.validation_check(request, ['create'])
         if not error_messages.has_error():
             question = Question.objects.create(
-                title=form.data['title'],
-                content=form.data['content'],
+                #title=form.data['title'],
+                title=request.POST.get('title'),
+                #content=form.data['content'],
+                content=request.POST.get('content'),
                 image=request.FILES.get('image'),
-                attached_file=form.data['attached_file'],
+                #attached_file=form.data['attached_file'],
+                attached_file=request.FILES.get('attached_file'),
                 s_or_e_tag=request.POST.get('s_or_e_tag'),
                 user=request.user
             )
             # file
-
-            # print(formset.data)
-            # if formset.is_valid():
-            #     print(formset.cleaned_data)
-            #     for form in formset.cleaned_data:
-            #         x = form['attached_file']
-            #         print(x)
-            #         attached_file = QuestionFiles.objects.create(question = question, attached_file = x)
-            #         attached_file.save()
 
             tags = request.POST.getlist('detail_tag')
             for tag in tags:
@@ -266,16 +258,9 @@ def question_update(request,pk):
     if request.method == "POST":
         form = QuestionForm(request.POST, request.FILES, instance = question)
 
-        error_messages = ErrorMessages()
-        error_messages.validation_check(
-            request.POST.get('title'),
-            request.POST.get('content'),
-            request.FILES.get('image'),
-            request.FILES.get('attached_file'),
-            request.POST.get('s_or_e_tag'),
-            request.POST.getlist('detail_tag'),
-            ['update']
-        )
+        error_messages = QnaErrorMessages()
+
+        error_messages.validation_check(request,['update'])
         if not error_messages.has_error():
             if form.is_valid():
                 question = form.save()
