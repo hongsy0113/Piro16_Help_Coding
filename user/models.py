@@ -27,6 +27,12 @@ class Reward(models.Model):
 
     def __str__(self):
         return self.name
+    
+    def has_reward(self, user):
+        if GetReward.objects.get(user = user, reward = self):
+            return True
+        else:
+            return False
 
 
 class User(AbstractUser):
