@@ -367,6 +367,10 @@ def answer_ajax(request):
     user_id = req['user']
     user = get_object_or_404(User, pk=user_id)
     username = user.nickname
+    user_image_url = user.img.url if user.img else ''
+    
+    # 작성자 여부
+    is_author = True if user_id == Question.objects.get(pk=question_id).user.pk else False
     
     #### TODO ##########
     ## user 대표이미지 넘겨주는 건 유저 조금 구체화 된 다음에 추가
@@ -387,7 +391,16 @@ def answer_ajax(request):
 
     update_answer(this_question, new_answer, this_question.user, request.user)
 
-    return JsonResponse({'id': new_answer.id ,'content': content,'user':username, 'created_at':created_at} )
+    response = JsonResponse({
+        'id': new_answer.id ,
+        'content': content,
+        'user':username, 
+        'created_at':created_at,
+        'user_image_url':user_image_url,
+        'is_author':is_author,
+    })
+
+    return response
 
 # 대댓글 작성
 @csrf_exempt
@@ -399,10 +412,13 @@ def reply_ajax(request):
     user_id = req['user']
     user = get_object_or_404(User, pk=user_id)
     username = user.nickname
-
     # 작성하려는 대댓글이 속한 질문 구하기
     this_answer = get_object_or_404(Answer, pk=answer_id)
     this_question = this_answer.question_id
+
+    user_image_url = user.img.url if user.img else ''
+    # 작성자 여부
+    is_author = True if user_id == this_question.user.pk else False
     
     ## 새 답변의 order 필드를 정해주기 위한 부분. 
     current_answers = Answer.objects.filter(question_id=this_question.id).order_by('answer_order')
@@ -431,6 +447,8 @@ def reply_ajax(request):
         'content': content,
         'user':username, 
         'created_at':created_at,
+        'user_image_url':user_image_url,
+        'is_author':is_author,
     })
 
     return response
