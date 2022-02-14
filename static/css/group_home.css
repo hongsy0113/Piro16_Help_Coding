@@ -1,3 +1,7 @@
+img {
+    object-fit: cover;
+}
+
 /* 내 그룹 상단 */
 .mygroup__top {
     display: flex;
@@ -26,7 +30,7 @@
     text-align: center;
     font-family: Noto Sans CJK KR;
     text-decoration: none;
-    /* font-weight: bold; */
+    font-weight: bold;
     color: #FFFFFF;
     font-size: 24px;
     line-height: 105%;
@@ -44,10 +48,11 @@
     text-align: center;
     font-family: Noto Sans CJK KR;
     text-decoration: none;
-    /* font-weight: bold; */
+    font-weight: bold;
     color: #FFFFFF;
     font-size: 24px;
     line-height: 105%;
+    cursor: pointer;
 }
 
 /* 게시물 정렬 */
@@ -136,16 +141,18 @@
     overflow: hidden;
     text-overflow: ellipsis;
     word-wrap: break-word;
+    word-break: break-all;
     display : -webkit-box;
-    -webkit-line-clamp: 2;  /* 줄 개수 설정 */
+    -webkit-line-clamp: 1;  /* 줄 개수 설정 */
     -webkit-box-orient: vertical;
+    padding-bottom: 2px;
 }
 
 .content__group-name {
     text-decoration: none;
     font-weight: bold;
     font-size: 25px;
-    line-height: 105%;
+    line-height: 107%;
     margin-right: 3px;
     color: #000000;
 }

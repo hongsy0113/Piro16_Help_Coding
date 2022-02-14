@@ -4,16 +4,12 @@
     background: none;
 } */
 
-.group__code--alert-box, .group-join__alert-box, .group__member--all {
+.group-join__alert-box, .group__member--all, .group-join__select-box {
     background: rgb(195, 195, 247);
     color: rgb(0, 0, 0);
     padding: 20px;
     border-radius: 5px;
     display: none;
-}
-
-img {
-    object-fit: cover;
 }
 
 /* .hidden {

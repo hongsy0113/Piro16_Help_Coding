@@ -25,6 +25,14 @@
     <div class="btn btn-secondary">기타</div>
     {% endif %}
 
+    <!-- 블록코딩 실행 iframe -->
+    <!-- context에서 iframe으로 태그 전체 접근 가능-->
+    <div class="iframe__container">{{ iframe | safe }}</div>
+    
+    {% if iframe %}
+    <div class="btn btn-secondary iframe__fullscreen">전체보기</div>
+    {% endif %}
+
     <h3>{{ post.content }}</h3>
     
     {% if post.image %}<img src="{{ post.image.url }}" height="100">{% endif %}
@@ -41,7 +49,6 @@
     </div>
     {% endif %}
     <div>
-        
         <div>
             {% if post.attached_link %}
             <label>첨부 링크</label>

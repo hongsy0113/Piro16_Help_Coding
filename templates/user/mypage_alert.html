@@ -1,23 +1,61 @@
 {% extends 'base.html' %}
 
+  
+{% load static %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/mypage_alert.css' %}">
+{% endblock css %}
+{% block title %} 도와줘, 코딩 | 알림 {% endblock %}
+
+
 {% block content %}
-<div>
-  <h3>○ 알림 내역 ( {{ user.email }} )</h3>
-  <h3 id="alert-count">새로운 알림이 {{ user.has_new_alert }}개 있어요.</h3>
-  {% if alerts %}
-  <button onclick="checkAllAlert()">전체 확인</button>
-  {% for alert in alerts %}
-  <div>
-    {% if not alert.checked %}
-    <div id="alert-{{ alert.id }}">
-      <p>새로운 알림!</p>
-      <button onclick="checkAlert({{ alert.id }})">확인</button>
+<div> <!-- Ajax 때문에 id는 유지해주세요! -->
+  <div class="alert__title">
+    <div>
+      <h3>알림</h3>
+      {% if user.has_new_alert %}
+      <h3 id="alert-count">{{ user.has_new_alert }}</h3>
+    </div>
+    <button id="check-all-alert-button" onclick="checkAllAlert()">모두 읽음</button>
+    {% else %}
+    <h3 id="alert-count" class="alert__count__none"> </h3>
     </div>
     {% endif %}
-    <a href="{{ alert.related_url }}">{{ alert.content }}</a>
-    <p>{{ alert.time }}</p>
+  </div>
+  {% for alert in alerts %}
+  <div class="alert__outer-container">
+    <a href="{{ alert.related_url }}" onclick="viewAlert({{ alert.id }})" class="alert__container{% if not alert.checked %} alert__container-unread{% endif %}">
+      <div class="alert-left">
+        {% if not alert.checked %}
+        <div id="alert-{{ alert.id }}">
+          <div class="alert__dot alert__dot-unread"></div>
+        </div>
+        {% else %}
+        <div class="alert__dot alert__dot-read"></div>
+        {% endif %} <!-- 새 알림만 강조하고 싶으면 밑에 처럼 인라인 스타일 하나씩 넣어줘도 될 듯...? 임시로 넣어봤어! 근데 Ajax로 스타일 빼는 것도 구현해야 할 듯... (나중에) -->
+        <div class="alert__content"><p>{{ alert.content }}</p><p>{{ alert.time | date:'y.m.d a h:i' }}</p></div>
+      </div>
+      {% if not alert.checked %}
+      <button onclick="checkAlert({{ alert.id }})">읽음</button>
+      {% endif %}
+    </a>
+    
   </div>
     {% endfor %}
+    <script>
+        const requestViewAlert = new XMLHttpRequest();
+  
+        const viewAlert = (id) => {
+            const url = "/mypage/alert/check_ajax/";
+            requestViewAlert.open("POST", url, true);
+            requestViewAlert.setRequestHeader(
+                "Content-Type",
+                "application/x-www-form-urlencoded"
+            );
+            requestViewAlert.send(JSON.stringify({id: id}));
+        };
+    </script>
+
     <script>
       const requestCheckAlert = new XMLHttpRequest();
 
@@ -37,7 +75,13 @@
               const newAlertMessage = document.querySelector(`#alert-${alert_id}`);
               newAlertMessage.remove();
               const alertNumDisplay = document.querySelector(`#alert-count`);
-              alertNumDisplay.innerHTML = `새로운 알림이 ${new_alert_num}개 있어요.`;
+              if (new_alert_num != 0) {
+                  alertNumDisplay.innerHTML = `새로운 알림이 ${new_alert_num}개 있어요.`;
+              } else {
+                  alertNumDisplay.innerHTML = `새로운 알림이 없어요.`;
+                  const checkAllAlertButton = document.querySelector(`#check-all-alert-button`);
+                  checkAllAlertButton.remove();
+              }
           }
       };
 
@@ -69,7 +113,9 @@
                   newAlertMessage.remove();
               }
               const alertNumDisplay = document.querySelector(`#alert-count`);
-              alertNumDisplay.innerHTML = `새로운 알림이 0개 있어요.`;
+              alertNumDisplay.innerHTML = `새로운 알림이 없어요.`;
+              const checkAllAlertButton = document.querySelector(`#check-all-alert-button`);
+              checkAllAlertButton.remove();
           }
       };
 
@@ -79,9 +125,6 @@
           }
       };
     </script>
-  {% else %}
-  <p>- 알림이 없습니다.</p>
-  {% endif %}
 
   {% if is_paginated %}
   <ul class="pagination">

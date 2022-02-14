@@ -1,4 +1,3 @@
-
 from multiprocessing.dummy import JoinableQueue
 import queue
 from django.shortcuts import render, redirect, get_object_or_404
@@ -94,10 +93,15 @@ def question_list(request):
     paginator = Paginator(questions, 5)    # 페이지당 5개씩 보여주기
     page_obj = paginator.get_page(page)
 
+    dict ={}
+    for page in page_obj:
+        answers_count = Answer.objects.filter(question_id =page, answer_depth=0, is_deleted = False).count()
+        dict[page] = answers_count
     ctx = {
         'questions': page_obj,
         'sort_by':sort_by,
         'filter_by':tag_filter_by+[answer_filter_by],
+        'question_answer_count':dict,
     }
 
     return render(request, 'qna/question_list.html', context=ctx)
@@ -211,12 +215,15 @@ class QuestionDetailView(HitCountDetailView):
         context['previous_pk'] = previous_pk
 
         tags = self.object.tags.all()
-        username = self.object.user.nickname
+        if self.object.user:
+            username = self.object.user.nickname
+        else:
+            username = '(알 수 없음)'
         total_likes = len(self.object.like_user.all())
         
         # 해당 게시글에 대한 답변 가져오기
-        answers = Answer.objects.filter(question_id = self.object.id, parent_answer__isnull=True).order_by('answer_order')   #  나중에 답변 정렬도 고려. 최신순 또는 좋아요 순
-        answers_count = len(answers)
+        answers = Answer.objects.filter(question_id = self.object.id, answer_depth=0).order_by('answer_order')   #  나중에 답변 정렬도 고려. 최신순 또는 좋아요 순
+        answers_count = answers.filter(is_deleted=False).count()
         
         answers_reply_dict ={}
         for answer in answers:
@@ -368,6 +375,15 @@ def answer_ajax(request):
     user_id = req['user']
     user = get_object_or_404(User, pk=user_id)
     username = user.nickname
+    user_image_url = user.img.url if user.img else ''
+    
+    this_question = Question.objects.get(pk=question_id)
+    # 작성자 여부
+    if this_question.user == None:
+        is_author = False
+    elif user_id == this_question.user.pk:
+        is_author = True
+    else: is_author= False
     
     #### TODO ##########
     ## user 대표이미지 넘겨주는 건 유저 조금 구체화 된 다음에 추가
@@ -382,13 +398,27 @@ def answer_ajax(request):
     this_question = get_object_or_404(Question, pk=question_id)
 
     ## 새로운 답변
-    new_answer = Answer.objects.create(question_id=this_question, content=content, answer_order=new_order, user = user)
+    new_answer = Answer.objects.create(
+        question_id=this_question, 
+        content=content, 
+        answer_order=new_order, 
+        answer_depth = 0,
+        user = user)
     # 템플릿에서 쉽게 띄울 수 있도록 답변 게시일자 포맷팅해서 json에 전달
     created_at = new_answer.created_at.strftime('%y.%m.%d %H:%M')
 
     update_answer(this_question, new_answer, this_question.user, request.user)
 
-    return JsonResponse({'id': new_answer.id ,'content': content,'user':username, 'created_at':created_at} )
+    response = JsonResponse({
+        'id': new_answer.id ,
+        'content': content,
+        'user':username, 
+        'created_at':created_at,
+        'user_image_url':user_image_url,
+        'is_author':is_author,
+    })
+
+    return response
 
 # 대댓글 작성
 @csrf_exempt
@@ -400,10 +430,18 @@ def reply_ajax(request):
     user_id = req['user']
     user = get_object_or_404(User, pk=user_id)
     username = user.nickname
-
     # 작성하려는 대댓글이 속한 질문 구하기
     this_answer = get_object_or_404(Answer, pk=answer_id)
     this_question = this_answer.question_id
+
+    user_image_url = user.img.url if user.img else ''
+    # 작성자 여부
+    if this_question.user == None:
+        is_author = False
+    elif user_id == this_question.user.pk:
+        is_author = True
+    else: is_author = False
+
     
     ## 새 답변의 order 필드를 정해주기 위한 부분. 
     current_answers = Answer.objects.filter(question_id=this_question.id).order_by('answer_order')
@@ -417,6 +455,7 @@ def reply_ajax(request):
         question_id=this_question, 
         content=content, 
         answer_order=new_order, 
+        answer_depth = 1,
         user = user,
         parent_answer = this_answer
     )
@@ -432,6 +471,8 @@ def reply_ajax(request):
         'content': content,
         'user':username, 
         'created_at':created_at,
+        'user_image_url':user_image_url,
+        'is_author':is_author,
     })
 
     return response
@@ -487,13 +528,52 @@ def answer_delete_ajax(request):
     answer_id = req['id']
 
     answer = get_object_or_404(Answer, pk=answer_id)
-    if answer.parent_answer:
-        update_answer_reply_cancel(answer.question_id, answer, request.user)
-    else:
+    
+    if answer.answer_depth == 0:
         update_answer_cancel(answer.question_id, answer, answer.question_id.user, request.user)
-    answer.delete()
+    else:
+        update_answer_reply_cancel(answer.question_id, answer, request.user)
 
-    return JsonResponse({'id':answer_id})
+    # 대댓글이거나 대댓글이 없는 답변의 경우 아예 삭제
+    if answer.answer_set.count() == 0:
+        # 마지막 대댓글이었다면 부모 답변도 삭제
+        if answer.answer_depth == 1 and answer.parent_answer.answer_set.count() == 1 and answer.parent_answer.is_deleted == True:
+            answer.parent_answer.delete()
+
+        answer.delete()
+        delete_yes = True
+    # 답변인 경우 내용만 삭제된 것처럼
+    else:
+        answer.is_deleted = True
+        answer.content = '삭제된 답변입니다.'
+        answer.user = None
+        answer.save()
+        delete_yes = False
+    
+    answer_count = Answer.objects.filter(question_id=answer.question_id, is_deleted=False, answer_depth=0).count()
+
+    return JsonResponse({'id':answer_id, 'delete_yes':delete_yes, 'answer_count':answer_count})
+
+# @csrf_exempt
+# def answer_delete_ajax(request):
+#     req = json.loads(request.body)
+#     answer_id = req['id']
+
+#     answer = get_object_or_404(Answer, pk=answer_id)
+#     # 대댓글인 경우 아예 지우기
+#     if answer.answer_depth == 1:
+#         answer.delete()
+#         update_answer_reply_cancel(answer.question_id, answer, request.user)
+#     # 답변인 경우 내용만 삭제된 것처럼
+#     else:
+        
+        
+#         update_answer_cancel(answer.question_id, answer, answer.question_id.user, request.user)
+#         answer.content = '삭제된 답변입니다.'
+#         answer.user = None
+#         answer.save()
+
+#     return JsonResponse({'id':answer_id})
 
 # 답변(대댓글 포함) 수정
 # 수정버튼 눌렀을 때 해당하는 폼 띄우는 기능

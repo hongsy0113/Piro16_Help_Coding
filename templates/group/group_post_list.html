@@ -12,7 +12,7 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}">
 {% endblock %}
 
-{% block title %} 그룹 커뮤니티 {% endblock %}
+{% block title %} 도와줘, 코딩 | {{ group.name }} | 커뮤니티 {% endblock %}
 
 {% block content %}
 <div class="group-post-board"> <!-- 그룹 내 커뮤니티 게시판 시작 -->
@@ -27,27 +27,26 @@
         </div>
     </div>
 
-    <div class="list-sort">    <!-- 최신순 인기순 댓글순 -->
-        <!-- 피그마 디자인 구현 -->
+    <div class="list-sort">    <!-- 최신순 조회수순 좋아요순 -->
         <span class="list-sort__btn">
             {% if sort_by != 'recent' %}
             <a href="{% url 'group:post_list' group.pk %}?{% param_replace sort='recent' page=1 %}">최신순</a>
             {% else %}
-            최신순
+            <span>최신순</span>
             {% endif %}
         </span>
         <span class="list-sort__btn">
             {% if sort_by != 'view' %}
             <a href="{% url 'group:post_list' group.pk %}?{% param_replace sort='view' page=1 %}">조회수순</a>
             {% else %}
-            조회수순
+            <span>조회수순</span>
             {% endif %}
         </span>
         <span class="list-sort__btn">
             {% if sort_by != 'liked' %}
             <a href="{% url 'group:post_list' group.pk %}?{% param_replace sort='liked' page=1 %}">좋아요순</a>
             {% else %}
-            좋아요순
+            <span>좋아요순</span>
             {% endif %}
         </span>
 
@@ -66,13 +65,16 @@
     <div class="group-post__list">  <!-- 게시글 목록 시작 -->
 
         <div class="gridbox">  
-            {% for post in posts %}
+            {% for post, img_src in posts_img_dict.items %}
             <div class="gridbox__item-post">    <!-- 그룹 게시글 하나 시작 -->
                 <div class="img__post">
                     {% if post.image %}
                     <img src="{{ post.image.url }}" height="200" width="200" class="img__post-img" />
+                    {% elif img_src %}
+                    <!-- 스크래치, 엔트리 iframe이 들어가있다면 해당하는 썸네일이 목록에서 보이도록 -->
+                    <img alt="" src="{{ img_src }}" height="200" width="200" class="img__post-img">
                     {% else %}
-                    <img src="../../static/image/none_image_group_post.jpeg" height="200" width="200" class="img__post-img" />
+                    <img src="/static/image/none_image_group_post.jpeg" height="200" width="200" class="img__post-img" />
                     {% endif %}
                 </div>
 
@@ -90,7 +92,7 @@
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
                     <path d="M13.1592 0.505859H1.90918C0.875 0.505859 0.0341797 1.34668 0.0341797 2.38086V10.8184C0.0341797 11.8525 0.875 12.6934 1.90918 12.6934H4.72168V15.1543C4.72168 15.4414 5.0498 15.6084 5.28125 15.4385L8.94043 12.6934H13.1592C14.1934 12.6934 15.0342 11.8525 15.0342 10.8184V2.38086C15.0342 1.34668 14.1934 0.505859 13.1592 0.505859Z" fill="white"/>
                     </svg>
-                    <span> {{ post.groupanswer_set.all | length }} </span>    <!-- 댓글 개수 수정 여기서 해주세요 -->
+                    <span>{{ post.groupanswer_set.all | length }}</span>    <!-- 댓글 개수 수정 여기서 해주세요 -->
                 </div>
 
                 <div class="content__post">
@@ -118,7 +120,7 @@
 
 
     <div class="group_post__search-container">  <!-- 게시글 검색 -->
-        <form class="group_post__search-box" action="{% url 'group:search_result' %}" method="get">
+        <form class="group_post__search-box" action="{% url 'group:search_result' group.pk %}" method="get">
             {% csrf_token %}
             <input type="search" placeholder="작품을 검색해보세요!" name="search" />
             <button type="submit">

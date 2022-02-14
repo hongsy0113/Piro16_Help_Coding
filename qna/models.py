@@ -26,7 +26,7 @@ class Question(models.Model, HitCountMixin):
     s_or_e_tag = models.CharField(verbose_name='기본 카테고리',choices=SE_TAG_CHOICES, max_length=20)
 
     #### 직성자필드
-    user = models.ForeignKey(User, on_delete=models.CASCADE ,related_name='question_person')
+    user = models.ForeignKey(User, on_delete=models.SET_NULL ,related_name='question_person', null=True, blank=True)
     like_user = models.ManyToManyField('user.User', blank=True)
     tags = models.ManyToManyField('QnaTag', blank=True)
 
@@ -47,7 +47,7 @@ class Question(models.Model, HitCountMixin):
 class Answer(models.Model):
     #####
     ### 작성자 필드
-    user = models.ForeignKey(User, on_delete=models.CASCADE ,related_name='answer_person')
+    user = models.ForeignKey(User, on_delete=models.SET_NULL ,related_name='answer_person', null=True, blank=True)
     content = models.TextField(verbose_name='내용')
     created_at = models.DateTimeField(verbose_name='게시일자', auto_now_add=True)
     updated_at = models.DateTimeField(verbose_name='수정일자', auto_now=True)
@@ -56,9 +56,11 @@ class Answer(models.Model):
 
     question_id = models.ForeignKey(Question, on_delete=models.CASCADE,)
 
-    parent_answer = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True)
+    parent_answer = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True)
 
     like_user = models.ManyToManyField('user.User', blank=True)
+
+    is_deleted = models.BooleanField(verbose_name='삭제여부', default=False)
 
 class QnaTag(models.Model):
     # 스크래치 메뉴
@@ -104,4 +106,11 @@ class QnaTag(models.Model):
 
 class QuestionFiles(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='question_files')
+    attached_file = models.FileField(verbose_name='첨부파일', upload_to='qna/file')
+
+def group_thumbnail_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/group_<group.name>/<filename>
+    return 'test_{0}/{1}'.format(instance.pk, filename)
+class PkTest(models.Model):
+    auto_increment_id = models.AutoField(primary_key=True)
     attached_file = models.FileField(verbose_name='첨부파일', upload_to='qna/file')

@@ -10,23 +10,23 @@ import os
 # group 대표 이미지
 def group_thumbnail_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/group_<group.name>/<filename>
-    return 'group_{0}/thumbnail/{1}'.format(instance.name, filename)
+    return 'group_{0}/thumbnail/{1}'.format(instance.pk, filename) ###
 
 # group 게시판 이미지
 def group_post_img_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/group_<group.name>/post/image/<filename>
-    return 'group_{0}/post/image/{1}'.format(instance.group.name, filename)
+    return 'group_{0}/post/image/{1}'.format(instance.group.pk, filename)
 
 # group 게시판 첨부코드
 def group_post_code_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/group_<group.name>/post/file/<filename>
-    return 'group_{0}/post/file/{1}'.format(instance.group.name, filename)
+    return 'group_{0}/post/file/{1}'.format(instance.group.pk, filename)
 ######################################
 
 # 그룹
 class Group(models.Model):
     name = models.CharField(verbose_name='그룹명', max_length=30)
-    intro = models.TextField(verbose_name='그룹 소개', max_length=250, blank=True)
+    intro = models.TextField(verbose_name='그룹 소개', blank=True)
     maker = models.ForeignKey(User, verbose_name='방장', on_delete=models.CASCADE, null=True, related_name='group_maker')
     code = models.CharField(verbose_name='초대 코드', max_length=20, null=True, blank=True)  #랜덤 코드 길이 설정
     image = models.ImageField(upload_to=group_thumbnail_path, null=True, blank=True)
@@ -39,10 +39,17 @@ class Group(models.Model):
     )
     mode = models.CharField(verbose_name='공개 여부', choices=MODE_CHOICES, max_length=20, default=0)
     interests = models.ManyToManyField('user.User', blank=True, related_name='interests')
-    is_star = models.BooleanField(verbose_name="찜하기", default=False)
     
     def __str__(self):
         return self.name
+
+# 그룹 찜 기능
+class GroupStar(models.Model):
+    user = models.ForeignKey(User, verbose_name='사용자', on_delete=models.CASCADE, related_name='star_user')
+    group = models.ForeignKey(Group, verbose_name='그룹', on_delete=models.CASCADE, related_name='star_group')
+
+    def __str__(self):
+        return self.user.nickname +  self.group.name
 
 # 그룹 게시글
 class GroupPost(models.Model, HitCountMixin):

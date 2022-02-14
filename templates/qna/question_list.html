@@ -8,12 +8,19 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}">
 {% endblock %}
 
+{% block title %} 도와줘, 코딩 | 묻고 답하기 {% endblock %}
+
+
 {% block content %}
 <div class="qna__top-search-container">
     <div class="qna__top">
-        <span class="qna__top-title">묻고 답하기</span>
-        <span class="qna__top-info">코딩 중 궁금한 내용을 찾거나 질문해보세요!</span>
+        <div class="qna__top--left">
+            <span class="qna__top-title">묻고 답하기</span>
+            <span class="qna__top-info">코딩 중 궁금한 내용을 찾거나 질문해보세요!</span>
+        </div>
+        <a class="qna__ask-btn" href="{% url 'qna:question_create' %}">질문 작성</a>
     </div>
+
     <div class="qna__search-container">
         <form class="qna__search-box" action="{% url 'qna:search_result' %}" method="get">
             {% csrf_token %}
@@ -24,7 +31,6 @@
                 </svg>
                 </button>
         </form>
-        <a class="qna__ask-btn" href="{% url 'qna:question_create' %}">질문 작성</a>
     </div>
 </div>
 
@@ -33,21 +39,21 @@
         {% if sort_by != 'recent' %}
         <a href="{% url 'qna:question_list' %}?{% param_replace sort='recent' page=1 %}">최신순</a>
         {% else %}
-        최신순
+        <span>최신순</span>
         {% endif %}
     </span>
     <span class="list-sort__btn">
         {% if sort_by != 'view' %}
         <a href="{% url 'qna:question_list' %}?{% param_replace sort='view' page=1 %}">조회수순</a>
         {% else %}
-        조회수순
+        <span>조회수순</span>
         {% endif %}
     </span>
     <span class="list-sort__btn">
         {% if sort_by != 'liked' %}
         <a href="{% url 'qna:question_list' %}?{% param_replace sort='liked' page=1 %}">좋아요순</a>
         {% else %}
-        좋아요순
+        <span>좋아요순</span>
         {% endif %}
     </span>
 </div>
@@ -90,7 +96,7 @@
 {% endcomment %}
 
 <div class="question__list-container">
-    {% for question in questions %}
+    {% for question, answers_count in question_answer_count.items %}
     <div class="question__container">
         <div class="question__cont-left">
             <a class="list__title" href = "{% url 'qna:question_detail' question.pk %}?{% param_replace %}">{{ question.title }}</a>
@@ -109,7 +115,7 @@
                     <span class="tag__etc">{{ tag }}</span>
                 {% endfor %}
                 <div class="question__info">
-                    <span>{{ question.user }} · 조회 {% get_hit_count for question %} · 좋아요 {{ question.like_user.all | length }} · {{ question.created_at | date:'y.m.d' }}</span>
+                    <span>{% if question.user %}{{ question.user }}{% else %}(알 수 없음){% endif %} · 조회 {% get_hit_count for question %} · 좋아요 {{ question.like_user.all | length }} · {{ question.created_at | date:'y.m.d' }}</span>
                 </div>
             </div>
             <div class="question__content">
@@ -119,7 +125,7 @@
         <div class="question__cont-right">
             <div>답변</div>
             <div>
-                {{ question.answer_set.all | length }}
+                {{ answers_count }}
             </div> 
         </div>
     </div>

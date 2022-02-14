@@ -6,9 +6,11 @@
   {% if rewards %}
   {% for reward in rewards %}
   <p>
+    <img src="{{ reward.reward.img }}" height="50">
     <p>업적 이름 : {{ reward.reward.name }}</p>
     <p>업적 설명 : {{ reward.reward.info }}</p>
     <p>획득일 : {{ reward.get_date }}</p>
+    <button id="reward-{{ reward.reward.id }}" onclick="setRepresentativeReward({{ user.id }}, {{ reward.reward.id }})">대표 배지 설정</button>
   </p>
   {% endfor %}
   {% else %}
@@ -44,5 +46,32 @@
     {% endif %}
   </ul>
   {% endif %}
+
+  <script>
+    const requestSetRepresentativeReward = new XMLHttpRequest();
+
+    const setRepresentativeReward = (user_id, reward_id) => {
+        const url = "/mypage/reward/representative_ajax/";
+        requestSetRepresentativeReward.open("POST", url, true);
+        requestSetRepresentativeReward.setRequestHeader(
+            "Content-Type",
+            "application/x-www-form-urlencoded"
+        );
+        requestSetRepresentativeReward.send(JSON.stringify({user_id: user_id, reward_id: reward_id}));
+    };
+
+    const setHandleResponse = () => {
+        if (requestSetRepresentativeReward.status < 400) {
+            const {previous_id, reward_id} = JSON.parse(requestSetRepresentativeReward.response);
+            const representativeRewardButton = document.querySelector(`reward-${reward_id}`);
+        }
+    };
+
+    requestSetRepresentativeReward.onreadystatechange = () => {
+        if (requestSetRepresentativeReward.readyState === XMLHttpRequest.DONE) {
+          setHandleResponse();
+        }
+    };
+  </script>
 </div>
 {% endblock content %}

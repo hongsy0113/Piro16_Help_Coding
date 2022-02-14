@@ -7,6 +7,9 @@ import uuid
 import base64
 import codecs
 import json
+import shutil, os
+import mimetypes
+import time
 from django.shortcuts import render, redirect, get_object_or_404
 from django.templatetags.static import static
 from django.db.models import Q
@@ -23,8 +26,9 @@ from django.views.generic import ListView, View
 from django.views.generic.detail import SingleObjectMixin
 from django.core.files.storage import FileSystemStorage
 from config.settings import MEDIA_ROOT
-import mimetypes
 from user.update import *
+from .iframe import *
+from threading import Timer
 
 ######## 그룹 메인 페이지 ########
 
@@ -34,27 +38,38 @@ def group_home(request):
 
     # 해당 유저의 그룹 리스트
     groups = user.group_set.all()
-    
-    # 페이징 처리
-    page = request.GET.get('page', '1')
+    group_star = Group.objects.filter(star_group__user=user)
+    # group_star = GroupStar.objects.filter(group=groups)
 
     # 정렬하기
     sort = request.GET.get('sort', 'star')
     if sort == 'name':
         groups = groups.order_by('name')
     elif sort == 'star':
-        groups = groups.order_by('-is_star')
-    # elif sort == 'member':
-    #     groups = groups.order_by('-members')
-    # elif sort == 'date':  # django에서 기본 제공하는 create날짜 있는지 체크
-    #     groups = groups.order_by('date')
+        groups = groups.annotate(star=Count('star_group')).order_by('-star')
+
+    # for group_star in groups:
+    #     if is_star = 'True':
+    #         groups_star_dict[group_star] = is_star
+
+    # 페이징 처리
+    page = request.GET.get('page', '1')
+
     ### user의 닉네임이랑 같은 경우에 처리해야 하는 부분 이후 추가
     pagintor = Paginator(groups, 6)
     page_obj = pagintor.get_page(page)
 
+    groups_star_dict = {}
+    for group in page_obj:
+        if group in group_star:
+            groups_star_dict[group] = True
+        else:
+            groups_star_dict[group] = False
+
     ctx = { 
         'user': user,  #나중에는 쓸모 X 
         'groups': page_obj,
+        'groups_star_dict': groups_star_dict,
         'sort_by': sort,
         'ani_image': static('image/helphelp.png')    
     }
@@ -69,7 +84,8 @@ def group_search_public(request):
         groups = Group.objects.all().filter(Q(name__icontains=query) & Q(mode='PUBLIC'))
         ctx = { 
             'groups': groups,
-            'query': query
+            'query': query,
+            'ani_image': static('image/helphelp.png'),
         }
 
     return render(request, 'group/group_search_public.html', context=ctx)
@@ -78,7 +94,6 @@ def group_search_public(request):
 
 ######## 그룹 CRUD ########
 
-command = []
 # 그룹 생성
 def group_create(request):
     user = request.user
@@ -87,35 +102,47 @@ def group_create(request):
         form = GroupForm(request.POST, request.FILES)
 
         name = request.POST.get('name')
-        intro = request.POST.get('intro')
         image = request.FILES.get('image')
         mode = request.POST.get('group-mode__tag')
 
-        origin_group = Group.objects.filter(name=name)
-        global command
-        command += ['group_create']
-
         # 에러 메세지 
         error = GroupErrorMessage()
-        error.validation_group(name, mode, '', command)
+        error.validation_group(name, mode, '', 'group_create')
         
-        if not error.has_error_group():
+        if not error.has_error_group() and form.is_valid():
             group = form.save()
+            os.makedirs(MEDIA_ROOT + '/group_{}/thumbnail/'.format(group.pk), exist_ok=True)
             group.mode = mode
-            image = request.FILES.get('image')
-            group.image = image
             group.maker = user    # 방장 = 접속한 유저
             group.members.add(user)  # 방장도 그룹의 멤버로 추가
+
+            if request.FILES.get('image'):  # form valid + 이미지 첨부 시
+                group.image = request.FILES.get('image')
+            elif request.POST['img_recent']: 
+                os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
+                shutil.copyfile('./media/temp/{}'.format(request.POST['img_recent']),
+                                './media/group_{}/thumbnail/{}'.format(group.pk, request.POST['img_recent'])) ###
+                group.image =  './group_{}/thumbnail/{}'.format(group.pk, request.POST['img_recent']) ###
             group.save()
 
             return redirect('group:group_home')
 
+        
+        original_info = OriginalGroupInfo()
+        original_info.remember(request)
+        # 다른 필드 에러 시(기존 파일 남아있도록)
+        if request.FILES.get('image'):
+            os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
+            with open('./media/temp/{}'.format(request.FILES.get('image')), 'wb+') as destination:
+                for chunk in request.FILES['image'].chunks():
+                    destination.write(chunk)
+        
+        original_info.image = request.POST['img_recent']
+
         ctx = { 
             'error': error,
-            'name': name,
-            'mode': mode,
-            'intro': intro,
-            'image': image
+            'origin': original_info,
+            'temp_img_location': '/media/temp/'
         }
         
         return render(request, template_name='group/group_form.html', context=ctx)
@@ -125,7 +152,7 @@ def group_create(request):
         users = User.objects.all()
         # users = User.objects.exclude(user)
         # form.fields['maker'].queryset = users
-        ctx = { 'form': form }
+        ctx = { 'form': form, 'temp_img_location': '/media/temp/' }
         
         return render(request, 'group/group_form.html', context=ctx)
 
@@ -136,41 +163,67 @@ def group_update(request, pk):
 
     if request.method == 'POST':
         form = GroupForm(request.POST, instance=group)
-        global command
-        command += ['group_create']
 
         group.name = request.POST.get('name')
         name = group.name
 
         group.intro = request.POST.get('intro')
         intro = group.intro
+            #os.makedirs(MEDIA_ROOT + '/group_{}/thumbnail/'.format(group.pk), exist_ok=True)
+            #shutil.copyfile('./media/temp/{}'.format(request.POST['img_recent']),
+            #'./media/group_{}/thumbnail/{}'.format(group.pk, request.POST['img_recent']))
+            
+        # # 기존 이미지는 유지
+        # if group.image:
+        #     image = request.POST.get('image')
 
-        if group.image:
-            image = group.image
-        # 기존 이미지는 유지
-        if request.FILES.get('image'):
-            image = request.FILES.get('image')
-            group.image = image
+        # if request.FILES.get('image'):
+        #     image = request.FILES.get('image')
+        #     group.image = image
+        #     group.save()
         
-        # group.image = image
-
         mode = request.POST.get('group-mode__tag')
         group.mode = mode
 
+        original_info = OriginalGroupInfo()
+        original_info.remember(request)
         # 에러 메세지
         error = GroupErrorMessage()
-        error.validation_group(name, mode, prev_name, command)
+        error.validation_group(name, mode, prev_name, 'group_update')
 
         if not error.has_error_group():
+            group.intro = request.POST.get('intro')
+            if request.FILES.get('image'):  # form valid 시
+                group.image = request.FILES.get('image')
+                
+            else:   # 다른 필드 에러 시(기존 파일 남아있도록)
+                group.image = './group_{}/thumbnail/{}'.format(group.pk, request.POST['img_recent'])
+                # original_info.image = request.POST['img_recent']
+
             group.save()
 
             return redirect('group:group_detail', pk)
 
+        # 에러 메세지가 존재할 때
+        if request.FILES.get('image'):
+            #os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
+            with open('/group_{}/thumbnail/{}'.format(group.pk, request.FILES.get('image')), 'wb+') as destination:
+                for chunk in request.FILES['image'].chunks():
+                    destination.write(chunk)
+        
+        original_info.image = request.POST['img_recent']
+
+        if group.image:
+            current_image = group.image.url.split('/')[-1]
+        else:
+            current_image = ''
+
+
         ctx = { 
             'error': error,
-            'name': name,
-            'intro': intro,
-            'mode': mode
+            'origin': original_info,
+            'current_image': current_image,
+            'temp_img_location': '/media/group_{}/thumbnail/'.format(group.pk)
         }
 
         return render(request, template_name='group/group_form.html', context=ctx)
@@ -178,7 +231,21 @@ def group_update(request, pk):
     else:
         form = GroupForm(instance=group)
 
-        ctx = { 'group': group, 'form': form }
+        # try:
+        #     current_image = '/media/group_{}/thumbnail/'.format(group.pk)
+        # except:
+        #     pass
+        if group.image:
+            current_image = group.image.url.split('/')[-1]
+        else:
+            current_image = ''
+
+        ctx = { 
+            'group': group, 
+            'form': form,
+            'current_image': current_image,
+            'temp_img_location': '/media/group_{}/thumbnail/'.format(group.pk)
+        }
 
         return render(request, template_name='group/group_form.html', context=ctx)
 
@@ -225,10 +292,19 @@ def group_detail(request, pk):
     user = request.user
     group = get_object_or_404(Group, pk=pk)
 
+    group_star = GroupStar.objects.filter(Q(group=group) & Q(user=user))
+    if GroupStar.objects.filter(Q(group=group) & Q(user=user)):
+        is_star = True
+    else:
+        is_star = False
+
     mygroup = user.group_set.all()
     members = group.members.all()
-    group.maker = members[0]
-    maker = group.maker
+    if group.maker in members:
+        maker = group.maker
+    else:
+        group.maker = members[0]
+        maker = group.maker
     group.save()
 
     total_likes = len(group.interests.all())
@@ -242,6 +318,7 @@ def group_detail(request, pk):
         'total_likes': total_likes,
         'is_liked': is_liked,
         'user': user,
+        'is_star': is_star,
         'ani_image': static('image/helphelp.png'),    
         'profile_img': static('image/none_image_user.jpeg'),
     }
@@ -257,25 +334,43 @@ class GroupErrorMessage():
     def validation_group(self, name, mode, prev, command):
 
         # 미입력 시 에러 메세지
-        if 'group_create' in command or 'group_update' in command:
+        if 'group_create' == command or 'group_update' == command:
             if not name:       
                 self.name = '그룹명을 입력하세요.'
             if not (mode in ['PUBLIC', 'PRIVATE']):    
                 self.mode = '그룹 공개모드를 선택하세요.'
         
         # 기존에 있던 입력과 비교
-        if 'group_update' in command:
-            if Group.objects.filter(name=name) and name != prev:
-                self.name = '이미 사용 중인 그룹명입니다.'
-        else:
+        if 'group_update' == command:
+            if name != prev:
+                if Group.objects.filter(name=name):
+                    self.name = '이미 사용 중인 그룹명입니다.'
+        elif 'group_create' == command:
             if Group.objects.filter(name=name):
                 self.name = '이미 사용 중인 그룹명입니다.'
 
     def has_error_group(self):
         return self.name or self.mode
 
+# Group Form에서 오류 발생 시 남아있는 정보
+class OriginalGroupInfo():
+
+    def remember(self, request):
+        self.name = request.POST['name']
+        self.intro = request.POST['intro']
+        self.image = request.FILES.get('image')
+        self.mode = request.POST.get('group-mode__tag')
+
+
 
 ######## 초대 코드 ########
+# 7일의 코드 유효 기간
+def group_code_save(pk):
+    group = get_object_or_404(Group, pk=pk)
+    print(group.code)
+    group.code = get_invite_code()
+    group.save()
+    print(group.code)
 
 # 초대 코드 발급
 def get_invite_code(length=6):
@@ -288,10 +383,19 @@ def get_invite_code(length=6):
 def create_code_ajax(request):
     req = json.loads(request.body)    
     group_id = req['groupId']
+
     group = get_object_or_404(Group, pk=group_id)
-    group.code = get_invite_code()
+    if group.code != '':
+        code = group.code
+    else:
+        time = Timer(7 * 24 * 60 * 60, group_code_save, [group_id])
+        time.start()
+        code = group.code
+        
+        if time.finished:
+            group.code = ''
+    print(code)
     group.save()
-    code = group.code
 
     return JsonResponse({ 'name': group.name, 'code': code })
 
@@ -397,29 +501,95 @@ def join_list(request, pk):
         # alert 창 띄우기 (방장이 아니므로 열람할 수 없습니다)
         return redirect('group:group_detail', pk)
 
-# 그룹 가입 대기자 명단 [미완]
+# 수락 선택 시
+@csrf_exempt
+def group_join_accept(request):
+    req = json.loads(request.body)
+    group_id = req['groupId']
+    wait_user_id = req['userId']
+
+    wait_user = get_object_or_404(User, pk=wait_user_id)
+    group = get_object_or_404(Group, pk=group_id)
+
+    wait_id = wait_user.id
+    print(wait_user)
+    group.waits.remove(wait_user)
+    group.members.add(wait_user)
+    group.save()
+    print('jj)')
+    return JsonResponse({
+        'userId': wait_id
+    })
+
+# 거절 선택 시
+@csrf_exempt
+def group_join_reject(request):
+    req = json.loads(request.body)
+    group_id = req['groupId']
+    wait_user_id = req['userId']
+
+    wait_user = get_object_or_404(User, pk=wait_user_id)
+    group = get_object_or_404(Group, pk=group_id)
+
+    wait_id = wait_user.id
+
+    group.waits.remove(wait_user)
+    group.save()
+
+    return JsonResponse({
+        'userId': wait_id
+    })
+
+
+# 그룹 가입 대기자 명단
 @csrf_exempt
 def wait_list_ajax(request):
     req = json.loads(request.body)
     group_id = req['id']
     group = get_object_or_404(Group, pk=group_id)
     waits = group.waits.all()
-    waits_img = group.waits.get('image')
-    
-    for wait in waits:
+    wait_member_name = []   # 대기자 명단 이름 배열
+    wait_member_img = []   # 대기자 명단 이미지 배열
+    wait_member_id = []
+
+    for wait_member in waits:
+        wait_member_name.append(wait_member.nickname)
+        wait_img_url = wait_member.img.url if wait_member.img else ''
+        wait_member_img.append(wait_img_url)
+        wait_member_id.append(wait_member.id)
+
         if request.GET.get('accept'):
-            group.waits.remove(wait)
-            group.members.add(wait)
+            group.waits.remove(wait_member)
+            group.members.add(wait_member)
             group.save()
         elif request.GET.get('reject'):
-            group.waits.remove(wait)
+            group.waits.remove(wait_member)
             group.save()
+    print(wait_member_img)
 
-    JsonResponse({
+    return JsonResponse({
         'groupName': group.name,
-        'waits': waits,
-        'waits_img': waits_img
+        'waitsName': wait_member_name,
+        'waitsImg': wait_member_img,
+        'waitsId': wait_member_id
     })
+
+# 공개그룹 대기자 수락 여부
+# @csrf_exempt
+# def wait_member_accept(request):
+#     req = json.loads(request.body)
+#     user_id = req['userId']
+#     waits = group.waits.
+
+#     if request.GET.get('accept'):
+#         group.waits.remove(wait)
+#         group.members.add(wait)
+#         group.save()
+#     elif request.GET.get('reject'):
+#         group.waits.remove(wait)
+#         group.save()
+
+#     return 1
 
 
 
@@ -473,29 +643,60 @@ def post_list(request, pk):
         posts = posts.annotate(total_likes=Count('like_user')).order_by('-total_likes')
     elif sort_by == 'view':    # 조회수순
         posts = posts.order_by('-hit_count_generic__hits')
-
+    
     # 페이징 처리
-    paginator = Paginator(posts, 6)    # 페이지당 5개씩 보여주기
+    paginator = Paginator(posts, 6)    # 페이지당 6개씩 보여주기
     page_obj = paginator.get_page(page)
+    
+    ## 각 게시글과 iframe 관련 썸네일의 이미지 경로 딕셔너리 생성
+    dict = {}
+    for page in page_obj:
+        if page.attached_link:
+            dict[page] = get_img_src(page.attached_link)
+        else:
+            dict[page] = None
 
     ctx = {
         'posts': page_obj,
+        'posts_img_dict': dict,
         'group': group,
         'sort_by': sort_by
     }
-
     return render(request, 'group/group_post_list.html', context=ctx)
 
 # 게시글 검색
-def search_result(request):
+def search_result(request, pk):
     if 'search' in request.GET:
+        group = Group.objects.get(pk=pk)
         query = request.GET.get('search')
-        posts = GroupPost.objects.all().filter(
+        page = request.GET.get('page', '1')
+
+        posts = GroupPost.objects.filter(group__pk=pk).filter(
             Q(title__icontains=query) | # 제목으로 검색
             Q(content__icontains=query) # 내용으로 검색
         )
 
-    return render(request, 'group/search_result.html', {'query': query, 'posts': posts})
+        # 페이징 처리
+        paginator = Paginator(posts, 6)    # 페이지당 6개씩 보여주기
+        page_obj = paginator.get_page(page)
+
+        ## 각 게시글과 iframe 관련 썸네일의 이미지 경로 딕셔너리 생성
+        dict = {}
+        for page in page_obj:
+            if page.attached_link:
+                dict[page] = get_img_src(page.attached_link)
+            else:
+                dict[page] = None
+
+        ctx = {
+            'query': query, 
+            'posts': page_obj,
+            'posts_img_dict': dict, 
+            'group_pk': pk,
+            'group': group,         
+        }
+
+    return render(request, 'group/search_result.html', context=ctx)
 
 # 게시글 작성
 def post_create(request, pk):
@@ -631,6 +832,13 @@ class GroupPostDetailView(HitCountDetailView):
         for answer in answers:
             replies =  GroupAnswer.objects.filter(parent_answer= answer).order_by('answer_order')
             answers_reply_dict[answer] = replies
+
+        ### iframe 
+        iframe_url = post.attached_link
+        iframe = get_iframe(iframe_url, 800, 600)
+        context['iframe'] = iframe
+        
+        ####
 
         context['group'] = post.group
         context['username']= username
@@ -809,26 +1017,34 @@ def answer_edit_submit_ajax(request):
 
     return JsonResponse({'id':answer_id, 'content':new_content})
 
+
 ############################################################################
 
 ## Ajax
 # 내 그룹 - 찜 기능 ajax
+# star 클릭 시 
 @csrf_exempt
-def star_ajax(request):
+def group_star_ajax(request):
     req = json.loads(request.body)
     group_id = req['id']
+
+    user = request.user
     group = get_object_or_404(Group, id=group_id)
+    # 1. 그룹 -> 2. 사용자 
+    group_star = GroupStar.objects.filter(Q(group=group) & Q(user=user))
     
-    if (group.is_star == True):
-        group.is_star = False
-
+    if group_star:
+        group_star.delete()
+        is_star = False
     else:
-        group.is_star = True
+        GroupStar.objects.create(group=group, user=user)
+        is_star = True
+    print(group_star)
 
-    is_stared = group.is_star
-    group.save()
+    is_stared = is_star
 
     return JsonResponse({ 'id': group_id, 'is_star': is_stared })
+
 
 # 공개 그룹 좋아요 수 
 @csrf_exempt
@@ -849,5 +1065,3 @@ def interest_ajax(request):
     # group.save()
 
     return JsonResponse({ 'groupId': group_id, 'total_likes': total_likes, 'is_liked': not(is_liked) })
-
-
