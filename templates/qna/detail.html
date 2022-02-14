@@ -89,7 +89,7 @@
         <input type="button" value = "등록" class="answer__submit">
     </div>
     {% endif %}
-    <p class="answer__total-count" style="font-weight: bold; font-size: 18px; line-height: 150%;">답변 {{ answers_count }} 개 </p>
+    <p class="answer__total-count" style="font-weight: bold; font-size: 18px; line-height: 150%; color: black;">답변 {{ answers_count }} 개 </p>
     <div class="answer__list">
         <!-- 답변 부분 -->
         {% for answer, replies in answers_reply_dict.items %}
