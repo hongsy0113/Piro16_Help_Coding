@@ -29,7 +29,9 @@
     <!-- context에서 iframe으로 태그 전체 접근 가능-->
     <div class="iframe__container">{{ iframe | safe }}</div>
     
-    {% if iframe %}<div class="btn btn-secondary iframe__fullscreen">전체보기</div>{% endif %}
+    {% if iframe %}
+    <div class="btn btn-secondary iframe__fullscreen">전체보기</div>
+    {% endif %}
 
     <h3>{{ post.content }}</h3>
     
