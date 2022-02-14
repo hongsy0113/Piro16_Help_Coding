@@ -165,7 +165,7 @@ const groupWaitHandleResponse = (groupName, waitsName, waitsImg, waitsId) => {
     };
     flag = 1;
     
-    groupWaitAlert.style.display = 'block';
+    groupWaitAlert.style.display = 'flex';
 
     // 수락, 거절 버튼 선택 이후
     const waitAcceptBtn = document.querySelector(`.wait__accept--btn-${ waitsId[i] }`);
