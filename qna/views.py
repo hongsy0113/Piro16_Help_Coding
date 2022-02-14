@@ -93,10 +93,15 @@ def question_list(request):
     paginator = Paginator(questions, 5)    # 페이지당 5개씩 보여주기
     page_obj = paginator.get_page(page)
 
+    dict ={}
+    for page in page_obj:
+        answers_count = Answer.objects.filter(question_id =page, answer_depth=0, is_deleted = False).count()
+        dict[page] = answers_count
     ctx = {
         'questions': page_obj,
         'sort_by':sort_by,
         'filter_by':tag_filter_by+[answer_filter_by],
+        'question_answer_count':dict,
     }
 
     return render(request, 'qna/question_list.html', context=ctx)

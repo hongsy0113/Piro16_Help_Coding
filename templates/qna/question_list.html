@@ -93,7 +93,7 @@
 {% endcomment %}
 
 <div class="question__list-container">
-    {% for question in questions %}
+    {% for question, answers_count in question_answer_count.items %}
     <div class="question__container">
         <div class="question__cont-left">
             <a class="list__title" href = "{% url 'qna:question_detail' question.pk %}?{% param_replace %}">{{ question.title }}</a>
@@ -122,7 +122,7 @@
         <div class="question__cont-right">
             <div>답변</div>
             <div>
-                {{ question.answer_set.all | length }}
+                {{ answers_count }}
             </div> 
         </div>
     </div>
