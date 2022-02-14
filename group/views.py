@@ -85,7 +85,8 @@ def group_search_public(request):
         groups = Group.objects.all().filter(Q(name__icontains=query) & Q(mode='PUBLIC'))
         ctx = { 
             'groups': groups,
-            'query': query
+            'query': query,
+            'ani_image': static('image/helphelp.png'),
         }
 
     return render(request, 'group/group_search_public.html', context=ctx)
@@ -322,7 +323,6 @@ class GroupErrorMessage():
                     self.name = '이미 사용 중인 그룹명입니다.'
         elif 'group_create' == command:
             if Group.objects.filter(name=name):
-                print(name, prev)
                 self.name = '이미 사용 중인 그룹명입니다.'
 
     def has_error_group(self):
@@ -562,29 +562,37 @@ def post_list(request, pk):
         posts = posts.annotate(total_likes=Count('like_user')).order_by('-total_likes')
     elif sort_by == 'view':    # 조회수순
         posts = posts.order_by('-hit_count_generic__hits')
-
+    
     # 페이징 처리
     paginator = Paginator(posts, 6)    # 페이지당 6개씩 보여주기
     page_obj = paginator.get_page(page)
+    
+    ## 각 게시글과 iframe 관련 썸네일의 이미지 경로 딕셔너리 생성
+    dict = {}
+    for page in page_obj:
+        if page.attached_link:
+            dict[page] = get_img_src(page.attached_link)
+        else:
+            dict[page] = None
 
     ctx = {
         'posts': page_obj,
+        'posts_img_dict': dict,
         'group': group,
         'sort_by': sort_by
     }
-
     return render(request, 'group/group_post_list.html', context=ctx)
 
 # 게시글 검색
-def search_result(request):
+def search_result(request, pk):
     if 'search' in request.GET:
         query = request.GET.get('search')
-        posts = GroupPost.objects.all().filter(
+        posts = GroupPost.objects.filter(group__pk=pk).filter(
             Q(title__icontains=query) | # 제목으로 검색
             Q(content__icontains=query) # 내용으로 검색
         )
 
-    return render(request, 'group/search_result.html', {'query': query, 'posts': posts})
+    return render(request, 'group/search_result.html', {'query': query, 'posts': posts, 'group_pk': pk})
 
 # 게시글 작성
 def post_create(request, pk):
@@ -725,6 +733,7 @@ class GroupPostDetailView(HitCountDetailView):
         iframe_url = post.attached_link
         iframe = get_iframe(iframe_url, 800, 600)
         context['iframe'] = iframe
+        
         ####
 
         context['group'] = post.group
@@ -952,5 +961,3 @@ def interest_ajax(request):
     # group.save()
 
     return JsonResponse({ 'groupId': group_id, 'total_likes': total_likes, 'is_liked': not(is_liked) })
-
-

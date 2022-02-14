@@ -79,3 +79,213 @@ main > p:first-of-type {
 .question__like-btn span {
     color: #4e4e4e;
 }
+
+
+
+
+/* 답변 */
+.answer__input__container{
+    position: relative;
+}
+.answer__input {
+    width: 1080px;
+    height: 150px;
+    border: 1px solid #bdbdbd;
+    border-radius: 5px;
+    padding: 17px 30px;
+    font-size: 18px;
+    line-height: 150%;
+    margin: 0;
+    margin-bottom: 30px;
+    padding-right: 110px;
+}
+
+.answer__submit {
+    position: absolute;
+    right: 15px;
+    bottom: 50px;
+    background-color: #37c6e6;
+    padding: 10px 20px 12px;
+    border-radius: 30px;
+    border: 2px solid #37c6e6;
+    font-size: 18px;
+    line-height: 100%;
+    color: white;
+    margin-left: -100px;
+}
+
+.answer__container, .reply__container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+    padding: 25px 35px;
+    border: 1px solid #bdbdbd;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.answer__container :last-of-type, .reply__container :last-of-type {
+    margin-bottom: 0;
+}
+
+.answer__content-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.answer__user__profile {
+    display: flex;
+    gap: 15px;
+    width: 100%;
+    align-items: center;
+}
+
+.answer__user__profile-left{
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 1px solid #bdbdbd;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.answer__user__profile-left img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+.answer__user__profile-right {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.answer__user__profile-right div {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+.answer__user__profile-right > div:first-of-type {
+    flex-direction: column;
+    gap: 0;
+    align-items: flex-start;
+}
+
+
+.answer__user__profile-right h2 {
+    font-weight: bold;
+    font-size: 18px;
+    line-height: 150%;
+    margin: 0;
+}
+
+.answer__user__profile-right p {
+    font-size: 16px;
+    line-height: 150%;
+    margin: 0;
+}
+
+.answer__user__profile-right span {
+    font-size: 18px;
+    line-height: 150%;
+    margin: 0;
+}
+
+.answer__writer-mark {
+    font-size: 14px !important;
+    color:white;
+    line-height: 100% !important;
+    background-color: #37c6e6;
+    padding: 4px 7px 2px;
+    border-radius: 10px;
+    height: 22px;
+}
+
+.question__edit-btn, .question__delete-btn,.question__list-btn, .question__prev-btn, .question__next-btn  {
+    color: #828282;
+    text-decoration: none;
+}
+.answer__edit-btn, .answer__delete-btn{
+    border: none;
+    background-color: transparent;
+    font-size: 16px;
+    padding: 0;
+    height: 20px;
+    color: #828282;
+    align-self: flex-start;
+}
+
+.answer__edit-btn:hover, .answer__delete-btn:hover, .question__edit-btn:hover, .question__delete-btn:hover, .question__list-btn:hover, .question__prev-btn:hover, .question__next-btn:hover{
+    text-decoration: underline;
+    color: #4e4e4e;
+}
+
+.answer__like__reply {
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    font-size: 18px;
+    color: #37c6e6;
+}
+.answer__like-btn {
+    color: #37c6e6;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.reply__form__flexbox {
+    width: 100%;
+    border-radius: 5px;
+    border: 1px solid #bdbdbd;
+    padding: 5px 5px 5px 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.reply__input, .reply__input:focus, .reply__input:active {
+    outline: none;
+    border: none;
+    width: 100%;
+}
+
+.reply__submit {
+    color: white;
+    background-color: #37c6e6;
+    border-radius: 5px;
+    border: #37c6e6;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 10px 20px 12px;
+}
+
+.answer__edit__flexbox {
+    width: 100%;
+    border-radius: 5px;
+    border: 1px solid #bdbdbd;
+    padding: 5px 5px 5px 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.answer__edit-input, .answer__edit-input:focus, .answer__edit-input:active {
+    outline: none;
+    border: none;
+    width: 100%;
+}
+
+.answer__edit-submit {
+    color: white;
+    background-color: #37c6e6;
+    border-radius: 5px;
+    border: #37c6e6;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 10px 20px 12px;
+}

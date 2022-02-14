@@ -10,23 +10,27 @@ BASE_IMAGES = ('base1.png', 'base2.jpg')
 
 # 직업 선택지
 JOB_CHOICE = (('elementary_school', '초등학생'), ('middle_school', '중학생'), ('high_school', '고등학생'),
-        ('university', '대학생'), ('programmer', '개발자'), ('parents', '학부모'), ('teacher', '교사'), ('etc', '기타'))
+              ('university', '대학생'), ('programmer', '개발자'), ('parents', '학부모'), ('teacher', '교사'), ('etc', '기타'))
 JOB_CATEGORY = {'student': ['elementary_school', 'middle_school', 'high_school'],
-        'adult': ['university', 'programmer', 'parents', 'teacher', 'etc']}
+                'adult': ['university', 'programmer', 'parents', 'teacher', 'etc']}
 
 # 레벨 체계
-LEVEL = (('level_1', '1단계'), ('level_2', '2단계'), ('level_3', '3단계'), ('level_4', '4단계'), ('level_5', '5단계'))
+LEVEL = (('level_1', '1단계'), ('level_2', '2단계'),
+         ('level_3', '3단계'), ('level_4', '4단계'), ('level_5', '5단계'))
 LEVEL_STEP = [LEVEL[i][0] for i in range(len(LEVEL))]
-LEVEL_UP_BOUNDARY = {'student': [0, 100, 200, 300, 400], 'adult': [0, 150, 300, 450, 500]}
+LEVEL_UP_BOUNDARY = {'student': [0, 100, 200, 300, 400],
+                     'adult': [0, 150, 300, 450, 500]}
 POINT_TYPE = (('question_like', '질문에 대한 좋아요 획득'), ('comment_like', '댓글에 대한 좋아요 획득'), ('question', '질문 작성'), ('answer', '답변 작성'), ('answer_reply', '대댓글 작성'),
-        ('question_like_cancel', '질문에 대한 좋아요 취소'), ('comment_like_cancel', '댓글에 대한 좋아요 취소'), ('question_cancel', '질문 삭제'), ('answer_cancel', '답변 삭제'), ('answer_reply_cancel', '대댓글 삭제'))
+              ('question_like_cancel', '질문에 대한 좋아요 취소'), ('comment_like_cancel', '댓글에 대한 좋아요 취소'), ('question_cancel', '질문 삭제'), ('answer_cancel', '답변 삭제'), ('answer_reply_cancel', '대댓글 삭제'))
 POINT = {'student': {'question_like': 20, 'comment_like': 15, 'question': 10, 'answer': 5, 'answer_reply': 5},
-        'adult': {'question_like': 10, 'comment_like': 20, 'question': 5, 'answer': 10, 'answer_reply': 5}}
+         'adult': {'question_like': 10, 'comment_like': 20, 'question': 5, 'answer': 10, 'answer_reply': 5}}
 
 # 업적 체계
-REWARD_TYPE = (('total_like', '총 좋아요 수'), ('question_like', '게시글 좋아요 수'), ('comment_like', '댓글 좋아요 수'),
-        ('total_question', '총 질문 수'), ('total_answer', '총 답변 수'), ('total_comment', '총 댓글 수'),
-        ('total_group_joined', '총 가입한 그룹 수'), ('total_group_created', '총 개설한 그룹 수'))
+REWARD_TYPE = (('total_like', '총 좋아요 수'), ('question_like', '게시글 좋아요 수'),
+               ('comment_like', '댓글 좋아요 수'), ('total_question', '총 질문 수'),
+               ('total_answer', '총 답변 수'), ('total_comment', '총 댓글 수'),
+               ('total_group_joined', '총 가입한 그룹 수'), ('total_group_created', '총 개설한 그룹 수'))
 
 # 알림 체계
-ALERT_TYPE = (('level_up', '레벨 상승'), ('level_change', '레벨 변경'), ('get_reward', '배지 획득'), ('new_comment', '새 댓글'), ('new_reply', '새 대댓글'), ('etc', '기타'))
+ALERT_TYPE = (('level_up', '레벨 상승'), ('level_change', '레벨 변경'), ('get_reward', '배지 획득'), ('new_comment', '새 댓글'), ('new_reply', '새 대댓글'),
+              ('group_create', '그룹 생성'), ('group_join', '그룹 가입'), ('etc', '기타'))

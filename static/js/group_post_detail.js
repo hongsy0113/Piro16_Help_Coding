@@ -385,3 +385,56 @@ answerEditSubmitHandleResponse = (answerId, content) => {
     const answerEditForm = document.querySelector(`.answer__edit--${answerId}`);
     answerEditForm.style.display = 'none';
 }
+
+//////////////////////////////////////////
+//// iframe fullscreen
+
+const iframeFullscreenButton = document.querySelector('.iframe__fullscreen');
+
+iframeFullscreenButton.addEventListener('click', function() {
+    onClickIframeFullscreen();
+})
+
+const onClickIframeFullscreen =() => {
+    const iframeContainer = document.querySelector('.iframe__container');
+    console.log(iframeContainer)
+    const smallScreenButton = document.createElement('button');
+    smallScreenButton.innerHTML = '작은 화면으로';
+    //iframeContainer.appendChild(smallScreenButton);
+    // smallScreenButton.addEventListener('click', function() {
+
+    // })
+
+    
+    document.querySelector("header").style.display = "none";
+    document.querySelector("section").style.display = "none";
+    
+    iframeContainer.style.display ='block'
+    iframeContainer.style.position = 'fixed';
+    iframeContainer.style.width ='90%'
+    iframeContainer.style.height ='90%'
+    
+
+    document.body.append(iframeContainer);
+    iframeContainer.append(smallScreenButton);
+    smallScreenButton.style.display='block';
+    const iframe = iframeContainer.firstElementChild;
+    iframe.setAttribute('width', '100%');
+    iframe.setAttribute('height', '150%');
+    //iframe.style.width='100% !important';
+    //iframe.style.height ='100% !important'
+    iframe.style.postion = 'absolute'
+    console.log(body)
+    console.log(iframe)
+}
+
+const fullscreen = element => {
+    if (element.requestFullscreen) return element.requestFullscreen()
+    if (element.webkitRequestFullscreen) return element.webkitRequestFullscreen()
+    if (element.mozRequestFullScreen) return element.mozRequestFullScreen()
+    if (element.msRequestFullscreen) return element.msRequestFullscreen()
+  }
+
+// iframeFullscreenButton.addEventListener('click', e => {
+//     fullscreen(document.querySelector('.iframe__container'));
+// })

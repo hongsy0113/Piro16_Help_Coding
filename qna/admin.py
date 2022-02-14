@@ -19,3 +19,4 @@ class AnswerAdmin(admin.ModelAdmin):
 admin.site.register(QnaTag)
 admin.site.register(QuestionFiles)
 #admin.site.register(QnaTagging)
+admin.site.register(PkTest)
