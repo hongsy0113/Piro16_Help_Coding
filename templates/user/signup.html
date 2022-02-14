@@ -67,7 +67,7 @@
                 <div class="signup__image__inputcontainer">
                     {% for base_image in base_images %}
                     <input type="radio" name="img_setting" value="{{ base_image }}" {% if original_information.img_setting == base_image %}checked{% endif %}>
-                    <img src="/static/img/{{ base_image }}" height="50" width="50">
+                    <img src="/static/img/user_thumbnail/{{ base_image }}" height="50" width="50">
                     {% endfor %}
                     <input id="img_setting_own" type="radio" name="img_setting" value="own_img" {% if original_information.img_setting == "own_img" or not original_information.img_setting%}checked{% endif %}>
                     <img id="img_display" src="" height="50" width="50">

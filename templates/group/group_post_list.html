@@ -33,21 +33,21 @@
             {% if sort_by != 'recent' %}
             <a href="{% url 'group:post_list' group.pk %}?{% param_replace sort='recent' page=1 %}">최신순</a>
             {% else %}
-            최신순
+            <span>최신순</span>
             {% endif %}
         </span>
         <span class="list-sort__btn">
             {% if sort_by != 'view' %}
             <a href="{% url 'group:post_list' group.pk %}?{% param_replace sort='view' page=1 %}">조회수순</a>
             {% else %}
-            조회수순
+            <span>조회수순</span>
             {% endif %}
         </span>
         <span class="list-sort__btn">
             {% if sort_by != 'liked' %}
             <a href="{% url 'group:post_list' group.pk %}?{% param_replace sort='liked' page=1 %}">좋아요순</a>
             {% else %}
-            좋아요순
+            <span>좋아요순</span>
             {% endif %}
         </span>
 

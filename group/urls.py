@@ -12,7 +12,7 @@ urlpatterns = [
     path('<int:pk>/group_delete/', view=views.group_delete, name='group_delete'),
     path('<int:pk>/group_drop/', view=views.group_drop, name='group_drop'),
     path('<int:pk>/group_detail/', view=views.group_detail, name='group_detail' ),
-    path('star_ajax/', view=views.star_ajax, name='star_ajax'),
+    # path('star_ajax/', view=views.star_ajax, name='star_ajax'),
     path('group_list/', view=views.group_list, name='group_list'),
     path('<int:pk>/public_group_join/', view=views.public_group_join, name='public_group_join'),
     path('<int:pk>/join_list/', view=views.join_list, name='join_list'),

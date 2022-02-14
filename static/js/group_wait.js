@@ -6,9 +6,11 @@ function closeGroupWait() {
     groupWaitAlert.style.display = 'block';
 }
 
-showGroupWaitBtn.addEventListener('click', function() {
-    onClickGroupWait(group_id);
-})
+if(showGroupWaitBtn) {
+    showGroupWaitBtn.addEventListener('click', function() {
+        onClickGroupWait(group_id);
+    })
+}
 
 const onClickGroupWait = async(id) => {
     console.log('!')
