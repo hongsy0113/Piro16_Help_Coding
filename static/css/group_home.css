@@ -141,16 +141,18 @@ img {
     overflow: hidden;
     text-overflow: ellipsis;
     word-wrap: break-word;
+    word-break: break-all;
     display : -webkit-box;
     -webkit-line-clamp: 1;  /* 줄 개수 설정 */
     -webkit-box-orient: vertical;
+    padding-bottom: 2px;
 }
 
 .content__group-name {
     text-decoration: none;
     font-weight: bold;
     font-size: 25px;
-    line-height: 105%;
+    line-height: 107%;
     margin-right: 3px;
     color: #000000;
 }

@@ -278,73 +278,37 @@ img {
     display: flex;
 }
 
-/* 페이지네이션 */
-.pagination-box {
+/* 검색 결과가 없으면 */
+.search-result__notresult {
     display: flex;
     justify-content: center;
-    padding-top: 20px;
-    padding-bottom: 30px;
+    text-align: center;
+    padding: 30px;
 }
 
-.all__pagination {
+.notresult-query {
+    font-weight: bold;
+    font-size: 27px;
+    margin-bottom: 5px;
+}
+
+.notresult-text {
+    font-size: 22px;
+    font-weight: normal;
+    color: #4E4E4E;
+}
+
+.group-search__bottom a {
+    width: 155px;
+    height: 60px;
+    color: #828282;
+    border: 2px solid #828282;
+    border-radius: 30px;
+    font-weight: bold;
+    font-size: 18px;
+    line-height: 105%;
+    text-decoration: none;
+    align-items: center;
+    justify-content: center;
     display: flex;
-    list-style: none;
-}
-
-/* 현재 페이지가 아닐 경우 */
-.all__page-link {
-    border: 1px solid #37C6E6;
-    box-sizing: border-box;
-    text-decoration: none;
-    font-family: Noto Sans CJK KR;
-    font-weight: bold;
-    font-size: 18px;
-    line-height: 150%;
-    text-align: center;
-    color: #37C6E5;
-    padding: 6px 14px;
-    background-color: #ffffff;
-    border-radius: 100%;
-    margin-right: 10px;
-    box-sizing: border-box;
-}
-
-/* 현재 페이지 표시 */
-.all__page-link:hover {
-    text-decoration: none;
-    font-family: Noto Sans CJK KR;
-    font-weight: bold;
-    font-size: 18px;
-    line-height: 150%;
-    text-align: center;
-    color: #FFFFFF;
-    padding: 6px 14px;
-    background-color: #37C6E5;
-    border-radius: 100%;
-    margin-right: 10px;
-    box-sizing: border-box;
-}
-
-.all__page-item-active {
-    text-decoration: none;
-    font-family: Noto Sans CJK KR;
-    font-weight: bold;
-    font-size: 18px;
-    line-height: 150%;
-    text-align: center;
-    color: #FFFFFF;
-    padding: 6px 14px;
-    background-color: #37C6E5;
-    border-radius: 100%;
-    margin-right: 10px;
-    box-sizing: border-box;
-}
-
-.all__page-sign {
-    background-color: none;
-    margin-right: 20px;
-}
-
-.sign-next {
-    margin-left: 10px;
 }
