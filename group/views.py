@@ -55,7 +55,7 @@ def group_home(request):
     if sort == 'name':
         groups = groups.order_by('name')
     elif sort == 'star':
-        groups = groups.order_by('-star_group')
+        groups = groups.order_by('-star_group', '-id')
         
     ### user의 닉네임이랑 같은 경우에 처리해야 하는 부분 이후 추가
     pagintor = Paginator(groups, 6)
