@@ -6,15 +6,14 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}">
-    {% block css %}
-
-    {% endblock %}
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
     <!-- fontawesome -->
     <script src="https://use.fontawesome.com/releases/v5.2.0/js/all.js"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}">
+    {% block css %}
+    {% endblock %}
     {% block js %}
     {% endblock %}
     <title>{% block title %}도와줘, 코딩{% endblock %}</title>
@@ -42,27 +41,37 @@
             </div>
             <div class="header__nav-right">
             {% if user.is_authenticated %}
-                <a class="header__alertbtn" href="{% url 'user:mypage_alert' %}"><svg width="21" height="24" viewBox="0 0 21 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M10.6597 23.25C12.2118 23.25 13.4709 21.991 13.4709 20.4375H7.84852C7.84852 21.991 9.10755 23.25 10.6597 23.25ZM20.1251 16.6709C19.2761 15.7586 17.6874 14.3862 17.6874 9.89062C17.6874 6.47607 15.2933 3.74268 12.0651 3.07207V2.15625C12.0651 1.37974 11.4358 0.75 10.6597 0.75C9.88362 0.75 9.25433 1.37974 9.25433 2.15625V3.07207C6.0261 3.74268 3.63196 6.47607 3.63196 9.89062C3.63196 14.3862 2.04334 15.7586 1.19432 16.6709C0.930646 16.9544 0.813751 17.2932 0.815948 17.625C0.820782 18.3457 1.38636 19.0312 2.22659 19.0312H19.0928C19.933 19.0312 20.4991 18.3457 20.5034 17.625C20.5056 17.2932 20.3887 16.954 20.1251 16.6709V16.6709Z" fill="#4E4E4E"/>
+                <div class="header__alertcontainer">
+                    <a class="header__alertbtn" href="{% url 'user:mypage_alert' %}"><svg width="21" height="24" viewBox="0 0 21 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M10.6597 23.25C12.2118 23.25 13.4709 21.991 13.4709 20.4375H7.84852C7.84852 21.991 9.10755 23.25 10.6597 23.25ZM20.1251 16.6709C19.2761 15.7586 17.6874 14.3862 17.6874 9.89062C17.6874 6.47607 15.2933 3.74268 12.0651 3.07207V2.15625C12.0651 1.37974 11.4358 0.75 10.6597 0.75C9.88362 0.75 9.25433 1.37974 9.25433 2.15625V3.07207C6.0261 3.74268 3.63196 6.47607 3.63196 9.89062C3.63196 14.3862 2.04334 15.7586 1.19432 16.6709C0.930646 16.9544 0.813751 17.2932 0.815948 17.625C0.820782 18.3457 1.38636 19.0312 2.22659 19.0312H19.0928C19.933 19.0312 20.4991 18.3457 20.5034 17.625C20.5056 17.2932 20.3887 16.954 20.1251 16.6709V16.6709Z" fill="#4E4E4E"/>
                     </svg>                    
-                    </a>
-                <p>{{ user.has_new_alert }}</p> <!-- 알림 개수 -->
-                <div> <!-- 알림 호버 창 때문에 만든 것 (찬영) -->
+                </a>
+                <div class="header__alert-dot">{{ user.has_new_alert }}</div> <!-- 알림 개수 -->
+                <div class="header__alert-dropdown"> <!-- 알림 호버 창 때문에 만든 것 (찬영) -->
                     {% if user.has_new_alert %}
-                    <p>새로운 알림이 {{ user.has_new_alert }}개 있어요.</p>
-                    {% for alert in user.get_new_alert %}
-                    <div id="alert-{{ alert.id }}">
-                        <p>새로운 알림!</p> <!-- 알림 빨간 동그라미 같은 이미지..? -->
-                        <button onclick="checkAlert({{ alert.id }})">확인</button> <!-- 이거 Ajax는 css 되고서 구현해야 할 듯 -->
-                        <a href="{{ alert.related_url }}" onclick="viewAlert({{ alert.id }})">{{ alert.content }}</a>
+                    <div>새로운 알림이 {{ user.has_new_alert }}개 있어요.</div>
+                    <div class="header__alerts">
+                        {% for alert in user.get_new_alert %}
+                        <a href="{{ alert.related_url }}" onclick="viewAlert({{ alert.id }})" id="alert-{{ alert.id }}" class="header__alert">
+                            <div>
+                                <div class="alert__dot alert__dot-unread"></div>
+                                <span>{{ alert.content }}</span>
+                            </div>
+                            <button onclick="checkAlert({{ alert.id }})">확인</button> <!-- 이거 Ajax는 css 되고서 구현해야 할 듯 -->
+                        </a>
+                        {% endfor %}
                     </div>
-                    {% endfor %}
-                    <button id="check-all-alert-button" onclick="checkAllAlert()">전체 확인</button>
-                    <a href="{% url 'user:mypage_alert' %}">전체 알림 보기</button>
+                    <div>
+                        <a href="{% url 'user:mypage_alert' %}">전체 알림 보기</button>
+                        <button id="check-all-alert-button" onclick="checkAllAlert()">전체 확인</button>
+                    </div>
                     {% else %}
-                    <p>새로운 알림이 없어요.</p>
+                    <div style="justify-content: center;">
+                        <p>새로운 알림이 없어요.</p>
+                    </div>
                     {% endif %}
-                </div> <!-- 여기까지 -->
+                    </div> <!-- 여기까지 -->
+                </div>
                 <a class="header__searchbtn" href="#"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M19.2349 17.109L15.4381 13.3122C15.2668 13.1408 15.0345 13.0456 14.7907 13.0456H14.17C15.2211 11.7013 15.8456 10.0105 15.8456 8.1711C15.8456 3.79545 12.3002 0.25 7.92452 0.25C3.54887 0.25 0.00341797 3.79545 0.00341797 8.1711C0.00341797 12.5467 3.54887 16.0922 7.92452 16.0922C9.76389 16.0922 11.4547 15.4677 12.799 14.4166V15.0373C12.799 15.2811 12.8942 15.5134 13.0656 15.6847L16.8624 19.4815C17.2204 19.8395 17.7992 19.8395 18.1534 19.4815L19.2311 18.4038C19.5891 18.0458 19.5891 17.467 19.2349 17.109ZM7.92452 13.0456C5.23211 13.0456 3.05 10.8673 3.05 8.1711C3.05 5.47869 5.2283 3.29658 7.92452 3.29658C10.6169 3.29658 12.799 5.47488 12.799 8.1711C12.799 10.8635 10.6207 13.0456 7.92452 13.0456Z" fill="#4E4E4E"/>
                     </svg>                    
@@ -75,7 +84,7 @@
                     <div class="header__mypage-dropdown">
                         <a href="{% url 'user:mypage' %}" class="mypage-dropdown__userprofile">
                             <div class="mypage-dropdown__userprofile-img">
-                                {% if user.img %}<img src="{{ user.img.url }}" style='height: 100%; width: auto; object-fit: contain'>{% else %}<p class="header__mypagebtn-noimage"></p>{% endif %}
+                                {% if user.img %}<img src="{{ user.img.url }}" style='height: 100%; width: auto; object-fit: cover'>{% else %}<p class="header__mypagebtn-noimage"></p>{% endif %}
                             </div>
                             <div class="mypage-dropdown__userprofile-name">
                                 <p>{{user.nickname}}</p>

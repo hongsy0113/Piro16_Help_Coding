@@ -74,6 +74,7 @@
     background-color: #f7f7f7;
 }
 
+/* 안 읽으면 파란 점으로 표시, 읽으면  투명
 .alert__dot {
     height: 10px;
     width: 10px;
@@ -86,7 +87,7 @@
 
 .alert__dot-read {
     background-color: transparent;
-}
+} */
 
 .alert__content {
     display: flex;
