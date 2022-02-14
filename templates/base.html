@@ -36,6 +36,7 @@
                     {% if user.is_authenticated %}
                     <li><a href="{% url 'qna:question_list' %}">묻고답하기</a></li>
                     <li><a href="{% url 'group:group_home' %}" style="text-decoration: none">내 그룹</a></li>
+                    <li><a href="{% url 'group:group_list' %}" style="text-decoration: none">그룹 찾기</a></li>
                     {% endif %}
                 </ul>
             </div>

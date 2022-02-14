@@ -60,7 +60,8 @@
 
     <!-- 내 그룹 목록 -->
     <div class="gridbox">
-        {% for group in groups %}
+        {% for group, is_star in groups_star_dict.items %}
+            
             <div class="gridbox__item-group">
                 <div class="img__group">
                     {% if group.image %}
