@@ -104,12 +104,11 @@ const createCodeHandleResonse = (code, name) => {
     const createCodeAlert = document.getElementById('create-code');
     const createCodeAlertText = document.querySelector('.code_box');
 
-    createCodeAlertText.innerHTML = `
-        <h3>그룹명: ${ name }</h3>
-        <h3>다음 코드로 친구를 초대하세요!</h3>
+    createCodeAlertText.innerHTML = `    
         <h1>${ code }</h1>
+        <p>코드 유효 기간: 일주일</p>
     `;
-    createCodeAlert.style.display = 'block';
+    createCodeAlert.style.display = 'flex';
 }
 
 // 그룹 대기자 명단 modal
@@ -147,34 +146,77 @@ const groupWaitHandleResponse = (groupName, waitsName, waitsImg, waitsId) => {
     const groupWaitName = document.querySelector('.group__wait-name');
     const groupWaitAlertText = document.querySelector('.group__wait--member-list');
 
+
     groupWaitName.innerHTML = `<h4><b>${groupName}</b>의 대기자 명단</h4>`;
 
     for(var i=0; i<waitsName.length; i++){
+        if(waitsImg[i]){
+            waitImg = `<img src="${waitsImg[i]}" alt="" height="50" width="50" style="border-radius: 50px;">`;
+        }
+
+        waitMemberId = waitsId[i];
+
         if(flag==0){
             groupWaitAlertText.innerHTML += `
             <form method="GET" class="group-wait__one d-flex flex-row">
                 <div class="d-flex flex-row align-items-center">
-                    <img src="${ waitsImg[i].url }" height="50" width="50" style="border-radius: 50px;"/>
+                    <div class="wait-member__img">${ waitImg }</div>
                     <h6>${ waitsName[i] }</h6>
-                    <h6 class="wait__text--${ waitsId[i] }">text</h6>
-                    <input type="button" value="수락" name="accept" class="wait__accept--btn-${ waitsId[i] }">
-                    <input type="button" value="거절" name="reject" class="wait__reject--btn-${ waitsId[i] }">
+                    <h6 class="wait__text--${ waitMemberId }">가입을 기다리고 있어요!</h6>
+                    <a href="{% url 'group:group_join_accept' ${ waitMemberId } %}">수락</a>
+                    <a href="{% url 'group:group_join_reject' ${ waitMemberId } %}">거절</a>
+                    <input type="button" value="수락" name="accept" class="wait__accept--btn-${ waitMemberId }">
+                    <input type="button" value="거절" name="reject" class="wait__reject--btn-${ waitMemberId }">
                 </div>  
             </form>
         `;
         }
+
+        // 수락, 거절 버튼 선택 이후
+        const waitAcceptBtn = document.querySelector(`.wait__accept--btn-${ waitMemberId }`);
+        const waitRejectBtn = document.querySelector(`.wait__reject--btn-${ waitMemberId }`);
+        const memberWaitAlertText = document.querySelector(`.wait__text--${ waitMemberId }`);
+
+        waitAcceptBtn.addEventListener('click', function(){
+            onClickacceptWait(waitMemberId, group_id);
+        })
+        waitRejectBtn.addEventListener('click', function(){
+            onClickrejectWait(waitMemberId, group_id);
+        })
+
     };
     flag = 1;
     
     groupWaitAlert.style.display = 'block';
-
-    // 수락, 거절 버튼 선택 이후
-    const waitAcceptBtn = document.querySelector(`.wait__accept--btn-${ waitsId[i] }`);
-    const waitRejectBtn = document.querySelector(`.wait__reject--btn-${ waitsId[i] }`);
-    const memberWaitAlertText = document.querySelector(`.wait__text--${ waitsId[i] }`)
-    
 }
 
-function acceptWait() {
-    memberWaitAlertText.innerText = '가입 대기 중입니다.'
+
+const onClickacceptWait = async (userId, groupId) => {
+    const url = "/group/group_join_accept/";
+    const {data} = await axios.post(url, {
+        userId, groupId
+    });
+    console.log('!')
+    joinAcceptHandleResponse(
+        data.userId
+    )
+}
+
+joinAcceptHandleResponse = (userId) => {
+    memberWaitAlertText.innerHTML = '수락했습니다.'
+}
+
+
+const onClickrejectWait = async (userId, groupId) => {
+    const url = "/group/group_join_reject/";
+    const {data} = await axios.post(url, {
+        userId, groupId
+    });
+    joinRejectHandleResponse(
+        data.userId
+    )
+}
+
+joinRejectHandleResponse = (userId) => {
+    memberWaitAlertText.innerHTML = '거절했습니다.'
 }

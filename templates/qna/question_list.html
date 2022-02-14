@@ -96,7 +96,7 @@
 {% endcomment %}
 
 <div class="question__list-container">
-    {% for question in questions %}
+    {% for question, answers_count in question_answer_count.items %}
     <div class="question__container">
         <div class="question__cont-left">
             <a class="list__title" href = "{% url 'qna:question_detail' question.pk %}?{% param_replace %}">{{ question.title }}</a>
@@ -115,7 +115,7 @@
                     <span class="tag__etc">{{ tag }}</span>
                 {% endfor %}
                 <div class="question__info">
-                    <span>{{ question.user }} · 조회 {% get_hit_count for question %} · 좋아요 {{ question.like_user.all | length }} · {{ question.created_at | date:'y.m.d' }}</span>
+                    <span>{% if question.user %}{{ question.user }}{% else %}(알 수 없음){% endif %} · 조회 {% get_hit_count for question %} · 좋아요 {{ question.like_user.all | length }} · {{ question.created_at | date:'y.m.d' }}</span>
                 </div>
             </div>
             <div class="question__content">
@@ -125,7 +125,7 @@
         <div class="question__cont-right">
             <div>답변</div>
             <div>
-                {{ question.answer_set.all | length }}
+                {{ answers_count }}
             </div> 
         </div>
     </div>
