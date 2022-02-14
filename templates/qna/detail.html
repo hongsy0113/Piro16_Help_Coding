@@ -138,7 +138,7 @@
 
                 <div class="answer__edit answer__edit--{{ answer.id }}" style=" display: none;">
                     <div class="answer__edit__flexbox">
-                        <input type="text" name="edit_answer_{{ answer.id }}" class="answer__edit-input answer__edit-input--{{ answer.id }}" id = "answer-edit-input-{{ answer.id }}" style="width:200px; height:20px;" value="{{ answer.content }}">    
+                        <input type="text" name="edit_answer_{{ answer.id }}" class="answer__edit-input answer__edit-input--{{ answer.id }}" id = "answer-edit-input-{{ answer.id }}" value="{{ answer.content }}">    
                         <input type="button" value = "수정" class="answer__edit-submit answer__edit-submit--{{ answer.id }}" id = "answer-edit-submit-{{ answer.id }}">
                     </div>
                 </div>
@@ -187,7 +187,7 @@
                             <div class="answer__edit answer__edit--{{ reply.id }}" style=" display: none;">
                                 <div class="answer__edit__flexbox">
                                     <input type="text" name="edit_answer_{{ reply.id }}" class="answer__edit-input answer__edit-input--{{ reply.id }}" id = "answer-edit-input-{{ reply.id }}" 
-                                    style="width:200px; height:20px;" value="{{ reply.content }}">    
+                                    value="{{ reply.content }}">    
                                     <input type="button" value = "수정" class="answer__edit-submit answer__edit-submit--{{ reply.id }}" id = "answer-edit-submit-{{ reply.id }}">
                                 </div>
                             </div>
