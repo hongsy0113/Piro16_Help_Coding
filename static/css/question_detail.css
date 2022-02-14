@@ -106,7 +106,7 @@ main > p:first-of-type {
     bottom: 50px;
     background-color: #37c6e6;
     padding: 10px 20px 12px;
-    border-radius: 30px;
+    border-radius: 5px;
     border: 2px solid #37c6e6;
     font-size: 18px;
     line-height: 100%;
@@ -237,7 +237,9 @@ main > p:first-of-type {
     font-size: 18px;
     font-weight: bold;
 }
-
+.answer__like__reply > .answer__like-btn {
+    margin-right: 35px;
+}
 .reply__form__flexbox {
     width: 100%;
     border-radius: 5px;

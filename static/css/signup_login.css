@@ -46,6 +46,10 @@ form input, form textarea {
     border: 1px solid #bdbdbd;
     border-radius: 5px;
 }
+
+form textarea {
+    padding: 24px 15px;
+}
 form input::placeholder, form textarea::placeholder {
     color: #828282;
 }
