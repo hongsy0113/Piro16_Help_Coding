@@ -1,9 +1,6 @@
-from multiprocessing.dummy import JoinableQueue
-import queue
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import *
 from .forms import *
-from django.contrib import messages
 from django.db.models import Q
 import json
 from django.http import JsonResponse, FileResponse
@@ -16,11 +13,9 @@ from django.views.generic.detail import SingleObjectMixin
 from django.core.files.storage import FileSystemStorage
 import mimetypes
 from user.update import *
-from django.forms import formset_factory
-from django.views.generic.edit import FormView
 from .forms import FileFieldForm
 
-basic_tags = ['동작', '형태', '소리', '이벤트', '제어',' 감지', '연산','변수', '내 블록', '기타']
+basic_tags = ['동작', '형태', '소리', '이벤트', '제어',' 감지', '연산', '변수', '내 블록', '기타']
 
 def question_tag_filter(questions, tag_filter_by_list):
     num = len(tag_filter_by_list)
