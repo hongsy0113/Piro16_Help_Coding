@@ -163,11 +163,11 @@ const groupWaitHandleResponse = (groupName, waitsName, waitsImg, waitsId) => {
                 </div>          
                 <div class="wait__text--${ waitMemberId } wait-member__text"><span>가입을 기다리고 있어요!<span></div>
                 <div class="wait-member__btnbox">
+                    <input type="button" value="수락" name="accept" class="wait__accept--btn wait__accept--btn--${ waitMemberId } wait-accept__btn" id="accept-btn-${ waitMemberId }">
+                    <input type="button" value="거절" name="reject" class="wait__reject--btn wait__reject--btn--${ waitMemberId } wait-reject__btn" id="reject-btn-${ waitMemberId }">
                 </div>
             </form>
-                    <input type="button" value="수락" name="accept" class="wait__accept--btn wait__accept--btn--${ waitMemberId }" id="accept-btn-${ waitMemberId }">
-                    <input type="button" value="거절" name="reject" class="wait__reject--btn wait__reject--btn--${ waitMemberId }" id="reject-btn-${ waitMemberId }">
-        `;
+                            `;
         }
 
         // 수락, 거절 버튼 선택 이후
@@ -238,4 +238,3 @@ const groupWaitHandleResponse = (groupName, waitsName, waitsImg, waitsId) => {
         memberWaitAlertText.innerHTML = '거절했습니다.'
     }
 }
-
