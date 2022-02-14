@@ -41,8 +41,13 @@ def group_home(request):
     group_star = Group.objects.filter(star_group__user=user)
     # group_star = GroupStar.objects.filter(group=groups)
 
-    
-    
+    # 정렬하기
+    sort = request.GET.get('sort', 'star')
+    if sort == 'name':
+        groups = groups.order_by('name')
+    elif sort == 'star':
+        groups = groups.annotate(star=Count('star_group')).order_by('-star')
+
     # for group_star in groups:
     #     if is_star = 'True':
     #         groups_star_dict[group_star] = is_star
@@ -50,13 +55,6 @@ def group_home(request):
     # 페이징 처리
     page = request.GET.get('page', '1')
 
-    # 정렬하기
-    sort = request.GET.get('sort', 'star')
-    if sort == 'name':
-        groups = groups.order_by('name')
-    elif sort == 'star':
-        groups = groups.order_by('-star_group', '-id')
-        
     ### user의 닉네임이랑 같은 경우에 처리해야 하는 부분 이후 추가
     pagintor = Paginator(groups, 6)
     page_obj = pagintor.get_page(page)
@@ -118,12 +116,12 @@ def group_create(request):
             group.maker = user    # 방장 = 접속한 유저
             group.members.add(user)  # 방장도 그룹의 멤버로 추가
 
-            if request.FILES.get('image'):  # form valid 시
+            if request.FILES.get('image'):  # form valid + 이미지 첨부 시
                 group.image = request.FILES.get('image')
-            elif request.POST.get('image'):   
-                os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
+            elif request.POST.get('image'):   # 다른 에러 발생 + 이전에 이미지 첨부
+                # os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
                 shutil.copyfile('./media/temp/{}'.format(request.POST['img_recent']),
-                './media/group_{}/thumbnail/{}'.format(group.pk, request.POST['img_recent'])) ###
+                                './media/group_{}/thumbnail/{}'.format(group.pk, request.POST['img_recent'])) ###
                 group.image =  './group_{}/thumbnail/{}'.format(group.pk, request.POST['img_recent']) ###
             
             group.save()
@@ -170,6 +168,8 @@ def group_update(request, pk):
         group.name = request.POST.get('name')
         name = group.name
 
+        group.intro = request.POST.get('intro')
+        intro = group.intro
             #os.makedirs(MEDIA_ROOT + '/group_{}/thumbnail/'.format(group.pk), exist_ok=True)
             #shutil.copyfile('./media/temp/{}'.format(request.POST['img_recent']),
             #'./media/group_{}/thumbnail/{}'.format(group.pk, request.POST['img_recent']))
@@ -193,10 +193,14 @@ def group_update(request, pk):
         error.validation_group(name, mode, prev_name, 'group_update')
 
         if not error.has_error_group():
+            group.intro = request.POST.get('intro')
             if request.FILES.get('image'):  # form valid 시
                 group.image = request.FILES.get('image')
+                
             else:   # 다른 필드 에러 시(기존 파일 남아있도록)
-                    group.image = './media/group_{}/thumbnail/{}'.format(group.pk, request.POST['img_recent'])
+                group.image = './group_{}/thumbnail/{}'.format(group.pk, request.POST['img_recent'])
+                # original_info.image = request.POST['img_recent']
+
             group.save()
 
             return redirect('group:group_detail', pk)
@@ -204,16 +208,22 @@ def group_update(request, pk):
         # 에러 메세지가 존재할 때
         if request.FILES.get('image'):
             #os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
-            with open('/media/group_{}/thumbnail/{}'.format(group.pk, request.POST['img_recent']), 'wb+') as destination:
+            with open('/group_{}/thumbnail/{}'.format(group.pk, request.FILES.get('image')), 'wb+') as destination:
                 for chunk in request.FILES['image'].chunks():
                     destination.write(chunk)
         
-            original_info.image = request.POST['img_recent']
+        original_info.image = request.POST['img_recent']
+
+        if group.image:
+            current_image = group.image.url.split('/')[-1]
+        else:
+            current_image = ''
 
 
         ctx = { 
             'error': error,
             'origin': original_info,
+            'current_image': current_image,
             'temp_img_location': '/media/group_{}/thumbnail/'.format(group.pk)
         }
 
@@ -222,10 +232,14 @@ def group_update(request, pk):
     else:
         form = GroupForm(instance=group)
 
-        try:
-            current_image = '/media/group_{}/thumbnail/'.format(group.pk)
-        except:
-            pass
+        # try:
+        #     current_image = '/media/group_{}/thumbnail/'.format(group.pk)
+        # except:
+        #     pass
+        if group.image:
+            current_image = group.image.url.split('/')[-1]
+        else:
+            current_image = ''
 
         ctx = { 
             'group': group, 
@@ -287,8 +301,11 @@ def group_detail(request, pk):
 
     mygroup = user.group_set.all()
     members = group.members.all()
-    group.maker = members[0]
-    maker = group.maker
+    if group.maker in members:
+        maker = group.maker
+    else:
+        group.maker = members[0]
+        maker = group.maker
     group.save()
 
     total_likes = len(group.interests.all())
@@ -350,15 +367,11 @@ class OriginalGroupInfo():
 ######## 초대 코드 ########
 # 7일의 코드 유효 기간
 def group_code_save(pk):
-    time = Timer(7 * 24 * 60 * 60, group_code_save, [pk])
-    time.start()
-
     group = get_object_or_404(Group, pk=pk)
     print(group.code)
     group.code = get_invite_code()
     group.save()
     print(group.code)
-    return 1
 
 # 초대 코드 발급
 def get_invite_code(length=6):
@@ -373,11 +386,15 @@ def create_code_ajax(request):
     group_id = req['groupId']
 
     group = get_object_or_404(Group, pk=group_id)
-    if group.code:
+    if group.code != '':
         code = group.code
     else:
-        group_code_save(group_id)
+        time = Timer(7 * 24 * 60 * 60, group_code_save, [group_id])
+        time.start()
         code = group.code
+        
+        if time.finished:
+            group.code = ''
     print(code)
     group.save()
 

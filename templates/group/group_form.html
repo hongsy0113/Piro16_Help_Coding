@@ -43,7 +43,7 @@
                 <label for="image">대표이미지</label>
                 </div>
                 <img id="img_display" src="" height="50" width="50">
-                <input id="img_upload" type="file" name="image" onchange="imageChange(event);"></d>
+                <input id="img_upload" type="file" name="image" onchange="imageChange(event);"></input>
                 <p id="img_upload_name">선택된 이미지 : 없음</p>
                 <input name="img_recent" id="img_recent" value="{% if current_image %}{{ current_image }}{% else %}{{ origin.image }}{% endif %}" hidden ></input>
                 <input id="temp_img_location" value="{{ temp_img_location }}" hidden></input>
