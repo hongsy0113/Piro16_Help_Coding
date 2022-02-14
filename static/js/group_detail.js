@@ -104,12 +104,11 @@ const createCodeHandleResonse = (code, name) => {
     const createCodeAlert = document.getElementById('create-code');
     const createCodeAlertText = document.querySelector('.code_box');
 
-    createCodeAlertText.innerHTML = `
-        <h3>그룹명: ${ name }</h3>
-        <h3>다음 코드로 친구를 초대하세요!</h3>
+    createCodeAlertText.innerHTML = `    
         <h1>${ code }</h1>
+        <span>다음 코드로 친구를 초대하세요!</span>
     `;
-    createCodeAlert.style.display = 'block';
+    createCodeAlert.style.display = 'flex';
 }
 
 // 그룹 대기자 명단 modal
