@@ -215,123 +215,12 @@ button {
     cursor: pointer;
 }
 
-/* 모달 */
-.modal {  
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.modal__overlay {
-    background-color: rgba(0, 0, 0, 0.6);
-    width: 100%;
-    height: 100%;
-    position: absolute;
-}
-
-/* 모달 디자인 */
-.modal__content {
-    position: relative;
-    top: 0px;
-    width: 40%;
-    height: 70%;
-    background-color: #FAFAFA;
-    border: 2px solid #BDBDBD;
-    box-sizing: border-box;
-    border-radius: 20px;
-    text-align: center;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
-}
-
-.modal__content--top {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    padding: 41px 0px 33px 0px;
-    border-bottom: 2px solid #BDBDBD;
-}
-
-.modal__content--top span {
-    font-family: Noto Sans CJK KR;
-    font-weight: bold;
-    font-size: 36px;
-    line-height: 105%;
-    text-align: center;
-    color: #000000;
-}
-
-.modal__content--bottom {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 70px 0px 70px 0px;
-}
-
-.code_box {
-    padding-bottom: 53px;
-}
-
-.code_box h1 {
-    font-family: Noto Sans CJK KR;
-    font-weight: bold;
-    font-size: 64px;
-    line-height: 105%;
-    text-align: center;
-    color: #000000;
-    margin: 0;
-    padding-bottom: 40px;
-}
-
-.code_box span {
-    font-family: Noto Sans CJK KR;
-    font-weight: bold;
-    font-size: 24px;
-    line-height: 105%;
-    text-align: center;
-    color: #828282;
-}
-
-.group__code--close {
-    position: static;
-    background: #FFFFFF;
-    border: 2px solid #37C6E6;
-    box-sizing: border-box;
-    border-radius: 41px;
-
-    font-family: Noto Sans CJK KR;
-    font-weight: bold;
-    font-size: 24px;
-    line-height: 105%;
-    display: flex;
-    align-items: center;
-    text-align: center;
-    color: #4E4E4E;
-    padding: 18px 38px 21px;
-}
-
-.group__code--close:hover {
-    background-color: #37C6E6;
-    color: #ffffff;
-    transition: 0.2px;
-}
-
 .top-right__button span {
     font-family: Noto Sans CJK KR;
     font-weight: bold;
     font-size: 22px;
     line-height: 105%;
     color: #FFFFFF;
-}
-
-.modal__hidden {
-    display: none;
 }
 
 /* 그룹 멤버 리스트 (멤버 명단) */
@@ -424,5 +313,9 @@ button {
 }
 
 .btn__update {
+    margin-right: 20px;
+}
+
+.btn__delete {
     margin-right: 20px;
 }

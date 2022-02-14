@@ -13,21 +13,24 @@ img {
 .group-post__top-left {
     display: flex;
     align-items: center;
+    gap: 15px;
 }
 
 .group-post__top--title {
     font-size: 36px;
     line-height: 150%;
     font-weight: bold;
-    margin-right: 25px;
-    width: 230px;
+    margin-right: 5px;
+    max-width: 230px;
+    word-break: break-all;
 }
 
 .group-post__top--intro {
-    width: 680px;
+    width: 670px;
     font-family: Noto Sans CJK KR;
     font-size: 16px;
     line-height: 150%;
+    word-break: break-all;
 }
 
 .group-post__top--info a {
