@@ -56,7 +56,9 @@ class LoginView(View):
 
 # Logout
 
-
+# 함수 이름을 log_out으로 해놓으면, 추후에 헷갈립니다.
+# 규칙을 정해서 아래와 같이 이름을 정하면 좋습니다.
+# def logout_view(request):
 def log_out(request):
     logout(request)
     return redirect('user:main')
@@ -106,6 +108,8 @@ class ErrorMessages():
         if not re.compile('^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$').match(birth):
             self.birth = '유효한 생년월일을 입력해주세요.'
 
+        # TODO : 이미지 밸리데이션 체크를 존재 여부만 하는데,
+        # TODO : 이상한 악성코드나 해킹 스크립트가 들어오면 보안 이슈가 생길 수 있습니다.
         if 'signup' in command or 'image_change' in command:
             if img_setting == 'own_img' and not img and not img_recent:  # 예외6) 이미지 선택 안 함
                 self.img = '이미지를 업로드하거나 기본 이미지를 선택해주세요.'
@@ -120,6 +124,9 @@ class ErrorMessages():
 # Original Information (Forms)
 
 
+# __init__ 함수에서 request를 초기화 시키면 더 간결하게 진행할 수 있을 것 같습니다.
+# remember 함수가 맥락상 값 초기화 느낌인 것 같은데, 파이썬 생성자 def __init__을 쓰면
+# 더 간결할 것 같습니다.
 class OriginalInformation():
 
     def remember(self, request, command):
@@ -174,6 +181,10 @@ def sign_up(request):
             ['signup']
         )
         if not sign_up_error.has_error():  # 오류가 없는 경우 유저 생성
+            # TODO : 직접 디렉토리를 생성하고 하드디스크를 수정하면, 요청이 느리다.
+            # TODO : 직접 유저가 업로드한 데이터 하드에 저장하면, 해킹 위험에 노출된다.
+            # TODO : 임시데이터는 인메모리 캐싱 솔루션(memcache, redis 등)을 사용하고,
+            # TODO : 사진 데이터는 정적 데이터 저장 솔루션 S3를 권장한다.
             os.makedirs(
                 MEDIA_ROOT + '/user_{}/thumbnail/'.format(request.POST['email']), exist_ok=True)
             user = User.objects.create_user(
@@ -218,6 +229,11 @@ def sign_up(request):
             mail_subject = '[도와줘, 코딩] 회원가입 인증 메일입니다.'
             email = EmailMessage(mail_subject, message, to=[user.email])
             # email.send()
+            # TODO : 이 부분 잘 되나요? 파이썬 뷰 함수가 렌더링 된 이후에도
+            # TODO : 스레딩이 남아있는 지 모르겠네요.
+            # TODO : 비동기 작업을 이렇게 오래 잡아놓고 있으면, 뷰 렌더링 함수가 끝나지 않아
+            # TODO : 서버가 쉽게 터질 것 같다는 생각이 드네요.
+            # TODO : 비동기 작업 처리에 대한 다른 방법 도입이 필요해보입니다.
             Timer(24 * 60 * 60, unauthenticated_user_delete,
                   [request.POST['email']]).start()
             ######## 업적 초기화를 위한 임시적인 부분 ########

@@ -8,7 +8,7 @@ from django.db.models import Q
 import json
 from django.http import JsonResponse, FileResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.core.paginator import Paginator 
+from django.core.paginator import Paginator
 from django.db.models import Count
 from django.views.generic import ListView, View
 from hitcount.views import HitCountDetailView
@@ -25,7 +25,7 @@ basic_tags = ['동작', '형태', '소리', '이벤트', '제어',' 감지', '�
 def question_tag_filter(questions, tag_filter_by_list):
     num = len(tag_filter_by_list)
     if num == 1:
-        questions= questions.filter(s_or_e_tag=tag_filter_by_list[0]) 
+        questions= questions.filter(s_or_e_tag=tag_filter_by_list[0])
     elif num == 2:
         questions= questions.filter(Q(s_or_e_tag=tag_filter_by_list[0]) | Q(s_or_e_tag=tag_filter_by_list[1]))
     elif num==3:
@@ -40,6 +40,8 @@ def question_answer_filter(questions, answer_filter_by):
     return questions
 
 ### Error messages
+# 이름이 user.view에 있는 것과 겹쳐서, 헷갈릴 여지가 있을 것 같습니다.
+# QnaErrorMessages가 좋을 것 같습니다.
 class ErrorMessages():
     title, content, image, attached_file, s_or_e_tag, tags = '', '', '', '', '', ''
     def validation_check(self,title, content, image, attached_file, s_or_e_tag, tags, command):
@@ -114,8 +116,10 @@ def search_result(request):
 def question_create(request):
     if request.method == 'POST':
         form = QuestionForm(request.POST, request.FILES)
-        
+
         error_messages = ErrorMessages()
+        # TODO : validation 체크할 때 request 객체와 form을 넘겨주는 건 어떨까요?
+        # TODO : 넘겨주는 인자가 너무 많고, 순서 헷갈릴 여지도 있어보입니다.
         error_messages.validation_check(
             form.data['title'],
             form.data['content'],
@@ -174,17 +178,17 @@ def question_create(request):
             original_information = OriginalInformation()
             original_information.remember(request, ['create'])
             ctx = {
-                'form': form, 
+                'form': form,
                 'error_messages': error_messages,
                 'original_information': original_information,
-                'basic_tag_names': basic_tag_names,  
+                'basic_tag_names': basic_tag_names,
                 'extra_tag_names': extra_tag_names,
                 }
             return render(request, 'qna/question_form.html', context=ctx)
     else:
         form = QuestionForm()
         ctx = {'form': form}
-        
+
         return render(request, 'qna/question_form.html', context=ctx)
 
 class QuestionDetailView(HitCountDetailView):
@@ -212,11 +216,11 @@ class QuestionDetailView(HitCountDetailView):
         tags = self.object.tags.all()
         username = self.object.user.nickname
         total_likes = len(self.object.like_user.all())
-        
+
         # 해당 게시글에 대한 답변 가져오기
         answers = Answer.objects.filter(question_id = self.object.id, parent_answer__isnull=True).order_by('answer_order')   #  나중에 답변 정렬도 고려. 최신순 또는 좋아요 순
         answers_count = len(answers)
-        
+
         answers_reply_dict ={}
         for answer in answers:
             replies =  Answer.objects.filter(parent_answer= answer).order_by('answer_order')
@@ -240,14 +244,14 @@ class FileDownloadView(SingleObjectMixin, View):
 
     def get(self, request, pk):
         object = get_object_or_404(Question, pk=pk)
-        
+
         file_path = object.attached_file.path
         file_type, _ = mimetypes.guess_type(file_path)
         #file_type = object.attached_file.name.split('.')[-1]  # django file object에 content type 속성이 없어서 따로 저장한 필드
         fs = FileSystemStorage(file_path)
         response = FileResponse(fs.open(file_path, 'rb'), content_type=file_type)
         response['Content-Disposition'] = f'attachment; filename={object.get_filename()}'
-        
+
         return response
 
 
@@ -287,7 +291,7 @@ def question_update(request,pk):
             update_question(question, request.user)
             return redirect('qna:question_detail', question.pk)
         else:
-            
+
             tags = request.POST.getlist('detail_tag')
 
             basic_tag_names = []
@@ -300,14 +304,14 @@ def question_update(request,pk):
             original_information = OriginalInformation()
             original_information.remember(request, ['update'])
             ctx = {
-                'form': form, 
+                'form': form,
                 'error_messages': error_messages,
                 'original_information': original_information,
-                'basic_tag_names': basic_tag_names,  
+                'basic_tag_names': basic_tag_names,
                 'extra_tag_names': extra_tag_names,
                 }
             return render(request, 'qna/question_form.html', context=ctx)
-        # question = form.save()  
+        # question = form.save()
         # question.s_or_e_tag = request.POST.get('s_or_e_tag')  # 카테고리 (스크래치, 엔트리, 기타) 중 1 선택
 
         # # 상세 태그 (기능) 선택
@@ -332,7 +336,7 @@ def question_update(request,pk):
         # TODO : 선택 태그 뭘 선택했었는 지를 ctx로 넘겨주자
         # 기본 태그와 추가 태그 다르게 넘기자
         # TODO :  기본 태그 가 바뀌게 된다면 아래 리스트 수정해야 됨.
-        
+
         tags = question.tags.all()
         basic_tag_names = []
         extra_tag_names = []
@@ -343,7 +347,7 @@ def question_update(request,pk):
                 extra_tag_names.append(tag.tag_name)
         ctx = {'form': form, 'question':question, 'basic_tag_names': basic_tag_names,  'extra_tag_names': extra_tag_names}
 
-        return render(request, template_name="qna/question_form.html", context=ctx)        
+        return render(request, template_name="qna/question_form.html", context=ctx)
 
 def question_delete(request, pk):
     question = get_object_or_404(Question, pk=pk)
@@ -358,7 +362,7 @@ def question_delete(request, pk):
 
 ############### ajax 관련 view 합수들
 
-# 답변 작성 
+# 답변 작성
 @csrf_exempt
 def answer_ajax(request):
     req = json.loads(request.body)
@@ -367,11 +371,11 @@ def answer_ajax(request):
     user_id = req['user']
     user = get_object_or_404(User, pk=user_id)
     username = user.nickname
-    
+
     #### TODO ##########
     ## user 대표이미지 넘겨주는 건 유저 조금 구체화 된 다음에 추가
 
-    ## 새 답변의 order 필드를 정해주기 위한 부분. 
+    ## 새 답변의 order 필드를 정해주기 위한 부분.
     current_answers = Answer.objects.filter(question_id=question_id).order_by('answer_order')
     if len(current_answers)==0:
         new_order = 1
@@ -403,8 +407,8 @@ def reply_ajax(request):
     # 작성하려는 대댓글이 속한 질문 구하기
     this_answer = get_object_or_404(Answer, pk=answer_id)
     this_question = this_answer.question_id
-    
-    ## 새 답변의 order 필드를 정해주기 위한 부분. 
+
+    ## 새 답변의 order 필드를 정해주기 위한 부분.
     current_answers = Answer.objects.filter(question_id=this_question.id).order_by('answer_order')
     if len(current_answers)==0:
         new_order = 1
@@ -413,9 +417,9 @@ def reply_ajax(request):
 
     ## 새로운 대댓글
     new_answer = Answer.objects.create(
-        question_id=this_question, 
-        content=content, 
-        answer_order=new_order, 
+        question_id=this_question,
+        content=content,
+        answer_order=new_order,
         user = user,
         parent_answer = this_answer
     )
@@ -429,7 +433,7 @@ def reply_ajax(request):
         'reply_id': new_answer.id,
         'answer_id' : this_answer.id,
         'content': content,
-        'user':username, 
+        'user':username,
         'created_at':created_at,
     })
 
@@ -467,7 +471,7 @@ def answer_like_ajax(request):
     liked_users = answer.like_user
 
     is_liked = request.user in liked_users.all()
-    
+
     if is_liked:
         liked_users.remove(request.user)
         update_comment_like_cancel(answer, answer.user, request.user)
@@ -504,7 +508,7 @@ def answer_edit_ajax(request):
     answer = get_object_or_404(Answer, pk=answer_id)
     # TODO : 고려해볼 사항. 원래 작성되어 있던 내용을 지금은 db에서 찾아서 넘겨주고 있는데
     # 그렇게 말고 data전송을 최소화화면서 프론트 단에서 그냥 현재 입력된 내용 받앙오기
-    
+
 
     return JsonResponse({'id':answer_id})
 

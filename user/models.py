@@ -50,6 +50,8 @@ class User(AbstractUser):
     def __str__(self):
         return self.nickname
 
+    # property 데코레이터 사용해서 getter/setter 추천드립니다.
+    # https://www.daleseo.com/python-property/
     def points(self):
         for category in JOB_CATEGORY:
             if self.job in JOB_CATEGORY[category]:
@@ -111,6 +113,9 @@ class GetPoint(models.Model):
 
 
 def initializeReward():
+    # 매 번 create 콜을 할 때 마다 DB 접속을 새로하기에, 오버헤드가 많이 발생
+    # bulk_create 추천
+    # https://blog.naver.com/jung_kj/221002011537
     Reward.objects.create(name='총 좋아요 수 2개 달성',
                           info='총 좋아요 수 2개 달성',
                           type='total_like', criteria=2,

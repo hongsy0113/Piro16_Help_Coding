@@ -30,6 +30,8 @@ urlpatterns = [
     path('<int:pk>/search_list/', view=views.search_result, name='search_result'),
     path('answer_ajax/', view=views.answer_ajax, name='answer_ajax'),
     path('reply_ajax/', view=views.reply_ajax, name='reply_ajax'),
+    # TODO : answer_like, answer_edit, answer_edit_submit 등 너무 엔드포인트가 많이 분리되어있습니다.
+    # TODO : answer 객체만 수정하는 엔드포인트를 파서, 변경하려는 answer 객체를 보내 수정하는 방식이 편합니다.
     path('post_like_ajax/', view=views.post_like_ajax, name='post_like_ajax'),
     path('answer_like_ajax/', view=views.answer_like_ajax, name='answer_like_ajax'),
     path('answer_delete_ajax/', view=views.answer_delete_ajax, name='answer_delete_ajax'),
