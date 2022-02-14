@@ -93,8 +93,9 @@ def update_answer(question, answer, posted_user, answered_user):
     answered_user.save()
     answered_user.get_level()
     update_point_history(answered_user, 'answer')
-    update_reward(answered_user, 'total_comment', posted_user.total_comment())
-    update_reward(answered_user, 'total_answer', posted_user.total_answer)
+    update_reward(answered_user, 'total_comment',
+                  answered_user.total_comment())
+    update_reward(answered_user, 'total_answer', answered_user.total_answer)
     if answered_user != posted_user:
         Alert.objects.create(user=posted_user, content="[{}] 질문글에 댓글이 달렸어요.".format(
             question.title), alert_type="new_comment", related_id=question.id, time=datetime.now())
