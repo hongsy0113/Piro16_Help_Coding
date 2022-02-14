@@ -9,6 +9,7 @@ import codecs
 import json
 import shutil, os
 import mimetypes
+import time
 from django.shortcuts import render, redirect, get_object_or_404
 from django.templatetags.static import static
 from django.db.models import Q
@@ -347,6 +348,17 @@ class OriginalGroupInfo():
 
 
 ######## 초대 코드 ########
+# 7일의 코드 유효 기간
+def group_code_save(pk):
+    time = Timer(7 * 24 * 60 * 60, group_code_save, [pk])
+    time.start()
+
+    group = get_object_or_404(Group, pk=pk)
+    print(group.code)
+    group.code = get_invite_code()
+    group.save()
+    print(group.code)
+    return 1
 
 # 초대 코드 발급
 def get_invite_code(length=6):
@@ -359,10 +371,15 @@ def get_invite_code(length=6):
 def create_code_ajax(request):
     req = json.loads(request.body)    
     group_id = req['groupId']
+
     group = get_object_or_404(Group, pk=group_id)
-    group.code = get_invite_code()
+    if group.code:
+        code = group.code
+    else:
+        group_code_save(group_id)
+        code = group.code
+    print(code)
     group.save()
-    code = group.code
 
     return JsonResponse({ 'name': group.name, 'code': code })
 
@@ -474,15 +491,18 @@ def group_join_accept(request):
     req = json.loads(request.body)
     group_id = req['groupId']
     wait_user_id = req['userId']
+
     wait_user = get_object_or_404(User, pk=wait_user_id)
     group = get_object_or_404(Group, pk=group_id)
 
+    wait_id = wait_user.id
+    print(wait_user)
     group.waits.remove(wait_user)
     group.members.add(wait_user)
     group.save()
-
+    print('jj)')
     return JsonResponse({
-        'userId': wait_user_id
+        'userId': wait_id
     })
 
 # 거절 선택 시
@@ -491,14 +511,17 @@ def group_join_reject(request):
     req = json.loads(request.body)
     group_id = req['groupId']
     wait_user_id = req['userId']
+
     wait_user = get_object_or_404(User, pk=wait_user_id)
     group = get_object_or_404(Group, pk=group_id)
+
+    wait_id = wait_user.id
 
     group.waits.remove(wait_user)
     group.save()
 
     return JsonResponse({
-        'userId': wait_user_id
+        'userId': wait_id
     })
 
 

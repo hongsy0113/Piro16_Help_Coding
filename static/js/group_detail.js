@@ -108,6 +108,7 @@ const createCodeHandleResonse = (code, name) => {
         <h3>그룹명: ${ name }</h3>
         <h3>다음 코드로 친구를 초대하세요!</h3>
         <h1>${ code }</h1>
+        <p>코드 유효 기간: 일주일</p>
     `;
     createCodeAlert.style.display = 'block';
 }
@@ -174,31 +175,30 @@ const groupWaitHandleResponse = (groupName, waitsName, waitsImg, waitsId) => {
         }
 
         // 수락, 거절 버튼 선택 이후
-        const waitAcceptBtn = document.querySelector(`.wait__accept--btn-${ waitsId[i] }`);
-        const waitRejectBtn = document.querySelector(`.wait__reject--btn-${ waitsId[i] }`);
+        const waitAcceptBtn = document.querySelector(`.wait__accept--btn-${ waitMemberId }`);
+        const waitRejectBtn = document.querySelector(`.wait__reject--btn-${ waitMemberId }`);
+        const memberWaitAlertText = document.querySelector(`.wait__text--${ waitMemberId }`);
 
         waitAcceptBtn.addEventListener('click', function(){
-            onClickacceptWait();
+            onClickacceptWait(waitMemberId, group_id);
         })
         waitRejectBtn.addEventListener('click', function(){
-            onClickrejectWait();
+            onClickrejectWait(waitMemberId, group_id);
         })
+
     };
     flag = 1;
     
     groupWaitAlert.style.display = 'block';
-
-    
-    
 }
 
-const memberWaitAlertText = document.querySelector(`.wait__text--${ waitsId[i] }`)
 
 const onClickacceptWait = async (userId, groupId) => {
     const url = "/group/group_join_accept/";
     const {data} = await axios.post(url, {
         userId, groupId
     });
+    console.log('!')
     joinAcceptHandleResponse(
         data.userId
     )
@@ -222,4 +222,3 @@ const onClickrejectWait = async (userId, groupId) => {
 joinRejectHandleResponse = (userId) => {
     memberWaitAlertText.innerHTML = '거절했습니다.'
 }
-
