@@ -3,8 +3,8 @@
 
 {% block css %}
     <link rel="stylesheet" href="{% static 'css/base.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/group.css' %}" />   <!-- 모달 css -->
     <link rel="stylesheet" href="{% static 'css/group_detail.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/group_detail_modal.css' %}" />
 {% endblock %}
 
 {% block js %}
@@ -120,19 +120,19 @@
 
                 <!-- 그룹 대기자 리스트 modal -->
                 <div class="group__member--all modal modal__hidden">
-                    <div class="modal__overlay"></div>
+                    <div class="modal__overlay"></div>  <!-- 모달 배경 -->
                     <div class="modal__content">    <!-- 모달 내용 -->
-                        <div class="group__wait-name"><h2></h2></div>
-                        <div class="d-flex flex-row">
-                        <hr/>
-                        <div class="group__wait--member-list me-2 p-4">
-                            
+                        <div class="modal__content--top">
+                            <span>그룹 가입 대기자</span>
                         </div>
-                        <button class="group__wait--close btn btn-dark" onclick="closeGroupWait()">닫기</button>
+                        <div class="modal__content--bottom group-wait__modal--bottom">
+                            <div class="group__wait--member-list">  <!-- 대기자 명단 js로 추가 -->                        
+                            </div>
+                            <div class="group__wait--closebox">
+                                <button class="group__wait--close modal__close" onclick="closeGroupWait()">완료</button>
+                            </div>
+                        </div>
                     </div>
-                    </div>
-                    
-                    
                 </div>
             </div>
         {% endif %}
@@ -157,16 +157,11 @@
                 <div class="modal__content">    <!-- 모달 내용 -->
                     <div class="modal__content--top">
                         <span>멤버 초대 코드</span>
-                        <!-- <button class="group__code--close" onclick="closeCreateCode()">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36" fill="none">
-                            <path d="M1.2041 1.57812L34.4998 34.5825M1.2041 34.5825L34.4998 1.57812" stroke="#4E4E4E" stroke-width="3"/>
-                            </svg>
-                        </button>                    -->
                     </div>
                     <div class="modal__content--bottom">
                         <div class="code_box">      
                         </div>  
-                        <button class="group__code--close" onclick="closeCreateCode()">확인</button>
+                        <button class="group__code--close modal__close" onclick="closeCreateCode()">확인</button>
                     </div>
                 </div>
             </div>    
