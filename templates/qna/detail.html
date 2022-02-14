@@ -17,10 +17,8 @@
 <main>
     <h1>{{ question.title }}</h1>
     <div style="display: flex; justify-content: space-between;">
-        <p>{{ question.created_at|date:'y.m.d'}} · 
-            조회 {% get_hit_count for question %} · 
-            좋아요 {{ total_likes }} · 
-            {{ username }}</p>
+        <!-- js 에서 question info를 split 하는데, 한 줄에 안 쓰면 공백이 들어가므로 한 줄로 써야 함 -->
+        <p class = "question__info ">{{ question.created_at|date:'y.m.d'}} · 조회 {% get_hit_count for question %} · 좋아요 {{ total_likes }} · {{ username }}</p>
         <p>
             {% if question.user.id == user.id %}
             <a href="{% url 'qna:question_update' question.pk %}" class="question__edit-btn">수정</a>
@@ -107,7 +105,7 @@
                             <div> <!-- 이름, 글쓴이, 날짜 -->
                                 <div>
                                     <h2>{{ answer.user }}</h2>
-                                    {% if answer.user.id == user.id %}
+                                    {% if answer.user.id == question.user.id %}
                                     <span class="answer__writer-mark">글쓴이</span>
                                     {% endif %}
                                 </div>
@@ -160,7 +158,7 @@
                                         <div>
                                             <div class="answer__user__profile-name">
                                                 <h2>{{ reply.user }}</h2>
-                                                {% if reply.user.id == user.id %}
+                                                {% if reply.user.id == question.user.id %}
                                                 <span class="answer__writer-mark">글쓴이</span>
                                                 {% endif %}
                                             </div>
@@ -194,9 +192,6 @@
                                 </div>
                             </div>
                         </div>
-
-                        
-
                     {% endfor %}
                 </div>
 
