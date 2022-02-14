@@ -352,7 +352,7 @@ def create_code_ajax(request):
     req = json.loads(request.body)    
     group_id = req['groupId']
     group = get_object_or_404(Group, pk=group_id)
-    # group.code = get_invite_code()
+    group.code = get_invite_code()
     group.save()
     code = group.code
 
