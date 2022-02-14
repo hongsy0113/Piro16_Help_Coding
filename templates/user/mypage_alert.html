@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div> <!-- Ajax 때문에 id는 유지해주세요! -->
+  <h3>○ 알림 내역 ( {{ user.email }} )</h3>
+  {% if user.has_new_alert %}
+  <h3 id="alert-count">새로운 알림이 {{ user.has_new_alert }}개 있어요.</h3>
+  <button id="check-all-alert-button" onclick="checkAllAlert()">전체 확인</button>
+  {% else %}
+  <h3 id="alert-count">새로운 알림이 없어요.</h3>
+  {% endif %}
+  {% for alert in alerts %}
+  <div>
+    {% if not alert.checked %}
+    <div id="alert-{{ alert.id }}">
+      <p>새로운 알림!</p>
+      <button onclick="checkAlert({{ alert.id }})">확인</button>
+    </div>
+    {% endif %} <!-- 새 알림만 강조하고 싶으면 밑에 처럼 인라인 스타일 하나씩 넣어줘도 될 듯...? 임시로 넣어봤어! 근데 Ajax로 스타일 빼는 것도 구현해야 할 듯... (나중에) -->
+    <a href="{{ alert.related_url }}" onclick="viewAlert({{ alert.id }})" {% if not alert.checked %}style="color: red;"{% endif %}>{{ alert.content }}</a>
+    <p>{{ alert.time }}</p>
+  </div>
+    {% endfor %}
+    <script>
+        const requestViewAlert = new XMLHttpRequest();
+  
+        const viewAlert = (id) => {
+            const url = "/mypage/alert/check_ajax/";
+            requestViewAlert.open("POST", url, true);
+            requestViewAlert.setRequestHeader(
+                "Content-Type",
+                "application/x-www-form-urlencoded"
+            );
+            requestViewAlert.send(JSON.stringify({id: id}));
+        };
+    </script>
+
+    <script>
+      const requestCheckAlert = new XMLHttpRequest();
+
+      const checkAlert = (id) => {
+          const url = "/mypage/alert/check_ajax/";
+          requestCheckAlert.open("POST", url, true);
+          requestCheckAlert.setRequestHeader(
+              "Content-Type",
+              "application/x-www-form-urlencoded"
+          );
+          requestCheckAlert.send(JSON.stringify({id: id}));
+      };
+
+      const checkHandleResponse = () => {
+          if (requestCheckAlert.status < 400) {
+              const {alert_id, new_alert_num} = JSON.parse(requestCheckAlert.response);
+              const newAlertMessage = document.querySelector(`#alert-${alert_id}`);
+              newAlertMessage.remove();
+              const alertNumDisplay = document.querySelector(`#alert-count`);
+              if (new_alert_num != 0) {
+                  alertNumDisplay.innerHTML = `새로운 알림이 ${new_alert_num}개 있어요.`;
+              } else {
+                  alertNumDisplay.innerHTML = `새로운 알림이 없어요.`;
+                  const checkAllAlertButton = document.querySelector(`#check-all-alert-button`);
+                  checkAllAlertButton.remove();
+              }
+          }
+      };
+
+      requestCheckAlert.onreadystatechange = () => {
+          if (requestCheckAlert.readyState === XMLHttpRequest.DONE) {
+              checkHandleResponse();
+          }
+      };
+    </script>
+    
+    <script>
+      const requestCheckAllAlert = new XMLHttpRequest();
+
+      const checkAllAlert = () => {
+          const url = "/mypage/alert/check_all_ajax/";
+          requestCheckAllAlert.open("POST", url, true);
+          requestCheckAllAlert.setRequestHeader(
+              "Content-Type",
+              "application/x-www-form-urlencoded"
+          );
+          requestCheckAllAlert.send(JSON.stringify());
+      };
+
+      const checkAllHandleResponse = () => {
+          if (requestCheckAllAlert.status < 400) {
+              const {all_alert_id} = JSON.parse(requestCheckAllAlert.response);
+              for (let index = 0; index < all_alert_id.length; index++) {
+                  const newAlertMessage = document.querySelector(`#alert-${all_alert_id[index]}`);
+                  newAlertMessage.remove();
+              }
+              const alertNumDisplay = document.querySelector(`#alert-count`);
+              alertNumDisplay.innerHTML = `새로운 알림이 없어요.`;
+              const checkAllAlertButton = document.querySelector(`#check-all-alert-button`);
+              checkAllAlertButton.remove();
+          }
+      };
+
+      requestCheckAllAlert.onreadystatechange = () => {
+          if (requestCheckAllAlert.readyState === XMLHttpRequest.DONE) {
+              checkAllHandleResponse();
+          }
+      };
+    </script>
+
+  {% if is_paginated %}
+  <ul class="pagination">
+    {% if page_obj.has_previous %}
+    <li class="page-item">
+      <a class="page-link" href="?page={{ page_obj.previous_page_number }}" tabindex="-1">이전</a>
+    </li>
+    {% else %}
+    <li class="page-item disabled">
+      <a class="page-link" href="#" tabindex="-1">이전</a>
+    </li>
+    {% endif %}
+
+    {% for page in page_range %}
+    <li class="page-item {% if page == page_obj.number %} activate {% endif %}">
+      <a class="page-link" href="?page={{ page }}">{{ page }}</a>
+    </li>
+    {% endfor %}
+
+    {% if page_obj.has_next %}
+    <li class="page-item">
+      <a class="page-link" href="?page={{ page_obj.next_page_number }}">다음</a>
+    </li>
+    {% else %}
+    <li class="page-item disabled">
+      <a class="page-link" href="#">다음</a>
+    </li>
+    {% endif %}
+  </ul>
+  {% endif %}
+</div>
+{% endblock content %}

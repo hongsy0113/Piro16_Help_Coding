@@ -1,0 +1,233 @@
+.mypage__profile__container {
+    padding: 30px 75px;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 40px;
+}
+
+.mypage__profile__img {
+    height: 220px;
+    width: 220px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 1px solid #bdbdbd;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.mypage__profile__img img {
+
+    height: 100%;
+    width: auto;
+    object-fit: contain;
+    
+}
+
+.mypage__profile__text {
+    width: 630px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.mypage__profile__text > p {
+    font-size: 32px;
+    font-weight: bold;
+    line-height: 100%;
+    margin: 0;
+}
+
+.mypage__profile__text > div {
+    display: flex;
+    gap: 20px;
+}
+
+.mypage__profile__text-content {
+    font-size: 18px;
+    line-height: 100%;
+    color: #4e4e4e;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.mypage__profile__text-content > div {
+    display: flex;
+}
+
+.mypage__profile__text-content > div :first-child{
+    font-weight: bold;
+    width: 100px;
+}
+
+.mypage__profile__text-content p {
+    margin: 0;
+}
+
+.mypage__options {
+    display: flex;
+    gap: 20px;
+    padding-left: 50px;
+    margin-bottom: 5px;
+    border-bottom: 2px solid #bdbdbd;
+}
+
+.mypage__options > h3 {
+    font-size: 20px;
+    color: #828282;
+    font-weight: bold;
+    cursor: pointer;
+    margin: 0;
+    padding-bottom: 5px;
+    margin-bottom: -2px;
+    border-bottom: none;
+}
+.mypage__options > h3:first-of-type {
+    color: #4F4f4f;
+    border-bottom: 3px solid #4f4f4f;
+}
+
+.mypage__options > h3:hover, .mypage__options > h3:active {
+    color: black;
+}
+.mypage__reward__container> div {
+    padding: 45px 30px;
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 35px;
+}
+
+.mypage__reward {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    margin-bottom: 45px;
+}
+
+.mypage__reward__img__container{
+    width: 175px;
+    height: 175px;
+    border-radius: 16px;
+    background-color: #c4c4c4;
+    margin-bottom: 10px;
+}
+
+.mypage__reward__img__container img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
+.mypage__reward__name {
+    font-size: 24px;
+    line-height: 150%;
+    font-weight: bold;
+    margin: 0;
+}
+
+.mypage__reward__content, .mypage__reward__date {
+    font-size: 14px;
+    line-height: 150%;
+    color: #4e4e4e;
+    margin: 0;
+}
+
+
+.mypage__question__container, .mypage__answer__container {
+    display: none;
+}
+
+.mypage__question {
+    text-decoration: none;
+    color: black;
+    /* height: 211px; */
+    padding: 20px 50px;
+    margin: 0 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    overflow: hidden;
+    border-bottom: 1px solid #bdbdbd;
+}
+
+.mypage__question:last-of-type {
+    margin-bottom: 15px;
+}
+
+.mypage__question-left {
+    width: 870px;
+}
+.mypage__question-left :first-child{
+    font-size: 18px;
+    font-weight: bold;
+    line-height: 150%;
+    margin: 0;
+}
+
+.mypage__question-left :last-child{
+    font-size: 16px;
+    line-height: 150%;
+    color: #4e4e4e;
+    margin: 0;
+    height: 50px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.mypage__question-right {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    border: 2px solid #c4c4c4;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 18px;
+    line-height: 150%;
+    color: #4e4e4e;
+    margin-left: 10px;
+}
+
+.mypage__answer {
+    text-decoration: none;
+    color: black;
+    height: 116px;
+    display: flex;
+    flex-direction: column;
+    gap: 13px;
+    padding: 20px 50px;
+    margin-bottom: 5px;
+    border-bottom: 1px solid #bdbdbd;
+    justify-content: space-between;
+    margin: 0 10px ;
+}
+
+.mypage__answer:last-of-type {
+    margin-bottom: 15px;
+}
+
+.mypage__answer :first-child {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 0;
+}
+
+.mypage__answer :last-child {
+    font-size: 16px;
+    line-height: 150%;
+    color: #4e4e4e;
+    margin: 0;
+    height: 54px;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

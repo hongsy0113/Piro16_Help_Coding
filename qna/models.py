@@ -1,48 +1,56 @@
 from django.db import models
 from user.models  import User
 from group.models  import *
+from django.contrib.contenttypes.fields import GenericRelation
+from hitcount.models import HitCountMixin, HitCount
+import os
 
 # Create your models here.
-class Question(models.Model):
-    title = models.CharField(verbose_name='제목', max_length=30)
+class Question(models.Model, HitCountMixin):
+    title = models.CharField(verbose_name='제목', max_length=50)
     content = models.TextField(verbose_name='내용')
+
     # 코드 캡쳐, 실행창 캡쳐와 같은 이미지 업로드
     image = models.ImageField(upload_to='qna/image', null=True, blank=True)
+
     # .ent, .sb3 파일 등 소스코드 파일 업로드
-    attached_file = models.FileField(verbose_name='첨부파일', upload_to='qna/code', null=True, blank=True)
-
+    attached_file = models.FileField(verbose_name='첨부파일', upload_to='qna/file', null=True, blank=True)
     hit = models.IntegerField(verbose_name='조회수', default=0)
-
     created_at = models.DateTimeField(verbose_name='게시일자', auto_now_add=True)
     updated_at = models.DateTimeField(verbose_name='수정일자', auto_now=True)
-
     SE_TAG_CHOICES = (
         ('S', '스크래치'),
         ('E', '엔트리'),
         ('ETC', '기타'),
     )
-
     s_or_e_tag = models.CharField(verbose_name='기본 카테고리',choices=SE_TAG_CHOICES, max_length=20)
+
     #### 직성자필드
     user = models.ForeignKey(User, on_delete=models.CASCADE ,related_name='question_person')
-
     like_user = models.ManyToManyField('user.User', blank=True)
-
     tags = models.ManyToManyField('QnaTag', blank=True)
 
     def __str__(self):
         return self.title
 
+    def is_answered(self):
+        return self.answer_set.count() > 0
+
+    def get_filename(self):
+        return os.path.basename(self.attached_file.name)
+
+    hit_count_generic = GenericRelation(
+        HitCount, object_id_field='object_pk',
+        related_query_name='hit_count_generic_relation'
+    )
+
 class Answer(models.Model):
     #####
     ### 작성자 필드
     user = models.ForeignKey(User, on_delete=models.CASCADE ,related_name='answer_person')
-
     content = models.TextField(verbose_name='내용')
-
     created_at = models.DateTimeField(verbose_name='게시일자', auto_now_add=True)
     updated_at = models.DateTimeField(verbose_name='수정일자', auto_now=True)
-
     answer_order = models.IntegerField(verbose_name='답변순서')
     answer_depth = models.IntegerField(verbose_name='답변깊이', default=0)
 
@@ -52,22 +60,7 @@ class Answer(models.Model):
 
     like_user = models.ManyToManyField('user.User', blank=True)
 
-# # 게시글 리액션
-# class QuestionReaction(models.Model):
-#     question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='reacted_question')
-
-#     # 리액션한 사람
-#     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='question_react_person') 
-
-# # 답변 리액션
-# class AnswerReaction(models.Model):
-#     question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='reacted_answer')
-
-#     # 리액션한 사람
-#     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='answer_react_person') 
-
 class QnaTag(models.Model):
-    '''
     # 스크래치 메뉴
     S_TAG_CHOICES = (
         ('MOTION', '동작'),
@@ -81,6 +74,8 @@ class QnaTag(models.Model):
         ('MY', '내 블록'),
         ('ETC', '기타'),
     )
+
+    '''
     # 엔트리 메뉴
     E_TAG_CHOICES = (
         ('START', '시작'),
@@ -99,12 +94,21 @@ class QnaTag(models.Model):
         ('ETC', '기타'),
     )
     '''
-    tag_name = models.CharField(verbose_name='태그', max_length=20)
+    tag_name = models.CharField(verbose_name='태그',  max_length=20)
 
     def __str__(self):
         return self.tag_name
 
-# manytomany field 사용
-# class QnaTagging(models.Model):
-#     question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='tagged_question')
-#     tag = models.ForeignKey(QnaTag, on_delete=models.CASCADE, related_name='this_question_tag', null=True)
+##################
+## 첨부파일, 첨부이미지 
+
+class QuestionFiles(models.Model):
+    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='question_files')
+    attached_file = models.FileField(verbose_name='첨부파일', upload_to='qna/file')
+
+def group_thumbnail_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/group_<group.name>/<filename>
+    return 'test_{0}/{1}'.format(instance.pk, filename)
+class PkTest(models.Model):
+    auto_increment_id = models.AutoField(primary_key=True)
+    attached_file = models.FileField(verbose_name='첨부파일', upload_to='qna/file')
