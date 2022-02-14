@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup as bs
+import json
 
 
 ## 엔트리 url에서 iframe 추출
@@ -7,13 +8,13 @@ from bs4 import BeautifulSoup as bs
 # output: iframe
 def get_entry_iframe(url, width, height):
   res = requests.get(url)
-  soup = bs(res.text, "html.parser")
-  [meta_tag] = soup.select("meta[property='og:image']")
-  content = meta_tag.get('content')
-  query_id = content.split('/')[-1].split('.')[0]
+  soup = bs(res.content, "html.parser")
+  data = soup.find("script", {"type": "application/json"})  
+  data = json.loads(data.text)
+  query_id = data['props']['initialProps']['pageProps']['query']['id']
   embed_url = 'https://playentry.org/iframe/' + query_id
+  #iframe = "<iframe width='" + str(width) + "' height='" + str(height) + "' src='https://playentry.org/iframe/" + query_id + "' frameborder='0'></iframe>"
   iframe = "<iframe width='" + str(width) + "' height='" + str(height) + "' src='" + embed_url + "' frameborder='0'></iframe>"
-  
   return iframe
 
 ## 스크래치 url에서 iframe 추출
@@ -60,10 +61,11 @@ def get_img_src(url):
     query_id = url.split('/')[-1]
     image_src = "https://cdn2.scratch.mit.edu/get_image/project/" + query_id + "_480x360.png"
   elif 'naver' in url:
-    soup = bs(response.text, "html.parser")
-    [meta_tag] = soup.select("meta[property='og:image']")
-    content = meta_tag.get('content')
-    query_id = content.split('/')[-1].split('.')[0]
+    soup = bs(response.content, "html.parser")
+    data = soup.find("script", {"type": "application/json"})  
+    data = json.loads(data.text)
+    query_id = data['props']['initialProps']['pageProps']['query']['id']
+    
     image_src = "https://playentry.org/uploads/thumb/" + query_id[0:4]  + "/" + query_id + ".png"
   try:
     response = requests.get(image_src)
