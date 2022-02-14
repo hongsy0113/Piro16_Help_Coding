@@ -30,7 +30,7 @@ img {
     text-align: center;
     font-family: Noto Sans CJK KR;
     text-decoration: none;
-    font-weight: bold;
+    /* font-weight: bold; */
     color: #FFFFFF;
     font-size: 24px;
     line-height: 105%;
@@ -48,7 +48,7 @@ img {
     text-align: center;
     font-family: Noto Sans CJK KR;
     text-decoration: none;
-    font-weight: bold;
+    /* font-weight: bold; */
     color: #FFFFFF;
     font-size: 24px;
     line-height: 105%;

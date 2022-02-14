@@ -187,8 +187,7 @@ const groupWaitHandleResponse = (groupName, waitsName, waitsImg, waitsId) => {
     };
     flag = 1;
     
-    groupWaitAlert.style.display = 'block';
-}
+    groupWaitAlert.style.display = 'flex';
 
 
 const onClickacceptWait = async (userId, groupId) => {
