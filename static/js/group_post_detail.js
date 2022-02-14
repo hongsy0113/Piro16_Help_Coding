@@ -398,18 +398,31 @@ iframeFullscreenButton.addEventListener('click', function() {
 const onClickIframeFullscreen =() => {
     const iframeContainer = document.querySelector('.iframe__container');
     console.log(iframeContainer)
-    const body= document.body
+    const smallScreenButton = document.createElement('button');
+    smallScreenButton.innerHTML = '작은 화면으로';
+    //iframeContainer.appendChild(smallScreenButton);
+    // smallScreenButton.addEventListener('click', function() {
+
+    // })
+
+    
     document.querySelector("header").style.display = "none";
     document.querySelector("section").style.display = "none";
+    
     iframeContainer.style.display ='block'
-    iframeContainer.style.width ='100%'
-    iframeContainer.style.height ='100%'
+    iframeContainer.style.position = 'fixed';
+    iframeContainer.style.width ='90%'
+    iframeContainer.style.height ='90%'
     
 
     document.body.append(iframeContainer);
+    iframeContainer.append(smallScreenButton);
+    smallScreenButton.style.display='block';
     const iframe = iframeContainer.firstElementChild;
-    iframe.style.width='100%'
-    iframe.style.height ='100%'
+    iframe.setAttribute('width', '100%');
+    iframe.setAttribute('height', '150%');
+    //iframe.style.width='100% !important';
+    //iframe.style.height ='100% !important'
     iframe.style.postion = 'absolute'
     console.log(body)
     console.log(iframe)
