@@ -461,29 +461,54 @@ def join_list(request, pk):
         # alert 창 띄우기 (방장이 아니므로 열람할 수 없습니다)
         return redirect('group:group_detail', pk)
 
-# 그룹 가입 대기자 명단 [미완]
+# 그룹 가입 대기자 명단
 @csrf_exempt
 def wait_list_ajax(request):
     req = json.loads(request.body)
     group_id = req['id']
     group = get_object_or_404(Group, pk=group_id)
     waits = group.waits.all()
-    waits_img = group.waits.get('image')
-    
-    for wait in waits:
+    wait_member_name = []   # 대기자 명단 이름 배열
+    wait_member_img = []   # 대기자 명단 이미지 배열
+    wait_member_id = []
+
+    for wait_member in waits:
+        wait_member_name.append(wait_member.nickname)
+        wait_member_img.append(str(wait_member.img))
+        wait_member_id.append(wait_member.id)
+
         if request.GET.get('accept'):
-            group.waits.remove(wait)
-            group.members.add(wait)
+            group.waits.remove(wait_member)
+            group.members.add(wait_member)
             group.save()
         elif request.GET.get('reject'):
-            group.waits.remove(wait)
+            group.waits.remove(wait_member)
             group.save()
+    print(wait_member_img)
 
-    JsonResponse({
+    return JsonResponse({
         'groupName': group.name,
-        'waits': waits,
-        'waits_img': waits_img
+        'waitsName': wait_member_name,
+        'waitsImg': wait_member_img,
+        'waitsId': wait_member_id
     })
+
+# 공개그룹 대기자 수락 여부
+# @csrf_exempt
+# def wait_member_accept(request):
+#     req = json.loads(request.body)
+#     user_id = req['userId']
+#     waits = group.waits.
+
+#     if request.GET.get('accept'):
+#         group.waits.remove(wait)
+#         group.members.add(wait)
+#         group.save()
+#     elif request.GET.get('reject'):
+#         group.waits.remove(wait)
+#         group.save()
+
+#     return 1
 
 
 

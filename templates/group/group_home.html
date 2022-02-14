@@ -30,6 +30,17 @@
         </div>
     </div>
 
+    <!-- 공개, 비공개 모드 선택 modal-->
+    <div class="group-join__select-box">
+        <h2>어떤 그룹에 가입하시겠습니까?</h2>
+        <div class="which-join__box d-flex">
+            <button class="public-group__join-btn"><a href="{% url 'group:group_list' %}">공개</a></button>
+            <button class="private-group__join-btn" onclick="showPrivateGroup()">비공개</button>
+        </div>
+        <button class="join__code--close btn btn-dark" onclick="closeGroupJoin()">닫기</button>
+    </div>
+
+
     <!-- 그룹 초대 modal -->
     <div class="group-join__alert-box" id="join-group">
         <div class="group-join__box">
