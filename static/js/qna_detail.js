@@ -129,7 +129,10 @@ const answerButton = document.querySelector('.answer__submit');
 const answerInput = document.querySelector('.answer__input');
 // 익명 함수를 통해 addEvent 호출 함수에 파라미터를 넣을 수 있다.
 
-answerButton.addEventListener('click', function(){onClickAnswer(question_id , answerInput.value)});
+if (answerButton){
+    answerButton.addEventListener('click', function(){onClickAnswer(question_id , answerInput.value)});
+}
+
 /////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////
@@ -148,14 +151,18 @@ const onClickReplyCheck = function (e, answerId) {
 }
 
 const replyButtons = document.querySelectorAll('.answer__write-reply');
-replyButtons.forEach(function(btn) {
-    btn.addEventListener('click',function(e){
-        // button class 이름에서 해당 대댓글 작성 버튼이 속한 답변 id 가져오기
-        const btnElementId = btn.getAttribute('id').split('-');
-        const answerId = btnElementId[btnElementId.length-1];
-        onClickReplyCheck(e, answerId);
+
+if (user_id){
+    replyButtons.forEach(function(btn) {
+        btn.addEventListener('click',function(e){
+            // button class 이름에서 해당 대댓글 작성 버튼이 속한 답변 id 가져오기
+            const btnElementId = btn.getAttribute('id').split('-');
+            const answerId = btnElementId[btnElementId.length-1];
+            onClickReplyCheck(e, answerId);
+        })
     })
-})
+}
+
 
 const onClickReply = async (answerId) => {
     const url = "/qna/reply_ajax/";
@@ -286,9 +293,12 @@ onClickQuestionLike = async (questionId) => {
     
 }
 
-questionLikeBtn.addEventListener('click', function(){
-    onClickQuestionLike(question_id);
-})
+if(user_id) {
+    questionLikeBtn.addEventListener('click', function(){
+        onClickQuestionLike(question_id);
+    })
+}
+
 
 questionLikeHandleResponse = (questionId, totalLikes, isLiking) => {
     if (isLiking){
@@ -320,14 +330,18 @@ const onClickAnswerLike = async (id) => {
 }
 // 같은 클래스 여러 요소에 같은 event 등록
 const answerLikeButtons = document.querySelectorAll('.answer__like-btn');
-answerLikeButtons.forEach(function(btn) {
-    btn.addEventListener('click',function(){
-        const btnElementId = btn.getAttribute('id').split('-');
-        const answerId = btnElementId[btnElementId.length-1];
-        
-        onClickAnswerLike(answerId);
+
+if(user_id) {
+    answerLikeButtons.forEach(function(btn) {
+        btn.addEventListener('click',function(){
+            const btnElementId = btn.getAttribute('id').split('-');
+            const answerId = btnElementId[btnElementId.length-1];
+            
+            onClickAnswerLike(answerId);
+        })
     })
-})
+}
+
 
 answerLikeHandleResponse = (answerId, totalLikes, isLiking) => {
     const answerLikeBtn = document.querySelector(`.answer__like-btn--${answerId}`)
@@ -439,3 +453,35 @@ answerEditSubmitHandleResponse = (answerId, content) => {
     const answerEditForm = document.querySelector(`.answer__edit--${answerId}`);
     answerEditForm.style.display = 'none';
 }
+
+
+////// 로그인 안 했으면 좋아요 시 alert 창 뜨게 하기
+// user_id 의 null 여부로 구분하자
+
+if (user_id == null){
+    const questionLikeButton = document.querySelector('.question__like-btn');
+    questionLikeButton.addEventListener('click',function(){
+        alert('로그인 후 이용해주세요.')
+    })
+
+
+    const answerLikeButtons = document.querySelectorAll('.answer__like-btn');
+    answerLikeButtons.forEach(function(btn) {
+        btn.addEventListener('click',function(){
+            alert('로그인 후 이용해주세요.')
+        })
+    })
+
+    const answerReplyButtons = document.querySelectorAll('.answer__reply-btn');
+    answerReplyButtons.forEach(function(btn) {
+        btn.addEventListener('click',function(){
+            alert('로그인 후 이용해주세요.')
+        })
+    })
+
+    const answerContainer = document.querySelector('.answer__input__container');
+    answerContainer.addEventListener('click',function(){
+        alert('로그인 후 이용해주세요.')
+        document.querySelector('.answer__input').blur();
+    })
+} 

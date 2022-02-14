@@ -83,12 +83,12 @@
     </div>
     <hr>
     
-    {% if user.is_authenticated %}
+    
     <div class="answer__input__container">
         <textarea name="new_answer" placeholder="답변을 입력하세요" class="answer__input";></textarea>  
         <input type="button" value = "등록" class="answer__submit">
     </div>
-    {% endif %}
+    
     <p class="answer__total-count" style="font-weight: bold; font-size: 18px; line-height: 150%;">답변 {{ answers_count }} 개 </p>
     <div class="answer__list">
         <!-- 답변 부분 -->
