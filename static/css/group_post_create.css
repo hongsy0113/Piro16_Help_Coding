@@ -15,6 +15,7 @@ html, body, section {
     line-height: 150%;
     font-weight: bold;
     padding-bottom: 10px;
+    margin-bottom: 30px;
     /* border-bottom: 1px solid #BDBDBD; */
 }
 
@@ -22,7 +23,7 @@ html, body, section {
 .input-title {
     width: 100%;
     height: 60px;
-    margin: 30px 0px;
+    margin-bottom: 30px;
     padding: 17px 32px 17px 20px;
 
     background: #FFFFFF;
@@ -41,6 +42,25 @@ html, body, section {
     border: 1px solid #BDBDBD;
     box-sizing: border-box;
     border-radius: 10px;
+}
+
+/* 에러메시지 */
+.input-error {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    width: 300px;
+    padding: 10px 20px;
+    margin: 10px 0px 6px 0px;
+
+    background-color: #FFE6E6;
+    border: 1px solid #eb6464;
+    border-radius: 5px;
+    box-sizing: border-box;
+    color: #eb6464;
+    font-weight: bold;
+    font-size: 18px;
 }
 
 .post-create__input ::placeholder {

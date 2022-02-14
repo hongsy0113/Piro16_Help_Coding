@@ -14,9 +14,13 @@
 {% block content %}
 <div class="qna__top-search-container">
     <div class="qna__top">
-        <span class="qna__top-title">묻고 답하기</span>
-        <span class="qna__top-info">코딩 중 궁금한 내용을 찾거나 질문해보세요!</span>
+        <div class="qna__top--left">
+            <span class="qna__top-title">묻고 답하기</span>
+            <span class="qna__top-info">코딩 중 궁금한 내용을 찾거나 질문해보세요!</span>
+        </div>
+        <a class="qna__ask-btn" href="{% url 'qna:question_create' %}">질문 작성</a>
     </div>
+
     <div class="qna__search-container">
         <form class="qna__search-box" action="{% url 'qna:search_result' %}" method="get">
             {% csrf_token %}
@@ -27,7 +31,6 @@
                 </svg>
                 </button>
         </form>
-        <a class="qna__ask-btn" href="{% url 'qna:question_create' %}">질문 작성</a>
     </div>
 </div>
 
