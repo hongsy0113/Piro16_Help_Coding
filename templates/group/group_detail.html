@@ -112,8 +112,7 @@
         </div>
 
         <!-- 공개 그룹인 경우 -->
-        {% if group.mode == 'PUBLIC' %}
-            {% if maker == user %}
+        {% if group.mode == 'PUBLIC' and maker == user %}
             <div class="member-top__right--public">
                 <div class="top-right__button">
                     <span><button class="group__wait--btn">대기자 명단 보기</button></span>
@@ -124,7 +123,7 @@
                         <div class="d-flex flex-row">
                             <hr/>
                             <div class="group__wait--member-list me-2 p-4">
-                                
+                            
                             </div>
                         </div>
                         
@@ -133,7 +132,6 @@
                 
                 </div>
             </div>
-            {% endif %}
         {% endif %}
 
         <!-- 비공개 그룹인 경우, 초대 코드로 가입하므로 대기자 명단 보기 필요 없음! -->
@@ -240,30 +238,22 @@
     <div class="bottom-btn__box">
         <a href="{% url 'group:group_update' group.pk %}" class="btn__update">그룹 정보 수정</a>
         <a href="{% url 'group:group_delete' group.pk %}" class="btn__delete">그룹 삭제</a> 
+        <a href="{% url 'group:group_drop' group.pk %}" class="btn-out">그룹 탈퇴하기</a>
     </div>
     {% endif %}
 
     <!-- 유저가 member인 경우 -->
-    {% if maker != user %}
-        {% for member in members %}
-            {% if member == user %}
-            <div class="bottom-btn__box">
-                <a href="{% url 'group:group_drop' group.pk %}" class="btn-out">그룹 탈퇴하기</a>
-            </div>
-            {% endif %} 
-        {% endfor %} 
-    {% endif %}       
-    
+    {% if maker != user and user in members %}
+        <div class="bottom-btn__box">
+            <a href="{% url 'group:group_drop' group.pk %}" class="btn-out">그룹 탈퇴하기</a>
+        </div>
+    {% endif %}    
 
     <!-- 공개 그룹 + 유저가 member가 아닌 경우 -->
-    {% if group.mode == 'PUBLIC' %}
-        {% for member in members %}
-            {% if user != member %}
-            <div class="bottom-btn__box">
-                <a href="{% url 'group:public_group_join' group.pk %}" class="btn-signup">그룹 가입하기</a>
-            </div>
-            {% endif %}
-        {% endfor %}
+    {% if group.mode == 'PUBLIC' and user not in members %}
+        <div class="bottom-btn__box">
+            <a href="{% url 'group:public_group_join' group.pk %}" class="btn-signup">그룹 가입하기</a>
+        </div>
     {% endif %}
 </div>  <!-- 페이지 하단 끝-->
 

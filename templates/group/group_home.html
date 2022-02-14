@@ -30,6 +30,13 @@
         </div>
     </div>
 
+    <!-- 가입한 내 그룹이 없을 때 -->
+    {% if not groups %}
+    <div>
+        <h1>현재 가입한 그룹이 없습니다. 나에게 맞는 그룹에 가입하세요!</h1>
+    </div>
+    {% endif %}
+
     <!-- 공개, 비공개 모드 선택 modal-->
     <div class="group-join__select-box">
         <h2>어떤 그룹에 가입하시겠습니까?</h2>
@@ -55,6 +62,7 @@
     </div>    
 
     <!-- 그룹 정렬 (sort) -->
+    {% if groups %}
     <div class="list-sort">  
         <!-- 피그마 디자인 구현 -->
         <span class="list-sort__btn">찜하기순</span>
@@ -68,6 +76,7 @@
             </select>
         </form>
     </div>
+    {% endif %}
 
     <!-- 내 그룹 목록 -->
     <div class="gridbox">
