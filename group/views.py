@@ -118,12 +118,11 @@ def group_create(request):
 
             if request.FILES.get('image'):  # form valid + 이미지 첨부 시
                 group.image = request.FILES.get('image')
-            elif request.POST.get('image'):   # 다른 에러 발생 + 이전에 이미지 첨부
-                # os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
+            elif request.POST['img_recent']: 
+                os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
                 shutil.copyfile('./media/temp/{}'.format(request.POST['img_recent']),
                                 './media/group_{}/thumbnail/{}'.format(group.pk, request.POST['img_recent'])) ###
                 group.image =  './group_{}/thumbnail/{}'.format(group.pk, request.POST['img_recent']) ###
-            
             group.save()
 
             return redirect('group:group_home')
@@ -668,13 +667,36 @@ def post_list(request, pk):
 # 게시글 검색
 def search_result(request, pk):
     if 'search' in request.GET:
+        group = Group.objects.get(pk=pk)
         query = request.GET.get('search')
+        page = request.GET.get('page', '1')
+
         posts = GroupPost.objects.filter(group__pk=pk).filter(
             Q(title__icontains=query) | # 제목으로 검색
             Q(content__icontains=query) # 내용으로 검색
         )
 
-    return render(request, 'group/search_result.html', {'query': query, 'posts': posts, 'group_pk': pk})
+        # 페이징 처리
+        paginator = Paginator(posts, 6)    # 페이지당 6개씩 보여주기
+        page_obj = paginator.get_page(page)
+
+        ## 각 게시글과 iframe 관련 썸네일의 이미지 경로 딕셔너리 생성
+        dict = {}
+        for page in page_obj:
+            if page.attached_link:
+                dict[page] = get_img_src(page.attached_link)
+            else:
+                dict[page] = None
+
+        ctx = {
+            'query': query, 
+            'posts': page_obj,
+            'posts_img_dict': dict, 
+            'group_pk': pk,
+            'group': group,         
+        }
+
+    return render(request, 'group/search_result.html', context=ctx)
 
 # 게시글 작성
 def post_create(request, pk):

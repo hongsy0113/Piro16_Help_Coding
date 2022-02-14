@@ -74,13 +74,18 @@ main > p:first-of-type {
     gap: 5px;
     justify-content: center;
     align-items: center;
+    transition: 0.2s;
 }
 
 .question__like-btn span {
     color: #4e4e4e;
+    transition: 0.2s;
 }
 
-
+.question__like-btn:hover, .question__like-btn:hover span {
+    background-color: #37c6e6;
+    color: white;
+}
 
 
 /* 답변 */
@@ -106,7 +111,7 @@ main > p:first-of-type {
     bottom: 50px;
     background-color: #37c6e6;
     padding: 10px 20px 12px;
-    border-radius: 30px;
+    border-radius: 5px;
     border: 2px solid #37c6e6;
     font-size: 18px;
     line-height: 100%;
@@ -156,8 +161,8 @@ main > p:first-of-type {
 }
 .answer__user__profile-left img {
     width: 100%;
-    height: auto;
-    object-fit: contain;
+    height: 100%;
+    object-fit: cover;
 }
 .answer__user__profile-right {
     display: flex;
@@ -237,7 +242,9 @@ main > p:first-of-type {
     font-size: 18px;
     font-weight: bold;
 }
-
+.answer__like__reply > .answer__like-btn {
+    margin-right: 35px;
+}
 .reply__form__flexbox {
     width: 100%;
     border-radius: 5px;
@@ -288,4 +295,8 @@ main > p:first-of-type {
     font-size: 18px;
     font-weight: bold;
     padding: 10px 20px 12px;
+}
+
+.answer__like-btn, .answer__reply-btn, .question__like-btn {
+    cursor: pointer;
 }

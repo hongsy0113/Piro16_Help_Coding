@@ -27,8 +27,7 @@
         </div>
     </div>
 
-    <div class="list-sort">    <!-- 최신순 인기순 댓글순 -->
-        <!-- 피그마 디자인 구현 -->
+    <div class="list-sort">    <!-- 최신순 조회수순 좋아요순 -->
         <span class="list-sort__btn">
             {% if sort_by != 'recent' %}
             <a href="{% url 'group:post_list' group.pk %}?{% param_replace sort='recent' page=1 %}">최신순</a>

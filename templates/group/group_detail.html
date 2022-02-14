@@ -48,7 +48,6 @@
     <!-- 비공개 그룹일 경우, 그룹 좋아요 숨기기 -->
     <div class="all-group__heart button-left__like--private" id="all-group__heart"></div>
 
-    
     <div class="container-button__right">
         <!-- 내 그룹일 경우, 그룹 찜하기 -->
         {% if group in mygroup %}
@@ -135,26 +134,39 @@
             </div>
         {% endif %}
 
-        <!-- 비공개 그룹인 경우-->
-        {% if group.mode == 'PRIVATE' %}
-            {% if maker == user %}
+        <!-- 비공개 그룹인 경우, 초대 코드로 가입하므로 대기자 명단 보기 필요 없음! -->
+        <!-- {% if maker == user %}
             <div class="member-top__right--private">
                 <div class="top-right__button">
                     <span><button class="group__wait--btn" onclick="">대기자 명단 보기</button></span>
                 </div>
-            {% endif %}
+            {% endif %} -->
 
-            <!-- 그룹 초대코드 생성 modal -->
-            <div class="group__code--alert-box" id="create-code">
-                친구 초대
-                <div class="code_box">
-                </div>
-                <button class="group__code--close btn btn-dark" onclick="closeCreateCode()">닫기</button>
-            </div>
+        <!-- 비공개 그룹일 경우, 초대 코드 -->
+        {% if group.mode == 'PRIVATE' %}
             <!-- 그룹 초대 버튼 -->
             <div class="group__code--btn top-right__button">
                 <span>멤버 초대하기</span>
             </div>
+            <!-- 그룹 초대코드 생성 modal -->
+            <div class="group__code--alert-box modal modal__hidden" id="create-code">
+                <div class="modal__overlay"></div>
+                <div class="modal__content">    <!-- 모달 내용 -->
+                    <div class="modal__content--top">
+                        <span>멤버 초대 코드</span>
+                        <!-- <button class="group__code--close" onclick="closeCreateCode()">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36" fill="none">
+                            <path d="M1.2041 1.57812L34.4998 34.5825M1.2041 34.5825L34.4998 1.57812" stroke="#4E4E4E" stroke-width="3"/>
+                            </svg>
+                        </button>                    -->
+                    </div>
+                    <div class="modal__content--bottom">
+                        <div class="code_box">      
+                        </div>  
+                        <button class="group__code--close" onclick="closeCreateCode()">확인</button>
+                    </div>
+                </div>
+            </div>    
         {% endif %}
         </div>
     </div>
@@ -177,7 +189,7 @@
                 </div>
             </div>
 
-            <!-- 유저 소개 받아올 수 있는지 -->
+            <!-- 유저 소개 -->
             <div class="member-list__maker--text member-list__one--intro">
                 {% if maker.introduction %}
                     <span class="text__intro">{{ maker.introduction }}</span>
