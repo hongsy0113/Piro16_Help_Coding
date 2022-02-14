@@ -461,20 +461,29 @@ def join_list(request, pk):
         # alert 창 띄우기 (방장이 아니므로 열람할 수 없습니다)
         return redirect('group:group_detail', pk)
 
-# 그룹 가입 대기자 명단 [미완]
+# 그룹 가입 대기자 명단
 @csrf_exempt
 def wait_list_ajax(request):
     req = json.loads(request.body)
     group_id = req['id']
     group = get_object_or_404(Group, pk=group_id)
-    waits = group.waits.first()
+    waits = group.waits.all()
+    wait_member_name = []   # 대기자 명단 이름 배열
+    wait_member_img = []   # 대기자 명단 이미지 배열
+
+    for wait_member in waits:
+        wait_member_name.append(wait_member.nickname)
+        wait_member_img.append(str(wait_member.img))
+    print(wait_member_img)
 
     return JsonResponse({
         'groupName': group.name,
-        'waits': waits,
+        'waitsName': wait_member_name,
+        'waitsImg': wait_member_img
     })
 
 # 공개그룹 대기자 수락 여부
+@csrf_exempt
 def wait_member_accept(request):
 
     if request.GET.get('accept'):
@@ -485,6 +494,7 @@ def wait_member_accept(request):
         group.waits.remove(wait)
         group.save()
 
+    return 1
 
 
 

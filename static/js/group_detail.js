@@ -24,9 +24,19 @@ const starHandleResponse = (groupId, is_star) => {
     const groupStar = document.querySelector(`.group__keyword-star--${groupId}`);
 
     if(is_star) {
-        groupStar.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="33" height="33" viewBox="0 0 33 33" fill="none"><path d="M14.2841 1.9274L14.284 1.92759L10.7818 9.44224L2.95814 10.6493C1.06844 10.9394 0.387624 13.3429 1.69516 14.6904C1.69521 14.6905 1.69526 14.6905 1.6953 14.6906L7.37193 20.5445L6.02817 28.821L6.02812 28.8213C5.72253 30.7113 7.63006 32.2674 9.33438 31.3119C9.33462 31.3118 9.33486 31.3117 9.33509 31.3115L16.3261 27.4227L23.3185 31.3124C23.3186 31.3124 23.3186 31.3124 23.3186 31.3124C25.0196 32.2589 26.9302 30.7151 26.624 28.8213L26.6239 28.821L25.2802 20.5446L30.9568 14.6906C32.2645 13.3431 31.5837 10.9394 29.694 10.6493L21.8703 9.44224L18.3681 1.92759L18.3677 1.92669C17.5428 0.165947 15.1196 0.136632 14.2841 1.9274Z" fill="#FFD76F" stroke="#828282"/></svg>`;
+        groupStar.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="33" height="33" viewBox="0 0 33 33" fill="none">
+        <path d="M14.2841 1.9274L14.284 1.92759L10.7818 9.44224L2.95814 10.6493C1.06844 10.9394 0.387624 13.3429 1.69516 14.6904C1.69521 14.6905 1.69526 14.6905 1.6953 14.6906L7.37193 20.5445L6.02817 28.821L6.02812 28.8213C5.72253 30.7113 7.63006 32.2674 9.33438 31.3119C9.33462 31.3118 9.33486 31.3117 9.33509 31.3115L16.3261 27.4227L23.3185 31.3124C23.3186 31.3124 23.3186 31.3124 23.3186 31.3124C25.0196 32.2589 26.9302 30.7151 26.624 28.8213L26.6239 28.821L25.2802 20.5446L30.9568 14.6906C32.2645 13.3431 31.5837 10.9394 29.694 10.6493L21.8703 9.44224L18.3681 1.92759L18.3677 1.92669C17.5428 0.165947 15.1196 0.136632 14.2841 1.9274Z" fill="#FFD76F" stroke="#828282"/>
+        </svg>
+        <span>그룹 찜하기</span>
+        `;
     } else {
-        groupStar.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="33" height="33" viewBox="0 0 33 33" fill="none"><path d="M14.515 1.92759L14.5151 1.9274C15.3505 0.136631 17.7738 0.165947 18.5986 1.92669L18.5991 1.92759L22.1012 9.44224L29.9249 10.6493L29.9253 10.6494L29.8491 11.1435C31.2995 11.3662 31.8808 13.2585 30.829 14.3424L14.515 1.92759ZM14.515 1.92759L11.0128 9.44224L3.1891 10.6493C3.18901 10.6493 3.18893 10.6494 3.18884 10.6494C3.1888 10.6494 3.18875 10.6494 3.18871 10.6494C1.29931 10.9397 0.618669 13.343 1.92612 14.6904C1.92617 14.6905 1.92621 14.6905 1.92626 14.6906L7.60289 20.5446L6.25913 28.821L6.25907 28.8213C5.95349 30.7113 7.86102 32.2674 9.56534 31.3119C9.56557 31.3118 9.56581 31.3117 9.56605 31.3115L16.557 27.4227L23.5495 31.3124C25.2505 32.259 27.1611 30.7151 26.855 28.8213L26.8549 28.821L25.5111 20.5445L31.1878 14.6906L14.515 1.92759Z" stroke="white"/></svg>`;
+        groupStar.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="33" height="33" viewBox="0 0 33 33" fill="none">
+        <path d="M14.515 1.92759L14.5151 1.9274C15.3505 0.136631 17.7738 0.165947 18.5986 1.92669L18.5991 1.92759L22.1012 9.44224L29.9249 10.6493L29.9253 10.6494L29.8491 11.1435C31.2995 11.3662 31.8808 13.2585 30.829 14.3424L14.515 1.92759ZM14.515 1.92759L11.0128 9.44224L3.1891 10.6493C3.18901 10.6493 3.18893 10.6494 3.18884 10.6494C3.1888 10.6494 3.18875 10.6494 3.18871 10.6494C1.29931 10.9397 0.618669 13.343 1.92612 14.6904C1.92617 14.6905 1.92621 14.6905 1.92626 14.6906L7.60289 20.5446L6.25913 28.821L6.25907 28.8213C5.95349 30.7113 7.86102 32.2674 9.56534 31.3119C9.56557 31.3118 9.56581 31.3117 9.56605 31.3115L16.557 27.4227L23.5495 31.3124C25.2505 32.259 27.1611 30.7151 26.855 28.8213L26.8549 28.821L25.5111 20.5445L31.1878 14.6906L14.515 1.92759Z" stroke="white"/>
+        </svg>
+        <span>그룹 찜하기</span>
+        `;
     }
 };
 // 공개 그룹 좋아요 ajax
@@ -102,3 +112,58 @@ const createCodeHandleResonse = (code, name) => {
     createCodeAlert.style.display = 'block';
 }
 
+// 그룹 대기자 명단 modal
+const showGroupWaitBtn = document.querySelector('.group__wait--btn');
+const closeGroupWaitBtn = document.querySelector('.group__wait--close');
+const groupWaitAlert = document.querySelector('.group__member--all');
+var flag = 0;    // 명단에 대한 반복문이 한 번만 실행되기 위한 변수
+
+function closeGroupWait() {
+    groupWaitAlert.style.display = 'none';
+}
+
+if(showGroupWaitBtn) {
+    showGroupWaitBtn.addEventListener('click', function() {
+        console.log('!')
+        onClickGroupWait(group_id);
+    })
+}
+
+const onClickGroupWait = async(id) => {
+    console.log(group_id) 
+    const url = '/group/wait_list_ajax/';
+    const { data } = await axios.post(url, {
+        id
+    });
+    console.log("@@")
+    groupWaitHandleResponse(
+        data.groupName,
+        data.waitsName,
+        data.waitsImg
+    );
+}
+
+const groupWaitHandleResponse = (groupName, waitsName, waitsImg) => {
+    const groupWaitName = document.querySelector('.group__wait-name');
+    const groupWaitAlertText = document.querySelector('.group__wait--member-list');
+    console.log("!")
+    groupWaitName.innerHTML = `<h4><b>${groupName}</b>의 대기자 명단</h4>`;
+
+    for(var i=0; i<waitsName.length; i++){
+        if(flag==0){
+            groupWaitAlertText.innerHTML += `
+            <form method="GET" class="group-wait__one d-flex flex-row">
+                <div class="d-flex flex-row align-items-center">
+                    <img src="${ waitsImg[i].url }" height="50" width="50" style="border-radius: 50px;"/>
+                    <h6>${ waitsName[i] }</h6>
+                    <input type="submit" value="수락" name="accept">
+                    <input type="submit" value="거절" name="reject">
+                </div>  
+            </form>
+        `;
+        }
+    };
+    flag = 1;
+    
+    groupWaitAlert.style.display = 'block';
+}
