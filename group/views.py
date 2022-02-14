@@ -119,12 +119,11 @@ def group_create(request):
 
             if request.FILES.get('image'):  # form valid 시
                 group.image = request.FILES.get('image')
-            else:   
+            elif request.POST['img_recent']: 
                 os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
                 shutil.copyfile('./media/temp/{}'.format(request.POST['img_recent']),
                 './media/group_{}/thumbnail/{}'.format(group.pk, request.POST['img_recent'])) ###
                 group.image =  './group_{}/thumbnail/{}'.format(group.pk, request.POST['img_recent']) ###
-            
             group.save()
 
             return redirect('group:group_home')
@@ -222,7 +221,7 @@ def group_update(request, pk):
         ctx = { 
             'group': group, 
             'form': form,
-            'current_image': group.image.url.split('/')[-1],
+            'current_image': group.image.url.split('/')[-1], 
             'temp_img_location': '/media/group_{}/thumbnail/'.format(group.pk)
         }
 

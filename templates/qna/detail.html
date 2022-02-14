@@ -83,17 +83,17 @@
     </div>
     <hr>
     
-    {% if user.is_authenticated %}
+    
     <div class="answer__input__container">
         <textarea name="new_answer" placeholder="답변을 입력하세요" class="answer__input";></textarea>  
         <input type="button" value = "등록" class="answer__submit">
     </div>
-    {% endif %}
+    
     <p class="answer__total-count" style="font-weight: bold; font-size: 18px; line-height: 150%;">답변 {{ answers_count }} 개 </p>
     <div class="answer__list">
         <!-- 답변 부분 -->
         {% for answer, replies in answers_reply_dict.items %}
-            <div class="answer__container answer__container--{{answer.id}}">
+            <div class="answer__container answer__container--{{ answer.id }}">
                 <div class="answer__content-container answer__content-container--{{ answer.id }}">
                     <div class="answer__user__profile">
                         <div class="answer__user__profile-left">
@@ -103,10 +103,14 @@
                         </div>
                         <div class="answer__user__profile-right">
                             <div> <!-- 이름, 글쓴이, 날짜 -->
-                                <div>
+                                <div class="answer__user__name answer__user__name--{{ answer.id }}">
+                                    {% if answer.user %}
                                     <h2>{{ answer.user }}</h2>
                                     {% if answer.user.id == question.user.id %}
                                     <span class="answer__writer-mark">글쓴이</span>
+                                    {% endif %}
+                                    {% else %}
+                                    <h2>(알 수 없음)</h2>
                                     {% endif %}
                                 </div>
                                 <p>{{ answer.created_at|date:'y.m.d  H:i'}}</p>
