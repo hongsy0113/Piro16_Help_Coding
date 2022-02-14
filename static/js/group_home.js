@@ -33,15 +33,24 @@ const starHandleResponse = (groupId, is_star) => {
 // 초대 코드 입력 창 
 const groupJoinBtn = document.querySelector('.right__joinbtn');
 const closeJoinBtn = document.querySelector('.group-join__close');
+const publicGroupJoin = document.querySelector('.public-group__join-btn')
+const privateGroupJoin = document.querySelector('.private-group__join-btn')
+const groupWhichJoin =  document.querySelector('.group-join__select-box')
 
 function showGroupJoin() {
+    groupWhichJoin.style.display = 'block';
+}
+
+function showPrivateGroup() {
     const groupJoinAlert = document.getElementById('join-group');
     groupJoinAlert.style.display = 'block';
+    groupWhichJoin.style.display = 'none';
 }
 
 function closeGroupJoin() {
     const closeJoinAlert = document.getElementById('join-group');
     closeJoinAlert.style.display = 'none';
+    groupWhichJoin.style.display = 'none';
 }
 
 // groupJoinBtn.addEventListener('click', showGroupJoin);

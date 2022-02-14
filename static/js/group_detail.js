@@ -124,7 +124,6 @@ function closeGroupWait() {
 
 if(showGroupWaitBtn) {
     showGroupWaitBtn.addEventListener('click', function() {
-        console.log('!')
         onClickGroupWait(group_id);
     })
 }
@@ -135,18 +134,19 @@ const onClickGroupWait = async(id) => {
     const { data } = await axios.post(url, {
         id
     });
-    console.log("@@")
+
     groupWaitHandleResponse(
         data.groupName,
         data.waitsName,
-        data.waitsImg
+        data.waitsImg,
+        data.waitsId
     );
 }
 
-const groupWaitHandleResponse = (groupName, waitsName, waitsImg) => {
+const groupWaitHandleResponse = (groupName, waitsName, waitsImg, waitsId) => {
     const groupWaitName = document.querySelector('.group__wait-name');
     const groupWaitAlertText = document.querySelector('.group__wait--member-list');
-    console.log("!")
+
     groupWaitName.innerHTML = `<h4><b>${groupName}</b>의 대기자 명단</h4>`;
 
     for(var i=0; i<waitsName.length; i++){
@@ -156,8 +156,9 @@ const groupWaitHandleResponse = (groupName, waitsName, waitsImg) => {
                 <div class="d-flex flex-row align-items-center">
                     <img src="${ waitsImg[i].url }" height="50" width="50" style="border-radius: 50px;"/>
                     <h6>${ waitsName[i] }</h6>
-                    <input type="submit" value="수락" name="accept">
-                    <input type="submit" value="거절" name="reject">
+                    <h6 class="wait__text--${ waitsId[i] }">text</h6>
+                    <input type="button" value="수락" name="accept" class="wait__accept--btn-${ waitsId[i] }">
+                    <input type="button" value="거절" name="reject" class="wait__reject--btn-${ waitsId[i] }">
                 </div>  
             </form>
         `;
@@ -166,4 +167,14 @@ const groupWaitHandleResponse = (groupName, waitsName, waitsImg) => {
     flag = 1;
     
     groupWaitAlert.style.display = 'block';
+
+    // 수락, 거절 버튼 선택 이후
+    const waitAcceptBtn = document.querySelector(`.wait__accept--btn-${ waitsId[i] }`);
+    const waitRejectBtn = document.querySelector(`.wait__reject--btn-${ waitsId[i] }`);
+    const memberWaitAlertText = document.querySelector(`.wait__text--${ waitsId[i] }`)
+    
+}
+
+function acceptWait() {
+    memberWaitAlertText.innerText = '가입 대기 중입니다.'
 }

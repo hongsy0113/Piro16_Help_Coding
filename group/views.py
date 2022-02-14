@@ -470,31 +470,45 @@ def wait_list_ajax(request):
     waits = group.waits.all()
     wait_member_name = []   # 대기자 명단 이름 배열
     wait_member_img = []   # 대기자 명단 이미지 배열
+    wait_member_id = []
 
     for wait_member in waits:
         wait_member_name.append(wait_member.nickname)
         wait_member_img.append(str(wait_member.img))
+        wait_member_id.append(wait_member.id)
+
+        if request.GET.get('accept'):
+            group.waits.remove(wait_member)
+            group.members.add(wait_member)
+            group.save()
+        elif request.GET.get('reject'):
+            group.waits.remove(wait_member)
+            group.save()
     print(wait_member_img)
 
     return JsonResponse({
         'groupName': group.name,
         'waitsName': wait_member_name,
-        'waitsImg': wait_member_img
+        'waitsImg': wait_member_img,
+        'waitsId': wait_member_id
     })
 
 # 공개그룹 대기자 수락 여부
-@csrf_exempt
-def wait_member_accept(request):
+# @csrf_exempt
+# def wait_member_accept(request):
+#     req = json.loads(request.body)
+#     user_id = req['userId']
+#     waits = group.waits.
 
-    if request.GET.get('accept'):
-        group.waits.remove(wait)
-        group.members.add(wait)
-        group.save()
-    elif request.GET.get('reject'):
-        group.waits.remove(wait)
-        group.save()
+#     if request.GET.get('accept'):
+#         group.waits.remove(wait)
+#         group.members.add(wait)
+#         group.save()
+#     elif request.GET.get('reject'):
+#         group.waits.remove(wait)
+#         group.save()
 
-    return 1
+#     return 1
 
 
 
