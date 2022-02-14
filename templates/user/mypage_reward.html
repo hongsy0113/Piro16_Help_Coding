@@ -8,7 +8,7 @@
 {% block content %}
 <div>
   <h3>○ 나의 업적들 ( {{ user.email }} )</h3>
-
+  <button class="btn btn-secondary"><a class="text-white" href="{% url 'user:mypage' %}" style="text-decoration: none">마이페이지로 돌아가기</a></button>
   <div class="mypage__reward__container">
     <div>
       {% for reward in rewards %}
@@ -29,7 +29,6 @@
       </div>
       {% endfor %}
     </div>
-    <button class="btn btn-secondary"><a class="text-white" href="{% url 'user:mypage_reward' %}" style="text-decoration: none">전체 업적 보기</a></button>
   </div>
 
   <script>

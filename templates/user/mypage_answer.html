@@ -3,6 +3,7 @@
 {% block content %}
 <div>
   <h3>○ 나의 답변들 ( {{ user.email }} )</h3>
+  <button class="btn btn-secondary"><a class="text-white" href="{% url 'user:mypage' %}" style="text-decoration: none">마이페이지로 돌아가기</a></button>
   <button class="btn btn-secondary"><a class="text-white" href="{% url 'qna:question_list' %}" style="text-decoration: none">답변하러 가기</a></button>
   {% if answers %}
   {% for answer in answers %}
