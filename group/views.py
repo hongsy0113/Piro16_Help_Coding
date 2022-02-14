@@ -119,7 +119,7 @@ def group_create(request):
 
             if request.FILES.get('image'):  # form valid 시
                 group.image = request.FILES.get('image')
-            else:   
+            elif request.POST.get('image'):   
                 os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
                 shutil.copyfile('./media/temp/{}'.format(request.POST['img_recent']),
                 './media/group_{}/thumbnail/{}'.format(group.pk, request.POST['img_recent'])) ###
@@ -209,6 +209,7 @@ def group_update(request, pk):
         
             original_info.image = request.POST['img_recent']
 
+
         ctx = { 
             'error': error,
             'origin': original_info,
@@ -219,10 +220,16 @@ def group_update(request, pk):
 
     else:
         form = GroupForm(instance=group)
+
+        try:
+            current_image = '/media/group_{}/thumbnail/'.format(group.pk)
+        except:
+            pass
+
         ctx = { 
             'group': group, 
             'form': form,
-            'current_image': group.image.url.split('/')[-1],
+            'current_image': current_image,
             'temp_img_location': '/media/group_{}/thumbnail/'.format(group.pk)
         }
 
@@ -353,7 +360,7 @@ def create_code_ajax(request):
     req = json.loads(request.body)    
     group_id = req['groupId']
     group = get_object_or_404(Group, pk=group_id)
-    # group.code = get_invite_code()
+    group.code = get_invite_code()
     group.save()
     code = group.code
 
@@ -461,6 +468,40 @@ def join_list(request, pk):
         # alert 창 띄우기 (방장이 아니므로 열람할 수 없습니다)
         return redirect('group:group_detail', pk)
 
+# 수락 선택 시
+@csrf_exempt
+def group_join_accept(request):
+    req = json.loads(request.body)
+    group_id = req['groupId']
+    wait_user_id = req['userId']
+    wait_user = get_object_or_404(User, pk=wait_user_id)
+    group = get_object_or_404(Group, pk=group_id)
+
+    group.waits.remove(wait_user)
+    group.members.add(wait_user)
+    group.save()
+
+    return JsonResponse({
+        'userId': wait_user_id
+    })
+
+# 거절 선택 시
+@csrf_exempt
+def group_join_reject(request):
+    req = json.loads(request.body)
+    group_id = req['groupId']
+    wait_user_id = req['userId']
+    wait_user = get_object_or_404(User, pk=wait_user_id)
+    group = get_object_or_404(Group, pk=group_id)
+
+    group.waits.remove(wait_user)
+    group.save()
+
+    return JsonResponse({
+        'userId': wait_user_id
+    })
+
+
 # 그룹 가입 대기자 명단
 @csrf_exempt
 def wait_list_ajax(request):
@@ -474,7 +515,8 @@ def wait_list_ajax(request):
 
     for wait_member in waits:
         wait_member_name.append(wait_member.nickname)
-        wait_member_img.append(str(wait_member.img))
+        wait_img_url = wait_member.img.url if wait_member.img else ''
+        wait_member_img.append(wait_img_url)
         wait_member_id.append(wait_member.id)
 
         if request.GET.get('accept'):
