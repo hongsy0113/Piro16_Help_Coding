@@ -15,7 +15,6 @@ urlpatterns = [
     # path('star_ajax/', view=views.star_ajax, name='star_ajax'),
     path('group_list/', view=views.group_list, name='group_list'),
     path('<int:pk>/public_group_join/', view=views.public_group_join, name='public_group_join'),
-    path('<int:pk>/join_list/', view=views.join_list, name='join_list'),
     path('interest_ajax/', view=views.interest_ajax, name='interest_ajax'),
     path('join_code_ajax/', view=views.join_code_ajax, name='join_code_ajax'),
     path('create_code_ajax/', view=views.create_code_ajax, name='create_code_ajax'),

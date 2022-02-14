@@ -12,7 +12,7 @@ import mimetypes
 import time
 from django.shortcuts import render, redirect, get_object_or_404
 from django.templatetags.static import static
-from django.db.models import Q
+from django.db.models import Q, F
 from django.core.paginator import Paginator
 from django.db.models import Count
 from django.http import JsonResponse, FileResponse
@@ -44,9 +44,13 @@ def group_home(request):
     # 정렬하기
     sort = request.GET.get('sort', 'star')
     if sort == 'name':
-        groups = groups.order_by('name')
-    elif sort == 'star':
-        groups = groups.annotate(star=Count('star_group')).order_by('-star')
+        groups = groups.order_by('name', '-id')
+    elif sort == 'star': #filter -> 정렬
+        dict = {}
+        for group in groups:
+            dict[group] = group.star_group.filter(user=user).count()
+        groups = sorted(groups, key=lambda group: dict[group], reverse=True)
+
 
     # for group_star in groups:
     #     if is_star = 'True':
@@ -467,39 +471,6 @@ def public_group_join(request, pk):
         group.save()
 
     return redirect('group:group_detail', pk)
-
-# 그룹 가입 요청 리스트(user == 방장일 때만 확인 가능)
-def join_list(request, pk):
-    user = request.user
-    group = get_object_or_404(Group, pk=pk)
-    waits = group.waits.all()
-    members = group.members.all()
-    group.maker = members[0]
-    maker = group.maker
-
-    for wait in waits:
-        if request.GET.get('accept'):
-            group.waits.remove(wait)
-            group.members.add(wait)
-            group.save()
-        elif request.GET.get('reject'):
-            group.waits.remove(wait)
-            group.save()
-    
-    if user == group.maker:
-
-        ctx = { 
-            'group': group,
-            'members': members,
-            'waits': waits,
-            'maker': maker,
-            'profile_img': static('image/none_image_user.jpeg'),
-        }
-        
-        return render(request, template_name='group/join_list.html', context=ctx)
-    else:
-        # alert 창 띄우기 (방장이 아니므로 열람할 수 없습니다)
-        return redirect('group:group_detail', pk)
 
 # 수락 선택 시
 @csrf_exempt
