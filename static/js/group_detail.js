@@ -159,7 +159,7 @@ const groupWaitHandleResponse = (groupName, waitsName, waitsImg, waitsId) => {
                     <div class="wait-member__img">
                         ${ waitImg }
                     </div>  
-                    <span class="wait-member__name">${ waitsName[i] }</span>  
+                    <span class="wait-member__name"><a href="{% url 'group:wait_member_detail' waitMemberId %}">${ waitsName[i] }</a></span>  
                 </div>          
                 <div class="wait__text--${ waitMemberId } wait-member__text"><span>가입을 기다리고 있어요!<span></div>
                 <div class="wait-member__btnbox">

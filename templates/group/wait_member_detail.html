@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+{% endblock %}
+
+
+{% block content %}
+<div class="group__mypage-profile__container">
+    <div class="group__mypage__img">
+        {% if user.img %}<img src="{{ user.img.url }}" height="100">{% else %}<p>사진 없음</p>{% endif %}
+    </div>
+    {{ user.nickname }}
+    {{ user.get_job_display }}
+</div>
+{% endblock %}

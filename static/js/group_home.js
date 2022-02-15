@@ -80,3 +80,14 @@ const groupCodeHandleResponse = (message) => {
     groupCodeAlertText.innerHTML = message;
     groupCodeAlert.style.display = 'block';
 }
+
+// if(user_id == null) {
+//     privateGroupJoin.addEventListener('click', function(){
+//         alert('로그인 후 이용해주세요.');
+//     })
+
+//     const groupCreateBtn = document.querySelector('.right__makebtn');
+//     groupCreateBtn.addEventListener('click', function(){
+//         alert('로그인 후 이용해주세요.');
+//     })
+// }

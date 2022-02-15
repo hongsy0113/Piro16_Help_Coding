@@ -484,11 +484,10 @@ def group_join_accept(request):
     group = get_object_or_404(Group, pk=group_id)
 
     wait_id = wait_user.id
-    print(wait_user)
     group.waits.remove(wait_user)
     group.members.add(wait_user)
     group.save()
-    print('jj)')
+
     return JsonResponse({
         'userId': wait_id
     })
@@ -537,7 +536,6 @@ def wait_list_ajax(request):
         elif request.GET.get('reject'):
             group.waits.remove(wait_member)
             group.save()
-    print(wait_member_img)
 
     return JsonResponse({
         'groupName': group.name,
@@ -545,6 +543,13 @@ def wait_list_ajax(request):
         'waitsImg': wait_member_img,
         'waitsId': wait_member_id
     })
+
+def wait_member_detail(request, pk):
+    wait_user = get_object_or_404(User, pk=pk)
+
+    ctx = { 'user': wait_user }
+    
+    return render(request, 'group/wait_member_detail.html', ctx=ctx)
 
 # 공개그룹 대기자 수락 여부
 # @csrf_exempt
@@ -1011,7 +1016,6 @@ def group_star_ajax(request):
     else:
         GroupStar.objects.create(group=group, user=user)
         is_star = True
-    print(group_star)
 
     is_stared = is_star
 
