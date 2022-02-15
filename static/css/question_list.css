@@ -132,7 +132,6 @@
     height: 210px;
     display: flex;
     gap: 10px;
-    align-items: center;
     justify-content: space-between;
     padding: 40px 50px;
     border-bottom: 1px solid #bdbdbd;
@@ -153,6 +152,14 @@
     line-height: 150%;
     text-decoration: none;
     color: black;
+}
+
+.question__content {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .question__tag-info {
