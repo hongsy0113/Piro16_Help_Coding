@@ -407,15 +407,18 @@ class AnswerView(MypageView):
 # My Page Reward List
 
 
-class RewardView(MypageView):
-    model = GetReward
-    template_name = 'user/mypage_reward.html'
-    context_object_name = 'rewards'
+def my_page_reward(request):
+    user = request.user
+    user_reward = []
+    if user == AnonymousUser():
+        return redirect('user:login')
+    rewards = Reward.objects.all()
+    for get_reward in GetReward.objects.filter(user=user):
+        user_reward.append(get_reward.reward.id)
+    representative_reward = user.representative_reward
+    ctx = {'user': user, 'rewards': rewards, 'user_reward': user_reward, 'representative_reward': representative_reward}
+    return render(request, template_name='user/mypage_reward.html', context=ctx)
 
-    def get_queryset(self):
-        rewards = GetReward.objects.filter(
-            user=self.request.user).order_by('-get_date')
-        return rewards
 
 # My Page Point List
 
@@ -482,3 +485,19 @@ def representative_reward_ajax(request):
     user.representative_reward = reward
     user.save()
     return JsonResponse({'previous_id': previous_id, 'reward_id': reward_id})
+
+# Get Reward Date (Ajax)
+
+
+@csrf_exempt
+def date_reward_ajax(request):
+    req = json.loads(request.body)
+    user_id = req['user_id']
+    reward_ids = req['reward_id']
+    date = []
+    for reward_id in reward_ids:
+        reward = Reward.objects.get(pk=reward_id)
+        user = User.objects.get(pk=user_id)
+        date.append(GetReward.objects.get(
+            user=user, reward=reward).get_date.strftime("%Y.%m.%d")[2:])
+    return JsonResponse({'reward_id': reward_ids, 'date': date})

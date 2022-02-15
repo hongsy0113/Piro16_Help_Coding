@@ -76,11 +76,6 @@ likeHandleResponse = (groupId, total_likes, is_liked) => {
 const createCodeBtn = document.querySelector('.group__code--btn');
 const closeCodeBtn = document.querySelector('.group__code--close');
 
-// function showCreateCode() {
-//     const createCodeAlert = document.getElementById('create-code');
-//     createCodeAlert.style.display = 'block';
-// }
-
 function closeCreateCode() {
     const createCodeAlert = document.getElementById('create-code');
     createCodeAlert.style.display = 'none';
@@ -106,7 +101,8 @@ const createCodeHandleResonse = (code, name) => {
 
     createCodeAlertText.innerHTML = `    
         <h1>${ code }</h1>
-        <p>코드 유효 기간: 일주일</p>
+        <h2>이 코드를 공유하여 멤버를 초대하세요.</h2>
+        <span>코드 유효 기간 : 7일</span>
     `;
     createCodeAlert.style.display = 'flex';
 }
@@ -147,7 +143,7 @@ const groupWaitHandleResponse = (groupName, waitsName, waitsImg, waitsId) => {
     const groupWaitAlertText = document.querySelector('.group__wait--member-list');
 
 
-    groupWaitName.innerHTML = `<h4><b>${groupName}</b>의 대기자 명단</h4>`;
+    // groupWaitName.innerHTML = `<h4><b>${groupName}</b>의 대기자 명단</h4>`;
 
     for(var i=0; i<waitsName.length; i++){
         if(waitsImg[i]){
@@ -158,65 +154,87 @@ const groupWaitHandleResponse = (groupName, waitsName, waitsImg, waitsId) => {
 
         if(flag==0){
             groupWaitAlertText.innerHTML += `
-            <form method="GET" class="group-wait__one d-flex flex-row">
-                <div class="d-flex flex-row align-items-center">
-                    <div class="wait-member__img">${ waitImg }</div>
-                    <h6>${ waitsName[i] }</h6>
-                    <h6 class="wait__text--${ waitMemberId }">가입을 기다리고 있어요!</h6>
-                    <a href="{% url 'group:group_join_accept' ${ waitMemberId } %}">수락</a>
-                    <a href="{% url 'group:group_join_reject' ${ waitMemberId } %}">거절</a>
-                    <input type="button" value="수락" name="accept" class="wait__accept--btn-${ waitMemberId }">
-                    <input type="button" value="거절" name="reject" class="wait__reject--btn-${ waitMemberId }">
-                </div>  
+            <form method="GET" class="group-wait__one">
+                <div class="wait-member__imgnname">
+                    <div class="wait-member__img">
+                        ${ waitImg }
+                    </div>  
+                    <span class="wait-member__name">${ waitsName[i] }</span>  
+                </div>          
+                <div class="wait__text--${ waitMemberId } wait-member__text"><span>가입을 기다리고 있어요!<span></div>
+                <div class="wait-member__btnbox">
+                    <input type="button" value="수락" name="accept" class="wait__accept--btn wait__accept--btn--${ waitMemberId } wait-accept__btn" id="accept-btn-${ waitMemberId }">
+                    <input type="button" value="거절" name="reject" class="wait__reject--btn wait__reject--btn--${ waitMemberId } wait-reject__btn" id="reject-btn-${ waitMemberId }">
+                </div>
             </form>
-        `;
+                            `;
         }
 
         // 수락, 거절 버튼 선택 이후
-        const waitAcceptBtn = document.querySelector(`.wait__accept--btn-${ waitMemberId }`);
-        const waitRejectBtn = document.querySelector(`.wait__reject--btn-${ waitMemberId }`);
-        const memberWaitAlertText = document.querySelector(`.wait__text--${ waitMemberId }`);
+        // const waitAcceptBtn = document.querySelector(`.wait__accept--btn-${ waitMemberId }`);
+        // const waitRejectBtn = document.querySelector(`.wait__reject--btn-${ waitMemberId }`);
+        // const memberWaitAlertText = document.querySelector(`.wait__text--${ waitMemberId }`);
 
-        waitAcceptBtn.addEventListener('click', function(){
-            onClickacceptWait(waitMemberId, group_id);
-        })
-        waitRejectBtn.addEventListener('click', function(){
-            onClickrejectWait(waitMemberId, group_id);
-        })
+        // waitAcceptBtn.addEventListener('click', function(){
+        //     onClickacceptWait(waitMemberId, group_id);
+        // })
+        // waitRejectBtn.addEventListener('click', function(){
+        //     onClickrejectWait(waitMemberId, group_id);
+        // })
 
     };
     flag = 1;
     
-    groupWaitAlert.style.display = 'block';
-}
+    groupWaitAlert.style.display = 'flex';
+
+    const waitAcceptBtn = document.querySelectorAll('.wait__accept--btn');
+    const waitRejectBtn = document.querySelectorAll('.wait__reject--btn');
+
+    waitAcceptBtn.forEach(function(btn) {
+        btn.addEventListener('click', function(){
+            const [txt1, txt2, waitId] = btn.getAttribute('id').split('-');
+            onClickacceptWait(waitId, group_id);
+        })
+    })
+
+    waitRejectBtn.forEach(function(btn) {
+        btn.addEventListener('click', function(){
+            const [txt1, txt2, waitId] = btn.getAttribute('id').split('-');
+            onClickrejectWait(waitId, group_id);
+        })
+    })
+
+    const onClickacceptWait = async (userId, groupId) => {
+        const url = "/group/group_join_accept/";
+        const {data} = await axios.post(url, {
+            userId, groupId
+        });
+        console.log('!')
+        joinAcceptHandleResponse(
+            data.userId
+        )
+    }
+
+    joinAcceptHandleResponse = (userId) => {
+        const memberWaitAlertText = document.querySelector(`.wait__text--${userId}`);
+
+        memberWaitAlertText.innerHTML = '수락했습니다.'
+    }
 
 
-const onClickacceptWait = async (userId, groupId) => {
-    const url = "/group/group_join_accept/";
-    const {data} = await axios.post(url, {
-        userId, groupId
-    });
-    console.log('!')
-    joinAcceptHandleResponse(
-        data.userId
-    )
-}
+    const onClickrejectWait = async (userId, groupId) => {
+        const url = "/group/group_join_reject/";
+        const {data} = await axios.post(url, {
+            userId, groupId
+        });
+        joinRejectHandleResponse(
+            data.userId
+        )
+    }
 
-joinAcceptHandleResponse = (userId) => {
-    memberWaitAlertText.innerHTML = '수락했습니다.'
-}
+    joinRejectHandleResponse = (userId) => {
+        const memberWaitAlertText = document.querySelector(`.wait__text--${userId}`);
 
-
-const onClickrejectWait = async (userId, groupId) => {
-    const url = "/group/group_join_reject/";
-    const {data} = await axios.post(url, {
-        userId, groupId
-    });
-    joinRejectHandleResponse(
-        data.userId
-    )
-}
-
-joinRejectHandleResponse = (userId) => {
-    memberWaitAlertText.innerHTML = '거절했습니다.'
+        memberWaitAlertText.innerHTML = '거절했습니다.'
+    }
 }
