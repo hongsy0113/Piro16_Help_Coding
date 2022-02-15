@@ -232,3 +232,8 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+.mypage__message {
+    color: #37C6E5;
+    font-size: 18px !important;
+}
