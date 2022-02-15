@@ -25,7 +25,8 @@
             {% if answers_count > 0 %}
             <a class="question__delete-btn" onclick="alert('답변이 달려 있어서 삭제할 수 없습니다.')">삭제</a>      
             {% else %}
-            <a href="{% url 'qna:question_delete' question.pk %}" class="question__delete-btn">삭제</a>      
+            <button class="question__delete-btn">삭제</button>      
+            
             {% endif %}
             {% endif %}
         </p>

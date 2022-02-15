@@ -94,7 +94,12 @@ const answerHandleResponse = (id, content, user, created_at, img_url, is_author)
     })
     const answerDeleteButton = document.querySelector(`.answer__delete-btn--${id}`);
     answerDeleteButton.addEventListener('click',function(){
-        onClickAnswerDelete(id);
+        if (confirm("정말 삭제하시겠습니까?")){
+            onClickAnswerDelete(id);
+        }
+        else {
+            return false
+        }
     })
     const replyButton = document.querySelector(`.answer__write-reply--${id}`);
     replyButton.addEventListener('click',function(e){
@@ -252,7 +257,12 @@ relpyHandleResponse = (replyId, answerId ,content, user, created_at, img_url, is
     })
     const answerDeleteButton = document.querySelector(`.answer__delete-btn--${replyId}`);
     answerDeleteButton.addEventListener('click',function(){
-        onClickAnswerDelete(replyId);
+        if (confirm("정말 삭제하시겠습니까?")){
+            onClickAnswerDelete(replyId);
+        }
+        else {
+            return false
+        }
     })
     const answerEditButton = document.querySelector(`.answer__edit-btn--${replyId}`);
     answerEditButton.addEventListener('click',function(){
@@ -366,7 +376,13 @@ answerDeleteButtons.forEach(function(btn) {
     btn.addEventListener('click',function(){
         const btnElementId = btn.getAttribute('id').split('-');
         const answerId = btnElementId[btnElementId.length-1];
-        onClickAnswerDelete(answerId);
+        if (confirm("정말 삭제하시겠습니까?")){
+            onClickAnswerDelete(answerId);
+        }
+        else {
+            return false
+        }
+        
     })
 })
 
@@ -496,3 +512,16 @@ if (user_id == null){
         document.querySelector('.answer__input').blur();
     })
 } 
+
+///// 삭제 전 확인
+const questionDeleteBtn = document.querySelector('.question__delete-btn');
+if (questionDeleteBtn){
+    questionDeleteBtn.addEventListener('click',function(){
+        if (confirm("정말 삭제하시겠습니까?")){
+            document.location.href = `/qna/${question_id}/delete`;//onClickQuestionDelete(question_id);
+        }
+        else {
+            return false
+        }
+    })
+}
