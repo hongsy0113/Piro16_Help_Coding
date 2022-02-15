@@ -238,19 +238,19 @@ button {
     width: 1040px;
     padding: 20px 100px;
     border-bottom: 1px solid #BDBDBD;
+    gap: 35px;
 }
 
 .member-list__maker--left, .member-list__member--left {
     display: flex;
     align-items: center;
-    margin-right: 30px;
+    gap: 25px;
 }
 
 .member-list__img img{
     width: 60px;
     height: 60px;
     border-radius: 50px;
-    margin-right: 20px;
 }
 
 .member-list__maker--text, .member-list__one--text {
@@ -263,10 +263,11 @@ button {
 
 .member-list__maker--name {
     width: 100px;
+    overflow: auto;
 }
 
 .text__name {
-    padding: 5px;
+    /* padding: 5px; */
 }
 
 .member-list__one--intro {
