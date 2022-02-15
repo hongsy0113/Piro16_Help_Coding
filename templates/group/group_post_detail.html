@@ -2,12 +2,12 @@
 {% load hitcount_tags %}
 
 {% block title %}
-    {{ group.name }} | 도와줘, 코딩
+    {{ post.title }} | 도와줘, 코딩
 {% endblock %}
 
 {% load static %}
 {% block css %}
-<link rel="stylesheet" href="{% static 'css/question_detail.css' %}">
+<link rel="stylesheet" href="{% static 'css/detail.css' %}">
 {% endblock css %}
 
 {% block js %}
