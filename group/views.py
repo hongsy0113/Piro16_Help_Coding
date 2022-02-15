@@ -44,10 +44,10 @@ def group_home(request):
     # group_star = GroupStar.objects.filter(group=groups)
 
     # 정렬하기
-    sort = request.GET.get('sort', 'star')
-    if sort == 'name':
+    sort_by = request.GET.get('sort', 'star')
+    if sort_by == 'name':
         groups = groups.order_by('name', '-id')
-    elif sort == 'star': #filter -> 정렬
+    elif sort_by == 'star': #filter -> 정렬
         dict = {}
         for group in groups:
             dict[group] = group.star_group.filter(user=user).count()
@@ -76,7 +76,7 @@ def group_home(request):
         'user': user,  #나중에는 쓸모 X 
         'groups': page_obj,
         'groups_star_dict': groups_star_dict,
-        'sort_by': sort,
+        'sort_by': sort_by,
         'ani_image': static('image/helphelp.png')    
     }
 
@@ -445,10 +445,10 @@ def group_list(request):
     page = request.GET.get('page', '1')
 
 
-    sort = request.GET.get('sort', 'interest')
-    if sort == 'name':
+    sort_by = request.GET.get('sort', 'interest')
+    if sort_by == 'name':
         groups = group.order_by('name')
-    elif sort == 'interest':
+    elif sort_by == 'interest':
         groups = group.annotate(total_likes=Count('interests')).order_by('-total_likes')
 
     pagintor = Paginator(groups, 6)
@@ -456,7 +456,7 @@ def group_list(request):
 
     ctx = { 
         'groups': page_obj,
-        'sort_by': sort,
+        'sort_by': sort_by,
         'ani_image': static('image/helphelp.png')    
     }
 
