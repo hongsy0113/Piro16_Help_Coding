@@ -808,7 +808,7 @@ class GroupPostDetailView(HitCountDetailView):
         context['username']= username
         context['total_likes'] = total_likes
         context['is_liked']= is_liked
-        context['answers']= answers
+        # context['answers']= answers
         context['answers_count']= answers_count
         context['answers_reply_dict']= answers_reply_dict
         return context
@@ -827,6 +827,11 @@ class FileDownloadView(SingleObjectMixin, View):
         response['Content-Disposition'] = f'attachment; filename={object.get_filename()}'
         
         return response
+
+def post_delete(request, pk, post_pk):
+    post = get_object_or_404(GroupPost, pk=post_pk)
+    post.delete()
+    return redirect('group:post_list', pk)
 
 @csrf_exempt
 def answer_ajax(request):
@@ -946,6 +951,7 @@ def answer_like_ajax(request):
 @csrf_exempt
 def answer_delete_ajax(request):
     req = json.loads(request.body)
+
     answer_id = req['id']
 
     answer = get_object_or_404(GroupAnswer, pk=answer_id)

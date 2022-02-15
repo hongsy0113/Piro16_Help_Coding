@@ -514,7 +514,7 @@ if (user_id == null){
 } 
 
 ///// 삭제 전 확인
-const questionDeleteBtn = document.querySelector('.question__delete-btn');
+const questionDeleteBtn = document.querySelector('.question__delete-btn--actual');
 if (questionDeleteBtn){
     questionDeleteBtn.addEventListener('click',function(){
         if (confirm("정말 삭제하시겠습니까?")){
