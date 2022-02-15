@@ -30,6 +30,7 @@ from user.update import *
 from .iframe import *
 from threading import Timer
 
+
 ######## 그룹 메인 페이지 ########
 
 # 나의 그룹
@@ -44,7 +45,7 @@ def group_home(request):
     # 정렬하기
     sort = request.GET.get('sort', 'star')
     if sort == 'name':
-        groups = groups.order_by('name', '-id')
+        groups = groups.order_by('name')
     elif sort == 'star': #filter -> 정렬
         dict = {}
         for group in groups:
