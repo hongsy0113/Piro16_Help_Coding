@@ -38,12 +38,12 @@ const privateGroupJoin = document.querySelector('.private-group__join-btn')
 const groupWhichJoin =  document.querySelector('.group-join__select-box')
 
 function showGroupJoin() {
-    groupWhichJoin.style.display = 'block';
+    groupWhichJoin.style.display = 'flex';
 }
 
 function showPrivateGroup() {
     const groupJoinAlert = document.getElementById('join-group');
-    groupJoinAlert.style.display = 'block';
+    groupJoinAlert.style.display = 'flex';
     groupWhichJoin.style.display = 'none';
 }
 

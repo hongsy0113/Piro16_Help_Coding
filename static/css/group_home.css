@@ -70,6 +70,42 @@ img {
     margin-right: 10px;
 }
 
+/* 가입한 내 그룹이 없을 때 */
+.mygroup__nogroup {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 45px;
+    height: 250px;
+}
+
+.mygroup__nogroup--text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    /* height: 250px; */
+}
+
+.mygroup__nogroup--text h2 {
+    font-family: Noto Sans CJK KR;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 35px;
+    line-height: 105%;
+    color: #4F4F4F;
+    margin-bottom: 10px;
+}
+
+.mygroup__nogroup--btnbox {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
 /* 내 그룹 목록 */
 .gridbox {
     margin-top: 24px;

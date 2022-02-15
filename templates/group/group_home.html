@@ -4,7 +4,7 @@
 {% block css %}
     <link rel="stylesheet" href="{% static 'css/base.css' %}" />
     <link rel="stylesheet" href="{% static 'css/group_home.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/group.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/group_home_modal.css' %}" />
 {% endblock %}
 
 {% block js %}
@@ -24,27 +24,48 @@
         <div class="mygroup__top-left">
             <span>내 그룹</span>
         </div>
+        {% if groups %}
         <div class="mygroup__top-right">
             <a href="{% url 'group:group_create' %}" class="right__makebtn">그룹 만들기</a>
             <a class="right__joinbtn" onclick="showGroupJoin()">그룹 가입하기</a>
         </div>
+        {% endif %}
     </div>
 
     <!-- 가입한 내 그룹이 없을 때 -->
     {% if not groups %}
-    <div>
-        <h1>현재 가입한 그룹이 없습니다. 나에게 맞는 그룹에 가입하세요!</h1>
+    <div class="mygroup__nogroup">
+        <div class="mygroup__nogroup--text">
+            <h2>아직 가입한 그룹이 없어요 👀</h2>
+            <h2>그룹에 가입해서 다른 친구들과 교류해보세요!</h2>
+        </div>
+
+        <div class="mygroup__nogroup--btnbox">
+            <a href="{% url 'group:group_create' %}" class="right__makebtn">그룹 만들기</a>
+            <a class="right__joinbtn" onclick="showGroupJoin()">그룹 가입하기</a>
+        </div>
     </div>
     {% endif %}
 
     <!-- 공개, 비공개 모드 선택 modal-->
-    <div class="group-join__select-box">
-        <h2>어떤 그룹에 가입하시겠습니까?</h2>
-        <div class="which-join__box d-flex">
-            <button class="public-group__join-btn"><a href="{% url 'group:group_list' %}">공개</a></button>
-            <button class="private-group__join-btn" onclick="showPrivateGroup()">비공개</button>
+    <div class="group-join__select-box modal modal__hidden">
+        <div class="modal__overlay"></div>  <!-- 모달 배경 -->
+
+        <div class="modal__content">    <!-- 모달 내용 -->
+            <div class="modal__content--top">
+                <span>어떤 그룹에 가입하고 싶나요?</span>
+            </div>
+
+            <div class="modal__content--bottom which-join-modal__bottom">
+                <div class="which-join__box which-join__box--top">
+                    <button class="public-group__join-btn"><a href="{% url 'group:group_list' %}">공개그룹</a></button>
+                    <button class="private-group__join-btn" onclick="showPrivateGroup()">비공개그룹</button>
+                </div>
+                <div class="which-join__box which-join__box--bottom">
+                    <button class="join__code--close modal__close" onclick="closeGroupJoin()">닫기</button>
+                </div>
+            </div>
         </div>
-        <button class="join__code--close btn btn-dark" onclick="closeGroupJoin()">닫기</button>
     </div>
 
 
