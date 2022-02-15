@@ -93,10 +93,10 @@
                 </div>
             </div>
 
-            <div class="post-crate__category">
+            <div class="post-create__category">
                 <div class="text-container category-text">
                     <span>카테고리</span>
-                    <span class="post-crate__error">{{ category_error }}</span>
+                    <span class="post-create__error">{{ category_error }}</span>
                 </div>
                 <!-- 카테고리 에러 메시지 -->
                 {% if error_messages.category %}
@@ -107,7 +107,7 @@
                     {{ error_messages.category }}
                 </span>
                 {% endif %}
-                <div class="post-crate__category-select">
+                <div class="post-create__category-select">
                     <input type="radio" name="category" value="S" id="show" class="tag" 
                     {% if original_information.category == 'S' or post.category == 'S' %} checked {% endif %}/>
                     <label for="show">자랑하기</label>
