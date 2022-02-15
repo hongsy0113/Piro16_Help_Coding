@@ -4,9 +4,25 @@
 {% block js %}
 <script type="text/javascript" src="/static/js/group_post_detail.js" defer></script>
 {% endblock %}
+
+<!-- context -->
+<!--
+    {'iframe': iframe 태그를 사용하는 경우, 해당 iframe 태그. {{ iframe | safe }} 를 통해 실제 html 태그처럼 사용 가능,
+    'group' : 게시글이 속한 group object 객체,
+    'username' : 게시글 작성한 사람의 이름,
+    'total_likes' : 게시글에 좋아요를 누른 사람의 수,
+    'is_liked': 현재 로그인한 사용자가 게시글에 좋아요를 눌렀는지 여부,
+    'answers_count': 총 댓글 개수. (대댓글 제외)(지금 이걸 적고 있는 시점에는 포함되어 있긴함)
+    'answers_reply_dict': 딕셔너리. 키로는 댓글 객체, 값으로는 해당하는 대댓글 객체 리스트.
+    'previous_pk' : 이전 게시글의 pk, 이전 글이 없다면 -1
+    'next_pk' : 다음 게시글의 pk, 다음 글이 없다면 -1
+-->
+
 {% block content %}
+<!-- js에서 data를 쓰기 위한 부분 -->
 {{ request.user.id|json_script:"user_id" }}
 {{ post.id|json_script:"post_id" }}
+{{ group.id | json_script:"group_id" }}
 
 <h2>{{ post.group }}      게시판</h2>
 
@@ -71,8 +87,8 @@
 
     <div class="post__buttons">
         {% if post.user.id == user.id %}
-        <a href="{% url 'group:post_update' group.pk post.pk %}" class="btn btn-success">수정</a>
-        <a href="" class="btn btn-success">삭제</a>
+        <a href="{% url 'group:post_update' group.pk post.pk %}" class="btn btn-success post__edit-btn">수정</a>
+        <a href="{% url 'group:post_delete' group.pk post.pk %}" class="btn btn-success post__delete-btn">삭제</a>
         {% endif %}
         <a href="{% url 'group:post_list' group.pk %}" class="btn btn-info">목록보기</a>
         {% if previous_pk != -1 %}

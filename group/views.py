@@ -29,6 +29,8 @@ from config.settings import MEDIA_ROOT
 from user.update import *
 from .iframe import *
 from threading import Timer
+from django.core.validators import URLValidator
+from django.core.exceptions import ValidationError
 
 ######## 그룹 메인 페이지 ########
 
@@ -566,11 +568,18 @@ def wait_list_ajax(request):
 
 ######################### 그룹 내 커뮤니티 게시판 ##############################
 ### Error messages
-from django.core.validators import URLValidator
-from django.core.exceptions import ValidationError
-class ErrorMessages():
+
+# TODO : validation 체크할 때 request 객체와 form을 넘겨주는 건 어떨까요?
+# TODO : 넘겨주는 인자가 너무 많고, 순서 헷갈릴 여지도 있어보입니다.
+
+class GroupPostErrorMessages():
     title, content, image, attached_file, attached_link, category = '', '', '', '', '', ''
-    def validation_check(self,title, content, image, attached_file, attached_link, category, command):
+
+    def validation_check(self, request, command):
+        title = request.POST.get('title')
+        content = request.POST.get('content')
+        attached_link = request.POST.get('attached_link')
+        category = request.POST.get('category')
         if 'create' in command or 'update' in command:
             if not title:
                 self.title = '제목을 입력해주세요'
@@ -674,16 +683,8 @@ def post_create(request, pk):
     group = get_object_or_404(Group, pk=pk)
     if request.method == 'POST':
         form = PostForm(request.POST, request.FILES)
-        error_messages = ErrorMessages()
-        error_messages.validation_check(
-            request.POST.get('title'),
-            request.POST.get('content'),
-            request.FILES.get('image'),
-            request.FILES.get('attached_file'),
-            request.POST.get('attached_link'),
-            request.POST.get('category'),
-            'create'
-        )
+        error_messages = GroupPostErrorMessages()
+        error_messages.validation_check(request , ['create'])
         if not error_messages.has_error():
             post = GroupPost.objects.create(
                 title=request.POST.get('title'),
@@ -730,16 +731,8 @@ def post_update(request,pk ,post_pk):
     if request.method == "POST":
         form = PostForm(request.POST, request.FILES, instance = post)
 
-        error_messages = ErrorMessages()
-        error_messages.validation_check(
-            request.POST.get('title'),
-            request.POST.get('content'),
-            request.FILES.get('image'),
-            request.FILES.get('attached_file'),
-            request.POST.get('attached_link'),
-            request.POST.get('category'),
-            ['update']
-        )
+        error_messages = GroupPostErrorMessages()
+        error_messages.validation_check(request , ['create'])
         if not error_messages.has_error():
             post = form.save()
             return redirect('group:post_detail', pk, post.pk)
@@ -815,7 +808,7 @@ class GroupPostDetailView(HitCountDetailView):
         context['username']= username
         context['total_likes'] = total_likes
         context['is_liked']= is_liked
-        context['answers']= answers
+        # context['answers']= answers
         context['answers_count']= answers_count
         context['answers_reply_dict']= answers_reply_dict
         return context
@@ -834,6 +827,11 @@ class FileDownloadView(SingleObjectMixin, View):
         response['Content-Disposition'] = f'attachment; filename={object.get_filename()}'
         
         return response
+
+def post_delete(request, pk, post_pk):
+    post = get_object_or_404(GroupPost, pk=post_pk)
+    post.delete()
+    return redirect('group:post_list', pk)
 
 @csrf_exempt
 def answer_ajax(request):
@@ -953,6 +951,7 @@ def answer_like_ajax(request):
 @csrf_exempt
 def answer_delete_ajax(request):
     req = json.loads(request.body)
+
     answer_id = req['id']
 
     answer = get_object_or_404(GroupAnswer, pk=answer_id)
