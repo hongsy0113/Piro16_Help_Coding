@@ -24,4 +24,5 @@ urlpatterns = [
          views.check_alert_ajax, name="check_alert_ajax"),
     path('mypage/alert/check_all_ajax/',
          views.check_all_alert_ajax, name="check_all_alert_ajax"),
+     path('<int:pk>/public_userpage/', views.public_userpage, name='public_userpage'),
 ]

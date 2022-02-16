@@ -270,6 +270,11 @@ button {
     /* padding: 5px; */
 }
 
+.text__name a {
+    text-decoration: none;
+    color: #212529;
+}
+
 .member-list__one--intro {
     width: 100%;
     height: 36px;
