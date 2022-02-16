@@ -249,3 +249,11 @@ const groupDeleteBtn = document.querySelector('.btn__delete');
 groupDeleteBtn.addEventListener('click', function(){
     alert('삭제되었습니다.');
 })
+
+// 그룹 가입 신청 완료 alert
+const signUpButton = document.querySelector('.btn-signup');
+signUpButton.addEventListener('click', signUpAlert);
+
+function signUpAlert() {
+    alert("가입 신청이 완료되었어요.\n그룹에서 가입 신청을 수락하면 활동할 수 있어요!");
+}
