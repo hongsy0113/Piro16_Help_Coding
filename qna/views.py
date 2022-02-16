@@ -357,16 +357,13 @@ def answer_ajax(request):
     username = user.nickname
     user_image_url = user.img.url if user.img else ''
     
-    this_question = Question.objects.get(pk=question_id)
+    this_question = get_object_or_404(Question, pk=question_id)
     # 작성자 여부
     if this_question.user == None:
         is_author = False
     elif user_id == this_question.user.pk:
         is_author = True
     else: is_author= False
-    
-    #### TODO ##########
-    ## user 대표이미지 넘겨주는 건 유저 조금 구체화 된 다음에 추가
 
     ## 새 답변의 order 필드를 정해주기 위한 부분. 
     current_answers = Answer.objects.filter(question_id=question_id).order_by('answer_order')
@@ -374,8 +371,6 @@ def answer_ajax(request):
         new_order = 1
     else:
         new_order = current_answers.last().answer_order + 1
-
-    this_question = get_object_or_404(Question, pk=question_id)
 
     ## 새로운 답변
     new_answer = Answer.objects.create(

@@ -965,9 +965,16 @@ def answer_ajax(request):
     user_id = req['user']
     user = get_object_or_404(User, pk=user_id)
     username = user.nickname
+    user_image_url = user.img.url if user.img else ''
     
-    #### TODO ##########
-    ## user 대표이미지 넘겨주는 건 유저 조금 구체화 된 다음에 추가
+    this_post = get_object_or_404(GroupPost, pk=post_id)
+    # 작성자 여부
+    if this_post.user == None:
+        is_author = False
+    elif user_id ==this_post.user.pk:
+        is_author = True
+    else: is_author = False
+
 
     ## 새 답변의 order 필드를 정해주기 위한 부분. 
     current_answers = GroupAnswer.objects.filter(post_id=post_id).order_by('answer_order')
@@ -976,14 +983,24 @@ def answer_ajax(request):
     else:
         new_order = current_answers.last().answer_order + 1
 
-    this_post = get_object_or_404(GroupPost, pk=post_id)
-
     ## 새로운 답변
-    new_answer = GroupAnswer.objects.create(post_id=this_post, content=content, answer_order=new_order, user = user)
+    new_answer = GroupAnswer.objects.create(
+        post_id=this_post,
+        content=content, 
+        answer_order=new_order,
+        answer_depth = 0,
+        user = user)
     # 템플릿에서 쉽게 띄울 수 있도록 답변 게시일자 포맷팅해서 json에 전달
     created_at = new_answer.created_at.strftime('%y.%m.%d %H:%M')
 
-    return JsonResponse({'id': new_answer.id ,'content': content,'user':username, 'created_at':created_at} )
+    return JsonResponse({
+        'id': new_answer.id ,
+        'content': content,
+        'user':username, 
+        'created_at':created_at,
+        'user_image_url':user_image_url,
+        'is_author':is_author,
+        })
 
 # 대댓글 작성
 @csrf_exempt
@@ -999,6 +1016,14 @@ def reply_ajax(request):
     # 작성하려는 대댓글이 속한 질문 구하기
     this_answer = get_object_or_404(GroupAnswer, pk=answer_id)
     this_post = this_answer.post_id
+
+    user_image_url = user.img.url if user.img else ''
+    # 작성자 여부
+    if this_post.user == None:
+        is_author = False
+    elif user_id == this_post.user.pk:
+        is_author = True
+    else: is_author = False
     
     ## 새 답변의 order 필드를 정해주기 위한 부분. 
     current_answers = GroupAnswer.objects.filter(post_id=this_post.id).order_by('answer_order')
@@ -1012,6 +1037,7 @@ def reply_ajax(request):
         post_id=this_post, 
         content=content, 
         answer_order=new_order, 
+        answer_depth = 1,
         user = user,
         parent_answer = this_answer
     )
@@ -1025,6 +1051,8 @@ def reply_ajax(request):
         'content': content,
         'user':username, 
         'created_at':created_at,
+        'user_image_url':user_image_url,
+        'is_author':is_author,
     })
 
     return response

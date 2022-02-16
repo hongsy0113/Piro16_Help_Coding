@@ -13,7 +13,14 @@ const onClickAnswer = async (questionId, content) => {
         const {data} = await axios.post(url,{
             questionId, content, user: user_id
         });
-        answerHandleResponse(data.id, data.content, data.user, data.created_at, data.user_image_url, data.is_author)
+        answerHandleResponse(
+            data.id, 
+            data.content,
+            data.user, 
+            data.created_at, 
+            data.user_image_url, 
+            data.is_author
+            )
     } 
 }
 
@@ -71,7 +78,7 @@ const answerHandleResponse = (id, content, user, created_at, img_url, is_author)
     </div>
     <div class="answer__edit answer__edit--${id}" style=" display: none;">
         <div class="answer__edit__flexbox">
-            <input type="text" name="edit_answer_${id}" class="answer__edit-input answer__edit-input--${id}" id = "answer-edit-input-${id}" style="width:200px; height:20px;" value="${content}">    
+            <input type="text" name="edit_answer_${id}" class="answer__edit-input answer__edit-input--${id}" id = "answer-edit-input-${id}"  value="${content}">    
             <input type="button" value = "수정" class="answer__edit-submit answer__edit-submit--${id}" id = "answer-edit-submit-${id}">
         </div>
     </div>
@@ -241,7 +248,7 @@ relpyHandleResponse = (replyId, answerId ,content, user, created_at, img_url, is
     <div class="answer__edit answer__edit--${replyId}" style=" display: none;">
         <div class="answer__edit__flexbox">
             <input type="text" name="edit_answer_${replyId}" class="answer__edit-input answer__edit-input--${replyId}" id = "answer-edit-input-${replyId}" 
-            style="width:200px; height:20px;" value="${content}">    
+             value="${content}">    
             <input type="button" value = "수정" class="answer__edit-submit answer__edit-submit--${replyId}" id = "answer-edit-submit-${replyId}">
         </div>
     </div>

@@ -137,7 +137,7 @@
                             <div class="answer__user__name answer__user__name--{{ answer.id }}">
                                 {% if answer.user %}
                                 <h2>{{ answer.user }}</h2>
-                                {% if answer.user.id == question.user.id %}
+                                {% if answer.user.id == post.user.id %}
                                 <span class="answer__writer-mark">글쓴이</span>
                                 {% endif %}
                                 {% else %}
