@@ -263,16 +263,20 @@ def group_delete(request, pk):
 
     if user == group.maker:
         group.delete()
-
+        
         return redirect('group:group_home')
+
     # else:
     #     ### 알림 창 하나 띄우기(alert) "방장만 그룹을 삭제할 수 있습니다."
     #     return redirect('group:group_detail', pk)
 
 # 그룹 탈퇴
-def group_drop(request, pk):
+def group_drop(request):
+    req = json.loads(request.body)
+    group_id = req['groupId']
+
     user = request.user
-    group = get_object_or_404(Group, pk=pk)
+    group = get_object_or_404(Group, pk=group_id)
     members = group.members.all()
 
     if len(members) > 1:
@@ -291,7 +295,6 @@ def group_drop(request, pk):
         group.delete()
 
         # group_delete(request, pk)  # 그룹 삭제 함수 호출
-
     return redirect('group:group_home')
 
 # 그룹 상세 페이지

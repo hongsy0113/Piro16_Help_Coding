@@ -250,3 +250,8 @@
     align-items: center;
     color: #828282;
 }
+
+/* 그룹 삭제, 탈퇴, 가입 시 alert 임시로 만들었어요-! */
+.group__delete--alert, .group__drop--alert {
+    display: none;
+}

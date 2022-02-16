@@ -51,8 +51,8 @@
     <div class="container-button__right">
         <!-- 내 그룹일 경우, 그룹 찜하기 -->
         {% if group in mygroup %}
-        <div class="container-button__btn star__group">    
-            <span class="star group__keyword-star group__keyword-star--{{ group.id }}" id="keyword-star-{{ group.id }}">  
+        <div class="container-button__btn star__group">
+            <span class="star group__keyword-star group__keyword-star--{{ group.id }}" id="keyword-star-{{ group.id }}">
                 {% if is_star %} <!-- 꽉 찬 별 -->
                 <svg xmlns="http://www.w3.org/2000/svg" width="33" height="33" viewBox="0 0 33 33" fill="none">
                 <path d="M14.2841 1.9274L14.284 1.92759L10.7818 9.44224L2.95814 10.6493C1.06844 10.9394 0.387624 13.3429 1.69516 14.6904C1.69521 14.6905 1.69526 14.6905 1.6953 14.6906L7.37193 20.5445L6.02817 28.821L6.02812 28.8213C5.72253 30.7113 7.63006 32.2674 9.33438 31.3119C9.33462 31.3118 9.33486 31.3117 9.33509 31.3115L16.3261 27.4227L23.3185 31.3124C23.3186 31.3124 23.3186 31.3124 23.3186 31.3124C25.0196 32.2589 26.9302 30.7151 26.624 28.8213L26.6239 28.821L25.2802 20.5446L30.9568 14.6906C32.2645 13.3431 31.5837 10.9394 29.694 10.6493L21.8703 9.44224L18.3681 1.92759L18.3677 1.92669C17.5428 0.165947 15.1196 0.136632 14.2841 1.9274Z" fill="#FFD76F" stroke="#828282"/>
@@ -87,12 +87,12 @@
 
     <div class="conatiner-info__content">
         <div class="info-content__maker">
-            <p class="text-box__top">그룹을 만든 사람</p>  
+            <p class="text-box__top">그룹을 만든 사람</p>
             <p class="text-box__bottom">{{ group.maker }}</p>
         </div>
 
         <div class="info-content__member">
-            <p class="text-box__top">그룹 인원</p>  
+            <p class="text-box__top">그룹 인원</p>
             <p class="text-box__bottom">{{ group.member |  length }}명</p>
         </div>
 
@@ -114,7 +114,7 @@
         {% if group.mode == 'PUBLIC' and maker == user %}
             <div class="member-top__right--public">
                 <div class="top-right__button">
-                    <span class="group__wait--btn">대기자 명단 보기</span> 
+                    <span class="group__wait--btn">대기자 명단 보기</span>
                 </div>
 
                 <!-- 그룹 대기자 리스트 modal -->
@@ -125,7 +125,7 @@
                             <span>그룹 가입 대기자</span>
                         </div>
                         <div class="modal__content--bottom group-wait__modal--bottom">
-                            <div class="group__wait--member-list">  <!-- 대기자 명단 js로 추가 -->                        
+                            <div class="group__wait--member-list">  <!-- 대기자 명단 js로 추가 -->
                             </div>
                             <div class="group__wait--closebox">
                                 <button class="group__wait--close modal__close" onclick="closeGroupWait()">완료</button>
@@ -158,12 +158,12 @@
                         <span>멤버 초대 코드</span>
                     </div>
                     <div class="modal__content--bottom">
-                        <div class="code_box">      
-                        </div>  
+                        <div class="code_box">
+                        </div>
                         <button class="group__code--close modal__close" onclick="closeCreateCode()">확인</button>
                     </div>
                 </div>
-            </div>    
+            </div>
         {% endif %}
         </div>
     </div>
@@ -171,14 +171,14 @@
     <!-- 그룹 멤버 명단 -->
     <div class="container-member__list">
         <!-- 그룹 maker 먼저 -->
-        <div class="member-list__maker">   
-            <div class="member-list__maker--left"> 
+        <div class="member-list__maker">
+            <div class="member-list__maker--left">
                 <div class="member-list__img">
                     {% if maker.img %}
                     <img src="{{ maker.img.url }}" height="50" width="50" style="border-radius: 50px;"/>
                     {% else %}
                     <img src="{{ profile_img }}" height="50" width="50" style="border-radius: 50px;"/>
-                    {% endif %}     
+                    {% endif %}
                 </div>
 
                 <div class="member-list__maker--text member-list__maker--name">
@@ -196,11 +196,11 @@
             </div>
         </div>
 
-        <!-- 그룹 멤버 --> 
+        <!-- 그룹 멤버 -->
         {% for member in members %}     <!-- 멤버가 있으면 -->
-        {% if member != maker %}      
-        <div class="member-list__member">             
-            <div class="member-list__member--left">   
+        {% if member != maker %}
+        <div class="member-list__member">
+            <div class="member-list__member--left">
                 <div class="member-list__img">  <!-- 멤버 이미지 -->
                     {% if member.img %}
                     <img src="{{ member.img.url }}" />
@@ -224,7 +224,7 @@
                 {% endif %}
             </div>
         </div>
-        {% endif %} 
+        {% endif %}
         {% endfor %}
     </div>
 </div>  <!-- 그룹 멤버 리스트 끝 -->
@@ -233,9 +233,24 @@
     <!-- 유저가 maker인 경우 -->
     {% if maker == user %}
     <div class="bottom-btn__box">
-        <a href="{% url 'group:group_update' group.pk %}" class="btn__update">그룹 정보 수정</a>
-        <a href="{% url 'group:group_delete' group.pk %}" class="btn__delete">그룹 삭제</a> 
-        <a href="{% url 'group:group_drop' group.pk %}" class="btn-out">그룹 탈퇴하기</a>
+        <span href="{% url 'group:group_update' group.pk %}" class="btn__update">그룹 정보 수정</span>
+        <span class="btn__delete">그룹 삭제</span>
+        <span class="btn-out">그룹 탈퇴하기</span> 
+
+        <!-- 그룹 삭제 modal -->
+        <!-- <div class="group__delete--alert">
+            <div class="group__delete--text">정말 을 삭제하시겠습니까?</div>
+            <button class="group__delete--yes">네</button>
+            <button class="group__delete--no" onclick="closeGroupDeleteAlert()">아니요</button>
+        </div>
+
+
+        <!-- 그룹 탈퇴 modal -->
+        <!-- <div class="group__drop--alert">
+            <div class="group__drop--text">정말 을 탈퇴하시겠습니까?</div>
+            <button class="group__drop--yes">네</button>
+            <button class="group__drop--no" onclick="closeGroupOutAlert()">아니요</button>
+        </div> -->
     </div>
     {% endif %}
 
@@ -244,12 +259,12 @@
         <div class="bottom-btn__box">
             <a href="{% url 'group:group_drop' group.pk %}" class="btn-out">그룹 탈퇴하기</a>
         </div>
-    {% endif %}    
+    {% endif %}
 
     <!-- 공개 그룹 + 유저가 member가 아닌 경우 -->
     {% if group.mode == 'PUBLIC' and user not in members %}
         <div class="bottom-btn__box">
-            <a href="{% url 'group:public_group_join' group.pk %}" class="btn-signup">그룹 가입하기</a>
+            <span class="btn-signup">그룹 가입하기</span>
         </div>
     {% endif %}
 </div>  <!-- 페이지 하단 끝-->
@@ -267,7 +282,7 @@
                 {% if maker == user %}
                 <!-- 그룹 초대코드 생성 modal -->
                 <div class="group__code--alert-box" id="create-code">
-                    친구 초대 
+                    친구 초대
                     <div class="code_box">
                     </div>
                     <button class="group__code--close btn btn-dark" onclick="closeCreateCode()">닫기</button>

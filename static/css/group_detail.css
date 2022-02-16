@@ -291,7 +291,8 @@ button {
     padding-top: 50px;
 }
 
-.bottom-btn__box a {
+.bottom-btn__box a,
+.bottom-btn__box span {
     padding: 10px 24px 12px;
     background: #FFFFFF;
     border: 2px solid #FF8989;
@@ -306,7 +307,8 @@ button {
     text-decoration: none;
 }
 
-.bottom-btn__box a:hover {
+.bottom-btn__box a:hover,
+.bottom-btn__box span:hover {
     border: 2px solid #FF8989;
     background: #FF8989;
     color: white;
