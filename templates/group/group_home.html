@@ -51,12 +51,10 @@
     <!-- 공개, 비공개 모드 선택 modal-->
     <div class="group-join__select-box modal modal__hidden">
         <div class="modal__overlay"></div>  <!-- 모달 배경 -->
-
         <div class="modal__content">    <!-- 모달 내용 -->
             <div class="modal__content--top">
                 <span>어떤 그룹에 가입하고 싶나요?</span>
             </div>
-
             <div class="modal__content--bottom which-join-modal__bottom">
                 <div class="which-join__box which-join__box--top">
                     <button class="public-group__join-btn"><a href="{% url 'group:group_list' %}">공개그룹</a></button>
@@ -70,17 +68,38 @@
     </div>
 
 
-    <!-- 그룹 초대 modal -->
-    <div class="group-join__alert-box" id="join-group">
-        <div class="group-join__box">
-            <input type="text" name="group_code" placeholder="초대코드를 입력하세요!" class="group-code__input">
-            <input type="submit" value="입력" class="group-code__submit">
+    <!-- 그룹 초대코드 입력 modal -->
+    <div class="group-join__alert-box modal modal__hidden" id="join-group">
+        <div class="modal__overlay"></div>  <!-- 모달 배경 -->
+        
+        <div class="modal__content--join">    <!-- 모달 내용 -->
+            <div class="modal__content--top">
+                <span>그룹 가입하기</span>
+                <button class="join__code--close join__close--btn" onclick="closeGroupJoin()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="37" height="36" viewBox="0 0 37 36" fill="none">
+                    <path d="M1.77148 1.57764L35.0672 34.582M1.77148 34.582L35.0672 1.57764" stroke="#4E4E4E" stroke-width="3"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="group-join__box modal__content--bottom">
+                <div class="group-join__inputbox">
+                    <!-- 초대 코드 입력 input -->
+                    <div class="group-join__inputbox--input">
+                        <input type="text" name="group_code" placeholder="초대코드를 입력하세요!" class="group-code__input">
+                    </div>
 
-            <div class="group-code__text">
-                <h4>{{ message }}</h4>
+                    <!-- 에러메세지 -->
+                    {% if message %}<span class="group-code__text group-code__error"><svg width="5" height="14" viewBox="0 0 9 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M8.3125 21.5825C8.3125 23.7364 6.56016 25.4888 4.40625 25.4888C2.25234 25.4888 0.5 23.7364 0.5 21.5825C0.5 19.4286 2.25234 17.6763 4.40625 17.6763C6.56016 17.6763 8.3125 19.4286 8.3125 21.5825ZM0.952148 1.71919L1.61621 15.0004C1.64741 15.6241 2.16216 16.1138 2.78662 16.1138H6.02588C6.65034 16.1138 7.16509 15.6241 7.19629 15.0004L7.86035 1.71919C7.8938 1.0498 7.36016 0.48877 6.68994 0.48877H2.12256C1.45234 0.48877 0.918701 1.0498 0.952148 1.71919Z" fill="#EB6464"/>
+                    </svg>{{ message }}</span>{% endif %}
+
+                    <!-- 그룹 찾기 버튼 -->
+                    <div class="group-join__inputbox--btn">
+                        <input type="submit" value="그룹 찾기" class="group-code__submit">
+                    </div>
+                </div>
             </div>
         </div>
-        <button class="join__code--close btn btn-dark" onclick="closeGroupJoin()">닫기</button>
     </div>    
 
     <!-- 그룹 정렬 (sort) -->
@@ -99,6 +118,7 @@
         </form>
     </div>
     {% endcomment %}
+
     <div class="list-sort">
         <span class="list-sort__btn">
             {% if sort_by != 'star' %}

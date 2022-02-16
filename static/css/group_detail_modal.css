@@ -241,3 +241,12 @@
     text-align: center;
     color: #4E4E4E;
 }
+
+.alert__text {
+    font-family: Noto Sans CJK KR;
+    font-size: 17px;
+    line-height: 150%;
+    display: flex;
+    align-items: center;
+    color: #828282;
+}
