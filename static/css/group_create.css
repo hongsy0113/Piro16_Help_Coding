@@ -128,6 +128,11 @@ html, body, section {
     line-height: 150%;
 }
 
+.group-form__label--image:hover {
+    background-color: #4E4E4E;
+    color: #ffffff;
+}
+
 .form__input--file {
     position: absolute;
     width: 0;

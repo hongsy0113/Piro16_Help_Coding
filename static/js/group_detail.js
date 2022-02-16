@@ -241,14 +241,18 @@ const groupWaitHandleResponse = (groupName, waitsName, waitsImg, waitsId) => {
 
 // alert(삭제 시, 탈퇴 시)
 const groupOutBtn = document.querySelector('.btn-out');
-groupOutBtn.addEventListener('click', function(){
-    alert('탈퇴되었습니다.');
-})
+groupOutBtn.addEventListener('click', groupOutAlert)
+
+function groupOutAlert() {
+    alert('그룹에서 탈퇴하였습니다.');
+}
 
 const groupDeleteBtn = document.querySelector('.btn__delete');
-groupDeleteBtn.addEventListener('click', function(){
-    alert('삭제되었습니다.');
-})
+groupDeleteBtn.addEventListener('click', groupDeleteAlert)
+
+function groupDeleteAlert() {
+    alert('그룹이 삭제되었습니다.');
+}
 
 // 그룹 가입 신청 완료 alert
 const signUpButton = document.querySelector('.btn-signup');

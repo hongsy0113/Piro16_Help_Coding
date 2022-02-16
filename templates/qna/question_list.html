@@ -112,7 +112,7 @@
                 </div>
                 <!-- 상세태그 가져오는 코드입니다. 참고해서 css 완성해주세요. 고마워요 -->
                 {% for tag in question.tags.all %}
-                    <span class="tag__etc">{{ tag }}</span>
+                    <span class="tag__detail-tag">{{ tag }}</span>
                 {% endfor %}
                 <div class="question__info">
                     <span>{% if question.user %}{{ question.user }}{% else %}(알 수 없음){% endif %} · 조회 {% get_hit_count for question %} · 좋아요 {{ question.like_user.all | length }} · {{ question.created_at | date:'y.m.d' }}</span>
