@@ -49,6 +49,11 @@ function showPrivateGroup() {
 
 function closeGroupJoin() {
     const closeJoinAlert = document.getElementById('join-group');
+    const groupCodeAlertText = document.querySelector('.group-code__text');
+    const groupCodeInput = document.querySelector('.group-code__input')
+
+    groupCodeAlertText.innerHTML = '';
+    groupCodeInput.value = '';
     closeJoinAlert.style.display = 'none';
     groupWhichJoin.style.display = 'none';
 }
@@ -77,6 +82,6 @@ const groupCodeHandleResponse = (message) => {
     const groupCodeAlert = document.querySelector('.group-join__alert-box');
     const groupCodeAlertText = document.querySelector('.group-code__text');
     
-    groupCodeAlertText.innerHTML = message;
-    groupCodeAlert.style.display = 'block';
+    groupCodeAlertText.innerHTML = '';
+    groupCodeAlert.style.display = 'flex';
 }
