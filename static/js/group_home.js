@@ -82,7 +82,11 @@ const groupCodeHandleResponse = (message) => {
     const groupCodeAlert = document.querySelector('.group-join__alert-box');
     const groupCodeAlertText = document.querySelector('.group-code__text');
     
-    groupCodeAlertText.innerHTML = '';
+    if(message){
+        groupCodeAlertText.innerHTML = message;
+        groupCodeAlertText.style.display = 'flex';
+    } 
+
     groupCodeAlert.style.display = 'flex';
 }
 

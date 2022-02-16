@@ -216,3 +216,6 @@ button {
     align-items: center;
 }
 
+.group-code__text {
+    display: none;
+}

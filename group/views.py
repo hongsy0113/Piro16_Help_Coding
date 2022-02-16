@@ -443,6 +443,7 @@ def join_code_ajax(request):
     user = request.user
     input_code = req['code']
     mygroup = list(user.group_set.all())
+    message = ''
 
     try:
         if input_code != None:
