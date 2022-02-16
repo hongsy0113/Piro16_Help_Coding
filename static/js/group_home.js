@@ -49,6 +49,11 @@ function showPrivateGroup() {
 
 function closeGroupJoin() {
     const closeJoinAlert = document.getElementById('join-group');
+    const groupCodeAlertText = document.querySelector('.group-code__text');
+    const groupCodeInput = document.querySelector('.group-code__input')
+
+    groupCodeAlertText.innerHTML = '';
+    groupCodeInput.value = '';
     closeJoinAlert.style.display = 'none';
     groupWhichJoin.style.display = 'none';
 }
@@ -77,6 +82,21 @@ const groupCodeHandleResponse = (message) => {
     const groupCodeAlert = document.querySelector('.group-join__alert-box');
     const groupCodeAlertText = document.querySelector('.group-code__text');
     
-    groupCodeAlertText.innerHTML = message;
-    groupCodeAlert.style.display = 'block';
+    if(message){
+        groupCodeAlertText.innerHTML = message;
+        groupCodeAlertText.style.display = 'flex';
+    } 
+
+    groupCodeAlert.style.display = 'flex';
 }
+
+// if(user_id == null) {
+//     privateGroupJoin.addEventListener('click', function(){
+//         alert('로그인 후 이용해주세요.');
+//     })
+
+//     const groupCreateBtn = document.querySelector('.right__makebtn');
+//     groupCreateBtn.addEventListener('click', function(){
+//         alert('로그인 후 이용해주세요.');
+//     })
+// }

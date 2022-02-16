@@ -159,7 +159,7 @@ const groupWaitHandleResponse = (groupName, waitsName, waitsImg, waitsId) => {
                     <div class="wait-member__img">
                         ${ waitImg }
                     </div>  
-                    <span class="wait-member__name">${ waitsName[i] }</span>  
+                    <span class="wait-member__name"><a href="{% url 'group:wait_member_detail' waitMemberId %}">${ waitsName[i] }</a></span>  
                 </div>          
                 <div class="wait__text--${ waitMemberId } wait-member__text"><span>가입을 기다리고 있어요!<span></div>
                 <div class="wait-member__btnbox">
@@ -218,7 +218,7 @@ const groupWaitHandleResponse = (groupName, waitsName, waitsImg, waitsId) => {
     joinAcceptHandleResponse = (userId) => {
         const memberWaitAlertText = document.querySelector(`.wait__text--${userId}`);
 
-        memberWaitAlertText.innerHTML = '수락했습니다.'
+        memberWaitAlertText.innerHTML = `<span class="alert__text">가입을 수락했습니다.</span>`
     }
 
 
@@ -235,6 +235,25 @@ const groupWaitHandleResponse = (groupName, waitsName, waitsImg, waitsId) => {
     joinRejectHandleResponse = (userId) => {
         const memberWaitAlertText = document.querySelector(`.wait__text--${userId}`);
 
-        memberWaitAlertText.innerHTML = '거절했습니다.'
+        memberWaitAlertText.innerHTML = `<span class="alert__text">가입을 거절했습니다.</span>`
     }
+}
+
+// alert(삭제 시, 탈퇴 시)
+const groupOutBtn = document.querySelector('.btn-out');
+groupOutBtn.addEventListener('click', function(){
+    alert('탈퇴되었습니다.');
+})
+
+const groupDeleteBtn = document.querySelector('.btn__delete');
+groupDeleteBtn.addEventListener('click', function(){
+    alert('삭제되었습니다.');
+})
+
+// 그룹 가입 신청 완료 alert
+const signUpButton = document.querySelector('.btn-signup');
+signUpButton.addEventListener('click', signUpAlert);
+
+function signUpAlert() {
+    alert("가입 신청이 완료되었어요.\n그룹에서 가입 신청을 수락하면 활동할 수 있어요!");
 }

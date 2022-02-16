@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+{% endblock %}
+
+{% block content %}
+<div class="group__user__join-state">
+    <div class="group__user--name">{{ user.nickname }}</div>
+    <div class="group__join__list">
+        {% for group in groups %}
+            <div class="group__wait__container d-flex flex-row">
+                <div>{{ group.name }}</div>
+                <div>{{ wait_status }}</div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

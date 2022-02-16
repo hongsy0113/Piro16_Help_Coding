@@ -182,7 +182,7 @@
                 </div>
 
                 <div class="member-list__maker--text member-list__maker--name">
-                    <span class="text__name">{{ maker }}</span>
+                    <span class="text__name"><a href="{% url 'group:group_member_state' %}">{{ maker }}</a></span>
                 </div>
             </div>
 
@@ -314,7 +314,7 @@
                     {% else %}
                     <img src="{{ profile_img }}" height="50" width="50" style="border-radius: 50px;"/>
                     {% endif %}
-                    <h6>{{ member }}</h6>
+                    <h6><a href="{% url 'group:group_member_state' %}">{{ member }}</a></h6>
                 </div>
             {% endif %}
         {% endfor %}
