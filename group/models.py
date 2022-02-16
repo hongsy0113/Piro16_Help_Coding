@@ -111,6 +111,8 @@ class GroupAnswer(models.Model):
     parent_answer = models.ForeignKey('self', on_delete=models.CASCADE,  null=True, blank=True)
     like_user = models.ManyToManyField('user.User', blank=True)
 
+    is_deleted = models.BooleanField(verbose_name='삭제여부', default=False)
+
 class GroupTag(models.Model):
 
     tag_name = models.CharField(verbose_name='태그', max_length=20)

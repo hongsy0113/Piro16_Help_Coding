@@ -33,7 +33,7 @@
 {{ post.id|json_script:"post_id" }}
 {{ group.id | json_script:"group_id" }}
 
-<p style="color: #828282;, margin-bottom: 3px;">{{ post.group }}게시판</p>
+<p style="color: #828282; margin-bottom: 3px;">{{ post.group }}게시판</p>
 
 <main>
     <h1>{{ post.title }}</h1>
@@ -42,7 +42,7 @@
         <div>
             {% if post.user.id == user.id %}
             <a href="{% url 'group:post_update' group.pk post.pk %}" class="post__edit-btn">수정</a>
-            <a href="{% url 'group:post_delete' group.pk post.pk %}" class="post__delete-btn">삭제</a>
+            <span class="post__delete-btn">삭제</span>
             {% endif %}
         </div>
     </div>
@@ -137,7 +137,7 @@
                             <div class="answer__user__name answer__user__name--{{ answer.id }}">
                                 {% if answer.user %}
                                 <h2>{{ answer.user }}</h2>
-                                {% if answer.user.id == question.user.id %}
+                                {% if answer.user.id == post.user.id %}
                                 <span class="answer__writer-mark">글쓴이</span>
                                 {% endif %}
                                 {% else %}
@@ -192,9 +192,13 @@
                                 <div class="answer__user__profile-right">
                                     <div>
                                         <div class="answer__user__profile-name">
+                                            {% if reply.user %}
                                             <h2>{{ reply.user }}</h2>
                                             {% if reply.user.id == question.user.id %}
                                             <span class="answer__writer-mark">글쓴이</span>
+                                            {% endif %}
+                                            {% else %}
+                                            <h2>(알 수 없음)</h2>
                                             {% endif %}
                                         </div>
                                         <p>{{ reply.created_at|date:'y.m.d  H:i' }}</p>

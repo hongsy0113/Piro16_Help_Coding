@@ -665,16 +665,19 @@ def post_list(request, pk):
     page_obj = paginator.get_page(page)
     
     ## 각 게시글과 iframe 관련 썸네일의 이미지 경로 딕셔너리 생성
-    dict = {}
+    ## key 는 각 게시글이고, value는 (댓글 수, 썸네일 이미지 경로) tuple인 딕셔너리
+    posts_value_dict = {}
     for page in page_obj:
+        answers_count = GroupAnswer.objects.filter(post_id =page, answer_depth=0, is_deleted = False).count()
+        
         if page.attached_link:
-            dict[page] = get_img_src(page.attached_link)
+            posts_value_dict[page] = (answers_count, get_img_src(page.attached_link))
         else:
-            dict[page] = None
+            posts_value_dict[page] = (answers_count, None)
 
     ctx = {
         'posts': page_obj,
-        'posts_img_dict': dict,
+        'posts_value_dict': posts_value_dict,
         'group': group,
         'sort_by': sort_by
     }
@@ -697,17 +700,20 @@ def search_result(request, pk):
         page_obj = paginator.get_page(page)
 
         ## 각 게시글과 iframe 관련 썸네일의 이미지 경로 딕셔너리 생성
-        dict = {}
+        ## key 는 각 게시글이고, value는 (댓글 수, 썸네일 이미지 경로) tuple인 딕셔너리
+        posts_value_dict = {}
         for page in page_obj:
+            answers_count = GroupAnswer.objects.filter(post_id =page, answer_depth=0, is_deleted = False).count()
+            
             if page.attached_link:
-                dict[page] = get_img_src(page.attached_link)
+                posts_value_dict[page] = (answers_count, get_img_src(page.attached_link))
             else:
-                dict[page] = None
+                posts_value_dict[page] = (answers_count, None)
 
         ctx = {
             'query': query, 
             'posts': page_obj,
-            'posts_img_dict': dict, 
+            'posts_value_dict': posts_value_dict, 
             'group_pk': pk,
             'group': group,         
         }
@@ -745,7 +751,7 @@ def post_create(request, pk):
                 post.image =  './group_{}/image/{}'.format(group.pk, request.POST['img_recent']) ###
 
             if request.FILES.get('attached_file'):
-                post.image = request.FILES.get('attached_file')
+                post.attached_file = request.FILES.get('attached_file')
             elif request.POST['file_recent']:
                 os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
                 shutil.copyfile('./media/temp/{}'.format(request.POST['file_recent']),
@@ -965,9 +971,16 @@ def answer_ajax(request):
     user_id = req['user']
     user = get_object_or_404(User, pk=user_id)
     username = user.nickname
+    user_image_url = user.img.url if user.img else ''
     
-    #### TODO ##########
-    ## user 대표이미지 넘겨주는 건 유저 조금 구체화 된 다음에 추가
+    this_post = get_object_or_404(GroupPost, pk=post_id)
+    # 작성자 여부
+    if this_post.user == None:
+        is_author = False
+    elif user_id ==this_post.user.pk:
+        is_author = True
+    else: is_author = False
+
 
     ## 새 답변의 order 필드를 정해주기 위한 부분. 
     current_answers = GroupAnswer.objects.filter(post_id=post_id).order_by('answer_order')
@@ -976,14 +989,24 @@ def answer_ajax(request):
     else:
         new_order = current_answers.last().answer_order + 1
 
-    this_post = get_object_or_404(GroupPost, pk=post_id)
-
     ## 새로운 답변
-    new_answer = GroupAnswer.objects.create(post_id=this_post, content=content, answer_order=new_order, user = user)
+    new_answer = GroupAnswer.objects.create(
+        post_id=this_post,
+        content=content, 
+        answer_order=new_order,
+        answer_depth = 0,
+        user = user)
     # 템플릿에서 쉽게 띄울 수 있도록 답변 게시일자 포맷팅해서 json에 전달
     created_at = new_answer.created_at.strftime('%y.%m.%d %H:%M')
 
-    return JsonResponse({'id': new_answer.id ,'content': content,'user':username, 'created_at':created_at} )
+    return JsonResponse({
+        'id': new_answer.id ,
+        'content': content,
+        'user':username, 
+        'created_at':created_at,
+        'user_image_url':user_image_url,
+        'is_author':is_author,
+        })
 
 # 대댓글 작성
 @csrf_exempt
@@ -999,6 +1022,14 @@ def reply_ajax(request):
     # 작성하려는 대댓글이 속한 질문 구하기
     this_answer = get_object_or_404(GroupAnswer, pk=answer_id)
     this_post = this_answer.post_id
+
+    user_image_url = user.img.url if user.img else ''
+    # 작성자 여부
+    if this_post.user == None:
+        is_author = False
+    elif user_id == this_post.user.pk:
+        is_author = True
+    else: is_author = False
     
     ## 새 답변의 order 필드를 정해주기 위한 부분. 
     current_answers = GroupAnswer.objects.filter(post_id=this_post.id).order_by('answer_order')
@@ -1012,6 +1043,7 @@ def reply_ajax(request):
         post_id=this_post, 
         content=content, 
         answer_order=new_order, 
+        answer_depth = 1,
         user = user,
         parent_answer = this_answer
     )
@@ -1025,6 +1057,8 @@ def reply_ajax(request):
         'content': content,
         'user':username, 
         'created_at':created_at,
+        'user_image_url':user_image_url,
+        'is_author':is_author,
     })
 
     return response
@@ -1075,14 +1109,29 @@ def answer_like_ajax(request):
 @csrf_exempt
 def answer_delete_ajax(request):
     req = json.loads(request.body)
-
     answer_id = req['id']
 
     answer = get_object_or_404(GroupAnswer, pk=answer_id)
 
-    answer.delete()
+    # 대댓글이거나 대댓글이 없는 답변의 경우 아예 삭제
+    if answer.groupanswer_set.count() == 0:
+        # 마지막 대댓글이었다면 부모 답변도 삭제
+        if answer.answer_depth == 1 and answer.parent_answer.groupanswer_set.count() == 1 and answer.parent_answer.is_deleted == True:
+            answer.parent_answer.delete()
 
-    return JsonResponse({'id':answer_id})
+        answer.delete()
+        delete_yes = True
+    # 답변인 경우 내용만 삭제된 것처럼
+    else:
+        answer.is_deleted = True
+        answer.content = '삭제된 답변입니다.'
+        answer.user = None
+        answer.save()
+        delete_yes = False
+
+    answer_count = GroupAnswer.objects.filter(post_id=answer.post_id, is_deleted=False, answer_depth=0).count()
+
+    return JsonResponse({'id':answer_id, 'delete_yes':delete_yes, 'answer_count':answer_count})
 
 # 답변(대댓글 포함) 수정
 # 수정버튼 눌렀을 때 해당하는 폼 띄우는 기능
