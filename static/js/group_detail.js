@@ -238,3 +238,14 @@ const groupWaitHandleResponse = (groupName, waitsName, waitsImg, waitsId) => {
         memberWaitAlertText.innerHTML = '거절했습니다.'
     }
 }
+
+// alert(삭제 시, 탈퇴 시)
+const groupOutBtn = document.querySelector('.btn-out');
+groupOutBtn.addEventListener('click', function(){
+    alert('탈퇴되었습니다.');
+})
+
+const groupDeleteBtn = document.querySelector('.btn__delete');
+groupDeleteBtn.addEventListener('click', function(){
+    alert('삭제되었습니다.');
+})

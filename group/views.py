@@ -330,6 +330,34 @@ def group_detail(request, pk):
 
     return render(request, template_name='group/group_detail.html', context=ctx)
 
+def group_member_state(request):
+    user = request.user
+    groups = Group.objects.all()
+    mygroup = user.group_set.all()
+    
+    for group in groups:
+        print(group.waits)
+        for wait in group.waits:
+            print(wait.nickname)
+    print(groups_wait)
+    group_wait = []
+    wait_status = ''
+
+    for group in groups:
+        if user in groups_wait:
+            group_wait.append(group)
+            wait_status = '가입 대기중 ...'
+        elif group == mygroup:
+            wait_status = '가입 완료!'
+    
+
+    ctx = {
+        'user': user,
+        'groups': group_wait,
+        'wait_status': wait_status
+    }
+
+    return render(request, template_name='group/group_member_state.html', context=ctx)
 
 ######## 그룹 생성 Form 오류 사항 체크 ########
 class GroupErrorMessage():
@@ -429,6 +457,7 @@ def join_code_ajax(request):
 
     except:
         message = '존재하지 않는 코드입니다.'
+
 
     return JsonResponse({ 'message': message })
 

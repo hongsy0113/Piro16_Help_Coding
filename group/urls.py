@@ -22,6 +22,7 @@ urlpatterns = [
     path('group_join_accept/', view=views.group_join_accept, name='group_join_accept'),
     path('group_join_reject/', view=views.group_join_reject, name='group_join_reject'),
     path('<int:pk>/wait_member_detail/', view=views.wait_member_detail, name='wait_member_detail'),
+    path('group_member_state/', view=views.group_member_state, name='group_member_state'),
     # path('<int:pk>/member_thumbnail/', view=views.member_thumbnail, name='member_thumbnail'),
     #### 게시판 관련 url
     path('<int:pk>/post_list/', view=views.post_list, name='post_list'),
