@@ -386,23 +386,43 @@ const onClickAnswerDelete = async (id) => {
     const {data} = await axios.post(url,{
         id
     });
-    answerDeleteHandleResponse(data.id)
+    answerDeleteHandleResponse(data.id , data.delete_yes, data.answer_count)
 }
 
-answerDeleteHandleResponse = (answerId) => {
+answerDeleteHandleResponse = (answerId,  deleteYes, count) => {
     const answerContainer = document.querySelector(`.answer__container--${answerId}`)
 
-    // 답변 개수도 바뀌어야함
-    // 대댓글, 답변 다 한 함수로 통일 했으므로 조건 나눠줘야 한다.
-    if (!answerContainer.classList.contains('reply__container')){
-        const answerCount = document.querySelector('.answer__total-count');
-        const [text1 , num, text2] = answerCount.innerHTML.split(' ');
+    // // 답변 개수도 바뀌어야함
+    // // 대댓글, 답변 다 한 함수로 통일 했으므로 조건 나눠줘야 한다.
+    // if (!answerContainer.classList.contains('reply__container')){
+    //     const answerCount = document.querySelector('.answer__total-count');
+    //     const [text1 , num, text2] = answerCount.innerHTML.split(' ');
     
-        const count = Number(num)-1;
+    //     const count = Number(num)-1;
 
-        answerCount.innerHTML = `답변 ${count} 개`
+    //     answerCount.innerHTML = `답변 ${count} 개`
+    // }
+    //answerContainer.remove();
+    const answerCount = document.querySelector('.answer__total-count');
+
+    answerCount.innerHTML = `답변 ${count} 개`
+
+    if (deleteYes){
+        answerContainer.remove();
     }
-    answerContainer.remove();
+    else {
+        const answeredUser = document.querySelector(`.answer__user__name--${answerId}`);
+        answeredUser.innerHTML = '<h2>(알 수 없음)</h2>';
+        
+        const answerContent = document.querySelector(`.answer__content--${answerId}`);
+        answerContent.innerHTML =  '삭제된 답변입니다.';
+
+        const answerEditButton = document.querySelector(`.answer__edit-btn--${answerId}`);
+        answerEditButton.remove();
+
+        const answerDeleteButton = document.querySelector(`.answer__delete-btn--${answerId}`);
+        answerDeleteButton.remove();
+    }
 }
 //---------------------------------//
 
@@ -467,6 +487,7 @@ answerEditSubmitHandleResponse = (answerId, content) => {
 
 //---------------------------------//
 // 게시글, 댓글 삭제 여부
+// 삭제 전 확인
 const postDeleteBtn = document.querySelector('.post__delete-btn');
 if (postDeleteBtn){
     postDeleteBtn.addEventListener('click',function(){

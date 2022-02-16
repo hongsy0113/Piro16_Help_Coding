@@ -33,7 +33,7 @@
 {{ post.id|json_script:"post_id" }}
 {{ group.id | json_script:"group_id" }}
 
-<p style="color: #828282;, margin-bottom: 3px;">{{ post.group }}게시판</p>
+<p style="color: #828282; margin-bottom: 3px;">{{ post.group }}게시판</p>
 
 <main>
     <h1>{{ post.title }}</h1>
@@ -42,7 +42,7 @@
         <div>
             {% if post.user.id == user.id %}
             <a href="{% url 'group:post_update' group.pk post.pk %}" class="post__edit-btn">수정</a>
-            <a href="{% url 'group:post_delete' group.pk post.pk %}" class="post__delete-btn">삭제</a>
+            <span class="post__delete-btn">삭제</span>
             {% endif %}
         </div>
     </div>

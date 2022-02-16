@@ -1109,14 +1109,29 @@ def answer_like_ajax(request):
 @csrf_exempt
 def answer_delete_ajax(request):
     req = json.loads(request.body)
-
     answer_id = req['id']
 
     answer = get_object_or_404(GroupAnswer, pk=answer_id)
 
-    answer.delete()
+    # 대댓글이거나 대댓글이 없는 답변의 경우 아예 삭제
+    if answer.groupanswer_set.count() == 0:
+        # 마지막 대댓글이었다면 부모 답변도 삭제
+        if answer.answer_depth == 1 and answer.parent_answer.groupanswer_set.count() == 1 and answer.parent_answer.is_deleted == True:
+            answer.parent_answer.delete()
 
-    return JsonResponse({'id':answer_id})
+        answer.delete()
+        delete_yes = True
+    # 답변인 경우 내용만 삭제된 것처럼
+    else:
+        answer.is_deleted = True
+        answer.content = '삭제된 답변입니다.'
+        answer.user = None
+        answer.save()
+        delete_yes = False
+
+    answer_count = GroupAnswer.objects.filter(post_id=answer.post_id, is_deleted=False, answer_depth=0).count()
+
+    return JsonResponse({'id':answer_id, 'delete_yes':delete_yes, 'answer_count':answer_count})
 
 # 답변(대댓글 포함) 수정
 # 수정버튼 눌렀을 때 해당하는 폼 띄우는 기능
