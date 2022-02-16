@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load my_tags %}
 
 {% block css %}
     <link rel="stylesheet" href="{% static 'css/base.css' %}" />
@@ -37,6 +38,23 @@
 <!-- 그룹 정렬 sort-box -->
 <div class="list-sort">
     <span class="list-sort__btn">
+        {% if sort_by != 'interest' %}
+        <a href="{% url 'group:group_list' %}?{% param_replace sort='interest' page=1 %}">인기순</a>
+        {% else %}
+        <span>인기순</span>
+        {% endif %}
+    </span>
+    <span class="list-sort__btn">
+        {% if sort_by != 'name' %}
+        <a href="{% url 'group:group_list' %}?{% param_replace sort='name' page=1 %}">이름순</a>
+        {% else %}
+        <span>이름순</span>
+        {% endif %}
+    </span>
+</div>
+{%comment %}
+<div class="list-sort">
+    <span class="list-sort__btn">
         <!-- 여기에 정렬 코드 작성해주세요 -->
         <span>인기순</span>
     </span>
@@ -52,6 +70,7 @@
         </select>
     </form>
 </div>
+{% endcomment %}
 
 <!-- 그룹 목록 -->
 <div class="gridbox">

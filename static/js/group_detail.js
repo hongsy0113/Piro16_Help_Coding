@@ -218,7 +218,7 @@ const groupWaitHandleResponse = (groupName, waitsName, waitsImg, waitsId) => {
     joinAcceptHandleResponse = (userId) => {
         const memberWaitAlertText = document.querySelector(`.wait__text--${userId}`);
 
-        memberWaitAlertText.innerHTML = '수락했습니다.'
+        memberWaitAlertText.innerHTML = `<span class="alert__text">가입을 수락했습니다.</span>`
     }
 
 
@@ -235,7 +235,7 @@ const groupWaitHandleResponse = (groupName, waitsName, waitsImg, waitsId) => {
     joinRejectHandleResponse = (userId) => {
         const memberWaitAlertText = document.querySelector(`.wait__text--${userId}`);
 
-        memberWaitAlertText.innerHTML = '거절했습니다.'
+        memberWaitAlertText.innerHTML = `<span class="alert__text">가입을 거절했습니다.</span>`
     }
 }
 

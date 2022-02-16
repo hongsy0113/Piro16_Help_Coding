@@ -55,12 +55,27 @@ img {
     cursor: pointer;
 }
 
-/* 게시물 정렬 */
+/* 게시물 정렬 (sort) */
 .list-sort {
     display: flex;
+    align-items: center;
 }
 
-.list-sort__btn {
+.list-sort__btn a {
+    font-family: Noto Sans CJK KR;
+    font-size: 16px;
+    line-height: 150%;
+    display: flex;
+    color: #5e5e5e;
+    margin-right: 10px;
+    text-decoration: none;
+}
+
+.list-sort__btn a:hover {
+    color: black;
+}
+
+.list-sort__btn span {
     font-family: Noto Sans CJK KR;
     font-weight: bold;
     font-size: 18px;
@@ -68,6 +83,42 @@ img {
     display: flex;
     color: #000000;
     margin-right: 10px;
+}
+
+/* 가입한 내 그룹이 없을 때 */
+.mygroup__nogroup {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 45px;
+    height: 250px;
+}
+
+.mygroup__nogroup--text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    /* height: 250px; */
+}
+
+.mygroup__nogroup--text h2 {
+    font-family: Noto Sans CJK KR;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 35px;
+    line-height: 105%;
+    color: #4F4F4F;
+    margin-bottom: 10px;
+}
+
+.mygroup__nogroup--btnbox {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
 }
 
 /* 내 그룹 목록 */

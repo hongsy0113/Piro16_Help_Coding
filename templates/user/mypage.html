@@ -34,9 +34,9 @@
       <button class="btn btn-secondary"><a class="text-white" href="{% url 'user:mypage_revise' %}" style="text-decoration: none">개인정보 수정</a></button>
       <button class="btn btn-secondary"><a class="text-white" href="{% url 'user:mypage_point' %}" style="text-decoration: none">나의 포인트 현황</a></button>
     </div>
+    {% if messages %}{% for message in messages %}<p class="mypage__message">{{ message.message }}</p>{% endfor %}{% endif %}
   </div>
 </div>
-  {% if messages %}{% for message in messages %}<p class="text-danger">{{ message.message }}</p>{% endfor %}{% endif %}
   <div class="mypage__options">
     <h3 class="mypage__options__reward">나의 업적</h3>
     <h3 class="mypage__options__question">최근 질문</h3>

@@ -111,12 +111,13 @@
     border-radius: 16px;
     background-color: #c4c4c4;
     margin-bottom: 10px;
+    overflow: hidden;
 }
 
 .mypage__reward__img__container img {
     width: 100%;
-    height: auto;
-    object-fit: contain;
+    height: 100%;
+    object-fit: cover;
 }
 
 .mypage__reward__name {
@@ -230,4 +231,9 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.mypage__message {
+    color: #37C6E5;
+    font-size: 18px !important;
 }

@@ -1,8 +1,12 @@
 {% extends 'base.html' %}
 
+{% block title %}
+    {{ question.title }} | 도와줘, 코딩
+{% endblock %}
+
 {% load static %}
 {% block css %}
-<link rel="stylesheet" href="{% static 'css/question_detail.css' %}">
+<link rel="stylesheet" href="{% static 'css/detail.css' %}">
 {% endblock css %}
 
 {% load hitcount_tags %}
@@ -22,7 +26,12 @@
         <p>
             {% if question.user.id == user.id %}
             <a href="{% url 'qna:question_update' question.pk %}" class="question__edit-btn">수정</a>
-            <a href="{% url 'qna:question_delete' question.pk %}" class="question__delete-btn">삭제</a>
+            {% if answers_count > 0 %}
+            <a class="question__delete-btn" onclick="alert('답변이 달려 있어서 삭제할 수 없습니다.')">삭제</a>      
+            {% else %}
+            <span class="question__delete-btn question__delete-btn--actual">삭제</span>      
+            
+            {% endif %}
             {% endif %}
         </p>
     </div>

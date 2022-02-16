@@ -28,6 +28,7 @@ urlpatterns = [
     path('<int:pk>/post_list/', view=views.post_list, name='post_list'),
     path('<int:pk>/post_create/', view=views.post_create, name='post_create'),
     path('<int:pk>/post_update/<int:post_pk>', view=views.post_update, name='post_update'),
+    path('<int:pk>/post_delete/<int:post_pk>', view=views.post_delete, name='post_delete'),
     path('<int:group_pk>/post_detail/<int:pk>', view=views.GroupPostDetailView.as_view(), name='post_detail'),
     path('<int:pk>/search_list/', view=views.search_result, name='search_result'),
     path('answer_ajax/', view=views.answer_ajax, name='answer_ajax'),

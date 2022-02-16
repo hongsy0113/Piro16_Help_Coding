@@ -69,7 +69,12 @@ const answerHandleResponse = (id, content, user, created_at) => {
     })
     const answerDeleteButton = document.querySelector(`.answer__delete-btn--${id}`);
     answerDeleteButton.addEventListener('click',function(){
-        onClickAnswerDelete(id);
+        if (confirm("정말 삭제하시겠습니까?")){
+            onClickAnswerDelete(id);
+        }
+        else {
+            return false
+        }
     })
     const replyButton = document.querySelector(`.answer__write-reply--${id}`);
     replyButton.addEventListener('click',function(e){
@@ -196,7 +201,12 @@ relpyHandleResponse = (replyId, answerId ,content, user, created_at) => {
     })
     const answerDeleteButton = document.querySelector(`.answer__delete-btn--${replyId}`);
     answerDeleteButton.addEventListener('click',function(){
-        onClickAnswerDelete(replyId);
+        if (confirm("정말 삭제하시겠습니까?")){
+            onClickAnswerDelete(replyId);
+        }
+        else {
+            return false
+        }
     })
     const answerEditButton = document.querySelector(`.answer__edit-btn--${replyId}`);
     answerEditButton.addEventListener('click',function(){
@@ -298,7 +308,12 @@ answerDeleteButtons.forEach(function(btn) {
     btn.addEventListener('click',function(){
         const btnElementId = btn.getAttribute('id').split('-');
         const answerId = btnElementId[btnElementId.length-1];
-        onClickAnswerDelete(answerId);
+        if (confirm("정말 삭제하시겠습니까?")){
+            onClickAnswerDelete(answerId);
+        }
+        else {
+            return false
+        }
     })
 })
 
@@ -386,18 +401,35 @@ answerEditSubmitHandleResponse = (answerId, content) => {
     answerEditForm.style.display = 'none';
 }
 
+//---------------------------------//
+// 게시글, 댓글 삭제 여부
+const postDeleteBtn = document.querySelector('.post__delete-btn');
+if (postDeleteBtn){
+    postDeleteBtn.addEventListener('click',function(){
+        if (confirm("정말 삭제하시겠습니까?")){
+            document.location.href = `/group/${group_id}/post_delete/${post_id}`;
+        }
+        else {
+            return false
+        }
+    })
+}
+
+
 //////////////////////////////////////////
 //// iframe fullscreen
 
 const iframeFullscreenButton = document.querySelector('.iframe__fullscreen');
 
-iframeFullscreenButton.addEventListener('click', function() {
-    onClickIframeFullscreen();
-})
+if (iframeFullscreenButton){
+    iframeFullscreenButton.addEventListener('click', function() {
+        onClickIframeFullscreen();
+    })
+}
 
 const onClickIframeFullscreen =() => {
     const iframeContainer = document.querySelector('.iframe__container');
-    console.log(iframeContainer)
+    
     const smallScreenButton = document.createElement('button');
     smallScreenButton.innerHTML = '작은 화면으로';
     //iframeContainer.appendChild(smallScreenButton);
@@ -424,8 +456,7 @@ const onClickIframeFullscreen =() => {
     //iframe.style.width='100% !important';
     //iframe.style.height ='100% !important'
     iframe.style.postion = 'absolute'
-    console.log(body)
-    console.log(iframe)
+
 }
 
 const fullscreen = element => {

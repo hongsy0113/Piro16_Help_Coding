@@ -11,7 +11,7 @@
 {% block title %} 도와줘, 코딩 | 가입하기 {% endblock %}
 
 {% block content %}
-<div class="signup__container">
+<div class="userform__container">
     <h1>도와줘코딩 가입하기</h1>
     <form method="POST" enctype="multipart/form-data" action="">
         {% csrf_token %}
@@ -19,7 +19,7 @@
             <div>
                 <label for="email">이메일</label>
                 <input type="text" name="email" id="email" value="{{ original_information.email }}" placeholder="이메일 주소를 입력하세요."/>
-                {% if sign_up_error.email %}<span class="signup__error"><svg width="5" height="14" viewBox="0 0 9 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                {% if sign_up_error.email %}<span class="userform__error"><svg width="5" height="14" viewBox="0 0 9 26" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M8.3125 21.5825C8.3125 23.7364 6.56016 25.4888 4.40625 25.4888C2.25234 25.4888 0.5 23.7364 0.5 21.5825C0.5 19.4286 2.25234 17.6763 4.40625 17.6763C6.56016 17.6763 8.3125 19.4286 8.3125 21.5825ZM0.952148 1.71919L1.61621 15.0004C1.64741 15.6241 2.16216 16.1138 2.78662 16.1138H6.02588C6.65034 16.1138 7.16509 15.6241 7.19629 15.0004L7.86035 1.71919C7.8938 1.0498 7.36016 0.48877 6.68994 0.48877H2.12256C1.45234 0.48877 0.918701 1.0498 0.952148 1.71919Z" fill="#EB6464"/>
                     </svg>
                     {{ sign_up_error.email }}</span>{% endif %}
@@ -27,7 +27,7 @@
             <div>
                 <label for="new_password1">비밀번호</label>
                 <input type="password" name="new_password1" id="new_password1" value="{{ original_information.new_password1 }}" placeholder="영문자, 숫자 혼합 8자리 이상 입력하세요."/>
-                {% if sign_up_error.new_password1 %}<span class="signup__error"><svg width="5" height="14" viewBox="0 0 9 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                {% if sign_up_error.new_password1 %}<span class="userform__error"><svg width="5" height="14" viewBox="0 0 9 26" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M8.3125 21.5825C8.3125 23.7364 6.56016 25.4888 4.40625 25.4888C2.25234 25.4888 0.5 23.7364 0.5 21.5825C0.5 19.4286 2.25234 17.6763 4.40625 17.6763C6.56016 17.6763 8.3125 19.4286 8.3125 21.5825ZM0.952148 1.71919L1.61621 15.0004C1.64741 15.6241 2.16216 16.1138 2.78662 16.1138H6.02588C6.65034 16.1138 7.16509 15.6241 7.19629 15.0004L7.86035 1.71919C7.8938 1.0498 7.36016 0.48877 6.68994 0.48877H2.12256C1.45234 0.48877 0.918701 1.0498 0.952148 1.71919Z" fill="#EB6464"/>
                     </svg>
                     {{ sign_up_error.new_password1 }}</span>{% endif %}
@@ -35,37 +35,37 @@
             <div>
                 <label for="new_password2">비밀번호 확인</label>
                 <input type="password" name="new_password2" id="new_password2" value="{{ original_information.new_password2 }}" placeholder="비밀번호를 다시 한 번 입력하세요."/>
-                {% if sign_up_error.new_password2 %}<span class="signup__error"><svg width="5" height="14" viewBox="0 0 9 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                {% if sign_up_error.new_password2 %}<span class="userform__error"><svg width="5" height="14" viewBox="0 0 9 26" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M8.3125 21.5825C8.3125 23.7364 6.56016 25.4888 4.40625 25.4888C2.25234 25.4888 0.5 23.7364 0.5 21.5825C0.5 19.4286 2.25234 17.6763 4.40625 17.6763C6.56016 17.6763 8.3125 19.4286 8.3125 21.5825ZM0.952148 1.71919L1.61621 15.0004C1.64741 15.6241 2.16216 16.1138 2.78662 16.1138H6.02588C6.65034 16.1138 7.16509 15.6241 7.19629 15.0004L7.86035 1.71919C7.8938 1.0498 7.36016 0.48877 6.68994 0.48877H2.12256C1.45234 0.48877 0.918701 1.0498 0.952148 1.71919Z" fill="#EB6464"/>
                     </svg>
                     {{ sign_up_error.new_password2 }}</span>{% endif %}
             </div>
-            <!-- <div class="signup__nextpagebtn">다음</div> -->
+            <!-- <div class="userform__nextpagebtn">다음</div> -->
         </div>
         <div class="signup__page2">
             <div>
                 <label for="nickname">닉네임</label>
                 <input type="text" name="nickname" id="nickname" value="{{ original_information.nickname }}"/>
-                {% if sign_up_error.nickname %}<span class="signup__error"><svg width="5" height="14" viewBox="0 0 9 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                {% if sign_up_error.nickname %}<span class="userform__error"><svg width="5" height="14" viewBox="0 0 9 26" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M8.3125 21.5825C8.3125 23.7364 6.56016 25.4888 4.40625 25.4888C2.25234 25.4888 0.5 23.7364 0.5 21.5825C0.5 19.4286 2.25234 17.6763 4.40625 17.6763C6.56016 17.6763 8.3125 19.4286 8.3125 21.5825ZM0.952148 1.71919L1.61621 15.0004C1.64741 15.6241 2.16216 16.1138 2.78662 16.1138H6.02588C6.65034 16.1138 7.16509 15.6241 7.19629 15.0004L7.86035 1.71919C7.8938 1.0498 7.36016 0.48877 6.68994 0.48877H2.12256C1.45234 0.48877 0.918701 1.0498 0.952148 1.71919Z" fill="#EB6464"/>
                     </svg>
                     {{ sign_up_error.nickname }}</span>{% endif %}
             </div>
-            <div class="signup__birth">
+            <div class="userform__birth">
                 <label for="birth">생년월일</label>
-                <div class="signup__birth__inputcontainer">
+                <div class="userform__birth__inputcontainer">
                     <input type="text" name="birth-y" id="birth-y" value="{{ original_information.birth_y }}" placeholder="년"/>
                     <input type="text" name="birth-m" id="birth-m" value="{{ original_information.birth_m }}" placeholder="월"/>
                     <input type="text" name="birth-d" id="birth-d" value="{{ original_information.birth_d }}" placeholder="일"/>
                 </div>
-                {% if sign_up_error.birth %}<span class="signup__error"><svg width="5" height="14" viewBox="0 0 9 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                {% if sign_up_error.birth %}<span class="userform__error"><svg width="5" height="14" viewBox="0 0 9 26" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M8.3125 21.5825C8.3125 23.7364 6.56016 25.4888 4.40625 25.4888C2.25234 25.4888 0.5 23.7364 0.5 21.5825C0.5 19.4286 2.25234 17.6763 4.40625 17.6763C6.56016 17.6763 8.3125 19.4286 8.3125 21.5825ZM0.952148 1.71919L1.61621 15.0004C1.64741 15.6241 2.16216 16.1138 2.78662 16.1138H6.02588C6.65034 16.1138 7.16509 15.6241 7.19629 15.0004L7.86035 1.71919C7.8938 1.0498 7.36016 0.48877 6.68994 0.48877H2.12256C1.45234 0.48877 0.918701 1.0498 0.952148 1.71919Z" fill="#EB6464"/>
                     </svg>
                     {{ sign_up_error.birth }}</span>{% endif %}
             </div>
             <div>
                 <label for="img">프로필 사진</label>
-                <div class="signup__image__inputcontainer">
+                <div class="userform__image__inputcontainer">
                     {% for base_image in base_images %}
                     <input type="radio" name="img_setting" value="{{ base_image }}" {% if original_information.img_setting == base_image %}checked{% endif %}>
                     <img src="/static/img/user_thumbnail/{{ base_image }}" height="50" width="50">
@@ -78,7 +78,7 @@
                     <input name="img_recent" id="img_recent" value="{{ original_information.img }}" hidden></input>
                     <input id="temp_img_location" value="{{ temp_img_location }}" hidden></input>
                 </div>
-                    {% if sign_up_error.img %}<span class="signup__error"><svg width="5" height="14" viewBox="0 0 9 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    {% if sign_up_error.img %}<span class="userform__error"><svg width="5" height="14" viewBox="0 0 9 26" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M8.3125 21.5825C8.3125 23.7364 6.56016 25.4888 4.40625 25.4888C2.25234 25.4888 0.5 23.7364 0.5 21.5825C0.5 19.4286 2.25234 17.6763 4.40625 17.6763C6.56016 17.6763 8.3125 19.4286 8.3125 21.5825ZM0.952148 1.71919L1.61621 15.0004C1.64741 15.6241 2.16216 16.1138 2.78662 16.1138H6.02588C6.65034 16.1138 7.16509 15.6241 7.19629 15.0004L7.86035 1.71919C7.8938 1.0498 7.36016 0.48877 6.68994 0.48877H2.12256C1.45234 0.48877 0.918701 1.0498 0.952148 1.71919Z" fill="#EB6464"/>
                         </svg>
                         {{ sign_up_error.img }}</span>{% endif %}
@@ -89,7 +89,7 @@
             </div>
             <div>
                 <label for="job">직업</label>
-                <div class="signup__job__inputcontainer">
+                <div class="userform__job__inputcontainer">
                     {% for job in job_choice %}
                     <div>
                         <input type="radio" name="job" value="{{ job.0 }}" {% if original_information.job == job.0 %}checked{% endif %}
@@ -98,14 +98,14 @@
                     </div>
                     {% endfor %}
                 </div>
-                {% if sign_up_error.job %}<span class="signup__error"><svg width="5" height="14" viewBox="0 0 9 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                {% if sign_up_error.job %}<span class="userform__error"><svg width="5" height="14" viewBox="0 0 9 26" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M8.3125 21.5825C8.3125 23.7364 6.56016 25.4888 4.40625 25.4888C2.25234 25.4888 0.5 23.7364 0.5 21.5825C0.5 19.4286 2.25234 17.6763 4.40625 17.6763C6.56016 17.6763 8.3125 19.4286 8.3125 21.5825ZM0.952148 1.71919L1.61621 15.0004C1.64741 15.6241 2.16216 16.1138 2.78662 16.1138H6.02588C6.65034 16.1138 7.16509 15.6241 7.19629 15.0004L7.86035 1.71919C7.8938 1.0498 7.36016 0.48877 6.68994 0.48877H2.12256C1.45234 0.48877 0.918701 1.0498 0.952148 1.71919Z" fill="#EB6464"/>
                     </svg>
                     {{ sign_up_error.job }}</span>{% endif %}
             </div>
-            <div class="signup__btncontainer">
-                <!-- <div class="signup__prevpagebtn">이전</div> -->
-                <input type="submit" value="가입하기" class="signup__sumbitbtn">
+            <div class="userform__btncontainer">
+                <!-- <div class="userform__prevpagebtn">이전</div> -->
+                <input type="submit" value="가입하기" class="userform__submitbtn">
             </div>
         </div>
     </form>
@@ -114,8 +114,8 @@
 <!-- <script>
     const page1 = document.querySelector('.signup__page1');
     const page2 = document.querySelector('.signup__page2');
-    const nextPageBtn = document.querySelector('.signup__nextpagebtn');
-    const prevPageBtn = document.querySelector('.signup__prevpagebtn');
+    const nextPageBtn = document.querySelector('.userform__nextpagebtn');
+    const prevPageBtn = document.querySelector('.userform__prevpagebtn');
     
     nextPageBtn.addEventListener('click', showSecondPage);
     prevPageBtn.addEventListener('click', showFirstPage);

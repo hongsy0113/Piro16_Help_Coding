@@ -1,0 +1,218 @@
+button {
+    all: unset;
+}
+
+/* 모달 */
+.modal {  
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal__overlay {
+    background-color: rgba(0, 0, 0, 0.6);
+    width: 100%;
+    height: 100%;
+    position: absolute;
+}
+
+.modal__hidden {
+    display: none;
+}
+
+/* 모달 디자인 */
+.modal__content {
+    position: relative;
+    top: 0px;
+    width: 40%;
+    height: 500px;
+    background-color: #FAFAFA;
+    border: 2px solid #BDBDBD;
+    box-sizing: border-box;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+}
+
+.modal__content--top {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 41px 0px 33px 0px;
+    border-bottom: 2px solid #BDBDBD;
+}
+
+.modal__content--top span {
+    font-family: Noto Sans CJK KR;
+    font-weight: bold;
+    font-size: 36px;
+    line-height: 105%;
+    text-align: center;
+    color: #000000;
+}
+
+.modal__content--bottom {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 70px 0px 70px 0px;
+}
+
+.modal__close {
+    position: static;
+    background: #bdbdbd;
+    border: 2px solid #bdbdbd;
+    box-sizing: border-box;
+    border-radius: 41px;
+
+    font-family: Noto Sans CJK KR;
+    font-weight: bold;
+    font-size: 24px;
+    line-height: 105%;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: white;
+    padding: 18px 38px 21px;
+}
+
+/* 그룹 가입하기 - 공개, 비공개 그룹 선택 모달  */
+.which-join__box--top {
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+    align-items: center;
+    padding: 35px 0px 85px 0px;
+    width: 100%;
+    border-bottom: 2px solid #BDBDBD;
+    margin-bottom: 28px;
+}
+
+.public-group__join-btn a {
+    background: #37C6E6;
+    border: 2px solid #37C6E6;
+    box-sizing: border-box;
+    border-radius: 41px;
+
+    font-family: Noto Sans CJK KR;
+    font-weight: bold;
+    font-size: 26px;
+    line-height: 105%;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: #FFFFFF;
+    padding: 21px 43px 22px;
+    text-decoration: none;
+}
+
+.public-group__join-btn a:hover {
+    background-color: white;
+    color: #37C6E6;
+}
+
+.private-group__join-btn {
+    background: #FF8989;
+    border: 2px solid #FF8989;
+    box-sizing: border-box;
+    border-radius: 41px;
+
+    font-family: Noto Sans CJK KR;
+    font-weight: bold;
+    font-size: 26px;
+    line-height: 105%;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: #FFFFFF;
+    padding: 21px 43px 22px;
+    text-decoration: none;
+}
+
+.private-group__join-btn:hover {
+    background-color: white;
+    color: #FF8989;
+}
+
+/* 그룹 가입하기 - 초대코드 입력 모달 */
+.join__close--btn {
+    position: absolute;
+    right: 40px;
+    top: 42px;
+}
+
+.modal__content--join {
+    position: relative;
+    top: 0px;
+    width: 40%;
+    height: 60%;
+    background-color: #FAFAFA;
+    border: 2px solid #BDBDBD;
+    box-sizing: border-box;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+}
+
+.group-join__inputbox {
+    display: flex;
+    flex-direction: column;
+    gap: 60px;
+}
+
+.group-code__input {
+    padding: 18px 32px 17px 20px;
+    background: #FFFFFF;
+    border: 1px solid #BDBDBD;
+    box-sizing: border-box;
+    border-radius: 5px;
+    font-family: Noto Sans CJK KR;
+    font-size: 24px;
+    line-height: 100%;
+    color: #828282;
+}
+
+.group-code__input::placeholder {
+    font-family: Noto Sans CJK KR;
+    font-size: 24px;
+    line-height: 100%;
+    color: #828282;
+}
+
+.group-code__submit {
+    padding: 20px 42px 21px;
+    background: #FF8989;
+    border: 2px solid #FF8989;
+    box-sizing: border-box;
+    border-radius: 41px;
+
+    font-family: Noto Sans CJK KR;
+    font-weight: bold;
+    font-size: 24px;
+    line-height: 105%;
+    color: #FFFFFF;
+}
+
+.group-code__error {
+    background-color: #FFE6E6;
+    border: 1px solid #eb6464;
+    color: #eb6464;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-weight: bold;
+    font-size: 18px;
+    padding: 10px 20px;
+    /* margin: 10px 0; */
+    width: 388px;
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
