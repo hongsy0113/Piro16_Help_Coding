@@ -271,12 +271,9 @@ def group_delete(request, pk):
     #     return redirect('group:group_detail', pk)
 
 # 그룹 탈퇴
-def group_drop(request):
-    req = json.loads(request.body)
-    group_id = req['groupId']
-
+def group_drop(request, pk):
     user = request.user
-    group = get_object_or_404(Group, pk=group_id)
+    group = get_object_or_404(Group, pk=pk)
     members = group.members.all()
 
     if len(members) > 1:
