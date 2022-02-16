@@ -159,7 +159,7 @@ const groupWaitHandleResponse = (groupName, waitsName, waitsImg, waitsId) => {
                     <div class="wait-member__img">
                         ${ waitImg }
                     </div>  
-                    <span class="wait-member__name"><a href="{% url 'group:wait_member_detail' waitMemberId %}">${ waitsName[i] }</a></span>  
+                    <span class="btn wait-member__name wait-member__name--${ waitMemberId }" id="wait-name-${ waitMemberId }">${ waitsName[i] }</span>  
                 </div>          
                 <div class="wait__text--${ waitMemberId } wait-member__text"><span>가입을 기다리고 있어요!<span></div>
                 <div class="wait-member__btnbox">
@@ -236,6 +236,28 @@ const groupWaitHandleResponse = (groupName, waitsName, waitsImg, waitsId) => {
 
         memberWaitAlertText.innerHTML = `<span class="alert__text">가입을 거절했습니다.</span>`
     }
+
+    const waitMemberProfile = document.querySelectorAll('.wait-member__name');
+    waitMemberProfile.forEach(function(btn) {
+        btn.addEventListener('click', function(){
+            const [txt1, txt2, waitId] = btn.getAttribute('id').split('-');
+            onClickWaitUserProfile(waitId);
+        })
+    })
+
+    const onClickWaitUserProfile = async (userId) => {
+        const url = '/user/group_wait_profile/';
+        const { data } = await axios.post(url, {
+            userId
+        });
+        waitProfileHandleResponse(
+            data.userId
+        )
+    }
+
+    waitProfileHandleResponse = (userId) => {
+        window.location.href = `http://127.0.0.1:8000/user/${userId}/public_userpage`;
+    }
 }
 
 // 그룹 삭제 전 확인
@@ -243,7 +265,7 @@ const groupDeleteBtn = document.querySelector('.btn__delete');
 if(groupDeleteBtn){
     groupDeleteBtn.addEventListener('click', function(){
         if(confirm('정말 삭제하시겠습니까?')){
-            document.location.href = `group/${group_id}/delete`;
+            window.location.href = `http://127.0.0.1:8000/group/${group_id}/group_delete`;
         }
         else{
             return false
@@ -256,7 +278,7 @@ const groupOutBtn = document.querySelector('.btn-out');
 if(groupOutBtn){
     groupOutBtn.addEventListener('click', function(){
         if(confirm('정말 탈퇴하시겠습니까?')){
-            document.location.href = `group/${group_id}/group_drop`;
+            window.location.href = `http://127.0.0.1:8000/group/${group_id}/group_drop`;
         }
     })
 }
@@ -266,7 +288,7 @@ const groupJoinBtn = document.querySelector('.btn-signup');
 if(groupJoinBtn){
     groupJoinBtn.addEventListener('click', function(){
         if(confirm('가입하시겠습니까?')){
-            document.location.href = `group/${group_id}/public_group_join`;
+            window.location.href = `http://127.0.0.1:8000/group/${group_id}/public_group_join`;
         }
     })
 }

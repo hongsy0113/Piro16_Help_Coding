@@ -517,3 +517,17 @@ def public_userpage(request, pk):
     }
     
     return render(request, template_name='user/public_userpage.html', context=ctx)
+
+# 그룹 가입 대기자 프로필 정보
+@csrf_exempt
+def group_wait_profile(request, pk):
+    req = json.loads(request.body)
+    wait_user_id = req['userId']
+
+    wait_user = get_object_or_404(User, pk=wait_user_id)
+
+    wait_id = wait_user.id
+
+    return JsonResponse({
+        'userId': wait_id
+    })
