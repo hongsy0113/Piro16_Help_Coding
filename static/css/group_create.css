@@ -62,9 +62,45 @@ html, body, section {
 }
 
 /* 이미지 업로드 */
-.img-form {
+.group-form__box {
+    display: flex;
+    align-items: center;
 }
 
+.group-form__input--image {
+    width: 50%;
+    height: 50px;
+    padding: 17px 32px 17px 20px;
+
+    background: #FFFFFF;
+    border: 1px solid #BDBDBD;
+    box-sizing: border-box;
+    border-radius: 5px;
+}
+
+.group-form__label--image {
+    height: 50px;
+    margin-left: 10px;
+    padding: 10px 20px;
+    background-color: #999999;
+    border-radius: 5px;
+    cursor: pointer;
+    color: #ffffff;
+    font-family: Noto Sans CJK KR;
+    font-size: 20px;
+    line-height: 150%;
+}
+
+.form__input--file {
+    position: absolute;
+    width: 0;
+    height: 0;
+    padding: 0;
+    overflow: hidden;
+    border: 0;
+}
+
+/* 그룹 공개 여부 선택 */
 .group-create__mode-select {
     display: flex;
     flex-direction: row;
