@@ -1,49 +1,86 @@
 {% extends 'base.html' %}
+{% load static %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/mypage.css' %}">
+{% endblock css %}
+{% block title %} 도와줘, 코딩 | 질문 기록 {% endblock %}
 
 {% block content %}
 <div>
-  <h3>○ 나의 질문들 ( {{ user.email }} )</h3>
-  <button class="btn btn-secondary"><a class="text-white" href="{% url 'user:mypage' %}" style="text-decoration: none">마이페이지로 돌아가기</a></button>
+  <div class="mypage__question__container" style="display: block;">
+    <div class="mypage__title">
+      <h3>질문 기록</h3>
+    </div>
+    {% if questions %}
+    {% for question in questions %}
+    <a href="{% url 'qna:question_detail' question.pk %}" class="mypage__question">
+      <div class="mypage__question-left">
+        <p class="mypage__question__title">{{ question.title }}</p>
+        <p class="mypage__question__content">{{ question.content }}</p>
+      </div>
+      <div class="mypage__question-right">
+        <div>답변</div>
+        <div>
+          {{ question.answer_set.all | length }}
+        </div>
+      </div>
+    </a>
+    {% endfor %}
+    {% else %}
+    <p>- 질문 기록이 없습니다.</p>
+    {% endif %}
+    <button class="btn btn-secondary"><a class="text-white" href="{% url 'user:mypage' %}" style="text-decoration: none">마이페이지로 돌아가기</a></button>
   <button class="btn btn-secondary"><a class="text-white" href="{% url 'qna:question_list' %}" style="text-decoration: none">질문하러 가기</a></button>
-  {% if questions %}
-  {% for question in questions %}
-  <p>
-    <a class="text-black" href="{% url 'qna:question_detail' question.pk %}" style="text-decoration: none">- Q> {{ question.title }}</a>
-    <p>최근 수정일 : {{ question.updated_at }}</p>
-  </p>
-  {% endfor %}
-  {% else %}
-  <p>- 질문 기록이 없습니다.</p>
-  {% endif %}
+  </div>
 
-  {% if is_paginated %}
+<!-- 페이지네이션 -->
+{% if is_paginated %}
+<div class="pagination-box">
   <ul class="pagination">
     {% if page_obj.has_previous %}
     <li class="page-item">
-      <a class="page-link" href="?page={{ page_obj.previous_page_number }}" tabindex="-1">이전</a>
+      <a class="all__page-sign" href="?page={{ page_obj.previous_page_number }}" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="24" viewBox="0 0 14 24" fill="none">
+          <path d="M12.7688 22.5918L2.02827 11.8513L12.7688 1.11076" stroke="#C4C4C4" stroke-width="2"/>
+        </svg>
+      </a>
     </li>
     {% else %}
     <li class="page-item disabled">
-      <a class="page-link" href="#" tabindex="-1">이전</a>
+      <a class="all__page-sign" href="#" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="24" viewBox="0 0 14 24" fill="none">
+          <path d="M12.7688 22.5918L2.02827 11.8513L12.7688 1.11076" stroke="#C4C4C4" stroke-width="2"/>
+        </svg>
+      </a>
     </li>
     {% endif %}
-
+    
     {% for page in page_range %}
-    <li class="page-item {% if page == page_obj.number %} activate {% endif %}">
-      <a class="page-link" href="?page={{ page }}">{{ page }}</a>
+    <li class="page-item">
+      <a class="page-link {% if page == page_obj.number %} page-item-active {% endif %}" href="?page={{ page }}">{{ page }}</a>
     </li>
     {% endfor %}
-
+    
     {% if page_obj.has_next %}
     <li class="page-item">
-      <a class="page-link" href="?page={{ page_obj.next_page_number }}">다음</a>
+      <a class="all__page-sign sign-next" href="?page={{ page_obj.next_page_number }}">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="24" viewBox="0 0 14 24" fill="none">
+          <path d="M1.23096 1.11035L11.9715 11.8509L1.23096 22.5914" stroke="#C4C4C4" stroke-width="2"/>
+          </svg>
+      </a>
     </li>
     {% else %}
     <li class="page-item disabled">
-      <a class="page-link" href="#">다음</a>
+      <a class="all__page-sign" href="#">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="24" viewBox="0 0 14 24" fill="none">
+          <path d="M1.23096 1.11035L11.9715 11.8509L1.23096 22.5914" stroke="#C4C4C4" stroke-width="2"/>
+          </svg>
+      </a>
     </li>
     {% endif %}
   </ul>
   {% endif %}
+</div>
+
 </div>
 {% endblock content %}
