@@ -43,7 +43,35 @@
                 {% endif %}
                 <textarea id="content" cols="30" rows="10" class="input-content" placeholder="내용을 입력하세요." name="content">{% if original_information %}{{ original_information.content }}{% else %}{{ question.content }}{% endif %}</textarea>
             </div>
+
             <div class="post-create__img post-create__form">
+                <div class="text-container">
+                    <span>사진</span>
+                </div>
+                <div class="group-post__form-box">  
+                    <input  id="img_upload_name" class="group-post__form-input group-post__form-input--image" placeholder="첨부파일" readonly  />
+                    <img id="img_display" src="" height="50" width="50">
+                    <label for="img_upload" class="group-post__form-label">사진 올리기</label>
+                    <input type="file" id="img_upload" class="form__input--file" name="image" onchange="imageChange(event);">
+                    <input name="img_recent" id="img_recent" value="{% if current_image %}{{ current_image }}{% else %}{{ original_information.image }}{% endif %}" hidden />
+                    <input id="temp_img_location" value="{{ temp_img_location }}" hidden></input>
+                </div>
+            </div>
+            <div class="post-create__attached-file post-create__form">
+                <div class="text-container">
+                    <span>파일</span>
+                </div>
+                <div class="group-post__form-box">
+                    <input id="file_upload_name" class="group-post__form-input group-post__form-input--file"  placeholder="첨부파일" readonly/>
+                    <label for="file_upload" class="group-post__form-label">파일 올리기</label>
+                    <input type="file" class="form__input--file" id="file_upload" name="attached_file" value="{{ form.attached_file.url }}" onchange="fileChange(event); "/>
+                    <input name="file_recent" id="file_recent" value="{% if current_file %}{{ current_file }}{% else %}{{ original_information.attached_file }}{% endif %}" hidden />
+                    <input id="temp_file_location" value="{{ temp_file_location }}" hidden></input>
+                </div>
+            </div>
+
+            {% comment %}
+            <div class="post-create__img post-create__form"> <!-- 기본 이미지 업로드 부분-->
                 <div class="text-container">
                     <span>사진</span>
                 </div>
@@ -53,6 +81,7 @@
                     <input type="file" id="image" class="form__input--file" name="image" value="{% if post.image %}{{ post.image.url }}{% endif %}">
                 </div>
             </div>
+            
             <div class="post-create__attached-file post-create__form">
                 <div class="text-container">
                     <span>파일</span>
@@ -62,18 +91,6 @@
                     <label for="attached_file" class="group-post__form-label">파일 올리기</label>
                     <input type="file" class="form__input--file" id="attached_file" name="attached_file" value="{{ form.attached_file.url }}">
                 </div>
-            </div>
-            {% comment %}
-            
-            <div>
-                <label for="image">이미지 업로드</label><br />
-                <p>{{ form.image }}</p>
-                {{ original_information.image }}
-            </div>
-            
-            <div>
-                <label for="attached_file">파일 업로드</label><br />
-                <p>{{ form.attached_file }}</p>
             </div>
             {% endcomment %}
             <div class="select__category post-create__category">

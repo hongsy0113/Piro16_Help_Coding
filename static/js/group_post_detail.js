@@ -2,6 +2,7 @@
 // template에서 data 가져오기
 const user_id = JSON.parse(document.getElementById('user_id').textContent);
 const post_id = JSON.parse(document.getElementById('post_id').textContent);
+const group_id = JSON.parse(document.getElementById('group_id').textContent);
 
 /////////////////////////////////////////////////////
 ////////////////////답변 작성 ///////////////////////

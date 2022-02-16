@@ -751,7 +751,7 @@ def post_create(request, pk):
                 post.image =  './group_{}/image/{}'.format(group.pk, request.POST['img_recent']) ###
 
             if request.FILES.get('attached_file'):
-                post.image = request.FILES.get('attached_file')
+                post.attached_file = request.FILES.get('attached_file')
             elif request.POST['file_recent']:
                 os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
                 shutil.copyfile('./media/temp/{}'.format(request.POST['file_recent']),
