@@ -152,7 +152,7 @@ button {
     position: relative;
     top: 0px;
     width: 40%;
-    height: 60%;
+    max-height: 500px;
     background-color: #FAFAFA;
     border: 2px solid #BDBDBD;
     box-sizing: border-box;
@@ -164,7 +164,7 @@ button {
 .group-join__inputbox {
     display: flex;
     flex-direction: column;
-    gap: 60px;
+    /* gap: 60px; */
 }
 
 .group-code__input {
@@ -188,6 +188,7 @@ button {
 
 .group-code__submit {
     padding: 20px 42px 21px;
+    margin-top: 55px;
     background: #FF8989;
     border: 2px solid #FF8989;
     box-sizing: border-box;
@@ -209,7 +210,7 @@ button {
     font-weight: bold;
     font-size: 18px;
     padding: 10px 20px;
-    /* margin: 10px 0; */
+    margin-top: 10px;
     width: 388px;
     display: flex;
     gap: 15px;

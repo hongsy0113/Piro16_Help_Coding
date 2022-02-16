@@ -2,6 +2,7 @@
 // template에서 data 가져오기
 const user_id = JSON.parse(document.getElementById('user_id').textContent);
 const post_id = JSON.parse(document.getElementById('post_id').textContent);
+const group_id = JSON.parse(document.getElementById('group_id').textContent);
 
 /////////////////////////////////////////////////////
 ////////////////////답변 작성 ///////////////////////
@@ -13,53 +14,86 @@ const onClickAnswer = async (postId, content) => {
         const {data} = await axios.post(url,{
             postId, content, user: user_id
         });
-        answerHandleResponse(data.id, data.content, data.user, data.created_at)
+        answerHandleResponse(
+            data.id, 
+            data.content,
+            data.user, 
+            data.created_at, 
+            data.user_image_url, 
+            data.is_author
+            )
     } 
 }
 
-const answerHandleResponse = (id, content, user, created_at) => {
+const answerHandleResponse = (id, content, user, created_at, img_url, is_author) => {
     
     const element = document.querySelector(`.answer__input`);
     const answerList = document.querySelector(`.answer__list`);
     
     // input 비우기
     element.value = "";
+    // 프로필 이미지. 없으면 아무것도 안 들어가도록
+    let userProfileImg ="";
+    // 작성자 여부
+    let isAuthorTag = "";
+
+    if (img_url){
+        userProfileImg = `<img src="${img_url}" alt="">`
+    }
+    if (is_author){
+        isAuthorTag = "<span class='answer__writer-mark'>글쓴이</span>"
+    }
 
     const newAnswer = document.createElement('div');
     newAnswer.classList.add('answer__container', `answer__container--${id}`)
+
     newAnswer.innerHTML = `
-        <div class="answer__content-container answer__content-container--${id}">
-            <h2>${user}</h2>
-            <p>${created_at}</p>
-            <div>
-                <span>(작성자)</span>
-                <p class="answer__content answer__content--${id}">${content}</p>
-                <div class="answer__like-btn answer__like-btn--${id} btn"  id="answer-like-${id}" >
-                    <i class="far fa-heart"></i>
-                    <span>좋아요 0개</span>
+    <div class="answer__content-container answer__content-container--${id}">
+        <div class="answer__user__profile">
+            <div class="answer__user__profile-left">
+                ${userProfileImg}
+            </div>
+            <div class="answer__user__profile-right">
+                <div> <!-- 이름, 글쓴이, 날짜 -->
+                    <div class="answer__user__name answer__user__name--${id}">
+                        <h2>${user}</h2>
+                        ${isAuthorTag}
+                    </div>
+                    <p>${created_at}</p>
+                </div>
+                <div>
+                    <button class="answer__edit-btn answer__edit-btn--${id}" id="answer-edit-btn-${id}">수정</button>
+                    <button class="answer__delete-btn answer__delete-btn--${id}" id="answer-delete-btn-${id}">삭제</button>
                 </div>
             </div>
+        </div>
+        <p class="answer__content answer__content--${id}">${content}</p>
+        <div class="answer__like__reply">
             <div>
-                <button class="btn btn-secondary answer__edit-btn answer__edit-btn--${id} " id="answer-edit-btn-${id}">답변 수정</button>
-                <button class="btn btn-secondary answer__delete-btn answer__delete-btn--${id}" id="answer-delete-btn-${id}">답변 삭제</button>
+                <input type="checkbox" class="answer__write-reply answer__write-reply--${id} btn-check " id="reply-btn-${id}" autocomplete="off">
+                <label class="answer__reply-btn" for="reply-btn-${id}">답글 작성</label>
             </div>
-            <div>
-                <input type="checkbox" class="answer__write-reply answer__write-reply--${id} btn-check" id="reply-btn-${id}" autocomplete="off"">
-                <label class="btn btn-primary" for="reply-btn-${id}">답글 작성</label>
-            </div>
-            <h6>대댓글</h4>
-            <hr>
-            <div class="reply__list reply__list--${id}"></div>
-            <div class="reply__form reply__form--${id}" style="display: none;">
-                <input type="text" name="new_reply_${id}" placeholder="답변을 입력하세요" class="reply__input reply__input--${id}" id = "reply-input-${id}"style="width:200px; height:20px;">    
-                <input type="button" value = "작성" class="reply__submit reply__submit--${id}" id ="reply-submit-${id}">
+            <div class="answer__like-btn answer__like-btn--${id}"  id="answer-like-${id}">
+                <i class="far fa-heart"></i>
+                <span>0</span>
             </div>
         </div>
-        <div class="answer__edit answer__edit--${id}" style="display: none;">
-            <input type="text" name="edit_answer_${id}" class="answer__edit-input answer__edit-input--${id}" id = "answer-edit-input-${id}" style="width:200px; height:20px;" value="${content}">    
+    </div>
+    <div class="answer__edit answer__edit--${id}" style=" display: none;">
+        <div class="answer__edit__flexbox">
+            <input type="text" name="edit_answer_${id}" class="answer__edit-input answer__edit-input--${id}" id = "answer-edit-input-${id}" value="${content}">    
             <input type="button" value = "수정" class="answer__edit-submit answer__edit-submit--${id}" id = "answer-edit-submit-${id}">
         </div>
-            `;
+    </div>
+    <div class="reply__list reply__list--${id}"></div>
+    <div class="reply__form reply__form--${id}" style="display: none;">
+        <div class="reply__form__flexbox">
+            <input type="text" name="new_reply_${id}" placeholder="답변을 입력하세요" class="reply__input reply__input--${id}" id = "reply-input-${id}">    
+            <input type="button" value = "작성" class="reply__submit reply__submit--${id}" id = "reply-submit-${id}">  
+        </div>
+    </div>
+    `;
+
     answerList.append(newAnswer);
 
     /// 동적으로 생성된 요소들에 이벤트 바인딩
@@ -152,11 +186,13 @@ const onClickReply = async (answerId) => {
             data.content,
             data.user,
             data.created_at,
+            data.user_image_url, 
+            data.is_author,
         )
     } 
 }
 
-relpyHandleResponse = (replyId, answerId ,content, user, created_at) => {
+relpyHandleResponse = (replyId, answerId ,content, user, created_at , img_url, is_author ) => {
     
     const element = document.querySelector(`.reply__input--${answerId}`);
     const replyList = document.querySelector(`.reply__list--${answerId}`);
@@ -164,32 +200,55 @@ relpyHandleResponse = (replyId, answerId ,content, user, created_at) => {
     // input 비우기
     element.value = "";
 
+    let userProfileImg ="";
+    // 작성자 여부
+    let isAuthorTag = "";
+    
+    if (img_url){
+        userProfileImg = `<img src="${img_url}" alt="">`
+    }
+    if (is_author){
+        isAuthorTag = "<span class='answer__writer-mark'>글쓴이</span>"
+    }
+
+
     const newReply = document.createElement('div');
     newReply.classList.add('reply__container', `reply__container--${replyId}`, `answer__container--${replyId}`)
     newReply.innerHTML = `
-        <div class="answer__content-container answer__content-container--${replyId}">
-            <p>
-            ${user}   ${created_at}
-            <br>
-            <span>(작성자)</span>
-            <p class= "answer__content answer__content--${replyId}"> ${content}</p>
-            <br>
-            <div class="answer__like-btn answer__like-btn--${replyId} btn"  id="answer-like-${replyId}" >
-            <i class="far fa-heart"></i>
-            <span>좋아요 0개</span>
+    <div class="answer__content-container answer__content-container--${replyId}">
+        <div class="answer__user__profile">
+            <div class="answer__user__profile-left">
+                ${userProfileImg}
             </div>
-            </p>
-            <div>
-                <button class="btn btn-sm btn-secondary answer__edit-btn answer__edit-btn--${replyId} " id="answer-edit-btn-${replyId}">답변 수정</button>
-                <button class="btn btn-sm btn-secondary answer__delete-btn answer__delete-btn--${replyId} " id="answer-delete-btn-${replyId}">답변 삭제</button>
+            <div class="answer__user__profile-right">
+                <div>
+                    <div class="answer__user__profile-name">
+                        <h2>${user}</h2>
+                        ${isAuthorTag}
+                    </div>
+                    <p>${created_at}</p>
+                </div>
+                <div>
+                    <button class="answer__edit-btn answer__edit-btn--${replyId} " id="answer-edit-btn-${replyId}">수정</button>
+                    <button class="answer__delete-btn answer__delete-btn--${replyId} " id="answer-delete-btn-${replyId}">삭제</button>
+                </div>
             </div>
         </div>
-        <div class="answer__edit answer__edit--${replyId}" style=" display: none;">
+        <p class= "answer__content answer__content--${replyId}"> ${content}</p>
+        <div class="answer__like-btn answer__like-btn--${replyId}" id="reply-like-${replyId}" style="align-self:flex-end">
+            <i class="far fa-heart"></i>
+            <span>0</span>
+        </div>
+
+    </div>
+    <div class="answer__edit answer__edit--${replyId}" style=" display: none;">
+        <div class="answer__edit__flexbox">
             <input type="text" name="edit_answer_${replyId}" class="answer__edit-input answer__edit-input--${replyId}" id = "answer-edit-input-${replyId}" 
-            style="width:200px; height:20px;" value="${content}">    
+             value="${content}">    
             <input type="button" value = "수정" class="answer__edit-submit answer__edit-submit--${replyId}" id = "answer-edit-submit-${replyId}">
         </div>
-        `;
+    </div>
+    `;
 
     replyList.append(newReply);
 
@@ -255,15 +314,21 @@ postLikeHandleResponse = (postId, totalLikes, isLiking) => {
     if (isLiking){
         postLikeBtn.innerHTML = `
         <i class="fas fa-heart"></i>
-        <span>좋아요 ${totalLikes}개</span>
+        <span>${totalLikes}</span>
         `
     }
     else {
         postLikeBtn.innerHTML = `
         <i class="far fa-heart"></i>
-        <span>좋아요 ${totalLikes}개</span>
+        <span>${totalLikes}</span>
         `
     }
+    const postInfo = document.querySelector('.post__info');
+    const originHTML = postInfo.innerHTML;
+    const [createdAt, hitCount, currentTotalLikes, nickname] = originHTML.split(' · ');
+    const [, num] = currentTotalLikes.split(' ');
+    const newTotalLikes = Number(num) + (isLiking? 1 : -1);
+    postInfo.innerHTML = `${createdAt} · ${hitCount} · 좋아요 ${newTotalLikes} · ${nickname}`;
 }
 
 /// 댓글 좋아요
@@ -291,13 +356,13 @@ answerLikeHandleResponse = (answerId, totalLikes, isLiking) => {
     if (isLiking){
         answerLikeBtn.innerHTML = `
         <i class="fas fa-heart"></i>
-        <span>좋아요 ${totalLikes}개</span>
+        <span>${totalLikes}</span>
         `
     }
     else {
         answerLikeBtn.innerHTML = `
         <i class="far fa-heart"></i>
-        <span>좋아요 ${totalLikes}개</span>
+        <span>${totalLikes}</span>
         `
     }
 }
@@ -322,23 +387,43 @@ const onClickAnswerDelete = async (id) => {
     const {data} = await axios.post(url,{
         id
     });
-    answerDeleteHandleResponse(data.id)
+    answerDeleteHandleResponse(data.id , data.delete_yes, data.answer_count)
 }
 
-answerDeleteHandleResponse = (answerId) => {
+answerDeleteHandleResponse = (answerId,  deleteYes, count) => {
     const answerContainer = document.querySelector(`.answer__container--${answerId}`)
 
-    // 답변 개수도 바뀌어야함
-    // 대댓글, 답변 다 한 함수로 통일 했으므로 조건 나눠줘야 한다.
-    if (!answerContainer.classList.contains('reply__container')){
-        const answerCount = document.querySelector('.answer__total-count');
-        const [text1 , num, text2] = answerCount.innerHTML.split(' ');
+    // // 답변 개수도 바뀌어야함
+    // // 대댓글, 답변 다 한 함수로 통일 했으므로 조건 나눠줘야 한다.
+    // if (!answerContainer.classList.contains('reply__container')){
+    //     const answerCount = document.querySelector('.answer__total-count');
+    //     const [text1 , num, text2] = answerCount.innerHTML.split(' ');
     
-        const count = Number(num)-1;
+    //     const count = Number(num)-1;
 
-        answerCount.innerHTML = `답변 ${count} 개`
+    //     answerCount.innerHTML = `답변 ${count} 개`
+    // }
+    //answerContainer.remove();
+    const answerCount = document.querySelector('.answer__total-count');
+
+    answerCount.innerHTML = `답변 ${count} 개`
+
+    if (deleteYes){
+        answerContainer.remove();
     }
-    answerContainer.remove();
+    else {
+        const answeredUser = document.querySelector(`.answer__user__name--${answerId}`);
+        answeredUser.innerHTML = '<h2>(알 수 없음)</h2>';
+        
+        const answerContent = document.querySelector(`.answer__content--${answerId}`);
+        answerContent.innerHTML =  '삭제된 답변입니다.';
+
+        const answerEditButton = document.querySelector(`.answer__edit-btn--${answerId}`);
+        answerEditButton.remove();
+
+        const answerDeleteButton = document.querySelector(`.answer__delete-btn--${answerId}`);
+        answerDeleteButton.remove();
+    }
 }
 //---------------------------------//
 
@@ -392,7 +477,7 @@ const onClickAnswerEditSubmit = async(id) => {
 }
 answerEditSubmitHandleResponse = (answerId, content) => {
     const answerContainer = document.querySelector(`.answer__content-container--${answerId}`);
-    answerContainer.style.display = 'block';
+    answerContainer.style.display = 'flex';
 
     const answerContent = document.querySelector(`.answer__content--${answerId}`);
     answerContent.innerHTML = content;
@@ -403,6 +488,7 @@ answerEditSubmitHandleResponse = (answerId, content) => {
 
 //---------------------------------//
 // 게시글, 댓글 삭제 여부
+// 삭제 전 확인
 const postDeleteBtn = document.querySelector('.post__delete-btn');
 if (postDeleteBtn){
     postDeleteBtn.addEventListener('click',function(){

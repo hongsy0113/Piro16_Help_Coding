@@ -13,14 +13,32 @@ html, body, section {
     font-size: 36px;
     line-height: 150%;
     font-weight: bold;
-    padding-bottom: 10px;
-    /* border-bottom: 1px solid #BDBDBD; */
+    padding-bottom: 40px;
+} 
+
+/* 에러메시지 */
+.input-error {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    width: 300px;
+    padding: 10px 20px;
+    margin: 10px 0px 6px 0px;
+
+    background-color: #FFE6E6;
+    border: 1px solid #eb6464;
+    border-radius: 5px;
+    box-sizing: border-box;
+    color: #eb6464;
+    font-weight: bold;
+    font-size: 18px;
 }
 
 .input-name {
     width: 100%;
     height: 60px;
-    margin: 30px 0px;
+    margin-bottom: 30px;
     padding: 17px 32px 17px 20px;
 
     background: #FFFFFF;
@@ -62,9 +80,69 @@ html, body, section {
 }
 
 /* 이미지 업로드 */
-.img-form {
+.group-form__box {
+    display: flex;
+    align-items: center;
 }
 
+.group-form__input--image {
+    width: 50%;
+    height: 50px;
+    padding: 13px 20px;
+
+    background: #FFFFFF;
+    border: 1px solid #BDBDBD;
+    box-sizing: border-box;
+    border-radius: 5px;
+
+    font-family: Noto Sans CJK KR;
+    color: #828282;
+    font-size: 16px;
+    line-height: 150%;
+
+    overflow: hidden;
+    word-wrap: break-word;
+    word-break: break-all;
+    display : -webkit-box;
+    -webkit-line-clamp: 1;  /* 줄 개수 설정 */
+    -webkit-box-orient: vertical;
+}
+
+.input-img__text {
+    font-family: Noto Sans CJK KR;
+    color: #828282;
+    font-size: 16px;
+    line-height: 150%;
+}
+
+.group-form__label--image {
+    height: 50px;
+    margin-left: 10px;
+    padding: 10px 20px;
+    background-color: #999999;
+    border-radius: 5px;
+    cursor: pointer;
+    color: #ffffff;
+    font-family: Noto Sans CJK KR;
+    font-size: 20px;
+    line-height: 150%;
+}
+
+.group-form__label--image:hover {
+    background-color: #4E4E4E;
+    color: #ffffff;
+}
+
+.form__input--file {
+    position: absolute;
+    width: 0;
+    height: 0;
+    padding: 0;
+    overflow: hidden;
+    border: 0;
+}
+
+/* 그룹 공개 여부 선택 */
 .group-create__mode-select {
     display: flex;
     flex-direction: row;

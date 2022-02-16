@@ -32,52 +32,53 @@
                 </button>
         </form>
     </div>
-</div>
 
-<div class="list-sort">
-    <span class="list-sort__btn">
-        {% if sort_by != 'recent' %}
-        <a href="{% url 'qna:question_list' %}?{% param_replace sort='recent' page=1 %}">최신순</a>
-        {% else %}
-        <span>최신순</span>
-        {% endif %}
-    </span>
-    <span class="list-sort__btn">
-        {% if sort_by != 'view' %}
-        <a href="{% url 'qna:question_list' %}?{% param_replace sort='view' page=1 %}">조회수순</a>
-        {% else %}
-        <span>조회수순</span>
-        {% endif %}
-    </span>
-    <span class="list-sort__btn">
-        {% if sort_by != 'liked' %}
-        <a href="{% url 'qna:question_list' %}?{% param_replace sort='liked' page=1 %}">좋아요순</a>
-        {% else %}
-        <span>좋아요순</span>
-        {% endif %}
-    </span>
-</div>
+    <div class="qna-sort-filter__box">
+        <!-- 최신순 조회수순 좋아요순 -->
+        <div class="list-sort">
+            <span class="list-sort__btn">
+                {% if sort_by != 'recent' %}
+                <a href="{% url 'qna:question_list' %}?{% param_replace sort='recent' page=1 %}">최신순</a>
+                {% else %}
+                <span>최신순</span>
+                {% endif %}
+            </span>
+            <span class="list-sort__btn">
+                {% if sort_by != 'view' %}
+                <a href="{% url 'qna:question_list' %}?{% param_replace sort='view' page=1 %}">조회수순</a>
+                {% else %}
+                <span>조회수순</span>
+                {% endif %}
+            </span>
+            <span class="list-sort__btn">
+                {% if sort_by != 'liked' %}
+                <a href="{% url 'qna:question_list' %}?{% param_replace sort='liked' page=1 %}">좋아요순</a>
+                {% else %}
+                <span>좋아요순</span>
+                {% endif %}
+            </span>
+        </div>
 
-
-<div class="qna__filterbox">
-    <form method="GET" action="{% url 'qna:question_list' %}" class="qna__filterbox--form" >
-        <!-- <select class="select_sort" onchange=""> -->
-        <p>필터 선택 </p>
-        <input type="radio" name="answer_filter_by" value="NOT_ANSWERED" id="filter_by-not-answered" class="tag" {% if 'NOT_ANSWERED' in filter_by %} checked {% endif %}/>
-        <label for="motion">답변 없는 글</label>
-        <input type="radio" name="answer_filter_by" value="ANSWERED" id="filter_by-answered" class="tag" {% if 'ANSWERED' in filter_by %} checked {% endif %}//>
-        <label for="motion">답변 완료</label>
-        <input type="checkbox" name="tag_filter_by" value="S" id="filter_by-scratch" class="tag" {% if 'S' in filter_by %} checked {% endif %}/ />
-        <label for="motion">스크래치</label>
-        <input type="checkbox" name="tag_filter_by" value="E" id="filter_by-entry" class="tag"{% if 'E' in filter_by %} checked {% endif %}/  />
-        <label for="looks">엔트리</label>
-        <input type="checkbox" name="tag_filter_by" value="ETC" id="filter_by-etc" class="tag"{% if 'ETC' in filter_by %} checked {% endif %}//>
-        <label for="sound">기타</label>
-
-        <button type="submit" class="qna__filterbox--btn">필터</button>
-        
-    </form>
-    <a href="{% url 'qna:question_list' %}"><button type="" class="qna__filterbox--reset">초기화</button></a>
+        <!-- 게시글 필터 -->
+        <div class="qna-filter__box">
+            <form method="GET" action="{% url 'qna:question_list' %}" class="qna__filterbox--form" >
+                <input type="radio" name="answer_filter_by" value="ANSWERED" id="filter_by-answered" class="tag select-answer__tag" {% if 'ANSWERED' in filter_by %} checked {% endif %}//>
+                <label for="filter_by-answered">답변 완료</label>
+                <input type="radio" name="answer_filter_by" value="NOT_ANSWERED" id="filter_by-not-answered" class="tag select-answer__tag" {% if 'NOT_ANSWERED' in filter_by %} checked {% endif %}/>
+                <label for="filter_by-not-answered">답변 미완료</label>
+                <div class="filter-detail__box">
+                    <input type="checkbox" name="tag_filter_by" value="S" id="filter_by-scratch" class="tag select-detail__tag" {% if 'S' in filter_by %} checked {% endif %}/ />
+                    <label for="filter_by-scratch">스크래치</label>
+                    <input type="checkbox" name="tag_filter_by" value="E" id="filter_by-entry" class="tag select-detail__tag" {% if 'E' in filter_by %} checked {% endif %}/  />
+                    <label for="filter_by-entry">엔트리</label>
+                    <input type="checkbox" name="tag_filter_by" value="ETC" id="filter_by-etc" class="tag select-detail__tag" {% if 'ETC' in filter_by %} checked {% endif %}//>
+                    <label for="filter_by-etc">기타</label>
+                </div>
+                <button type="submit" class="qna-filter__box--btn">적용</button>       
+            </form>
+            <a href="{% url 'qna:question_list' %}" class="qna__filterbox--reset">초기화</a>
+        </div>
+    </div>
 </div>
 
 {% comment %}
@@ -112,7 +113,7 @@
                 </div>
                 <!-- 상세태그 가져오는 코드입니다. 참고해서 css 완성해주세요. 고마워요 -->
                 {% for tag in question.tags.all %}
-                    <span class="tag__etc">{{ tag }}</span>
+                    <span class="tag__detail-tag">{{ tag }}</span>
                 {% endfor %}
                 <div class="question__info">
                     <span>{% if question.user %}{{ question.user }}{% else %}(알 수 없음){% endif %} · 조회 {% get_hit_count for question %} · 좋아요 {{ question.like_user.all | length }} · {{ question.created_at | date:'y.m.d' }}</span>
