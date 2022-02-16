@@ -1,3 +1,7 @@
+button {
+    all: unset;
+}
+
 .qna__top {
     display: flex;
     justify-content: space-between;
@@ -29,9 +33,7 @@
 
 /* search-box */
 .qna__search-container {
-    display: flex;
     align-items: center;
-    gap: 20px;
     height: 60px;
     box-sizing: border-box;
     margin-bottom: 40px;
@@ -90,10 +92,18 @@
     display: flex;
 }
 
+/* 게시물 정렬 & 필터 box */
+.qna-sort-filter__box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
 /* 게시물 정렬 (sort) */
 .list-sort {
     display: flex;
     align-items: center;
+    padding-bottom: 6px;
 }
 
 .list-sort__btn a {
@@ -118,6 +128,87 @@
     display: flex;
     color: #000000;
     margin-right: 10px;
+}
+
+/* 게시글 필터 */
+.qna-filter__box {
+    display: flex;
+    align-items: center;
+    padding-bottom: 6px;
+    gap: 2px;
+}
+
+.qna__filterbox--form {
+    display: flex;
+    align-items: center;
+}
+
+.qna-filter__box .tag {
+    display: none;
+}
+
+.qna__filterbox--form label {
+    display: inline-block;
+    border-radius: 20px;
+    text-align: center;
+    text-decoration: none;
+    border: solid 1px #ccc;
+    transition: 0.25s;
+    padding: 6px 18px;
+    cursor: pointer;
+    font-size: 14px;
+    margin: 3px;
+    font-family: Noto Sans CJK KR;
+    font-size: 15px;
+}
+
+.qna__filterbox--form > input:checked + label {
+    background: #4cc4d4;
+    color: #fff;
+}
+
+.filter-detail__box {
+    display: flex;
+    align-items: center;
+}
+
+.filter-detail__box > input:checked + label {
+    background: #51b96e;
+    color: #fff;
+}
+
+.qna-filter__box--btn {
+    border: 1px solid #5e5e5e;
+    border-radius: 10px;
+    padding: 5px 10px;
+    margin-left: 10px;
+    background-color: #5e5e5e;
+
+    font-family: Noto Sans CJK KR;
+    font-size: 15px;
+    color: #ffffff;
+}
+
+.qna-filter__box--btn:hover {
+    background-color: black;
+}
+
+.qna__filterbox--reset {
+    border: 1px solid #5e5e5e;
+    border-radius: 10px;
+    padding: 5px 10px;
+    margin-left: 2px;
+    background-color: #5e5e5e;
+
+    text-decoration: none;
+    font-family: Noto Sans CJK KR;
+    font-size: 15px;
+    color: #ffffff;
+}
+
+.qna__filterbox--reset:hover {
+    background-color: black;
+    color: #fff;
 }
 
 /* 질문 목록 */
@@ -202,7 +293,7 @@
 
 .tag__detail-tag{
     box-sizing: border-box;
-    border: 1px solid #37C6E6;
+    border: 1px solid #5e5e5e;
     border-radius: 13px;
     display: flex;
     justify-content: center;
