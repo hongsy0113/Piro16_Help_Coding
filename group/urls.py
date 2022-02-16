@@ -12,7 +12,6 @@ urlpatterns = [
     path('<int:pk>/group_delete/', view=views.group_delete, name='group_delete'),
     path('<int:pk>/group_drop/', view=views.group_drop, name='group_drop'),
     path('<int:pk>/group_detail/', view=views.group_detail, name='group_detail' ),
-    # path('star_ajax/', view=views.star_ajax, name='star_ajax'),
     path('group_list/', view=views.group_list, name='group_list'),
     path('<int:pk>/public_group_join/', view=views.public_group_join, name='public_group_join'),
     path('interest_ajax/', view=views.interest_ajax, name='interest_ajax'),
@@ -22,6 +21,8 @@ urlpatterns = [
     path('group_star_ajax/', view=views.group_star_ajax, name='group_star_ajax'),
     path('group_join_accept/', view=views.group_join_accept, name='group_join_accept'),
     path('group_join_reject/', view=views.group_join_reject, name='group_join_reject'),
+    path('<int:pk>/wait_member_detail/', view=views.wait_member_detail, name='wait_member_detail'),
+    path('group_member_state/', view=views.group_member_state, name='group_member_state'),
     # path('<int:pk>/member_thumbnail/', view=views.member_thumbnail, name='member_thumbnail'),
     #### 게시판 관련 url
     path('<int:pk>/post_list/', view=views.post_list, name='post_list'),
