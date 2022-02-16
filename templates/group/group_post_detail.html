@@ -192,9 +192,13 @@
                                 <div class="answer__user__profile-right">
                                     <div>
                                         <div class="answer__user__profile-name">
+                                            {% if reply.user %}
                                             <h2>{{ reply.user }}</h2>
                                             {% if reply.user.id == question.user.id %}
                                             <span class="answer__writer-mark">글쓴이</span>
+                                            {% endif %}
+                                            {% else %}
+                                            <h2>(알 수 없음)</h2>
                                             {% endif %}
                                         </div>
                                         <p>{{ reply.created_at|date:'y.m.d  H:i' }}</p>

@@ -665,16 +665,19 @@ def post_list(request, pk):
     page_obj = paginator.get_page(page)
     
     ## 각 게시글과 iframe 관련 썸네일의 이미지 경로 딕셔너리 생성
-    dict = {}
+    ## key 는 각 게시글이고, value는 (댓글 수, 썸네일 이미지 경로) tuple인 딕셔너리
+    posts_value_dict = {}
     for page in page_obj:
+        answers_count = GroupAnswer.objects.filter(post_id =page, answer_depth=0, is_deleted = False).count()
+        
         if page.attached_link:
-            dict[page] = get_img_src(page.attached_link)
+            posts_value_dict[page] = (answers_count, get_img_src(page.attached_link))
         else:
-            dict[page] = None
+            posts_value_dict[page] = (answers_count, None)
 
     ctx = {
         'posts': page_obj,
-        'posts_img_dict': dict,
+        'posts_value_dict': posts_value_dict,
         'group': group,
         'sort_by': sort_by
     }
@@ -697,17 +700,20 @@ def search_result(request, pk):
         page_obj = paginator.get_page(page)
 
         ## 각 게시글과 iframe 관련 썸네일의 이미지 경로 딕셔너리 생성
-        dict = {}
+        ## key 는 각 게시글이고, value는 (댓글 수, 썸네일 이미지 경로) tuple인 딕셔너리
+        posts_value_dict = {}
         for page in page_obj:
+            answers_count = GroupAnswer.objects.filter(post_id =page, answer_depth=0, is_deleted = False).count()
+            
             if page.attached_link:
-                dict[page] = get_img_src(page.attached_link)
+                posts_value_dict[page] = (answers_count, get_img_src(page.attached_link))
             else:
-                dict[page] = None
+                posts_value_dict[page] = (answers_count, None)
 
         ctx = {
             'query': query, 
             'posts': page_obj,
-            'posts_img_dict': dict, 
+            'posts_value_dict': posts_value_dict, 
             'group_pk': pk,
             'group': group,         
         }
