@@ -405,10 +405,13 @@ class OriginalGroupInfo():
 # 7일의 코드 유효 기간
 def group_code_save(pk):
     group = get_object_or_404(Group, pk=pk)
-    print(group.code)
     group.code = get_invite_code()
     group.save()
-    print(group.code)
+
+    time = Timer(7 * 24 * 60 * 60, group_code_save, [group.pk])
+    time.start()
+
+    return group.code
 
 # 초대 코드 발급
 def get_invite_code(length=6):
@@ -423,12 +426,12 @@ def create_code_ajax(request):
     group_id = req['groupId']
 
     group = get_object_or_404(Group, pk=group_id)
-    if group.code != '':
+    if group.code != None:
         code = group.code
     else:
-        time = Timer(7 * 24 * 60 * 60, group_code_save, [group_id])
-        time.start()
-        code = group.code
+        # time = Timer(7 * 24 * 60 * 60, group_code_save, [group_id])
+        code = group_code_save(group_id)
+        # code = group.code
         
         if time.finished:
             group.code = ''
