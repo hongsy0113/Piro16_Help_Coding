@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+  
+{% load static %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/mypage.css' %}">
+{% endblock css %}
+
+{% block title %} 도와줘, 코딩 | 프로필 정보 {% endblock %}
+
+{% block content %}
+<div class="mypage__profile__container">
+  <div class="mypage__profile__img">
+    {% if user.img %}<img src="{{ user.img.url }}" height="100">{% else %}<p>사진 없음</p>{% endif %}
+  </div>
+  <div class="mypage__profile__text">
+    <p>{{ user.nickname }}</p>
+    <div>
+      <div class="mypage__profile__text-content">
+        <!-- <div><p>이메일</p><p>{{ user.email }}</p></div>
+        <div><p>생년월일</p><p>{{ user.birth }}</p></div> -->
+        <div><p>직업</p><p>{{ user.get_job_display }}</p></div>
+      </div>
+      <div class="mypage__profile__text-content">
+        <div><p>레벨</p><p>{{ user.get_level }}</p></div>
+        <!-- <div><p>좋아요 수</p><p>{{ user.total_like }}</p></div>
+        <div><p>포인트</p><p>{{ user.points }}</p></div> -->
+      </div>
+    </div>
+    <div class="mypage__profile__text-content">
+      <div><p>소개</p><p>{{ user.introduction }}</p></div>
+      <div><p>대표 배지</p>{% if user.representative_reward %}<img src="{{ user.representative_reward.img }}" height="15"></img>{% else %}<p>없음</p>{% endif %}</div>
+    </div>
+    <!-- <div class="mypage__profile__btn">
+      <button class="btn btn-secondary"><a class="text-white" href="{% url 'user:mypage_revise' %}" style="text-decoration: none">개인정보 수정</a></button>
+      <button class="btn btn-secondary"><a class="text-white" href="{% url 'user:mypage_point' %}" style="text-decoration: none">나의 포인트 현황</a></button>
+    </div> -->
+    {% if messages %}{% for message in messages %}<p class="mypage__message">{{ message.message }}</p>{% endfor %}{% endif %}
+  </div>
+</div>
+  <div class="mypage__options">
+    <h3 class="mypage__options__reward">{{ user.nickname }}의 업적</h3>
+    <h3 class="mypage__options__question">최근 질문</h3>
+    <h3 class="mypage__options__answer">최근 답변</h3>
+  </div>
+
+
+<div class="mypage__reward__container">
+  {% if rewards %}
+  <div>
+    {% for reward in rewards %}
+    <div class="mypage__reward">
+      <div class="mypage__reward__img__container">
+        <img src="{{ reward.reward.img }}" alt="rewardimg">
+      </div>
+      <p class="mypage__reward__name">{{ reward.reward.name }}</p> 
+      <p class="mypage__reward__content">{{ reward.reward.info }}</p> 
+      <p class="mypage__reward__date">{{ reward.get_date | date:'y.m.d' }}</p>
+    </div>
+    {% endfor %}
+  </div>
+  <button class="btn btn-secondary"><a class="text-white" href="{% url 'user:mypage_reward' %}" style="text-decoration: none">전체 업적 보기</a></button>
+  {% else %}
+  <p>- 아직 달성한 업적이 없습니다.</p>
+  {% endif %}
+</div>
+
+<div class="mypage__question__container">
+  
+  {% if questions %}
+  {% for question in questions %}
+  <a href="{% url 'qna:question_detail' question.pk %}" class="mypage__question">
+    <div class="mypage__question-left">
+      <p class="mypage__question__title">{{ question.title }}</p>
+      <p class="mypage__question__content">{{ question.content }}</p>
+    </div>
+    <div class="mypage__question-right">
+      <div>답변</div>
+      <div>
+        {{ question.answer_set.all | length }}
+      </div>
+    </div>
+  </a>
+  {% endfor %}
+  <button class="btn btn-secondary"><a class="text-white" href="{% url 'user:mypage_question' %}" style="text-decoration: none">전체 질문 보기</a></button>
+  {% else %}
+  <p>- 질문 기록이 없습니다.</p>
+  {% endif %}
+  <button class="btn btn-secondary"><a class="text-white" href="{% url 'qna:question_list' %}" style="text-decoration: none">질문하러 가기</a></button>
+</div>
+
+<div class="mypage__answer__container">
+  {% if answers %}
+  {% for answer in answers %}
+  <a class="mypage__answer" href="{% url 'qna:question_detail' answer.question_id.pk %}" style="text-decoration: none">
+    <p class="mypage__answer__title">{{ answer.content }}</p>
+    <p class="mypage__answer__question">Q. {{ answer.question_id.title }}</p>
+  </a>
+  {% endfor %}
+  <button class="btn btn-secondary"><a class="text-white" href="{% url 'user:mypage_answer' %}" style="text-decoration: none">전체 답변 보기</a></button>
+  {% else %}
+  <p>- 답변 기록이 없습니다.</p>
+  {% endif %}
+  <button class="btn btn-secondary"><a class="text-white" href="{% url 'qna:question_list' %}" style="text-decoration: none">답변하러 가기</a></button>
+</div>
+
+<script>
+  const rewardbtn = document.querySelector('.mypage__options__reward');
+  const questionbtn = document.querySelector('.mypage__options__question');
+  const answerbtn = document.querySelector('.mypage__options__answer');
+
+  const rewardcontainer = document.querySelector('.mypage__reward__container');
+  const questioncontainer = document.querySelector('.mypage__question__container');
+  const answercontainer = document.querySelector('.mypage__answer__container');
+
+  rewardbtn.addEventListener('click', () => {
+    rewardcontainer.style.display = 'block';
+    questioncontainer.style.display = 'none';
+    answercontainer.style.display = 'none';
+    rewardbtn.style.color = 'black';
+    questionbtn.style.color = '#828282';
+    answerbtn.style.color = '#828282';
+    rewardbtn.style.borderBottom = '3px solid black';
+    questionbtn.style.borderBottom = 'none';
+    answerbtn.style.borderBottom = 'none';
+  });
+  
+  questionbtn.addEventListener('click', () => {
+    rewardcontainer.style.display = 'none';
+    questioncontainer.style.display = 'block';
+    answercontainer.style.display = 'none';
+    rewardbtn.style.color = '#828282';
+    questionbtn.style.color = 'black';
+    answerbtn.style.color = '#828282';
+    questionbtn.style.borderBottom = '3px solid black';
+    rewardbtn.style.borderBottom = 'none';
+    answerbtn.style.borderBottom = 'none';
+  });
+
+  answerbtn.addEventListener('click', () => {
+    rewardcontainer.style.display = 'none';
+    questioncontainer.style.display = 'none';
+    answercontainer.style.display = 'block';
+    rewardbtn.style.color = '#828282';
+    questionbtn.style.color = '#828282';
+    answerbtn.style.color = 'black';
+    answerbtn.style.borderBottom = '3px solid black';
+    rewardbtn.style.borderBottom = 'none';
+    questionbtn.style.borderBottom = 'none';
+  });
+</script>
+{% endblock content %}

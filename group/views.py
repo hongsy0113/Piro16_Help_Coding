@@ -579,12 +579,6 @@ def wait_list_ajax(request):
         'waitsId': wait_member_id
     })
 
-def wait_member_detail(request, pk):
-    wait_user = get_object_or_404(User, pk=pk)
-
-    ctx = { 'user': wait_user }
-    
-    return render(request, 'group/wait_member_detail.html', ctx=ctx)
 
 # 공개그룹 대기자 수락 여부
 # @csrf_exempt

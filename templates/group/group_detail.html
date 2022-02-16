@@ -182,7 +182,7 @@
                 </div>
 
                 <div class="member-list__maker--text member-list__maker--name">
-                    <span class="text__name"><a href="{% url 'group:group_member_state' %}">{{ maker }}</a></span>
+                    <span class="text__name"><a href="{% url 'user:public_userpage' maker.pk %}">{{ maker }}</a></span>
                 </div>
             </div>
 
@@ -210,7 +210,7 @@
                 </div>
 
                 <div class="member-list__one--text member-list__maker--name">    <!-- 멤버 이름 -->
-                    <span class="text__name">{{ member }}</span>
+                    <span class="text__name"><a href="{% url 'user:public_userpage' member.pk %}">{{ member }}</a></span>
                 </div>
             </div>
 
@@ -233,7 +233,7 @@
     <!-- 유저가 maker인 경우 -->
     {% if maker == user %}
     <div class="bottom-btn__box">
-        <span href="{% url 'group:group_update' group.pk %}" class="btn__update">그룹 정보 수정</span>
+        <a href="{% url 'group:group_update' group.pk %}" class="btn__update">그룹 정보 수정</a>
         <span class="btn__delete">그룹 삭제</span>
         <span class="btn-out">그룹 탈퇴하기</span> 
 
