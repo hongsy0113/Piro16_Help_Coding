@@ -53,7 +53,7 @@ class GroupStar(models.Model):
 
 # 그룹 게시글
 class GroupPost(models.Model, HitCountMixin):
-    user = models.ForeignKey(User, on_delete=models.CASCADE ,related_name='group_writer_person')
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='group_writer_person', null=True, blank=True)
     group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name= 'this_group')
 
     title = models.CharField(verbose_name='제목', max_length=50)
@@ -96,7 +96,7 @@ class GroupPost(models.Model, HitCountMixin):
 class GroupAnswer(models.Model):
     
     ### 작성자 필드
-    user = models.ForeignKey(User, on_delete=models.CASCADE ,related_name='group_answer_person')
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='group_answer_person', null=True, blank=True)
 
     content = models.TextField(verbose_name='내용')
 

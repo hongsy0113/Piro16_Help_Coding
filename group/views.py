@@ -717,6 +717,7 @@ def search_result(request, pk):
 # 게시글 작성
 def post_create(request, pk):
     group = get_object_or_404(Group, pk=pk)
+
     if request.method == 'POST':
         form = PostForm(request.POST, request.FILES)
         error_messages = GroupPostErrorMessages()
@@ -725,38 +726,72 @@ def post_create(request, pk):
             post = GroupPost.objects.create(
                 title=request.POST.get('title'),
                 content=request.POST.get('content'),
-                image=request.FILES.get('image'),
-                attached_file=request.FILES.get('attached_file'),
+                # image=request.FILES.get('image'),
+                # attached_file=request.FILES.get('attached_file'),
                 attached_link=request.POST.get('attached_link'),
                 category=request.POST.get('category'),
                 user=request.user,
                 group=group
             )
+            os.makedirs(MEDIA_ROOT + '/group_{}/image/'.format(group.pk), exist_ok=True)
+            os.makedirs(MEDIA_ROOT + '/group_{}/file/'.format(group.pk), exist_ok=True)
+
+            if request.FILES.get('image'):
+                post.image = request.FILES.get('image')
+            elif request.POST['img_recent']:
+                os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
+                shutil.copyfile('./media/temp/{}'.format(request.POST['img_recent']),
+                                './media/group_{}/image/{}'.format(group.pk, request.POST['img_recent'])) ###
+                post.image =  './group_{}/image/{}'.format(group.pk, request.POST['img_recent']) ###
+
+            if request.FILES.get('attached_file'):
+                post.image = request.FILES.get('attached_file')
+            elif request.POST['file_recent']:
+                os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
+                shutil.copyfile('./media/temp/{}'.format(request.POST['file_recent']),
+                                './media/group_{}/file/{}'.format(group.pk, request.POST['file_recent'])) ###
+                post.attached_file =  './group_{}/file/{}'.format(group.pk, request.POST['file_recent']) ###
+
+
             post.save()
+
             return redirect ('group:post_detail', pk, post.pk)
-        # if form.is_valid():
-        #     post = form.save(commit=False)
-        #     post.group = get_object_or_404(Group, pk=pk)   # 그룹 pk로 받아오기
-        #     post.category = request.POST.get('category')  # 그룹게시글 카테고리 (대분류)
-        #     post.user = request.user
-        #     post = form.save()
-            ### TODO
-            # 게시글 디테일 페이지로 이동
         else:
             original_information = OriginalInformation()
             original_information.remember(request, ['create'])
             
+            if request.FILES.get('image'):
+                os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
+                with open('./media/temp/{}'.format(request.FILES['image'].name), 'wb+') as destination:
+                    for chunk in request.FILES['image'].chunks():
+                        destination.write(chunk)
+            if request.FILES.get('attached_file'):
+                os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
+                with open('./media/temp/{}'.format(request.FILES['attached_file'].name), 'wb+') as destination:
+                    for chunk in request.FILES['attached_file'].chunks():
+                        destination.write(chunk)
+
+            original_information.image = request.POST['img_recent']
+            original_information.attached_file = request.POST['file_recent']
+
             ctx = {
                 'form': form, 
                 'error_messages': error_messages,
                 'original_information': original_information,
-                'group': group
+                'group': group,
+                'temp_img_location':'/media/temp/',
+                'temp_file_location':'/media/temp/',
                 }
             return render(request, 'group/group_post_form.html', context=ctx)
 
     else:
         form = PostForm()
-        ctx = {'form': form, 'group': group}
+        ctx = {
+            'form': form, 
+            'group': group, 
+            'temp_img_location': '/media/temp/',
+            'temp_file_location': '/media/temp/',
+            }
 
         return render(request, 'group/group_post_form.html', context=ctx)
 
@@ -770,30 +805,78 @@ def post_update(request,pk ,post_pk):
         error_messages = GroupPostErrorMessages()
         error_messages.validation_check(request , ['create'])
         if not error_messages.has_error():
+            if request.FILES.get('image'):  # form valid 시
+                post.image = request.FILES.get('image')
+                
+            else:   # 다른 필드 에러 시(기존 파일 남아있도록)
+                post.image = './group_{}/image/{}'.format(group.pk, request.POST['img_recent'])
+            if request.FILES.get('attached_file'):  # form valid 시
+                post.attached_file = request.FILES.get('attached_file')
+                
+            else:   # 다른 필드 에러 시(기존 파일 남아있도록)
+                post.attached_file = './group_{}/file/{}'.format(group.pk, request.POST['file_recent'])
+                
+
             post = form.save()
+
             return redirect('group:post_detail', pk, post.pk)
         else:
+            if request.FILES.get('image'):
+                with open('/group_{}/image/{}'.format(group.pk, request.FILES.get('image')), 'wb+') as destination:
+                    for chunk in request.FILES['image'].chunks():
+                        destination.write(chunk)
+            if request.FILES.get('attached_file'):
+                with open('/group_{}/file/{}'.format(group.pk, request.FILES.get('attached_file')), 'wb+') as destination:
+                    for chunk in request.FILES['attached_file'].chunks():
+                        destination.write(chunk)
+
             original_information = OriginalInformation()
             original_information.remember(request, ['update'])
+
+            original_information.image = request.POST['img_recent']
+            original_information.attached_file = request.POST['file_recent']
+
+            if post.image:
+                current_image = post.image.url.split('/')[-1]
+            else:
+                current_image = ''
+            if post.attached_file:
+                current_file = post.attached_file.url.split('/')[-1]
+            else:
+                current_file = ''
 
             ctx = {
                 'form': form, 
                 'error_messages': error_messages,
                 'original_information': original_information,
                 'group': group,
+                'current_image': current_image,
+                'temp_img_location': '/media/group_{}/image/'.format(group.pk),
+                'current_file': current_file,
+                'temp_file_location': '/media/group_{}/file/'.format(group.pk),
                 }
             return render(request, 'group/group_post_form.html', context=ctx)
-        # if form.is_valid():
-        #     post = form.save()  
-
-        #     return redirect('group:post_detail', pk, post_pk)
-        # else:
-        #     ctx = {'form': form,}
-        #     return render(request, 'group/group_post_form.html', context=ctx)
     else:
         form = PostForm(instance=post)
 
-        ctx = {'form': form, 'post': post, 'group': group,}
+        if post.image:
+            current_image = post.image.url.split('/')[-1]
+        else:
+            current_image = ''
+        if post.attached_file:
+            current_file = post.attached_file.url.split('/')[-1]
+        else:
+            current_file = ''
+
+        ctx = {
+            'form': form, 
+            'post': post, 
+            'group': group,
+            'current_image': current_image,
+            'temp_img_location': '/media/group_{}/image/'.format(group.pk),
+            'current_file': current_file,
+            'temp_file_location': '/media/group_{}/file/'.format(group.pk),
+            }
 
         return render(request, template_name="group/group_post_form.html", context=ctx)        
 
@@ -820,7 +903,12 @@ class GroupPostDetailView(HitCountDetailView):
         context['previous_pk'] = previous_pk
 
         post = self.object
-        username = post.user.nickname
+        
+        if post.user:
+            username = self.object.user.nickname
+        else:
+            username = '(알 수 없음)'
+
         total_likes = len(post.like_user.all())
         is_liked = self.request.user in  post.like_user.all()
 
