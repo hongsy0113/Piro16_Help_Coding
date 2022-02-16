@@ -29,10 +29,16 @@
         <!-- 그룹 생성 form -->
         <div class="group-create-form">
             <div class="group-create__input">
-                <input class="input-name" placeholder="그룹 이름을 30자 이내로 입력하세요." name="name" type="text" maxlength="30" value="{% if group.name %}{{ group.name }}{% elif origin.name %}{{ origin.name }}{% endif %}">
-                <div>
-                    {% if error %}<p style="color:red;">{{ error.name }}</p>{% endif %}
-                </div>
+                <!-- 그룹 이름 에러 메시지 -->
+                {% if error.name %}
+                <span class="input-error">
+                    <svg width="5" height="14" viewBox="0 0 9 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M8.3125 21.5825C8.3125 23.7364 6.56016 25.4888 4.40625 25.4888C2.25234 25.4888 0.5 23.7364 0.5 21.5825C0.5 19.4286 2.25234 17.6763 4.40625 17.6763C6.56016 17.6763 8.3125 19.4286 8.3125 21.5825ZM0.952148 1.71919L1.61621 15.0004C1.64741 15.6241 2.16216 16.1138 2.78662 16.1138H6.02588C6.65034 16.1138 7.16509 15.6241 7.19629 15.0004L7.86035 1.71919C7.8938 1.0498 7.36016 0.48877 6.68994 0.48877H2.12256C1.45234 0.48877 0.918701 1.0498 0.952148 1.71919Z" fill="#EB6464"></path>
+                    </svg>
+                    {{ error.name }}
+                </span>
+                {% endif %}
+                <input class="input-name" placeholder="그룹 이름을 30자 이내로 입력하세요." name="name" type="text" maxlength="30" value="{% if group.name %}{{ group.name }}{% elif origin.name %}{{ origin.name }}{% endif %}">         
             </div>
 
             <div class="group-create__input">
@@ -44,21 +50,18 @@
                 <label for="image">대표이미지</label>
                 </div>
 
-                <!-- <div class="group-post__form-box">
-                    <input class="group-post__form-input group-post__form-input--image" placeholder="첨부파일" readonly />
-                    <input name="img_recent" type="file" id="img_recent" value="{% if current_image %}{{ current_image }}{% else %}{{ origin.image }}{% endif %}" hidden />
-                    <input id="temp_img_location" value="{{ temp_img_location }}" hidden />
-                </div> -->
-
                 <div class="group-form__box">
-                    <input class="group-form__input--image" id="img_upload_name" placeholder="첨부파일" readonly />
-                    <label for="img_upload" class="group-form__label--image">사진 올리기</label>                 
+                    <p id="img_upload_name" class="group-form__input--image">
+                        <span class="input-img__text">첨부파일</span>
+                    </p>
+                    <label for="img_upload" class="group-form__label--image">사진 올리기</label> 
                     <input id="img_upload" type="file" name="image" class="form__input--file" onchange="imageChange(event);" />
                     <input name="img_recent" id="img_recent" value="{% if current_image %}{{ current_image }}{% else %}{{ origin.image }}{% endif %}" hidden />
                     <input id="temp_img_location" value="{{ temp_img_location }}" hidden />
+
                     <!-- <img id="img_display" src="" height="50" width="50" > -->
                     <!-- <input id="img_upload" type="file" name="image" onchange="imageChange(event);"></input>
-                    <p id="img_upload_name">선택된 이미지 : 없음</p> -->
+                    <p id="img_upload_name">선택된 이미지 : 없음</p>
                     <!-- <input name="img_recent" id="img_recent" value="{% if current_image %}{{ current_image }}{% else %}{{ origin.image }}{% endif %}" hidden ></input> -->
                     <!-- <input id="temp_img_location" value="{{ temp_img_location }}" hidden /> -->
                 </div>
@@ -68,13 +71,21 @@
                 <div class="text-container">
                     <span>그룹 공개 여부</span>
                 </div>
+                <!-- 그룹 공개 여부 에러 메시지 -->
+                {% if error.mode %}
+                <span class="input-error">
+                    <svg width="5" height="14" viewBox="0 0 9 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M8.3125 21.5825C8.3125 23.7364 6.56016 25.4888 4.40625 25.4888C2.25234 25.4888 0.5 23.7364 0.5 21.5825C0.5 19.4286 2.25234 17.6763 4.40625 17.6763C6.56016 17.6763 8.3125 19.4286 8.3125 21.5825ZM0.952148 1.71919L1.61621 15.0004C1.64741 15.6241 2.16216 16.1138 2.78662 16.1138H6.02588C6.65034 16.1138 7.16509 15.6241 7.19629 15.0004L7.86035 1.71919C7.8938 1.0498 7.36016 0.48877 6.68994 0.48877H2.12256C1.45234 0.48877 0.918701 1.0498 0.952148 1.71919Z" fill="#EB6464"></path>
+                    </svg>
+                    {{ error.mode }}
+                </span>
+                {% endif %}
                 <div class="group-create__mode-select">
                     <input type="radio" name="group-mode__tag" value="PUBLIC" id="public" class="mode-select__tag" {% if group.mode == 'PUBLIC' or origin.mode == 'PUBLIC' %} checked {% endif %}>
                     <label for="public">공개</label>
                     <input type="radio" name="group-mode__tag" value="PRIVATE" id="private" class="mode-select__tag" {% if group.mode == 'PRIVATE' or origin.mode == 'PRIVATE' %} checked {% endif %}>
                     <label for="private">비공개</label>
                 </div>
-                {% if error %}<p style="color:red;">{{ error.mode }}</p>{% endif %}
             </div>
         </div>
 
