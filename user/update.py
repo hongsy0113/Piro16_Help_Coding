@@ -1,7 +1,16 @@
 from .models import User, Reward, GetPoint, GetReward, Alert
-from group.models import Group
+from group.models import Group, GroupPost
 from .constants import *
 from datetime import datetime
+
+# 글자 수 줄이기
+
+
+def text_shorten(text):
+    if len(text) > 12:
+        return text[:12] + "···"
+    else:
+        return text
 
 # 질문에 좋아요를 달았을 때
 
@@ -109,8 +118,8 @@ def update_answer(question, answer, posted_user, answered_user):
         update_reward(answered_user, 'total_answer',
                       answered_user.total_answer)
         if answered_user != posted_user and posted_user:
-            Alert.objects.create(user=posted_user, content="[{}] 질문글에 댓글이 달렸어요.".format(
-                question.title), alert_type="new_comment", related_id=question.id, time=datetime.now())
+            Alert.objects.create(user=posted_user, content="[{}] 질문글에 답변이 달렸어요.".format(
+                text_shorten(question.title)), alert_type="new_comment_qna", related_id=question.id, time=datetime.now())
 
 # 질문에 답변을 삭제했을 때
 
@@ -144,13 +153,12 @@ def update_answer_reply(question, reply, replied_user):
         update_point_history(replied_user, 'answer_reply')
         update_reward(replied_user, 'total_comment',
                       replied_user.total_comment())
-        if replied_user != question.user and question.user:
+        if replied_user != question.user and reply.parent_answer.user != question.user and question.user:
             Alert.objects.create(user=question.user, content="[{}] 질문글에 댓글이 달렸어요.".format(
-                question.title), alert_type="new_comment", related_id=question.id, time=datetime.now())
+                text_shorten(question.title)), alert_type="new_comment_qna", related_id=question.id, time=datetime.now())
         if replied_user != reply.parent_answer.user and reply.parent_answer.user:
-            # 댓글을 삭제한 경우 고려해야 함
             Alert.objects.create(user=reply.parent_answer.user, content="[{}] 댓글에 대댓글이 달렸어요.".format(
-                reply.parent_answer.content), alert_type="new_reply", related_id=question.id, time=datetime.now())
+                text_shorten(reply.parent_answer.content)), alert_type="new_reply_qna", related_id=question.id, time=datetime.now())
 
 # 질문에 대댓글을 삭제했을 때
 
@@ -172,8 +180,12 @@ def update_answer_reply_cancel(question, reply, replied_user):
 
 
 def update_group_create(group, created_user):
-    Alert.objects.create(user=created_user, content="[{}] 그룹이 만들어졌습니다.".format(
-        group.name), alert_type="group_create", related_id=group.id, time=datetime.now())
+    if group.mode == 'PUBLIC':
+        Alert.objects.create(user=created_user, content="[{}] 그룹이 만들어졌어요. 가입 신청이 오면 대기자 명단 창에서 수락 또는 거절해주세요!".format(
+            text_shorten(group.name)), alert_type="group_create", related_id=group.id, time=datetime.now())
+    else:
+        Alert.objects.create(user=created_user, content="[{}] 그룹이 만들어졌어요. 초대 코드를 통해 친구를 초대해보세요!".format(
+            text_shorten(group.name)), alert_type="group_create", related_id=group.id, time=datetime.now())
     update_reward(created_user, 'total_group_created', len(
         Group.objects.filter(maker=created_user)))
 
@@ -181,10 +193,10 @@ def update_group_create(group, created_user):
 
 
 def update_private_group_join(group, registered_user):
-    Alert.objects.create(user=group.maker, content="[{}] 님이 [{}] 그룹에 가입했습니다.".format(
-        registered_user.nickname, group.name), alert_type="group_join", related_id=group.id, time=datetime.now())
-    Alert.objects.create(user=registered_user, content="[{}] 그룹에 가입되었습니다.".format(
-        group.name), alert_type="group_join", related_id=group.id, time=datetime.now())
+    Alert.objects.create(user=group.maker, content="[{}] 님이 [{}] 그룹에 가입했어요.".format(
+        registered_user.nickname, text_shorten(group.name)), alert_type="group_join", related_id=group.id, time=datetime.now())
+    Alert.objects.create(user=registered_user, content="[{}] 그룹에 가입되었어요. 그룹에서 첫 글을 남겨보세요!".format(
+        text_shorten(group.name)), alert_type="group_join", related_id=group.id, time=datetime.now())
     update_reward(registered_user, 'total_group_joined',
                   len(registered_user.group_set.all()))
 
@@ -192,19 +204,19 @@ def update_private_group_join(group, registered_user):
 
 
 def update_public_group_register(group, registered_user):
-    Alert.objects.create(user=group.maker, content="[{}] 님이 [{}] 그룹에 가입하고 싶어합니다.".format(
-        registered_user.nickname, group.name), alert_type="group_register", related_id=group.id, time=datetime.now())
-    Alert.objects.create(user=registered_user, content="[{}] 그룹 가입을 요청했습니다. 승인될 때까지 기다려주세요!".format(
-        group.name), alert_type="group_register", related_id=group.id, time=datetime.now())
+    Alert.objects.create(user=group.maker, content="[{}] 님이 [{}] 그룹에 가입하고 싶어해요. 대기자 명단 창에서 수락 또는 거절해주세요!".format(
+        registered_user.nickname, text_shorten(group.name)), alert_type="group_register", related_id=group.id, time=datetime.now())
+    Alert.objects.create(user=registered_user, content="[{}] 그룹 가입을 요청했어요. 승인될 때까지 기다려주세요!".format(
+        text_shorten(group.name)), alert_type="group_register", related_id=group.id, time=datetime.now())
 
 # 그룹 가입 신청을 수락했을 때 (공개)
 
 
 def update_public_group_join(group, registered_user):
-    Alert.objects.create(user=group.maker, content="[{}] 님이 [{}] 그룹에 가입했습니다.".format(
-        registered_user.nickname, group.name), alert_type="group_join", related_id=group.id, time=datetime.now())
-    Alert.objects.create(user=registered_user, content="[{}] 그룹에 가입되었습니다.".format(
-        group.name), alert_type="group_join", related_id=group.id, time=datetime.now())
+    Alert.objects.create(user=group.maker, content="[{}] 님이 [{}] 그룹에 가입했어요.".format(
+        registered_user.nickname, text_shorten(group.name)), alert_type="group_join", related_id=group.id, time=datetime.now())
+    Alert.objects.create(user=registered_user, content="[{}] 그룹에 가입되었어요. 그룹에서 첫 글을 남겨보세요!".format(
+        text_shorten(group.name)), alert_type="group_join", related_id=group.id, time=datetime.now())
     update_reward(registered_user, 'total_group_joined',
                   len(registered_user.group_set.all()))
 
@@ -212,35 +224,72 @@ def update_public_group_join(group, registered_user):
 
 
 def update_public_group_reject(group, registered_user):
-    Alert.objects.create(user=registered_user, content="[{}] 그룹 가입 신청이 거절되었습니다.".format(
-        group.name), alert_type="group_reject", related_id=group.id, time=datetime.now())
+    Alert.objects.create(user=registered_user, content="[{}] 그룹 가입 신청이 거절되었어요. 아쉽지만 다른 그룹을 찾아보아요!".format(
+        text_shorten(group.name)), alert_type="group_reject", related_id=group.id, time=datetime.now())
 
 
 # 그룹 대표를 넘겨줄 때
 
 def update_change_group_maker(group, original_maker, new_maker):
-    Alert.objects.create(user=original_maker, content="[{}] 그룹에서 탈퇴했습니다.".format(
-        group.name), alert_type="group_drop", related_id=group.id, time=datetime.now())
-    Alert.objects.create(user=new_maker, content="[{}] 그룹 대표가 되었습니다.".format(
-        group.name), alert_type="group_maker", related_id=group.id, time=datetime.now())
+    Alert.objects.create(user=original_maker, content="[{}] 그룹에서 탈퇴했어요.".format(
+        text_shorten(group.name)), alert_type="group_drop", related_id=group.id, time=datetime.now())
+    if group.mode == 'PUBLIC':
+        Alert.objects.create(user=new_maker, content="[{}] 그룹 대표가 되었어요. 가입 신청이 오면 대기자 명단 창에서 수락 또는 거절해주세요!".format(
+            text_shorten(group.name)), alert_type="group_maker", related_id=group.id, time=datetime.now())
+    else:
+        Alert.objects.create(user=new_maker, content="[{}] 그룹 대표가 되었어요. 초대 코드를 통해 친구를 초대해보세요!".format(
+            text_shorten(group.name)), alert_type="group_maker", related_id=group.id, time=datetime.now())
 
 
 # 그룹을 탈퇴할 때
 def update_drop_group(group, dropped_user):
-    Alert.objects.create(user=dropped_user, content="[{}] 그룹에서 탈퇴했습니다.".format(
-        group.name), alert_type="group_drop", related_id=group.id, time=datetime.now())
+    Alert.objects.create(user=dropped_user, content="[{}] 그룹에서 탈퇴했어요.".format(
+        text_shorten(group.name)), alert_type="group_drop", related_id=group.id, time=datetime.now())
 
 # 그룹을 삭제할 때
 
 
 def update_delete_group(group):
     for member in group.members.all():
-        Alert.objects.create(user=member, content="[{}] 그룹이 삭제되었습니다.".format(
-            group.name), alert_type="group_delete", related_id=group.id, time=datetime.now())
+        Alert.objects.create(user=member, content="[{}] 그룹이 삭제되었어요.".format(
+            text_shorten(group.name)), alert_type="group_delete", related_id=group.id, time=datetime.now())
+
+
+# 그룹에 글을 작성할 때
+def update_group_post(post, posted_user):
+    # post : 해당 글
+    # posted_user : 글 작성자
+    if posted_user:
+        update_reward(posted_user, 'total_group_post',
+                      len(GroupPost.objects.filter(user=posted_user)))
+
+# 그룹 글에 댓글을 작성할 때
+
+
+def update_group_comment(post, comment, posted_user, commented_user):
+    # post : 해당 글
+    # comment : 해당 댓글
+    # posted_user : 글 작성자
+    # commented_user : 댓글 작성자
+    if commented_user != posted_user and posted_user:
+        Alert.objects.create(user=posted_user, content="[{}] 그룹의 [{}] 글에 댓글이 달렸어요.".format(
+            text_shorten(post.group.name), text_shorten(post.title)), alert_type="new_comment_group", related_id=str(post.group.id)+" "+str(post.id), time=datetime.now())
+
+
+def update_group_comment_reply(post, reply, replied_user):
+    # post : 해당 글
+    # reply : 해당 대댓글
+    # replied_user : 대댓글 작성자
+    if replied_user:
+        if replied_user != post.user and reply.parent_answer.user != post.user and post.user:
+            Alert.objects.create(user=post.user, content="[{}] 그룹의 [{}] 글에 댓글이 달렸어요.".format(
+                text_shorten(post.group.name), text_shorten(post.title)), alert_type="new_comment_group", related_id=str(post.group.id)+" "+str(post.id), time=datetime.now())
+        if replied_user != reply.parent_answer.user and reply.parent_answer.user:
+            Alert.objects.create(user=reply.parent_answer.user, content="[{}] 그룹의 [{}] 댓글에 대댓글이 달렸어요.".format(
+                text_shorten(post.group.name), text_shorten(reply.parent_answer.content)), alert_type="new_reply_group", related_id=str(post.group.id)+" "+str(post.id), time=datetime.now())
+
 
 # 업적 업데이트
-
-
 def update_reward(user, type, current_state):
     if Reward.objects.filter(type=type, criteria=current_state):
         reward = Reward.objects.get(type=type, criteria=current_state)
@@ -259,6 +308,6 @@ def update_point_history(user, type):
             if '_cancel' not in type:
                 point = POINT[category][type]
             else:
-                point = POINT[category][type.removesuffix('_cancel')] * (-1)
+                point = POINT[category][type[:-7]] * (-1)
             GetPoint.objects.create(
                 user=user, type=type, point=point, get_date=datetime.now())

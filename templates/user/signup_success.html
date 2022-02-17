@@ -2,6 +2,8 @@
 {% block title %} 도와줘, 코딩 | 가입 완료 {% endblock %}
 
 {% block content %}
-<p>{{ email }} 로 회원가입 인증 메일이 발송되었습니다. 24시간 이내에 인증 메일을 확인해주세요.</p>
+<p>{{ email }} 로 회원가입 인증 메일이 발송되었어요.
+  가입한 이메일 주소로 로그인한 후, 메일을 열어 링크를 클릭해주세요!
+  24시간 이내에 인증 메일을 확인하지 않으면 회원가입이 취소돼요.</p>
 <button class="btn btn-secondary"><a class="text-white" href="{% url 'user:main' %}" style="text-decoration: none">메인으로 돌아가기</a></button>
 {% endblock content %}

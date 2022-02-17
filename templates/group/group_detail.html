@@ -65,7 +65,6 @@
                 <span>그룹 찜하기</span>
                 {% endif %}
             </span>
-            <!-- <span>그룹 찜하기</span> -->
         </div>
         {% endif %}
 
@@ -93,7 +92,7 @@
 
         <div class="info-content__member">
             <p class="text-box__top">그룹 인원</p>
-            <p class="text-box__bottom">{{ group.member |  length }}명</p>
+            <p class="text-box__bottom">{{ group.members |  length }}명</p>
         </div>
 
         <div class="info-content__intro">
@@ -149,7 +148,7 @@
         {% if group.mode == 'PRIVATE' %}
             <!-- 그룹 초대 버튼 -->
             <div class="group__code--btn top-right__button">
-                <span>멤버 초대하기</span>
+                <span>멤버 초대코드</span>
             </div>
             <!-- 그룹 초대코드 생성 modal -->
             <div class="group__code--alert-box modal modal__hidden" id="create-code">
@@ -174,6 +173,7 @@
         <!-- 그룹 maker 먼저 -->
         <div class="member-list__maker">
             <div class="member-list__maker--left">
+                
                 <div class="member-list__img">
                     {% if maker.img %}
                     <img src="{{ maker.img.url }}" height="50" width="50" style="border-radius: 50px;"/>
@@ -183,7 +183,7 @@
                 </div>
 
                 <div class="member-list__maker--text member-list__maker--name">
-                    <span class="text__name"><a href="{% url 'user:public_userpage' maker.pk %}">{{ maker }}</a></span>
+                    <span class="text__name"><a href="{% url 'user:public_userpage' maker.pk %}">{{ maker }}👑</a></span>
                 </div>
             </div>
 
@@ -245,7 +245,6 @@
             <button class="group__delete--no" onclick="closeGroupDeleteAlert()">아니요</button>
         </div>
 
-
         <!-- 그룹 탈퇴 modal -->
         <!-- <div class="group__drop--alert">
             <div class="group__drop--text">정말 을 탈퇴하시겠습니까?</div>
@@ -265,7 +264,7 @@
     <!-- 공개 그룹 + 유저가 member가 아닌 경우 -->
     {% if group.mode == 'PUBLIC' and user in waits %}
         <div class="bottom-btn__box">
-            <span class="btn-join-out">가입 대기중 🐱</span>
+            <span class="btn-join-out">가입 대기중 💬</span>
         </div>
     {% elif group.mode == 'PUBLIC' and user not in members %}
         <div class="bottom-btn__box">

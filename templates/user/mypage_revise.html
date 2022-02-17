@@ -18,7 +18,7 @@
             {% csrf_token %}
             <div>
                 <label for="nickname">닉네임</label><br />
-                <input type="text" name="nickname" id="nickname" value="{% if original_information %}{{ original_information.nickname }}{% else %}{{ user.nickname }}{% endif %}"/>
+                <input type="text" name="nickname" id="nickname" value="{% if original_information %}{{ original_information.nickname }}{% else %}{{ user.nickname }}{% endif %}" placeholder="닉네임을 7글자 이내로 지어주세요."/>
                 {% if revise_error.nickname %}<span class="userform__error">
                     <svg width="5" height="14" viewBox="0 0 9 26" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M8.3125 21.5825C8.3125 23.7364 6.56016 25.4888 4.40625 25.4888C2.25234 25.4888 0.5 23.7364 0.5 21.5825C0.5 19.4286 2.25234 17.6763 4.40625 17.6763C6.56016 17.6763 8.3125 19.4286 8.3125 21.5825ZM0.952148 1.71919L1.61621 15.0004C1.64741 15.6241 2.16216 16.1138 2.78662 16.1138H6.02588C6.65034 16.1138 7.16509 15.6241 7.19629 15.0004L7.86035 1.71919C7.8938 1.0498 7.36016 0.48877 6.68994 0.48877H2.12256C1.45234 0.48877 0.918701 1.0498 0.952148 1.71919Z" fill="#EB6464"/>
@@ -28,9 +28,9 @@
             <div class="userform__birth">
                 <label for="birth">생년월일</label><br />
                 <div class="userform__birth__inputcontainer">
-                    <input type="text" name="birth-y" id="birth-y" value="{% if original_information %}{{ original_information.birth_y }}{% else %}{{ user.birth.year }}{% endif %}"/>
-                    <input type="text" name="birth-m" id="birth-m" value="{% if original_information %}{{ original_information.birth_m }}{% else %}{{ user.birth.month }}{% endif %}"/>
-                    <input type="text" name="birth-d" id="birth-d" value="{% if original_information %}{{ original_information.birth_d }}{% else %}{{ user.birth.day }}{% endif %}"/>
+                    <input type="text" name="birth-y" id="birth-y" value="{% if original_information %}{{ original_information.birth_y }}{% else %}{{ user.birth.year }}{% endif %}" placeholder="년"/>
+                    <input type="text" name="birth-m" id="birth-m" value="{% if original_information %}{{ original_information.birth_m }}{% else %}{{ user.birth.month }}{% endif %}" placeholder="월"/>
+                    <input type="text" name="birth-d" id="birth-d" value="{% if original_information %}{{ original_information.birth_d }}{% else %}{{ user.birth.day }}{% endif %}" placeholder="일"/>
                 </div>
                 {% if revise_error.birth %}<span class="userform__error">
                     <svg width="5" height="14" viewBox="0 0 9 26" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -81,21 +81,21 @@
             <div id="password_change_block">
                 <div style="margin-bottom: 20px;">
                     <label for="current_password">현재 비밀번호</label><br />
-                    <input type="password" name="current_password" id="current_password" value="{{ original_information.current_password }}"/>
+                    <input type="password" name="current_password" id="current_password" value="{{ original_information.current_password }}" placeholder="비밀번호를 바꾸기 위해 현재 비밀번호를 입력해주세요."/>
                     {% if revise_error.current_password %}<span class="userform__error"><svg width="5" height="14" viewBox="0 0 9 26" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M8.3125 21.5825C8.3125 23.7364 6.56016 25.4888 4.40625 25.4888C2.25234 25.4888 0.5 23.7364 0.5 21.5825C0.5 19.4286 2.25234 17.6763 4.40625 17.6763C6.56016 17.6763 8.3125 19.4286 8.3125 21.5825ZM0.952148 1.71919L1.61621 15.0004C1.64741 15.6241 2.16216 16.1138 2.78662 16.1138H6.02588C6.65034 16.1138 7.16509 15.6241 7.19629 15.0004L7.86035 1.71919C7.8938 1.0498 7.36016 0.48877 6.68994 0.48877H2.12256C1.45234 0.48877 0.918701 1.0498 0.952148 1.71919Z" fill="#EB6464"/>
                     </svg>{{ revise_error.current_password }}</span>{% endif %}
                 </div>
                 <div style="margin-bottom: 20px;">
                     <label for="new_password1">새 비밀번호</label><br />
-                    <input type="password" name="new_password1" id="new_password1" value="{{ original_information.new_password1 }}"/>
+                    <input type="password" name="new_password1" id="new_password1" value="{{ original_information.new_password1 }}" placeholder="영문자, 숫자 혼합 8자리 이상의 비밀번호를 입력해주세요."/>
                     {% if revise_error.new_password1 %}<span class="userform__error"><svg width="5" height="14" viewBox="0 0 9 26" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M8.3125 21.5825C8.3125 23.7364 6.56016 25.4888 4.40625 25.4888C2.25234 25.4888 0.5 23.7364 0.5 21.5825C0.5 19.4286 2.25234 17.6763 4.40625 17.6763C6.56016 17.6763 8.3125 19.4286 8.3125 21.5825ZM0.952148 1.71919L1.61621 15.0004C1.64741 15.6241 2.16216 16.1138 2.78662 16.1138H6.02588C6.65034 16.1138 7.16509 15.6241 7.19629 15.0004L7.86035 1.71919C7.8938 1.0498 7.36016 0.48877 6.68994 0.48877H2.12256C1.45234 0.48877 0.918701 1.0498 0.952148 1.71919Z" fill="#EB6464"/>
                     </svg>{{ revise_error.new_password1 }}</span>{% endif %}
                 </div>
                 <div>
                     <label for="new_password2">새 비밀번호 확인</label><br />
-                    <input type="password" name="new_password2" id="new_password2" value="{{ original_information.new_password2 }}"/>
+                    <input type="password" name="new_password2" id="new_password2" value="{{ original_information.new_password2 }}" placeholder="새 비밀번호를 다시 한 번 입력해주세요."/>
                     {% if revise_error.new_password2 %}<spa class="userform__error"n><svg width="5" height="14" viewBox="0 0 9 26" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M8.3125 21.5825C8.3125 23.7364 6.56016 25.4888 4.40625 25.4888C2.25234 25.4888 0.5 23.7364 0.5 21.5825C0.5 19.4286 2.25234 17.6763 4.40625 17.6763C6.56016 17.6763 8.3125 19.4286 8.3125 21.5825ZM0.952148 1.71919L1.61621 15.0004C1.64741 15.6241 2.16216 16.1138 2.78662 16.1138H6.02588C6.65034 16.1138 7.16509 15.6241 7.19629 15.0004L7.86035 1.71919C7.8938 1.0498 7.36016 0.48877 6.68994 0.48877H2.12256C1.45234 0.48877 0.918701 1.0498 0.952148 1.71919Z" fill="#EB6464"/>
                     </svg>{{ revise_error.new_password2 }}</spa>{% endif %}

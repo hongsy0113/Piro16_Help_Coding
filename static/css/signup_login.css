@@ -12,6 +12,9 @@
     text-align: center;
 }
 
+.login__innercontainer label {
+    margin-bottom: 10px;
+}
 
 .signup__page1, .signup__page2, .login__innercontainer, .revise__container {
     display: flex;

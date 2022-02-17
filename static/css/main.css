@@ -54,7 +54,6 @@ section {
 /* 검색창 */
 .qna__search-container {
     display: flex;
-    fe
     align-items: center;
     gap: 20px;
     height: 60px;
@@ -387,4 +386,41 @@ p.main__title, .main__qna__box p {
     align-items: flex-start;
     width: 1080px;
     margin: 0 auto;
+}
+
+/* 내 그룹 최근 게시글이 없을 경우 text */
+.landing__group__notpost {
+    display: flex;
+    width: 1080px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 30px;
+    border: 2px solid #BDBDBD;
+    border-radius: 10px;
+}
+
+.notpost-text {
+    font-family: Noto Sans CJK KR;
+    font-weight: bold; 
+    font-size: 25px;
+    color: #4E4E4E;
+}
+
+.landing__ctabtn--group {
+    background: #37C6E5;
+    color: white;
+    width: 235px;
+    height: 66px;
+    margin-top: 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 33px;
+    gap: 15px;
+    text-decoration: none;
+    font-size: 24px;
+    font-weight: bold;
+    transition: 0.5s;
 }
