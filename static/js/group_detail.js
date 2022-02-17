@@ -161,8 +161,8 @@ const groupWaitHandleResponse = (groupName, waitsName, waitsImg, waitsId) => {
                     </div>  
                     <span class="btn wait-member__name wait-member__name--${ waitMemberId }" id="wait-name-${ waitMemberId }">${ waitsName[i] }</span>  
                 </div>          
-                <div class="wait__text--${ waitMemberId } wait-member__text"><span>가입을 기다리고 있어요!<span></div>
-                <div class="wait-member__btnbox">
+            
+                <div class="wait-member__btnbox wait-member__btnbox--${ waitMemberId }">
                     <input type="button" value="수락" name="accept" class="wait__accept--btn wait__accept--btn--${ waitMemberId } wait-accept__btn" id="accept-btn-${ waitMemberId }">
                     <input type="button" value="거절" name="reject" class="wait__reject--btn wait__reject--btn--${ waitMemberId } wait-reject__btn" id="reject-btn-${ waitMemberId }">
                 </div>
@@ -224,8 +224,12 @@ const groupWaitHandleResponse = (groupName, waitsName, waitsImg, waitsId) => {
     }
 
     joinAcceptHandleResponse = (userId) => {
-        const memberWaitAlertText = document.querySelector(`.wait__text--${userId}`);
+        const memberWaitAlertText = document.querySelector(`.wait-member__btnbox--${ userId }`);
+        const memberWaitAcceptBtn = document.querySelector(`.wait__accept--btn--${ userId }`);
+        const memberWaitRejectBtn = document.querySelector(`.wait__reject--btn--${ userId }`);
 
+        memberWaitAcceptBtn.style.display = 'none';
+        memberWaitRejectBtn.style.display = 'none';
         memberWaitAlertText.innerHTML = `<span class="alert__text">가입을 수락했습니다.</span>`
     }
 
@@ -241,7 +245,12 @@ const groupWaitHandleResponse = (groupName, waitsName, waitsImg, waitsId) => {
     }
 
     joinRejectHandleResponse = (userId) => {
-        const memberWaitAlertText = document.querySelector(`.wait__text--${userId}`);
+        const memberWaitAlertText = document.querySelector(`.wait-member__btnbox--${ userId }`);
+        const memberWaitAcceptBtn = document.querySelector(`.wait__accept--btn--${ userId }`);
+        const memberWaitRejectBtn = document.querySelector(`.wait__reject--btn--${ userId }`);
+
+        memberWaitAcceptBtn.style.display = 'none';
+        memberWaitRejectBtn.style.display = 'none';
 
         memberWaitAlertText.innerHTML = `<span class="alert__text">가입을 거절했습니다.</span>`
     }
