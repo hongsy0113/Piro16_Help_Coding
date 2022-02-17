@@ -298,4 +298,37 @@ section{
     background-color: transparent;
 }
 
+/* 게시판 글이 없을 때 */
+.no-post__box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 45px;
+    height: 420px;
+}
 
+.no-post__text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.no-post__text h2 {
+    font-family: Noto Sans CJK KR;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 35px;
+    line-height: 105%;
+    color: #4F4F4F;
+    margin-bottom: 10px;
+}
+
+.no-post__btnbox {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
