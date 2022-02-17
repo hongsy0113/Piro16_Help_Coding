@@ -88,7 +88,7 @@
     <div class="conatiner-info__content">
         <div class="info-content__maker">
             <p class="text-box__top">그룹을 만든 사람</p>
-            <p class="text-box__bottom">{{ group.maker }}</p>
+            <p class="text-box__bottom"><a href="{% url 'user:public_userpage' group.maker.pk %}" style="text-decoration: none; color:#4e4e4e;">{{ group.maker }}</a></p>
         </div>
 
         <div class="info-content__member">
@@ -127,6 +127,7 @@
                         <div class="modal__content--bottom group-wait__modal--bottom">
                             <div class="group__wait--member-list">  <!-- 대기자 명단 js로 추가 -->
                             </div>
+                        
                             <div class="group__wait--closebox">
                                 <button class="group__wait--close modal__close" onclick="closeGroupWait()">완료</button>
                             </div>

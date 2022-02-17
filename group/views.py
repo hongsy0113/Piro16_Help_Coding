@@ -571,12 +571,13 @@ def wait_list_ajax(request):
         elif request.GET.get('reject'):
             group.waits.remove(wait_member)
             group.save()
+    
 
     return JsonResponse({
         'groupName': group.name,
         'waitsName': wait_member_name,
         'waitsImg': wait_member_img,
-        'waitsId': wait_member_id
+        'waitsId': wait_member_id,
     })
 
 
