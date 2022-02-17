@@ -105,6 +105,10 @@
     gap: 13px;
 }
 
+.question__cont-left span {
+    word-break: break-word;
+}
+
 .list__title {
     font-weight: bold;
     font-size: 20px;
