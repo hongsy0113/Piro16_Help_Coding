@@ -922,13 +922,13 @@ def post_update(request, pk, post_pk):
             if request.FILES.get('image'):  # form valid 시
                 post.image = request.FILES.get('image')
 
-            else:   # 다른 필드 에러 시(기존 파일 남아있도록)
+            elif request.POST['img_recent'] : # 다른 필드 에러 시(기존 파일 남아있도록)
                 post.image = './group_{}/image/{}'.format(
                     group.pk, request.POST['img_recent'])
             if request.FILES.get('attached_file'):  # form valid 시
                 post.attached_file = request.FILES.get('attached_file')
 
-            else:   # 다른 필드 에러 시(기존 파일 남아있도록)
+            elif request.POST['file_recent']:   # 다른 필드 에러 시(기존 파일 남아있도록)
                 post.attached_file = './group_{}/file/{}'.format(
                     group.pk, request.POST['file_recent'])
 
