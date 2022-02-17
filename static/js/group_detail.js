@@ -255,7 +255,7 @@ const groupWaitHandleResponse = (groupName, waitsName, waitsImg, waitsId) => {
     })
 
     const onClickWaitUserProfile = async (userId) => {
-        const url = '/user/group_wait_profile/';
+        const url = '/group_wait_profile/';
         const { data } = await axios.post(url, {
             userId
         });
@@ -265,7 +265,7 @@ const groupWaitHandleResponse = (groupName, waitsName, waitsImg, waitsId) => {
     }
 
     waitProfileHandleResponse = (userId) => {
-        window.location.href = `http://127.0.0.1:8000/user/${userId}/public_userpage`;
+        window.location.href = `http://127.0.0.1:8000/${userId}/public_userpage`;
     }
 }
 

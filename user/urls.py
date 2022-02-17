@@ -25,5 +25,5 @@ urlpatterns = [
     path('mypage/alert/check_all_ajax/',
          views.check_all_alert_ajax, name="check_all_alert_ajax"),
      path('<int:pk>/public_userpage/', views.public_userpage, name='public_userpage'),
-     path('<int:pk>/group_wait_profile/', view=views.group_wait_profile, name='group_wait_profile'),
+     path('group_wait_profile/', view=views.group_wait_profile, name='group_wait_profile'),
 ]

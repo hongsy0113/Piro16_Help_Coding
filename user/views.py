@@ -520,7 +520,7 @@ def public_userpage(request, pk):
 
 # 그룹 가입 대기자 프로필 정보
 @csrf_exempt
-def group_wait_profile(request, pk):
+def group_wait_profile(request):
     req = json.loads(request.body)
     wait_user_id = req['userId']
 
