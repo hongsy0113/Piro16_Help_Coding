@@ -307,6 +307,7 @@ def group_detail(request, pk):
 
     mygroup = user.group_set.all()
     members = group.members.all()
+    waits = group.waits.all()
     if group.maker in members:
         maker = group.maker
     else:
@@ -321,6 +322,7 @@ def group_detail(request, pk):
         'group': group, 
         'mygroup': mygroup,
         'members': members,
+        'waits': waits,
         'maker': maker,
         'total_likes': total_likes,
         'is_liked': is_liked,
@@ -506,6 +508,19 @@ def public_group_join(request, pk):
         group.waits.add(user)
         group.save()
 
+    return redirect('group:group_detail', pk)
+
+# 가입 클릭 후 취소
+def group_wait_cancel(request, pk):
+    user = request.user
+    group = get_object_or_404(Group, pk=pk)
+    members = group.members.all()
+    waits = group.waits.all()
+
+    if user not in members and user in waits:
+        group.waits.remove(user)
+        group.save()
+        
     return redirect('group:group_detail', pk)
 
 # 수락 선택 시
