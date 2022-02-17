@@ -45,17 +45,22 @@
             <span>좋아요순</span>
             {% endif %}
         </span>
+    </div>
 
-        {% comment %}
-        <!-- select box -->
-        <form method="get" action="{% url 'group:post_list' group.pk %}">
-            <select id="select_sort-test"class="select_sort" onchange="location=this.value; getSelectValue(this.form); ">
-                <option class="sort-recent" value="?{% param_replace sort='recent' %}" {% if sort_by == 'recent' %} selected {% endif %}>최신순</option>
-                <option class="sort-liked" value="?{% param_replace sort='liked' %}" {% if sort_by == 'liked' %} selected {% endif %}>좋아요순</option>
-                <option class="sort-view" value="?{% param_replace sort='view' %}" {% if sort_by == 'view' %} selected {% endif %}>조회수순</option>
-            </select>
+    <!-- 게시글 필터 -->
+    <div class="post-filter__box">
+        <form method="GET" action="{% url 'group:post_list' group.pk %}" class="post__filterbox--form" >
+            <div class="filter-detail__box">
+                <input type="checkbox" name="filter_by" value="S" id="filter_by-s" class="tag " {% if 'S' in filter_by %} checked {% endif %}/ />
+                <label for="filter_by-s">자랑글</label>
+                <input type="checkbox" name="filter_by" value="Q" id="filter_by-q" class="tag " {% if 'Q' in filter_by %} checked {% endif %}/  />
+                <label for="filter_by-q">질문글</label>
+                <input type="checkbox" name="filter_by" value="ETC" id="filter_by-etc" class="tag " {% if 'ETC' in filter_by %} checked {% endif %}//>
+                <label for="filter_by-etc">기타</label>
+            </div>
+            <button type="submit" class="post-filter__box--btn">적용</button>       
         </form>
-        {% endcomment %}    
+        <a href="{% url 'group:post_list' group.pk %}" class="post__filterbox--reset">초기화</a>
     </div>
 
     <div class="group-post__list">  <!-- 게시글 목록 시작 -->

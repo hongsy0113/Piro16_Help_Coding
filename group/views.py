@@ -649,6 +649,17 @@ def post_list(request, pk):
     group = Group.objects.get(pk=pk)
     page = request.GET.get('page', '1')    # 페이지
     
+    # 게시글 필터
+    filter_by_list = request.GET.getlist('filter_by')
+    if filter_by_list:
+        num = len(filter_by_list)
+        if num == 1:
+            posts= posts.filter(category=filter_by_list[0]) 
+        elif num == 2:
+            posts= posts.filter(Q(category=filter_by_list[0]) | Q(category=filter_by_list[1]))
+        elif num==3:
+            pass
+
     # 게시물 정렬
     sort_by = request.GET.get('sort', 'recent')
     if sort_by == 'recent':    # 최신순
@@ -677,7 +688,8 @@ def post_list(request, pk):
         'posts': page_obj,
         'posts_value_dict': posts_value_dict,
         'group': group,
-        'sort_by': sort_by
+        'sort_by': sort_by,
+        'filter_by': filter_by_list,
     }
     return render(request, 'group/group_post_list.html', context=ctx)
 
