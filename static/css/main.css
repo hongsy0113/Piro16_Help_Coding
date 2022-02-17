@@ -54,7 +54,7 @@ section {
 /* 검색창 */
 .qna__search-container {
     display: flex;
-    fe
+    
     align-items: center;
     gap: 20px;
     height: 60px;

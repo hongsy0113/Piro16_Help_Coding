@@ -80,7 +80,8 @@ def group_home(request):
         'groups': page_obj,
         'groups_star_dict': groups_star_dict,
         'sort_by': sort_by,
-        'ani_image': static('image/helphelp.png')
+        'ani_image': static('image/helphelp.png'),
+        'code_ex': static('image/code_ex.jpg')
     }
 
     return render(request, template_name='group/group_home.html', context=ctx)

@@ -53,12 +53,15 @@ function showPrivateGroup() {
 function closeGroupJoin() {
     const closeJoinAlert = document.getElementById('join-group');
     const groupCodeAlertText = document.querySelector('.group-code__text');
-    const groupCodeInput = document.querySelector('.group-code__input')
+    const groupCodeInput = document.querySelector('.group-code__input');
+    const groupCodeGuideAlert = document.querySelector('.group__code--guide');
+
 
     groupCodeAlertText.innerHTML = '';
     groupCodeInput.value = '';
     closeJoinAlert.style.display = 'none';
     groupWhichJoin.style.display = 'none';
+    groupCodeGuideAlert.style.display = 'none';
 }
 
 // groupJoinBtn.addEventListener('click', showGroupJoin);
@@ -103,3 +106,14 @@ const groupCodeHandleResponse = (message) => {
 //         alert('로그인 후 이용해주세요.');
 //     })
 // }
+
+const groupCodeGuideAlert = document.querySelector('.group__code--guide');
+const groupCodeGuideHover = document.querySelector('.group__code--guide-hover');
+
+groupCodeGuideHover.addEventListener('mouseover', function(){
+    groupCodeGuideAlert.style.display = 'flex';
+})
+
+groupCodeGuideHover.addEventListener('mouseout', (event) => {
+    groupCodeGuideAlert.style.display = 'none';
+})
