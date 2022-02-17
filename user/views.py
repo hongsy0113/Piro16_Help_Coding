@@ -11,6 +11,8 @@ from .models import *
 from .constants import *
 from .update import *
 from qna.models import Question, Answer
+from group.models import * 
+from group.iframe import *
 from django.contrib import messages
 from django.contrib.sites.shortcuts import get_current_site
 from django.contrib.auth.hashers import check_password
@@ -32,7 +34,23 @@ from threading import Timer
 
 
 def main(request):
-    return render(request, 'user/main.html')
+    user = request.user
+    ctx ={}
+    if user != AnonymousUser():
+        groups = user.group_set.all()
+        posts = GroupPost.objects.filter(group__in=groups).exclude(user=user).order_by('-created_at')[:3]
+        posts_img_dict = {}
+        for post in posts: 
+            if post.attached_link:
+                posts_img_dict[post] = get_img_src(post.attached_link)
+            elif post.image:
+                posts_img_dict[post] = post.image.url
+            else: 
+                posts_img_dict[post] = ''
+
+        ctx['posts_img_dict'] = posts_img_dict
+    
+    return render(request, 'user/main.html', context=ctx)
 
 # Login
 
