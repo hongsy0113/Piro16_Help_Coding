@@ -7,7 +7,8 @@ import uuid
 import base64
 import codecs
 import json
-import shutil, os
+import shutil
+import os
 import mimetypes
 import time
 from django.shortcuts import render, redirect, get_object_or_404
@@ -20,7 +21,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q
 from .models import *
 from .forms import *
-from django.core.paginator import Paginator 
+from django.core.paginator import Paginator
 from hitcount.views import HitCountDetailView
 from django.views.generic import ListView, View
 from django.views.generic.detail import SingleObjectMixin
@@ -35,6 +36,8 @@ from django.core.exceptions import ValidationError
 ######## 그룹 메인 페이지 ########
 
 # 나의 그룹
+
+
 def group_home(request):
     user = request.user  # 현재 접속한 사용자
 
@@ -47,12 +50,11 @@ def group_home(request):
     sort_by = request.GET.get('sort', 'star')
     if sort_by == 'name':
         groups = groups.order_by('name', '-id')
-    elif sort_by == 'star': #filter -> 정렬
+    elif sort_by == 'star':  # filter -> 정렬
         dict = {}
         for group in groups:
             dict[group] = group.star_group.filter(user=user).count()
         groups = sorted(groups, key=lambda group: dict[group], reverse=True)
-
 
     # for group_star in groups:
     #     if is_star = 'True':
@@ -61,7 +63,7 @@ def group_home(request):
     # 페이징 처리
     page = request.GET.get('page', '1')
 
-    ### user의 닉네임이랑 같은 경우에 처리해야 하는 부분 이후 추가
+    # user의 닉네임이랑 같은 경우에 처리해야 하는 부분 이후 추가
     pagintor = Paginator(groups, 6)
     page_obj = pagintor.get_page(page)
 
@@ -72,12 +74,12 @@ def group_home(request):
         else:
             groups_star_dict[group] = False
 
-    ctx = { 
-        'user': user,  #나중에는 쓸모 X 
+    ctx = {
+        'user': user,  # 나중에는 쓸모 X
         'groups': page_obj,
         'groups_star_dict': groups_star_dict,
         'sort_by': sort_by,
-        'ani_image': static('image/helphelp.png')    
+        'ani_image': static('image/helphelp.png')
     }
 
     return render(request, template_name='group/group_home.html', context=ctx)
@@ -88,14 +90,13 @@ def group_search_public(request):
     if 'search' in request.GET:
         query = request.GET.get('search')
         groups = Group.objects.all().filter(Q(name__icontains=query) & Q(mode='PUBLIC'))
-        ctx = { 
+        ctx = {
             'groups': groups,
             'query': query,
             'ani_image': static('image/helphelp.png'),
         }
 
     return render(request, 'group/group_search_public.html', context=ctx)
-
 
 
 ######## 그룹 CRUD ########
@@ -111,29 +112,31 @@ def group_create(request):
         image = request.FILES.get('image')
         mode = request.POST.get('group-mode__tag')
 
-        # 에러 메세지 
+        # 에러 메세지
         error = GroupErrorMessage()
         error.validation_group(name, mode, '', 'group_create')
-        
+
         if not error.has_error_group() and form.is_valid():
             group = form.save()
-            os.makedirs(MEDIA_ROOT + '/group_{}/thumbnail/'.format(group.pk), exist_ok=True)
+            os.makedirs(
+                MEDIA_ROOT + '/group_{}/thumbnail/'.format(group.pk), exist_ok=True)
             group.mode = mode
             group.maker = user    # 방장 = 접속한 유저
             group.members.add(user)  # 방장도 그룹의 멤버로 추가
 
             if request.FILES.get('image'):  # form valid + 이미지 첨부 시
                 group.image = request.FILES.get('image')
-            elif request.POST['img_recent']: 
+            elif request.POST['img_recent']:
                 os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
                 shutil.copyfile('./media/temp/{}'.format(request.POST['img_recent']),
-                                './media/group_{}/thumbnail/{}'.format(group.pk, request.POST['img_recent'])) ###
-                group.image =  './group_{}/thumbnail/{}'.format(group.pk, request.POST['img_recent']) ###
+                                './media/group_{}/thumbnail/{}'.format(group.pk, request.POST['img_recent']))
+                group.image = './group_{}/thumbnail/{}'.format(
+                    group.pk, request.POST['img_recent'])
             group.save()
+            update_group_create(group, user)
 
             return redirect('group:group_home')
 
-        
         original_info = OriginalGroupInfo()
         original_info.remember(request)
         # 다른 필드 에러 시(기존 파일 남아있도록)
@@ -142,27 +145,29 @@ def group_create(request):
             with open('./media/temp/{}'.format(request.FILES.get('image')), 'wb+') as destination:
                 for chunk in request.FILES['image'].chunks():
                     destination.write(chunk)
-        
+
         original_info.image = request.POST['img_recent']
 
-        ctx = { 
+        ctx = {
             'error': error,
             'origin': original_info,
             'temp_img_location': '/media/temp/'
         }
-        
+
         return render(request, template_name='group/group_form.html', context=ctx)
-        
+
     else:
         form = GroupForm()
         users = User.objects.all()
         # users = User.objects.exclude(user)
         # form.fields['maker'].queryset = users
-        ctx = { 'form': form, 'temp_img_location': '/media/temp/' }
-        
+        ctx = {'form': form, 'temp_img_location': '/media/temp/'}
+
         return render(request, 'group/group_form.html', context=ctx)
 
 # 그룹 정보 수정
+
+
 def group_update(request, pk):
     group = get_object_or_404(Group, pk=pk)
     prev_name = group.name
@@ -175,10 +180,10 @@ def group_update(request, pk):
 
         group.intro = request.POST.get('intro')
         intro = group.intro
-            #os.makedirs(MEDIA_ROOT + '/group_{}/thumbnail/'.format(group.pk), exist_ok=True)
-            #shutil.copyfile('./media/temp/{}'.format(request.POST['img_recent']),
-            #'./media/group_{}/thumbnail/{}'.format(group.pk, request.POST['img_recent']))
-            
+        #os.makedirs(MEDIA_ROOT + '/group_{}/thumbnail/'.format(group.pk), exist_ok=True)
+        # shutil.copyfile('./media/temp/{}'.format(request.POST['img_recent']),
+        # './media/group_{}/thumbnail/{}'.format(group.pk, request.POST['img_recent']))
+
         # # 기존 이미지는 유지
         # if group.image:
         #     image = request.POST.get('image')
@@ -187,7 +192,7 @@ def group_update(request, pk):
         #     image = request.FILES.get('image')
         #     group.image = image
         #     group.save()
-        
+
         mode = request.POST.get('group-mode__tag')
         group.mode = mode
 
@@ -201,9 +206,10 @@ def group_update(request, pk):
             group.intro = request.POST.get('intro')
             if request.FILES.get('image'):  # form valid 시
                 group.image = request.FILES.get('image')
-                
+
             else:   # 다른 필드 에러 시(기존 파일 남아있도록)
-                group.image = './group_{}/thumbnail/{}'.format(group.pk, request.POST['img_recent'])
+                group.image = './group_{}/thumbnail/{}'.format(
+                    group.pk, request.POST['img_recent'])
                 # original_info.image = request.POST['img_recent']
 
             group.save()
@@ -216,7 +222,7 @@ def group_update(request, pk):
             with open('/group_{}/thumbnail/{}'.format(group.pk, request.FILES.get('image')), 'wb+') as destination:
                 for chunk in request.FILES['image'].chunks():
                     destination.write(chunk)
-        
+
         original_info.image = request.POST['img_recent']
 
         if group.image:
@@ -224,8 +230,7 @@ def group_update(request, pk):
         else:
             current_image = ''
 
-
-        ctx = { 
+        ctx = {
             'error': error,
             'origin': original_info,
             'current_image': current_image,
@@ -246,8 +251,8 @@ def group_update(request, pk):
         else:
             current_image = ''
 
-        ctx = { 
-            'group': group, 
+        ctx = {
+            'group': group,
             'form': form,
             'current_image': current_image,
             'temp_img_location': '/media/group_{}/thumbnail/'.format(group.pk)
@@ -256,11 +261,14 @@ def group_update(request, pk):
         return render(request, template_name='group/group_form.html', context=ctx)
 
 # 그룹 삭제
+
+
 def group_delete(request, pk):
     user = request.user
     group = get_object_or_404(Group, pk=pk)
 
     if user == group.maker:
+        update_delete_group(group)
         group.delete()
 
         return redirect('group:group_home')
@@ -269,6 +277,8 @@ def group_delete(request, pk):
     #     return redirect('group:group_detail', pk)
 
 # 그룹 탈퇴
+
+
 def group_drop(request, pk):
     user = request.user
     group = get_object_or_404(Group, pk=pk)
@@ -279,14 +289,19 @@ def group_drop(request, pk):
             # group.members.remove(user)
             group.members.remove(user)
             # group.maker = members[0]   #랜덤하게 지정해야 하나..?
+            # 그룹 대표를 넘겨줄 때
+            # update_change_group_maker(group, user, new_maker)
+            # 이거 구현하면 윗줄 new_maker 부분에 새 대표 넣고 주석해제 해주세요! (-찬영)
             group.save()
             # group.maker = members[0]
             # group.save()
 
         else:
+            update_drop_group(group, user)
             group.members.remove(user)
-        
-    else: 
+
+    else:
+        update_delete_group(group)
         group.delete()
 
         # group_delete(request, pk)  # 그룹 삭제 함수 호출
@@ -294,6 +309,8 @@ def group_drop(request, pk):
     return redirect('group:group_home')
 
 # 그룹 상세 페이지
+
+
 def group_detail(request, pk):
     user = request.user
     group = get_object_or_404(Group, pk=pk)
@@ -316,8 +333,8 @@ def group_detail(request, pk):
     total_likes = len(group.interests.all())
     is_liked = user in group.interests.all()
 
-    ctx = { 
-        'group': group, 
+    ctx = {
+        'group': group,
         'mygroup': mygroup,
         'members': members,
         'maker': maker,
@@ -325,7 +342,7 @@ def group_detail(request, pk):
         'is_liked': is_liked,
         'user': user,
         'is_star': is_star,
-        'ani_image': static('image/helphelp.png'),    
+        'ani_image': static('image/helphelp.png'),
         'profile_img': static('image/none_image_user.jpeg'),
     }
 
@@ -341,11 +358,11 @@ class GroupErrorMessage():
 
         # 미입력 시 에러 메세지
         if 'group_create' == command or 'group_update' == command:
-            if not name:       
+            if not name:
                 self.name = '그룹명을 입력하세요.'
-            if not (mode in ['PUBLIC', 'PRIVATE']):    
+            if not (mode in ['PUBLIC', 'PRIVATE']):
                 self.mode = '그룹 공개모드를 선택하세요.'
-        
+
         # 기존에 있던 입력과 비교
         if 'group_update' == command:
             if name != prev:
@@ -359,6 +376,8 @@ class GroupErrorMessage():
         return self.name or self.mode
 
 # Group Form에서 오류 발생 시 남아있는 정보
+
+
 class OriginalGroupInfo():
 
     def remember(self, request):
@@ -366,7 +385,6 @@ class OriginalGroupInfo():
         self.intro = request.POST['intro']
         self.image = request.FILES.get('image')
         self.mode = request.POST.get('group-mode__tag')
-
 
 
 ######## 초대 코드 ########
@@ -379,15 +397,19 @@ def group_code_save(pk):
     print(group.code)
 
 # 초대 코드 발급
+
+
 def get_invite_code(length=6):
     return base64.urlsafe_b64encode(
         codecs.encode(uuid.uuid4().bytes, 'base64').rstrip()
     ).decode()[:length]
 
 # 초대 코드 생성 (from 상세 페이지)
+
+
 @csrf_exempt
 def create_code_ajax(request):
-    req = json.loads(request.body)    
+    req = json.loads(request.body)
     group_id = req['groupId']
 
     group = get_object_or_404(Group, pk=group_id)
@@ -397,20 +419,20 @@ def create_code_ajax(request):
         time = Timer(7 * 24 * 60 * 60, group_code_save, [group_id])
         time.start()
         code = group.code
-        
+
         if time.finished:
             group.code = ''
     print(code)
     group.save()
 
-    return JsonResponse({ 'name': group.name, 'code': code })
+    return JsonResponse({'name': group.name, 'code': code})
 
 
 # 초대 코드 입력하기 (나의 그룹 홈페이지)
 @csrf_exempt
 def join_code_ajax(request):
     req = json.loads(request.body)
-    
+
     user = request.user
     input_code = req['code']
     mygroup = list(user.group_set.all())
@@ -422,8 +444,10 @@ def join_code_ajax(request):
                 message = '이미 가입된 그룹입니다.'
             else:
                 group.members.add(user)
+                # update -> 비공개 그룹 가입
                 group.save()
                 message = '가입에 성공했습니다.'
+                update_private_group_join(group, user)
 
         else:
             message = '가입에 성공했습니다.'
@@ -431,7 +455,7 @@ def join_code_ajax(request):
     except:
         message = '존재하지 않는 코드입니다.'
 
-    return JsonResponse({ 'message': message })
+    return JsonResponse({'message': message})
 
 
 ######## 공개 그룹 ########
@@ -444,37 +468,44 @@ def group_list(request):
     # 페이징 처리
     page = request.GET.get('page', '1')
 
-
     sort_by = request.GET.get('sort', 'interest')
     if sort_by == 'name':
         groups = group.order_by('name')
     elif sort_by == 'interest':
-        groups = group.annotate(total_likes=Count('interests')).order_by('-total_likes')
+        groups = group.annotate(total_likes=Count(
+            'interests')).order_by('-total_likes')
 
     pagintor = Paginator(groups, 6)
     page_obj = pagintor.get_page(page)
 
-    ctx = { 
+    ctx = {
         'groups': page_obj,
         'sort_by': sort_by,
-        'ani_image': static('image/helphelp.png')    
+        'ani_image': static('image/helphelp.png')
     }
 
     return render(request, template_name='group/group_list.html', context=ctx)
 
 # 그룹 가입하기
+
+
 def public_group_join(request, pk):
     user = request.user
     group = get_object_or_404(Group, pk=pk)
     members = group.members.all()
 
     if user not in members:
+        # if user not in group.waits: (하고서 밑 부분 3개 들여쓰기)
         group.waits.add(user)
         group.save()
+        update_public_group_register(group, user)
+        # 혹시 이거 user이 group.waits에 있는지 확인하는 코드는 어떨까?
 
     return redirect('group:group_detail', pk)
 
 # 수락 선택 시
+
+
 @csrf_exempt
 def group_join_accept(request):
     req = json.loads(request.body)
@@ -490,11 +521,14 @@ def group_join_accept(request):
     group.members.add(wait_user)
     group.save()
     print('jj)')
+    update_public_group_join(group, wait_user)
     return JsonResponse({
         'userId': wait_id
     })
 
 # 거절 선택 시
+
+
 @csrf_exempt
 def group_join_reject(request):
     req = json.loads(request.body)
@@ -508,6 +542,8 @@ def group_join_reject(request):
 
     group.waits.remove(wait_user)
     group.save()
+    update_public_group_reject(group, wait_user)
+    # update -> 거절됨
 
     return JsonResponse({
         'userId': wait_id
@@ -565,9 +601,8 @@ def wait_list_ajax(request):
 #     return 1
 
 
-
 ######################### 그룹 내 커뮤니티 게시판 ##############################
-### Error messages
+# Error messages
 
 # TODO : validation 체크할 때 request 객체와 form을 넘겨주는 건 어떨까요?
 # TODO : 넘겨주는 인자가 너무 많고, 순서 헷갈릴 여지도 있어보입니다.
@@ -583,7 +618,7 @@ class GroupPostErrorMessages():
         if 'create' in command or 'update' in command:
             if not title:
                 self.title = '제목을 입력해주세요'
-            elif len(title)>50:
+            elif len(title) > 50:
                 self.title = '제목은 50자 이내로 입력해주세요'
             if not content:
                 self.content = '내용을 입력해주세요'
@@ -599,6 +634,7 @@ class GroupPostErrorMessages():
     def has_error(self):
         return self.title or self.content or self.image or self.attached_file or self.attached_link or self.category
 
+
 class OriginalInformation():
     def remember(self, request, command):
         self.title = request.POST.get('title')
@@ -610,25 +646,28 @@ class OriginalInformation():
         self.command = command
 
 # 게시글 목록
+
+
 def post_list(request, pk):
     posts = GroupPost.objects.filter(group__pk=pk).order_by('-created_at')
     group = Group.objects.get(pk=pk)
     page = request.GET.get('page', '1')    # 페이지
-    
+
     # 게시물 정렬
     sort_by = request.GET.get('sort', 'recent')
     if sort_by == 'recent':    # 최신순
         posts = posts.order_by('-created_at')
     elif sort_by == 'liked':   # 좋아요순
-        posts = posts.annotate(total_likes=Count('like_user')).order_by('-total_likes')
+        posts = posts.annotate(total_likes=Count(
+            'like_user')).order_by('-total_likes')
     elif sort_by == 'view':    # 조회수순
         posts = posts.order_by('-hit_count_generic__hits')
-    
+
     # 페이징 처리
     paginator = Paginator(posts, 6)    # 페이지당 6개씩 보여주기
     page_obj = paginator.get_page(page)
-    
-    ## 각 게시글과 iframe 관련 썸네일의 이미지 경로 딕셔너리 생성
+
+    # 각 게시글과 iframe 관련 썸네일의 이미지 경로 딕셔너리 생성
     dict = {}
     for page in page_obj:
         if page.attached_link:
@@ -645,6 +684,8 @@ def post_list(request, pk):
     return render(request, 'group/group_post_list.html', context=ctx)
 
 # 게시글 검색
+
+
 def search_result(request, pk):
     if 'search' in request.GET:
         group = Group.objects.get(pk=pk)
@@ -652,15 +693,15 @@ def search_result(request, pk):
         page = request.GET.get('page', '1')
 
         posts = GroupPost.objects.filter(group__pk=pk).filter(
-            Q(title__icontains=query) | # 제목으로 검색
-            Q(content__icontains=query) # 내용으로 검색
+            Q(title__icontains=query) |  # 제목으로 검색
+            Q(content__icontains=query)  # 내용으로 검색
         )
 
         # 페이징 처리
         paginator = Paginator(posts, 6)    # 페이지당 6개씩 보여주기
         page_obj = paginator.get_page(page)
 
-        ## 각 게시글과 iframe 관련 썸네일의 이미지 경로 딕셔너리 생성
+        # 각 게시글과 iframe 관련 썸네일의 이미지 경로 딕셔너리 생성
         dict = {}
         for page in page_obj:
             if page.attached_link:
@@ -669,22 +710,24 @@ def search_result(request, pk):
                 dict[page] = None
 
         ctx = {
-            'query': query, 
+            'query': query,
             'posts': page_obj,
-            'posts_img_dict': dict, 
+            'posts_img_dict': dict,
             'group_pk': pk,
-            'group': group,         
+            'group': group,
         }
 
     return render(request, 'group/search_result.html', context=ctx)
 
 # 게시글 작성
+
+
 def post_create(request, pk):
     group = get_object_or_404(Group, pk=pk)
     if request.method == 'POST':
         form = PostForm(request.POST, request.FILES)
         error_messages = GroupPostErrorMessages()
-        error_messages.validation_check(request , ['create'])
+        error_messages.validation_check(request, ['create'])
         if not error_messages.has_error():
             post = GroupPost.objects.create(
                 title=request.POST.get('title'),
@@ -697,25 +740,25 @@ def post_create(request, pk):
                 group=group
             )
             post.save()
-            return redirect ('group:post_detail', pk, post.pk)
+            return redirect('group:post_detail', pk, post.pk)
         # if form.is_valid():
         #     post = form.save(commit=False)
         #     post.group = get_object_or_404(Group, pk=pk)   # 그룹 pk로 받아오기
         #     post.category = request.POST.get('category')  # 그룹게시글 카테고리 (대분류)
         #     post.user = request.user
         #     post = form.save()
-            ### TODO
+            # TODO
             # 게시글 디테일 페이지로 이동
         else:
             original_information = OriginalInformation()
             original_information.remember(request, ['create'])
-            
+
             ctx = {
-                'form': form, 
+                'form': form,
                 'error_messages': error_messages,
                 'original_information': original_information,
                 'group': group
-                }
+            }
             return render(request, 'group/group_post_form.html', context=ctx)
 
     else:
@@ -725,14 +768,14 @@ def post_create(request, pk):
         return render(request, 'group/group_post_form.html', context=ctx)
 
 
-def post_update(request,pk ,post_pk):
+def post_update(request, pk, post_pk):
     post = get_object_or_404(GroupPost, pk=post_pk)
     group = get_object_or_404(Group, pk=pk)
     if request.method == "POST":
-        form = PostForm(request.POST, request.FILES, instance = post)
+        form = PostForm(request.POST, request.FILES, instance=post)
 
         error_messages = GroupPostErrorMessages()
-        error_messages.validation_check(request , ['create'])
+        error_messages.validation_check(request, ['create'])
         if not error_messages.has_error():
             post = form.save()
             return redirect('group:post_detail', pk, post.pk)
@@ -741,14 +784,14 @@ def post_update(request,pk ,post_pk):
             original_information.remember(request, ['update'])
 
             ctx = {
-                'form': form, 
+                'form': form,
                 'error_messages': error_messages,
                 'original_information': original_information,
                 'group': group,
-                }
+            }
             return render(request, 'group/group_post_form.html', context=ctx)
         # if form.is_valid():
-        #     post = form.save()  
+        #     post = form.save()
 
         #     return redirect('group:post_detail', pk, post_pk)
         # else:
@@ -757,9 +800,10 @@ def post_update(request,pk ,post_pk):
     else:
         form = PostForm(instance=post)
 
-        ctx = {'form': form, 'post': post, 'group': group,}
+        ctx = {'form': form, 'post': post, 'group': group, }
 
-        return render(request, template_name="group/group_post_form.html", context=ctx)        
+        return render(request, template_name="group/group_post_form.html", context=ctx)
+
 
 class GroupPostDetailView(HitCountDetailView):
     model = GroupPost
@@ -771,12 +815,14 @@ class GroupPostDetailView(HitCountDetailView):
         context = super().get_context_data(**kargs)
         # self.object로 GroupPost 객체에 접근할 수 있음
         try:
-            previous_pk = GroupPost.get_previous_by_created_at(self.object, group=self.object.group).pk
+            previous_pk = GroupPost.get_previous_by_created_at(
+                self.object, group=self.object.group).pk
         except:
             # 이전글 없을 때
             previous_pk = -1
         try:
-            next_pk =  GroupPost.get_next_by_created_at(self.object, group=self.object.group).pk
+            next_pk = GroupPost.get_next_by_created_at(
+                self.object, group=self.object.group).pk
         except:
             # 이전글 없을 때
             next_pk = -1
@@ -786,52 +832,58 @@ class GroupPostDetailView(HitCountDetailView):
         post = self.object
         username = post.user.nickname
         total_likes = len(post.like_user.all())
-        is_liked = self.request.user in  post.like_user.all()
+        is_liked = self.request.user in post.like_user.all()
 
         # 해당 게시글에 대한 답변 가져오기
-        answers = GroupAnswer.objects.filter(post_id = post.id, parent_answer__isnull=True).order_by('answer_order')   #  나중에 답변 정렬도 고려. 최신순 또는 좋아요 순
+        answers = GroupAnswer.objects.filter(post_id=post.id, parent_answer__isnull=True).order_by(
+            'answer_order')  # 나중에 답변 정렬도 고려. 최신순 또는 좋아요 순
         answers_count = len(answers)
-        
-        answers_reply_dict ={}
+
+        answers_reply_dict = {}
         for answer in answers:
-            replies =  GroupAnswer.objects.filter(parent_answer= answer).order_by('answer_order')
+            replies = GroupAnswer.objects.filter(
+                parent_answer=answer).order_by('answer_order')
             answers_reply_dict[answer] = replies
 
-        ### iframe 
+        # iframe
         iframe_url = post.attached_link
         iframe = get_iframe(iframe_url, 800, 600)
         context['iframe'] = iframe
-        
+
         ####
 
         context['group'] = post.group
-        context['username']= username
+        context['username'] = username
         context['total_likes'] = total_likes
-        context['is_liked']= is_liked
+        context['is_liked'] = is_liked
         # context['answers']= answers
-        context['answers_count']= answers_count
-        context['answers_reply_dict']= answers_reply_dict
+        context['answers_count'] = answers_count
+        context['answers_reply_dict'] = answers_reply_dict
         return context
+
 
 class FileDownloadView(SingleObjectMixin, View):
     queryset = GroupPost.objects.all()
 
     def get(self, request, pk):
         object = get_object_or_404(GroupPost, pk=pk)
-        
+
         file_path = object.attached_file.path
         file_type, _ = mimetypes.guess_type(file_path)
-        #file_type = object.attached_file.name.split('.')[-1]  # django file object에 content type 속성이 없어서 따로 저장한 필드
+        # file_type = object.attached_file.name.split('.')[-1]  # django file object에 content type 속성이 없어서 따로 저장한 필드
         fs = FileSystemStorage(file_path)
-        response = FileResponse(fs.open(file_path, 'rb'), content_type=file_type)
+        response = FileResponse(
+            fs.open(file_path, 'rb'), content_type=file_type)
         response['Content-Disposition'] = f'attachment; filename={object.get_filename()}'
-        
+
         return response
+
 
 def post_delete(request, pk, post_pk):
     post = get_object_or_404(GroupPost, pk=post_pk)
     post.delete()
     return redirect('group:post_list', pk)
+
 
 @csrf_exempt
 def answer_ajax(request):
@@ -841,27 +893,31 @@ def answer_ajax(request):
     user_id = req['user']
     user = get_object_or_404(User, pk=user_id)
     username = user.nickname
-    
-    #### TODO ##########
-    ## user 대표이미지 넘겨주는 건 유저 조금 구체화 된 다음에 추가
 
-    ## 새 답변의 order 필드를 정해주기 위한 부분. 
-    current_answers = GroupAnswer.objects.filter(post_id=post_id).order_by('answer_order')
-    if len(current_answers)==0:
+    #### TODO ##########
+    # user 대표이미지 넘겨주는 건 유저 조금 구체화 된 다음에 추가
+
+    # 새 답변의 order 필드를 정해주기 위한 부분.
+    current_answers = GroupAnswer.objects.filter(
+        post_id=post_id).order_by('answer_order')
+    if len(current_answers) == 0:
         new_order = 1
     else:
         new_order = current_answers.last().answer_order + 1
 
     this_post = get_object_or_404(GroupPost, pk=post_id)
 
-    ## 새로운 답변
-    new_answer = GroupAnswer.objects.create(post_id=this_post, content=content, answer_order=new_order, user = user)
+    # 새로운 답변
+    new_answer = GroupAnswer.objects.create(
+        post_id=this_post, content=content, answer_order=new_order, user=user)
     # 템플릿에서 쉽게 띄울 수 있도록 답변 게시일자 포맷팅해서 json에 전달
     created_at = new_answer.created_at.strftime('%y.%m.%d %H:%M')
 
-    return JsonResponse({'id': new_answer.id ,'content': content,'user':username, 'created_at':created_at} )
+    return JsonResponse({'id': new_answer.id, 'content': content, 'user': username, 'created_at': created_at})
 
 # 대댓글 작성
+
+
 @csrf_exempt
 def reply_ajax(request):
     req = json.loads(request.body)
@@ -875,21 +931,22 @@ def reply_ajax(request):
     # 작성하려는 대댓글이 속한 질문 구하기
     this_answer = get_object_or_404(GroupAnswer, pk=answer_id)
     this_post = this_answer.post_id
-    
-    ## 새 답변의 order 필드를 정해주기 위한 부분. 
-    current_answers = GroupAnswer.objects.filter(post_id=this_post.id).order_by('answer_order')
-    if len(current_answers)==0:
+
+    # 새 답변의 order 필드를 정해주기 위한 부분.
+    current_answers = GroupAnswer.objects.filter(
+        post_id=this_post.id).order_by('answer_order')
+    if len(current_answers) == 0:
         new_order = 1
     else:
         new_order = current_answers.last().answer_order + 1
 
-    ## 새로운 대댓글
+    # 새로운 대댓글
     new_answer = GroupAnswer.objects.create(
-        post_id=this_post, 
-        content=content, 
-        answer_order=new_order, 
-        user = user,
-        parent_answer = this_answer
+        post_id=this_post,
+        content=content,
+        answer_order=new_order,
+        user=user,
+        parent_answer=this_answer
     )
 
     # 템플릿에서 쉽게 띄울 수 있도록 답변 게시일자 포맷팅해서 json에 전달
@@ -897,10 +954,10 @@ def reply_ajax(request):
 
     response = JsonResponse({
         'reply_id': new_answer.id,
-        'answer_id' : this_answer.id,
+        'answer_id': this_answer.id,
         'content': content,
-        'user':username, 
-        'created_at':created_at,
+        'user': username,
+        'created_at': created_at,
     })
 
     return response
@@ -916,7 +973,7 @@ def post_like_ajax(request):
     post = get_object_or_404(GroupPost, pk=post_id)
     liked_users = post.like_user
 
-    is_liked = request.user in  liked_users.all()
+    is_liked = request.user in liked_users.all()
 
     if is_liked:
         liked_users.remove(request.user)
@@ -924,9 +981,11 @@ def post_like_ajax(request):
         liked_users.add(request.user)
 
     total_likes = len(liked_users.all())
-    return JsonResponse({'post_id':post_id, 'total_likes':total_likes, 'is_liking': not(is_liked)})
+    return JsonResponse({'post_id': post_id, 'total_likes': total_likes, 'is_liking': not(is_liked)})
 
 # 답변 (대댓글 포함) 좋아요 기능
+
+
 @csrf_exempt
 def answer_like_ajax(request):
     req = json.loads(request.body)
@@ -936,7 +995,7 @@ def answer_like_ajax(request):
     liked_users = answer.like_user
 
     is_liked = request.user in liked_users.all()
-    
+
     if is_liked:
         liked_users.remove(request.user)
     else:
@@ -944,7 +1003,7 @@ def answer_like_ajax(request):
 
     total_likes = len(liked_users.all())
 
-    return JsonResponse({'answer_id':answer_id, 'total_likes':total_likes,  'is_liking': not(is_liked)})
+    return JsonResponse({'answer_id': answer_id, 'total_likes': total_likes,  'is_liking': not(is_liked)})
 
 
 # 답변(대댓글 포함) 삭제
@@ -958,10 +1017,12 @@ def answer_delete_ajax(request):
 
     answer.delete()
 
-    return JsonResponse({'id':answer_id})
+    return JsonResponse({'id': answer_id})
 
 # 답변(대댓글 포함) 수정
 # 수정버튼 눌렀을 때 해당하는 폼 띄우는 기능
+
+
 @csrf_exempt
 def answer_edit_ajax(request):
     req = json.loads(request.body)
@@ -970,12 +1031,13 @@ def answer_edit_ajax(request):
     answer = get_object_or_404(GroupAnswer, pk=answer_id)
     # TODO : 고려해볼 사항. 원래 작성되어 있던 내용을 지금은 db에서 찾아서 넘겨주고 있는데
     # 그렇게 말고 data전송을 최소화화면서 프론트 단에서 그냥 현재 입력된 내용 받앙오기
-    
 
-    return JsonResponse({'id':answer_id})
+    return JsonResponse({'id': answer_id})
 
 # 답변(대댓글 포함) 수정
 # 수정할 내용 입력 후 버튼 눌렀을 때 수정 내용 적용하는 기능
+
+
 @csrf_exempt
 def answer_edit_submit_ajax(request):
     req = json.loads(request.body)
@@ -985,14 +1047,14 @@ def answer_edit_submit_ajax(request):
     answer.content = new_content
     answer.save()
 
-    return JsonResponse({'id':answer_id, 'content':new_content})
+    return JsonResponse({'id': answer_id, 'content': new_content})
 
 
 ############################################################################
 
-## Ajax
+# Ajax
 # 내 그룹 - 찜 기능 ajax
-# star 클릭 시 
+# star 클릭 시
 @csrf_exempt
 def group_star_ajax(request):
     req = json.loads(request.body)
@@ -1000,9 +1062,9 @@ def group_star_ajax(request):
 
     user = request.user
     group = get_object_or_404(Group, id=group_id)
-    # 1. 그룹 -> 2. 사용자 
+    # 1. 그룹 -> 2. 사용자
     group_star = GroupStar.objects.filter(Q(group=group) & Q(user=user))
-    
+
     if group_star:
         group_star.delete()
         is_star = False
@@ -1013,10 +1075,10 @@ def group_star_ajax(request):
 
     is_stared = is_star
 
-    return JsonResponse({ 'id': group_id, 'is_star': is_stared })
+    return JsonResponse({'id': group_id, 'is_star': is_stared})
 
 
-# 공개 그룹 좋아요 수 
+# 공개 그룹 좋아요 수
 @csrf_exempt
 def interest_ajax(request):
     req = json.loads(request.body)
@@ -1034,4 +1096,4 @@ def interest_ajax(request):
     total_likes = len(interests.all())
     # group.save()
 
-    return JsonResponse({ 'groupId': group_id, 'total_likes': total_likes, 'is_liked': not(is_liked) })
+    return JsonResponse({'groupId': group_id, 'total_likes': total_likes, 'is_liked': not(is_liked)})
