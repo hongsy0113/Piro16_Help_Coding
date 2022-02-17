@@ -61,6 +61,10 @@ main > p:first-of-type {
     flex-direction: column;
 }
 
+.question__detail__content p, .post__detail__content p {
+    word-wrap: break-word;
+}
+
 .question__like-btn, .post__like-btn {
     display: flex;
     padding: 12px 18px;
