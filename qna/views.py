@@ -1,3 +1,5 @@
+#-*-coding:utf-8-*-
+from wsgiref.simple_server import sys_version
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import *
 from .forms import *
@@ -143,6 +145,12 @@ def search_result(request):
     }
     return render(request, 'qna/search_result.html', context=ctx)
 
+import urllib
+import os
+from django.http import HttpResponse, Http404
+import mimetypes
+
+
 def question_create(request):
     if request.method == 'POST':
         form = QuestionForm(request.POST, request.FILES)
@@ -156,9 +164,9 @@ def question_create(request):
                 title=request.POST.get('title'),
                 #content=form.data['content'],
                 content=request.POST.get('content'),
-                image=request.FILES.get('image'),
-                #attached_file=form.data['attached_file'],
-                attached_file=request.FILES.get('attached_file'),
+                # image=request.FILES.get('image'),
+                # #attached_file=form.data['attached_file'],
+                # attached_file=request.FILES.get('attached_file'),
                 s_or_e_tag=request.POST.get('s_or_e_tag'),
                 user=request.user
             )
@@ -187,13 +195,12 @@ def question_create(request):
                 question.image =  './qna/image/{}'.format(request.POST['img_recent']) ###
 
             if request.FILES.get('attached_file'):
-                question.image = request.FILES.get('attached_file')
+                question.attached_file = request.FILES.get('attached_file')
             elif request.POST['file_recent']:
                 os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
                 shutil.copyfile('./media/temp/{}'.format(request.POST['file_recent']),
                                 './media/qna/file/{}'.format(request.POST['file_recent'])) ###
                 question.attached_file =  './qna/file/{}'.format( request.POST['file_recent']) ###
-
 
 
             question.save()
@@ -222,7 +229,7 @@ def question_create(request):
                         destination.write(chunk)
             if request.FILES.get('attached_file'):
                 os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
-                with open('./media/temp/{}'.format(request.FILES['attached_file'].name), 'wb+') as destination:
+                with open('./media/temp/{}'.format(request.FILES['attached_file'].name), 'wb+' ) as destination:
                     for chunk in request.FILES['attached_file'].chunks():
                         destination.write(chunk)
 
@@ -345,12 +352,12 @@ def question_update(request,pk):
             if request.FILES.get('image'):  # form valid 시
                 question.image = request.FILES.get('image')
                 
-            else:   # 다른 필드 에러 시(기존 파일 남아있도록)
+            elif request.POST['img_recent'] :   # 다른 필드 에러 시(기존 파일 남아있도록)
                 question.image = './qna/image/{}'.format(request.POST['img_recent'])
             if request.FILES.get('attached_file'):  # form valid 시
                 question.attached_file = request.FILES.get('attached_file')
                 
-            else:   # 다른 필드 에러 시(기존 파일 남아있도록)
+            elif request.POST['file_recent']:   # 다른 필드 에러 시(기존 파일 남아있도록)
                 question.attached_file = './qna/file/{}'.format(request.POST['file_recent'])
 
             question.save()
