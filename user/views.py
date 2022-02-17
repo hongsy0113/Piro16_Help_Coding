@@ -35,7 +35,7 @@ from threading import Timer
 
 def main(request):
     user = request.user
-    ctx ={}
+    ctx = {}
     if user != AnonymousUser():
         groups = user.group_set.all()
         posts = GroupPost.objects.filter(group__in=groups).exclude(user=user).order_by('-created_at')[:3]
@@ -94,22 +94,24 @@ class ErrorMessages():
             if not re.compile('^[a-zA-Z0-9]+@[a-zA-Z0-9.]+$').match(email):
                 self.email = '올바른 이메일 주소를 입력해주세요.'
             elif User.objects.filter(email=email):  # 예외1-2) 이미 가입된 유저
-                self.email = '이미 가입된 유저입니다.'
+                self.email = '이미 가입된 유저예요. 다른 이메일 주소를 입력해주세요.'
 
         if not nickname:  # 예외2-1) 닉네임 입력하지 않음
             self.nickname = '닉네임을 입력해주세요.'
+        elif len(nickname) > 7:  # 예외2-2) 너무 긴 닉네임
+            self.nickname = '닉네임은 7글자 이내로 지어주세요.'
         else:
-            if 'signup' in command:  # 예외2-2) 이미 사용 중인 닉네임 (회원 가입 시)
+            if 'signup' in command:  # 예외2-3) 이미 사용 중인 닉네임 (회원 가입 시)
                 if User.objects.filter(nickname=nickname):
-                    self.nickname = '이미 사용 중인 닉네임입니다.'
+                    self.nickname = '이미 사용 중인 닉네임이에요. 다른 닉네임을 입력해주세요.'
             else:  # 예외2-3) 이미 사용 중인 닉네임 (닉네임 수정 시)
                 if User.objects.filter(nickname=nickname) and User.objects.get(nickname=nickname).email != email:
-                    self.nickname = '이미 사용 중인 닉네임입니다.'
+                    self.nickname = '이미 사용 중인 닉네임이에요. 다른 닉네임을 입력해주세요.'
 
         if 'password_change' in command:
             # 예외3-1) 현재 비밀번호 오류
             if not check_password(current_password, User.objects.get(email=email).password):
-                self.current_password = '현재 비밀번호가 일치하지 않습니다.'
+                self.current_password = '현재 비밀번호가 일치하지 않아요.'
 
         if 'signup' in command or 'password_change' in command:
             # 예외4-1) 잘못된 비밀번호 형식
@@ -118,7 +120,7 @@ class ErrorMessages():
             elif new_password1 in email:  # 예외4-2) 이메일에 포함되는 비밀번호
                 self.new_password1 = '비밀번호는 이메일 주소에 포함되지 않게 만들어주세요.'
             if new_password1 != new_password2:  # 예외4-3) 비밀번호 불일치
-                self.new_password2 = '비밀번호가 일치하지 않습니다.'
+                self.new_password2 = '비밀번호가 일치하지 않아요.'
 
         # 예외5) 잘못된 생년월일 형식
         if not re.compile('^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$').match(birth):

@@ -394,6 +394,7 @@ p.main__title, .main__qna__box p {
     width: 1080px;
     flex-direction: column;
     justify-content: center;
+    align-items: center;
     text-align: center;
     padding: 30px;
     border: 2px solid #BDBDBD;
@@ -405,4 +406,21 @@ p.main__title, .main__qna__box p {
     font-weight: bold; 
     font-size: 25px;
     color: #4E4E4E;
+}
+
+.landing__ctabtn--group {
+    background: #37C6E5;
+    color: white;
+    width: 235px;
+    height: 66px;
+    margin-top: 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 33px;
+    gap: 15px;
+    text-decoration: none;
+    font-size: 24px;
+    font-weight: bold;
+    transition: 0.5s;
 }
