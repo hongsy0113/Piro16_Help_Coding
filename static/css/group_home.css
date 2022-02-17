@@ -2,6 +2,10 @@ img {
     object-fit: cover;
 }
 
+a {
+    text-decoration: none;
+}
+
 /* 내 그룹 상단 */
 .mygroup__top {
     display: flex;
@@ -218,6 +222,12 @@ img {
     border-radius: 8px;
     padding: 5px 15px;
     text-align: center;
+}
+
+.content__group-member span {
+    color: #4E4E4E;
+    font-family: Noto Sans CJK KR;
+    font-size: 16px;
 }
 
 .content__group-bottom {
