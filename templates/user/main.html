@@ -67,6 +67,30 @@
         </svg>            
     </div>
 </div>
+
+<div class="main__container">
+    <div class="main__element main__group">
+        <p class="main__title">내 그룹에 올라온 글</p>
+        <div class="landing__group__cardcontainer">
+            {% for post, img_src in posts_img_dict.items %}
+            <a href="{% url 'group:post_detail' post.group.pk post.pk %}" class="landing__group__card">
+                <img src="{{ img_src }}" alt="">
+                <div class="landing__group__card__text">
+                    <h6>{{ post.title }}</h6>
+                    <p>{{ post.group.name }}</p>
+                </div>
+            </a>
+            {% empty %}
+            <div class="landing__group__notpost">
+                <span class="notpost-text">내 그룹에 글이 아직 없어요🥺</span><br>
+                <span class="notpost-text">그룹 커뮤니티에 글을 올려보세요!</span><br>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% comment %}
 <div class="main__container">
     <div class="main__element main__group">
         <p class="main__title">내 그룹에 올라온 글</p>
@@ -95,6 +119,7 @@
         </div>
     </div>
 </div>
+{% endcomment %}
 {% else %}
 <div class="landing__container landing__container-first">
     <div class="landing__element landing__first">
@@ -158,21 +183,21 @@
             <p>누구나 그룹을 만들어 친구들과 작품을 공유할 수 있어요.</p>
         </div>
         <div class="landing__group__cardcontainer">
-            <a href="{% url 'group:group_home' %}" class="landing__group__card">
+            <a href="{% url 'user:signup' %}" class="landing__group__card">
                 <img src="#" alt="">
                 <div class="landing__group__card__text">
                     <h6>이런 작품을 만들었어요.</h6>
                     <p>작품 내용</p>
                 </div>
             </a>
-            <a href="{% url 'group:group_home' %}" class="landing__group__card">
+            <a href="{% url 'user:signup' %}" class="landing__group__card">
                 <img src="#" alt="">
                 <div class="landing__group__card__text">
                     <h6>이런 작품을 만들었어요.</h6>
                     <p>작품 내용</p>
                 </div>
             </a>
-            <a href="{% url 'group:group_home' %}" class="landing__group__card">
+            <a href="{% url 'user:signup' %}" class="landing__group__card">
                 <img src="#" alt="">
                 <div class="landing__group__card__text">
                     <h6>이런 작품을 만들었어요.</h6>
@@ -180,8 +205,8 @@
                 </div>
             </a>
         </div>
-        <a href="{% url 'group:group_home' %}" class="landing__ctabtn">
-            <span>작품 구경하기</span>
+        <a href="{% url 'user:signup' %}" class="landing__ctabtn">
+            <span>지금 시작하기</span>
             <svg width="11" height="20" viewBox="0 0 11 20" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M2 2.2243L9.06853 9.29294C9.45905 9.68346 9.45905 10.3166 9.06853 10.7071L2 17.7757" stroke="white" stroke-width="3" stroke-linecap="round"/>
             </svg>

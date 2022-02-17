@@ -1,9 +1,9 @@
-.signup__container, .login__container {
+.userform__container, .login__container {
     margin: 0 auto;
     width: 540px;
 }
 
-.signup__container h1, .login__container h1 {
+.userform__container h1, .login__container h1 {
     font-size: 36px;
     font-weight: bold;
     line-height: 150%;
@@ -12,8 +12,11 @@
     text-align: center;
 }
 
+.login__innercontainer label {
+    margin-bottom: 10px;
+}
 
-.signup__page1, .signup__page2, .login__innercontainer {
+.signup__page1, .signup__page2, .login__innercontainer, .revise__container {
     display: flex;
     flex-direction: column;
     gap: 30px;
@@ -30,11 +33,16 @@
     flex-direction: column;
     gap: 10px;
 }
-form label {
+form label, #password_change {
     font-weight: bold;
     font-size: 24px;
     line-height: 150%;
     color: #4f4f4f;
+}
+
+#password_change {
+    cursor: pointer;
+    text-decoration: underline;
 }
 
 form input, form textarea {
@@ -46,36 +54,40 @@ form input, form textarea {
     border: 1px solid #bdbdbd;
     border-radius: 5px;
 }
+
+form textarea {
+    padding: 10px 15px;
+}
 form input::placeholder, form textarea::placeholder {
     color: #828282;
 }
 
-.signup__birth__inputcontainer {
+.userform__birth__inputcontainer {
     display: flex;
     gap: 10px;
 }
 
-.signup__birth__inputcontainer input {
+.userform__birth__inputcontainer input {
     width: 100%;
 }
 
-.signup__job__inputcontainer {
+.userform__job__inputcontainer {
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
 }
 
-.signup__job__inputcontainer > div {
+.userform__job__inputcontainer > div {
     display: flex;
     gap: 15px;
 }
 
-.signup__image__inputcontainer input, .signup__job__inputcontainer input {
+.userform__image__inputcontainer input, .userform__job__inputcontainer input {
     width: 20px;
     height: 20px;
 }
 
-.signup__job__inputcontainer p {
+.userform__job__inputcontainer p {
     font-size: 22px;
     color: #4f4f4f;
     width: 80px;
@@ -83,13 +95,13 @@ form input::placeholder, form textarea::placeholder {
     margin-bottom: 8px;
 }
 
-.signup__btncontainer {
+.userform__btncontainer {
     display: flex;
     justify-content: center;
     gap: 10px;
     align-self: center;
 }
-.signup__nextpagebtn, .signup__sumbitbtn, .login__loginbtn {
+.userform__nextpagebtn, .userform__submitbtn, .login__loginbtn {
     width: 180px;
     height: 75px;
     background: #37C6E6;
@@ -105,12 +117,12 @@ form input::placeholder, form textarea::placeholder {
     cursor: pointer;
 }
 
-.signup__nextpagebtn, .login__loginbtn {
+.userform__nextpagebtn, .login__loginbtn {
     align-self: center;
     margin: 0 auto;
 }
 
-.signup__prevpagebtn {
+.userform__prevpagebtn {
     width: 180px;
     height: 75px;
     border: 2px solid #828282;
@@ -124,7 +136,7 @@ form input::placeholder, form textarea::placeholder {
     cursor: pointer;
 }
 
-.signup__error {
+.userform__error {
     background-color: #FFE6E6;
     border: 1px solid #eb6464;
     color: #eb6464;
@@ -134,6 +146,7 @@ form input::placeholder, form textarea::placeholder {
     font-size: 18px;
     padding: 10px 20px;
     /* margin: 10px 0; */
+    margin-top: 10px;
     width: 540px;
     display: flex;
     gap: 15px;

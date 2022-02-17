@@ -1,28 +1,165 @@
 {% extends 'base.html' %}
 
+{% load static %}
+{% load hitcount_tags %}
+{% load my_tags %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/qna_search_result.css' %}">
+{% endblock css %}
+
+{% block title %} 도와줘, 코딩 | 묻고 답하기 | 검색 결과 {% endblock %}
+    
 {% block content %}
-<div class="search-box">
-    <form action="{% url 'qna:search_result' %}" method="get">
-        {% csrf_token %}
-        <input type="search" placeholder="검색" name="search" />
-        <button type="submit">검색</button>
-    </form>
+<div>
+    <div class="searchresult__title">
+        <h3>"{{ query }}"</h3>
+    </div>
 </div>
 
-<h2>검색결과</h2>
-<h3>검색어: <b>"{{ query }}"</b></h3>
+<div class="qna__top-search-container">
+    <div class="qna__search-container">
+        <form class="qna__search-box" action="{% url 'qna:search_result' %}" method="get">
+            {% csrf_token %}
+            <input type="search" placeholder="궁금한 내용을 검색해보세요!" name="search" />
+            <button type="submit">
+                <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M25.1504 22.115L20.2822 17.2468C20.0625 17.0271 19.7646 16.905 19.4521 16.905H18.6562C20.0039 15.1814 20.8047 13.0134 20.8047 10.655C20.8047 5.04468 16.2588 0.498779 10.6484 0.498779C5.03809 0.498779 0.492188 5.04468 0.492188 10.655C0.492188 16.2654 5.03809 20.8113 10.6484 20.8113C13.0068 20.8113 15.1748 20.0105 16.8984 18.6628V19.4587C16.8984 19.7712 17.0205 20.0691 17.2402 20.2888L22.1084 25.157C22.5674 25.616 23.3096 25.616 23.7637 25.157L25.1455 23.7751C25.6045 23.3162 25.6045 22.574 25.1504 22.115ZM10.6484 16.905C7.19629 16.905 4.39844 14.1121 4.39844 10.655C4.39844 7.20288 7.19141 4.40503 10.6484 4.40503C14.1006 4.40503 16.8984 7.198 16.8984 10.655C16.8984 14.1072 14.1055 16.905 10.6484 16.905Z" fill="#4E4E4E"/>
+                </svg>
+                </button>
+        </form>
+    </div>
+</div>
 
-{% for question in questions %}
-    <div>
-        <div>
-        <h4><a href="{% url 'qna:question_detail' question.pk %}">{{ question.title }} </a> </h4>
-        <p>{{ question.content }}</p>
-        <p>{{ question.user }}</p>
+<div class="qna-sort-filter__box">
+    <!-- 최신순 조회수순 좋아요순 -->
+    <div class="list-sort">
+        <span class="list-sort__btn">
+            {% if sort_by != 'recent' %}
+            <a href="{% url 'qna:search_result' %}?{% param_replace sort='recent' page=1 search=query %}">최신순</a>
+            {% else %}
+            <span>최신순</span>
+            {% endif %}
+        </span>
+        <span class="list-sort__btn">
+            {% if sort_by != 'view' %}
+            <a href="{% url 'qna:search_result' %}?{% param_replace sort='view' page=1 search=query %}">조회수순</a>
+            {% else %}
+            <span>조회수순</span>
+            {% endif %}
+        </span>
+        <span class="list-sort__btn">
+            {% if sort_by != 'liked' %}
+            <a href="{% url 'qna:search_result' %}?{% param_replace sort='liked' page=1 search=query %}">좋아요순</a>
+            {% else %}
+            <span>좋아요순</span>
+            {% endif %}
+        </span>
+    </div>
+</div>
+
+{% if questions %}
+<div class="question__list-container">
+    {% for question, answers_count in question_answer_count.items %}
+    <a href="{% url 'qna:question_detail' question.pk %}">
+        <div class="question__container">
+            <div class="question__cont-left">
+                <p class="list__title">{{ question.title }}</p>
+                <div class="question__tag-info">
+                    <div class="question__tag">
+                        {% if question.s_or_e_tag == 'S' %}
+                        <span class="tag__scratch">스크래치</span>
+                        {% elif question.s_or_e_tag == 'E' %}
+                        <span class="tag__entry">엔트리</span>
+                        {% else %}
+                        <span class="tag__etc">기타</span>
+                        {% endif %}      
+                    </div>
+                    <!-- 상세태그 가져오는 코드입니다. 참고해서 css 완성해주세요. 고마워요 -->
+                    {% for tag in question.tags.all %}
+                    <span class="tag__etc">{{ tag }}</span>
+                    {% endfor %}
+                    <div class="question__info">
+                        <span>{% if question.user %}{{ question.user }}{% else %}(알 수 없음){% endif %} · 조회 {% get_hit_count for question %} · 좋아요 {{ question.like_user.all | length }} · {{ question.created_at | date:'y.m.d' }}</span>
+                    </div>
+                </div>
+                <div class="question__content">
+                    <span>{{ question.content }}</span>
+                </div>
+            </div>
+            <div class="question__cont-right">
+                <div>답변</div>
+                <div>
+                    {{ answers_count }}
+                </div> 
+            </div>
         </div>
-    </div>    
+    </a>
+    {% endfor %}
+</div>
 
-    {% empty %}
-        <h4> 결과 없음</h4>
-{% endfor %}
+<!-- 페이지네이션 -->
+<div class="pagination-box">
+    <ul class="all__pagination">
+        {% if questions.has_previous %}
+        <li class="all__page-item">
+            <!-- 이전페이지 -->
+            <a class="all__page-sign" href="?{% param_replace page=questions.previous_page_number %}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="24" viewBox="0 0 14 24" fill="none">
+                <path d="M12.7688 22.5918L2.02827 11.8513L12.7688 1.11076" stroke="#C4C4C4" stroke-width="2"/>
+                </svg>
+            </a>
+        </li>
+        {% else %}
+        <li class="all__page-item">
+            <a class="all__page-sign" href="#">
+                <!-- 이전페이지 -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="24" viewBox="0 0 14 24" fill="none">
+                <path d="M12.7688 22.5918L2.02827 11.8513L12.7688 1.11076" stroke="#C4C4C4" stroke-width="2"/>
+                </svg>
+            </a>
+        </li>
+        {% endif %}
+
+        {% for page_number in questions.paginator.page_range %}
+            {% if page_number == questions.number %}
+            <li class="all__page-item">
+                <a class="all__page-item-active" href="?{% param_replace page=page_number %}">{{ page_number }}</a>
+            </li>
+            {% else %}
+            <li class="all__page-item">
+                <a class="all__page-link" href="?{% param_replace page=page_number %}">{{ page_number }}</a>
+            </li>
+            {% endif %}
+        {% endfor %}
+
+        {% if questions.has_next %}
+        <li class="all__page-item">
+            <a class="all__page-sign sign-next" href="?{% param_replace page=questions.next_page_number %}">
+                <!-- 다음페이지 -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="24" viewBox="0 0 14 24" fill="none">
+                <path d="M1.23096 1.11035L11.9715 11.8509L1.23096 22.5914" stroke="#C4C4C4" stroke-width="2"/>
+                </svg>
+            </a>
+        </li>
+        {% else %}
+        <li class="all__page-item">
+            <a class="all__page-sign sign-next" tabindex="-1" aria-disabled="true" href="#">
+                <!-- 다음페이지 -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="24" viewBox="0 0 14 24" fill="none">
+                <path d="M1.23096 1.11035L11.9715 11.8509L1.23096 22.5914" stroke="#C4C4C4" stroke-width="2"/>
+                </svg>
+            </a>
+        </li>
+        {% endif %}
+    </ul>
+</div>
+{% else %}
+<div class="search-result__notresult">
+    <span class="notresult-query">{{ query }}<br/>
+    <span class="notresult-text">글을 찾을 수 없어요🥺</span><br/>
+    <span class="notresult-text">다른 글을 찾아보세요!</span><br/>
+</div>
+{% endif %}
 
 {% endblock %}

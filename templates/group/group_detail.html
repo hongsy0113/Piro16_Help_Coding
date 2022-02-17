@@ -3,13 +3,12 @@
 
 {% block css %}
     <link rel="stylesheet" href="{% static 'css/base.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/group.css' %}" />   <!-- 모달 css -->
     <link rel="stylesheet" href="{% static 'css/group_detail.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/group_detail_modal.css' %}" />
 {% endblock %}
 
 {% block js %}
     <script src="{% static 'js/group_detail.js' %}" defer></script>
-    <script src="{% static 'js/group_wait.js' %}" defer></script>
 {% endblock %}
 
 {% block title %} 도와줘, 코딩 | {{ group.name }} {% endblock %}
@@ -33,32 +32,48 @@
     </div>
 </div>  <!-- 페이지 상단 끝 -->
 
-<div class="group-detail__container--button">   <!-- 페이지 이동 버튼 시작 -->
-    <div class="container-button">
-    <!-- 그룹 찜하기 -->
-    {% if group in mygroup %}
-    <div class="container-button__btn star__group">    
-        <span class="star group__keyword-star group__keyword-star--{{ group.id }}" id="keyword-star-{{ group.id }}">  
-            {% if group.is_star %} <!-- 꽉 찬 별 -->
-            <svg xmlns="http://www.w3.org/2000/svg" width="33" height="33" viewBox="0 0 33 33" fill="none">
-            <path d="M14.2841 1.9274L14.284 1.92759L10.7818 9.44224L2.95814 10.6493C1.06844 10.9394 0.387624 13.3429 1.69516 14.6904C1.69521 14.6905 1.69526 14.6905 1.6953 14.6906L7.37193 20.5445L6.02817 28.821L6.02812 28.8213C5.72253 30.7113 7.63006 32.2674 9.33438 31.3119C9.33462 31.3118 9.33486 31.3117 9.33509 31.3115L16.3261 27.4227L23.3185 31.3124C23.3186 31.3124 23.3186 31.3124 23.3186 31.3124C25.0196 32.2589 26.9302 30.7151 26.624 28.8213L26.6239 28.821L25.2802 20.5446L30.9568 14.6906C32.2645 13.3431 31.5837 10.9394 29.694 10.6493L21.8703 9.44224L18.3681 1.92759L18.3677 1.92669C17.5428 0.165947 15.1196 0.136632 14.2841 1.9274Z" fill="#FFD76F" stroke="#828282"/>
-            </svg>
-            {% else %} <!-- 빈 별 -->
-            <svg xmlns="http://www.w3.org/2000/svg" width="33" height="33" viewBox="0 0 33 33" fill="none">
-            <path d="M14.515 1.92759L14.5151 1.9274C15.3505 0.136631 17.7738 0.165947 18.5986 1.92669L18.5991 1.92759L22.1012 9.44224L29.9249 10.6493L29.9253 10.6494L29.8491 11.1435C31.2995 11.3662 31.8808 13.2585 30.829 14.3424L14.515 1.92759ZM14.515 1.92759L11.0128 9.44224L3.1891 10.6493C3.18901 10.6493 3.18893 10.6494 3.18884 10.6494C3.1888 10.6494 3.18875 10.6494 3.18871 10.6494C1.29931 10.9397 0.618669 13.343 1.92612 14.6904C1.92617 14.6905 1.92621 14.6905 1.92626 14.6906L7.60289 20.5446L6.25913 28.821L6.25907 28.8213C5.95349 30.7113 7.86102 32.2674 9.56534 31.3119C9.56557 31.3118 9.56581 31.3117 9.56605 31.3115L16.557 27.4227L23.5495 31.3124C25.2505 32.259 27.1611 30.7151 26.855 28.8213L26.8549 28.821L25.5111 20.5445L31.1878 14.6906L14.515 1.92759Z" stroke="white"/>
-            </svg>
-            {% endif %}
-        </span>
-        <span>그룹 찜하기</span>
+<div class="group-detail__container--button">   <!-- 페이지 상단 버튼 시작 -->
+    <!-- 공개그룹일 경우, 그룹 좋아요 -->
+    {% if group.mode == 'PUBLIC' %}
+    <div class="all-group__heart button-left__like" id="all-group__heart">
+        {% if is_liked %}
+        <i class="fas fa-heart"></i>
+        {% else %}
+        <i class="far fa-heart"></i>
+        {% endif %}
+        <span>좋아요 {{ total_likes }}개</span>
     </div>
     {% endif %}
 
-    <!-- 그룹 커뮤니티 -->
-    <a href="{% url 'group:post_list' group.pk %}" class="container-button__btn btn-community">
-        <span>그룹 커뮤니티</span>
-    </a>
+    <!-- 비공개 그룹일 경우, 그룹 좋아요 숨기기 -->
+    <div class="all-group__heart button-left__like--private" id="all-group__heart"></div>
+
+    <div class="container-button__right">
+        <!-- 내 그룹일 경우, 그룹 찜하기 -->
+        {% if group in mygroup %}
+        <div class="container-button__btn star__group">
+            <span class="star group__keyword-star group__keyword-star--{{ group.id }}" id="keyword-star-{{ group.id }}">
+                {% if is_star %} <!-- 꽉 찬 별 -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="33" height="33" viewBox="0 0 33 33" fill="none">
+                <path d="M14.2841 1.9274L14.284 1.92759L10.7818 9.44224L2.95814 10.6493C1.06844 10.9394 0.387624 13.3429 1.69516 14.6904C1.69521 14.6905 1.69526 14.6905 1.6953 14.6906L7.37193 20.5445L6.02817 28.821L6.02812 28.8213C5.72253 30.7113 7.63006 32.2674 9.33438 31.3119C9.33462 31.3118 9.33486 31.3117 9.33509 31.3115L16.3261 27.4227L23.3185 31.3124C23.3186 31.3124 23.3186 31.3124 23.3186 31.3124C25.0196 32.2589 26.9302 30.7151 26.624 28.8213L26.6239 28.821L25.2802 20.5446L30.9568 14.6906C32.2645 13.3431 31.5837 10.9394 29.694 10.6493L21.8703 9.44224L18.3681 1.92759L18.3677 1.92669C17.5428 0.165947 15.1196 0.136632 14.2841 1.9274Z" fill="#FFD76F" stroke="#828282"/>
+                </svg>
+                <span>그룹 찜하기</span>
+                {% else %} <!-- 빈 별 -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="33" height="33" viewBox="0 0 33 33" fill="none">
+                <path d="M14.515 1.92759L14.5151 1.9274C15.3505 0.136631 17.7738 0.165947 18.5986 1.92669L18.5991 1.92759L22.1012 9.44224L29.9249 10.6493L29.9253 10.6494L29.8491 11.1435C31.2995 11.3662 31.8808 13.2585 30.829 14.3424L14.515 1.92759ZM14.515 1.92759L11.0128 9.44224L3.1891 10.6493C3.18901 10.6493 3.18893 10.6494 3.18884 10.6494C3.1888 10.6494 3.18875 10.6494 3.18871 10.6494C1.29931 10.9397 0.618669 13.343 1.92612 14.6904C1.92617 14.6905 1.92621 14.6905 1.92626 14.6906L7.60289 20.5446L6.25913 28.821L6.25907 28.8213C5.95349 30.7113 7.86102 32.2674 9.56534 31.3119C9.56557 31.3118 9.56581 31.3117 9.56605 31.3115L16.557 27.4227L23.5495 31.3124C25.2505 32.259 27.1611 30.7151 26.855 28.8213L26.8549 28.821L25.5111 20.5445L31.1878 14.6906L14.515 1.92759Z" stroke="white"/>
+                </svg>
+                <span>그룹 찜하기</span>
+                {% endif %}
+            </span>
+        </div>
+        {% endif %}
+
+        <!-- 그룹 커뮤니티 -->
+        <a href="{% url 'group:post_list' group.pk %}" class="container-button__btn btn-community">
+            <span>그룹 커뮤니티</span>
+        </a>
     </div>
-</div>  <!-- 페이지 이동 버튼 끝 -->
+</div>  <!-- 페이지 상단 버튼 끝 -->
 
 <div class="group-detail__container--info"> <!-- 그룹 정보 시작 -->
     <div class="container-info__image">
@@ -71,13 +86,13 @@
 
     <div class="conatiner-info__content">
         <div class="info-content__maker">
-            <p class="text-box__top">그룹을 만든 사람</p>  
-            <p class="text-box__bottom">{{ group.maker }}</p>
+            <p class="text-box__top">그룹을 만든 사람</p>
+            <p class="text-box__bottom"><a href="{% url 'user:public_userpage' group.maker.pk %}" style="text-decoration: none; color:#4e4e4e;">{{ group.maker }}</a></p>
         </div>
 
         <div class="info-content__member">
-            <p class="text-box__top">그룹 인원</p>  
-            <p class="text-box__bottom">{{ group.member |  length }}명</p>
+            <p class="text-box__top">그룹 인원</p>
+            <p class="text-box__bottom">{{ group.members |  length }}명</p>
         </div>
 
         <div class="info-content__intro">
@@ -95,35 +110,59 @@
         </div>
 
         <!-- 공개 그룹인 경우 -->
-        {% if group.mode == 'PUBLIC' %}
-            {% if maker == user %}
+        {% if group.mode == 'PUBLIC' and maker == user %}
             <div class="member-top__right--public">
                 <div class="top-right__button">
-                    <span>대기자 명단 보기</span>
+                    <span class="group__wait--btn">대기자 명단 보기</span>
+                </div>
+
+                <!-- 그룹 대기자 리스트 modal -->
+                <div class="group__member--all modal modal__hidden">
+                    <div class="modal__overlay"></div>  <!-- 모달 배경 -->
+                    <div class="modal__content">    <!-- 모달 내용 -->
+                        <div class="modal__content--top">
+                            <span>그룹 가입 대기자</span>
+                        </div>
+                        <div class="modal__content--bottom group-wait__modal--bottom">
+                            <div class="group__wait--member-list">  <!-- 대기자 명단 js로 추가 -->
+                            </div>
+                        
+                            <div class="group__wait--closebox">
+                                <button class="group__wait--close modal__close" onclick="closeGroupWait()">완료</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            {% endif %}
         {% endif %}
 
-        <!-- 비공개 그룹인 경우-->
-        {% if group.mode == 'PRIVATE' %}
-            {% if maker == user %}
+        <!-- 비공개 그룹인 경우, 초대 코드로 가입하므로 대기자 명단 보기 필요 없음! -->
+        <!-- {% if maker == user %}
             <div class="member-top__right--private">
                 <div class="top-right__button">
-                    <span>대기자 명단 보기</span>
+                    <span><button class="group__wait--btn" onclick="">대기자 명단 보기</button></span>
                 </div>
-            {% endif %}
+            {% endif %} -->
 
-            <!-- 그룹 초대코드 생성 modal -->
-            <div class="group__code--alert-box" id="create-code">
-                친구 초대
-                <div class="code_box">
-                </div>
-                <button class="group__code--close btn btn-dark" onclick="closeCreateCode()">닫기</button>
-            </div>
+        <!-- 비공개 그룹일 경우, 초대 코드 -->
+        {% if group.mode == 'PRIVATE' %}
             <!-- 그룹 초대 버튼 -->
             <div class="group__code--btn top-right__button">
-                <span>멤버 초대하기</span>
+                <span>멤버 초대코드</span>
+            </div>
+            <!-- 그룹 초대코드 생성 modal -->
+            <div class="group__code--alert-box modal modal__hidden" id="create-code">
+                <div class="modal__overlay"></div>
+                <div class="modal__content">    <!-- 모달 내용 -->
+                    <div class="modal__content--top">
+                        <span>멤버 초대 코드</span>
+                    </div>
+                    <div class="modal__content--bottom">
+                        <div class="code_box">
+                        </div>
+                        <button class="group__code--close modal__close" onclick="closeCreateCode()">확인</button>
+                    </div>
+                </div>
             </div>
         {% endif %}
         </div>
@@ -132,22 +171,23 @@
     <!-- 그룹 멤버 명단 -->
     <div class="container-member__list">
         <!-- 그룹 maker 먼저 -->
-        <div class="member-list__maker">   
-            <div class="member-list__maker--left"> 
+        <div class="member-list__maker">
+            <div class="member-list__maker--left">
+                
                 <div class="member-list__img">
                     {% if maker.img %}
                     <img src="{{ maker.img.url }}" height="50" width="50" style="border-radius: 50px;"/>
                     {% else %}
                     <img src="{{ profile_img }}" height="50" width="50" style="border-radius: 50px;"/>
-                    {% endif %}     
+                    {% endif %}
                 </div>
 
                 <div class="member-list__maker--text member-list__maker--name">
-                    <span class="text__name">{{ maker }}</span>
+                    <span class="text__name"><a href="{% url 'user:public_userpage' maker.pk %}">{{ maker }}👑</a></span>
                 </div>
             </div>
 
-            <!-- 유저 소개 받아올 수 있는지 -->
+            <!-- 유저 소개 -->
             <div class="member-list__maker--text member-list__one--intro">
                 {% if maker.introduction %}
                     <span class="text__intro">{{ maker.introduction }}</span>
@@ -157,11 +197,11 @@
             </div>
         </div>
 
-        <!-- 그룹 멤버 --> 
+        <!-- 그룹 멤버 -->
         {% for member in members %}     <!-- 멤버가 있으면 -->
-        {% if member != maker %}      
-        <div class="member-list__member">             
-            <div class="member-list__member--left">   
+        {% if member != maker %}
+        <div class="member-list__member">
+            <div class="member-list__member--left">
                 <div class="member-list__img">  <!-- 멤버 이미지 -->
                     {% if member.img %}
                     <img src="{{ member.img.url }}" />
@@ -171,52 +211,69 @@
                 </div>
 
                 <div class="member-list__one--text member-list__maker--name">    <!-- 멤버 이름 -->
-                    <span class="text__name">{{ member }}</span>
+                    <span class="text__name"><a href="{% url 'user:public_userpage' member.pk %}">{{ member }}</a></span>
                 </div>
             </div>
 
             <div class="member-list__one--text member-list__one--intro">
                 <!-- 멤버 소개 -->
                 {% if member.introduction %}
-                <span class="text__intro">두 줄이 넘어가면 어떻게 되는지 보여줄게요! 두 줄이 넘어가면 어떻게 되는지 보여줄게요!</span>
-                <!-- 원래는 이거 <span class="text__intro">{{ member.introduction }}</span> -->
+                <span class="text__intro">{{ member.introduction }}</span>
+                <!-- <span class="text__intro">두 줄이 넘어가면 어떻게 되는지 보여줄게요! 두 줄이 넘어가면 어떻게 되는지 보여줄게요!</span> -->
                 {% else %}
                 <span class="text__intro">소개가 없습니다. 멤버에게 소개를 부탁해보세요!</span>
                 {% endif %}
             </div>
         </div>
-        {% endif %} 
+        {% endif %}
         {% endfor %}
     </div>
 </div>  <!-- 그룹 멤버 리스트 끝 -->
 
 <div class="group-detail__container--bottom">   <!-- 페이지 하단 시작 -->
     <!-- 유저가 maker인 경우 -->
+    {% if maker == user %}
     <div class="bottom-btn__box">
-        {% if maker == user %}
         <a href="{% url 'group:group_update' group.pk %}" class="btn__update">그룹 정보 수정</a>
-        <a href="{% url 'group:group_delete' group.pk %}" class="btn__delete">그룹 삭제</a>    
-        {% endif %}
+        <span class="btn__delete">그룹 삭제</span>
+        <span class="btn-out">그룹 탈퇴하기</span> 
+
+        <!-- 그룹 삭제 modal -->
+        <!-- <div class="group__delete--alert">
+            <div class="group__delete--text">정말 을 삭제하시겠습니까?</div>
+            <button class="group__delete--yes">네</button>
+            <button class="group__delete--no" onclick="closeGroupDeleteAlert()">아니요</button>
+        </div>
+
+        <!-- 그룹 탈퇴 modal -->
+        <!-- <div class="group__drop--alert">
+            <div class="group__drop--text">정말 을 탈퇴하시겠습니까?</div>
+            <button class="group__drop--yes">네</button>
+            <button class="group__drop--no" onclick="closeGroupOutAlert()">아니요</button>
+        </div> -->
     </div>
+    {% endif %}
 
     <!-- 유저가 member인 경우 -->
-    <div class="bottom-btn__box">
-        {% if maker != user %}
-        <a href="{% url 'group:group_drop' group.pk %}" class="btn-out">그룹 탈퇴하기</a>
-        {% endif %}
-    </div>
+    {% if maker != user and user in members %}
+        <div class="bottom-btn__box">
+            <a href="{% url 'group:group_drop' group.pk %}" class="btn-out">그룹 탈퇴하기</a>
+        </div>
+    {% endif %}
 
     <!-- 공개 그룹 + 유저가 member가 아닌 경우 -->
-    <div class="bottom-btn__box">
-    {% if group.mode == 'PUBLIC' %}
-        {% if maker != user %}
-            {% if member != user %}
-            <a href="{% url 'group:public_group_join' group.pk %}" class="btn-signup">그룹 가입</a>
-            {% endif %}
-        {% endif %}
+    {% if group.mode == 'PUBLIC' and user in waits %}
+        <div class="bottom-btn__box">
+            <span class="btn-join-out">가입 대기중 💬</span>
+        </div>
+    {% elif group.mode == 'PUBLIC' and user not in members %}
+        <div class="bottom-btn__box">
+            <span class="btn-signup">그룹 가입하기</span>
+        </div>
     {% endif %}
-    </div>
 </div>  <!-- 페이지 하단 끝-->
+
+
 
 
 <!-- 예준이 부분 -->
@@ -229,7 +286,7 @@
                 {% if maker == user %}
                 <!-- 그룹 초대코드 생성 modal -->
                 <div class="group__code--alert-box" id="create-code">
-                    친구 초대 
+                    친구 초대
                     <div class="code_box">
                     </div>
                     <button class="group__code--close btn btn-dark" onclick="closeCreateCode()">닫기</button>
@@ -240,39 +297,11 @@
         <a href="{% url 'group:post_list' group.pk %}">그룹 커뮤니티</a>
             {% endif %}
 
-            {% if group.mode == 'PUBLIC' %}
-                {% if maker == user %}
-                <button class="group__wait--btn btn btn-dark">그룹 가입신청 관리</button>
+
 
                 <!-- 가입 대기 리스트 modal -->
-                <div class="group__member--all">
-                    <div class="group__wait-name"><h2></h2></div>
-                    <div class="d-flex flex-row">
-                        <h3>대기자 명단</h3>
-                        <hr/>
-                        <div class="group__wait--member-list me-2 p-4">
-                            
-                            {% for wait in waits %}
-                                <form method="GET" class="group-wait__one d-flex flex-row">
-                                    <div class="d-flex flex-row align-items-center">
-                                        {% if wait.img %}
-                                        <img src="{{ wait.img.url }}" height="50" width="50" style="border-radius: 50px;"/>
-                                        {% else %}
-                                        <img src="{{ profile_img }}" height="50" width="50" style="border-radius: 50px;"/>
-                                        {% endif %}
-                                        <h6>{{ wait }}</h6>
-                                        <input type="submit" value="수락" name="accept">
-                                        <input type="submit" value="거절" name="reject">
-                                    </div>  
-                                </form>
-                            {% endfor %}
-                        </div>
-                    </div>
-                    
-                    <button class="group__wait--close btn btn-dark" onclick="closeGroupWait()">닫기</button>
-                </div>
-                {% endif %}
-            {% endif %}
+
+
         </nav>
     </div>
 
@@ -304,7 +333,7 @@
                     {% else %}
                     <img src="{{ profile_img }}" height="50" width="50" style="border-radius: 50px;"/>
                     {% endif %}
-                    <h6>{{ member }}</h6>
+                    <h6><a href="{% url 'group:group_member_state' %}">{{ member }}</a></h6>
                 </div>
             {% endif %}
         {% endfor %}

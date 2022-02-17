@@ -14,9 +14,13 @@
 {% block content %}
 <div class="qna__top-search-container">
     <div class="qna__top">
-        <span class="qna__top-title">묻고 답하기</span>
-        <span class="qna__top-info">코딩 중 궁금한 내용을 찾거나 질문해보세요!</span>
+        <div class="qna__top--left">
+            <span class="qna__top-title">묻고 답하기</span>
+            <span class="qna__top-info">코딩 중 궁금한 내용을 찾거나 질문해보세요!</span>
+        </div>
+        <a class="qna__ask-btn" href="{% url 'qna:question_create' %}">질문 작성</a>
     </div>
+
     <div class="qna__search-container">
         <form class="qna__search-box" action="{% url 'qna:search_result' %}" method="get">
             {% csrf_token %}
@@ -27,73 +31,58 @@
                 </svg>
                 </button>
         </form>
-        <a class="qna__ask-btn" href="{% url 'qna:question_create' %}">질문 작성</a>
+    </div>
+
+    <div class="qna-sort-filter__box">
+        <!-- 최신순 조회수순 좋아요순 -->
+        <div class="list-sort">
+            <span class="list-sort__btn">
+                {% if sort_by != 'recent' %}
+                <a href="{% url 'qna:question_list' %}?{% param_replace sort='recent' page=1 %}">최신순</a>
+                {% else %}
+                <span>최신순</span>
+                {% endif %}
+            </span>
+            <span class="list-sort__btn">
+                {% if sort_by != 'view' %}
+                <a href="{% url 'qna:question_list' %}?{% param_replace sort='view' page=1 %}">조회수순</a>
+                {% else %}
+                <span>조회수순</span>
+                {% endif %}
+            </span>
+            <span class="list-sort__btn">
+                {% if sort_by != 'liked' %}
+                <a href="{% url 'qna:question_list' %}?{% param_replace sort='liked' page=1 %}">좋아요순</a>
+                {% else %}
+                <span>좋아요순</span>
+                {% endif %}
+            </span>
+        </div>
+
+        <!-- 게시글 필터 -->
+        <div class="qna-filter__box">
+            <form method="GET" action="{% url 'qna:question_list' %}" class="qna__filterbox--form" >
+                <input type="radio" name="answer_filter_by" value="ANSWERED" id="filter_by-answered" class="tag select-answer__tag" {% if 'ANSWERED' in filter_by %} checked {% endif %}//>
+                <label for="filter_by-answered">답변 완료</label>
+                <input type="radio" name="answer_filter_by" value="NOT_ANSWERED" id="filter_by-not-answered" class="tag select-answer__tag" {% if 'NOT_ANSWERED' in filter_by %} checked {% endif %}/>
+                <label for="filter_by-not-answered">답변 미완료</label>
+                <div class="filter-detail__box">
+                    <input type="checkbox" name="tag_filter_by" value="S" id="filter_by-scratch" class="tag select-detail__tag filter_by-scratch" {% if 'S' in filter_by %} checked {% endif %}/ />
+                    <label for="filter_by-scratch">스크래치</label>
+                    <input type="checkbox" name="tag_filter_by" value="E" id="filter_by-entry" class="tag select-detail__tag filter_by-entry" {% if 'E' in filter_by %} checked {% endif %}/  />
+                    <label for="filter_by-entry">엔트리</label>
+                    <input type="checkbox" name="tag_filter_by" value="ETC" id="filter_by-etc" class="tag select-detail__tag filter_by-etc" {% if 'ETC' in filter_by %} checked {% endif %}//>
+                    <label for="filter_by-etc">기타</label>
+                </div>
+                <button type="submit" class="qna-filter__box--btn">적용</button>       
+            </form>
+            <a href="{% url 'qna:question_list' %}" class="qna__filterbox--reset">초기화</a>
+        </div>
     </div>
 </div>
 
-<div class="list-sort">
-    <span class="list-sort__btn">
-        {% if sort_by != 'recent' %}
-        <a href="{% url 'qna:question_list' %}?{% param_replace sort='recent' page=1 %}">최신순</a>
-        {% else %}
-        최신순
-        {% endif %}
-    </span>
-    <span class="list-sort__btn">
-        {% if sort_by != 'view' %}
-        <a href="{% url 'qna:question_list' %}?{% param_replace sort='view' page=1 %}">조회수순</a>
-        {% else %}
-        조회수순
-        {% endif %}
-    </span>
-    <span class="list-sort__btn">
-        {% if sort_by != 'liked' %}
-        <a href="{% url 'qna:question_list' %}?{% param_replace sort='liked' page=1 %}">좋아요순</a>
-        {% else %}
-        좋아요순
-        {% endif %}
-    </span>
-</div>
-
-
-<div class="qna__filterbox">
-    <form method="GET" action="{% url 'qna:question_list' %}" class="qna__filterbox--form" >
-        <!-- <select class="select_sort" onchange=""> -->
-        <p>필터 선택 </p>
-        <input type="radio" name="answer_filter_by" value="NOT_ANSWERED" id="filter_by-not-answered" class="tag" {% if 'NOT_ANSWERED' in filter_by %} checked {% endif %}/>
-        <label for="motion">답변 없는 글</label>
-        <input type="radio" name="answer_filter_by" value="ANSWERED" id="filter_by-answered" class="tag" {% if 'ANSWERED' in filter_by %} checked {% endif %}//>
-        <label for="motion">답변 완료</label>
-        <input type="checkbox" name="tag_filter_by" value="S" id="filter_by-scratch" class="tag" {% if 'S' in filter_by %} checked {% endif %}/ />
-        <label for="motion">스크래치</label>
-        <input type="checkbox" name="tag_filter_by" value="E" id="filter_by-entry" class="tag"{% if 'E' in filter_by %} checked {% endif %}/  />
-        <label for="looks">엔트리</label>
-        <input type="checkbox" name="tag_filter_by" value="ETC" id="filter_by-etc" class="tag"{% if 'ETC' in filter_by %} checked {% endif %}//>
-        <label for="sound">기타</label>
-
-        <button type="submit" class="qna__filterbox--btn">필터</button>
-        
-    </form>
-    <a href="{% url 'qna:question_list' %}"><button type="" class="qna__filterbox--reset">초기화</button></a>
-</div>
-
-{% comment %}
-<div class="qna__filterbox">
-    <form method="get" action="{% url 'qna:question_list' %}" class="float-end">
-        <!-- <select class="select_sort" onchange=""> -->
-        <select class="qna__select-filter" onchange="location=this.value; getSelectValue(this.form);">
-            <option class="qna__filter-option qna__filter-option--answered" value="?filter=answered">답변완료된 글</option>
-            <option class="qna__filter-option qna__filter-option--not_answered" value="?filter=not_answered" >답변 없는 글</option>
-            <option class="qna__filter-option qna__filter-option--scratch" value="?filter=scratch">스크래치</option>
-            <option class="qna__filter-option qna__filter-option--entry" value="?filter=scratch">엔트리</option>
-            <option class="qna__filter-option qna__filter-option--etc" value="?filter=scratch">기타</option>
-        </select>
-    </form>
-</div>
-{% endcomment %}
-
 <div class="question__list-container">
-    {% for question in questions %}
+    {% for question, answers_count in question_answer_count.items %}
     <div class="question__container">
         <div class="question__cont-left">
             <a class="list__title" href = "{% url 'qna:question_detail' question.pk %}?{% param_replace %}">{{ question.title }}</a>
@@ -109,10 +98,10 @@
                 </div>
                 <!-- 상세태그 가져오는 코드입니다. 참고해서 css 완성해주세요. 고마워요 -->
                 {% for tag in question.tags.all %}
-                    <span class="tag__etc">{{ tag }}</span>
+                    <span class="tag__detail-tag">{{ tag }}</span>
                 {% endfor %}
                 <div class="question__info">
-                    <span>{{ question.user }} · 조회 {% get_hit_count for question %} · 좋아요 {{ question.like_user.all | length }} · {{ question.created_at | date:'y.m.d' }}</span>
+                    <span>{% if question.user %}<a href="{% url 'user:public_userpage' question.user.pk %}" style="text-decoration: none; color:#828282;">{{ question.user }}</a>{% else %}(알 수 없음){% endif %} · 조회 {% get_hit_count for question %} · 좋아요 {{ question.like_user.all | length }} · {{ question.created_at | date:'y.m.d' }}</span>
                 </div>
             </div>
             <div class="question__content">
@@ -122,7 +111,7 @@
         <div class="question__cont-right">
             <div>답변</div>
             <div>
-                {{ question.answer_set.all | length }}
+                {{ answers_count }}
             </div> 
         </div>
     </div>

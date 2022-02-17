@@ -15,6 +15,7 @@ html, body, section {
     line-height: 150%;
     font-weight: bold;
     padding-bottom: 10px;
+    margin-bottom: 30px;
     /* border-bottom: 1px solid #BDBDBD; */
 }
 
@@ -22,7 +23,7 @@ html, body, section {
 .input-title {
     width: 100%;
     height: 60px;
-    margin: 30px 0px;
+    margin-bottom: 30px;
     padding: 17px 32px 17px 20px;
 
     background: #FFFFFF;
@@ -41,6 +42,25 @@ html, body, section {
     border: 1px solid #BDBDBD;
     box-sizing: border-box;
     border-radius: 10px;
+}
+
+/* 에러메시지 */
+.input-error {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    width: 300px;
+    padding: 10px 20px;
+    margin: 10px 0px 6px 0px;
+
+    background-color: #FFE6E6;
+    border: 1px solid #eb6464;
+    border-radius: 5px;
+    box-sizing: border-box;
+    color: #eb6464;
+    font-weight: bold;
+    font-size: 18px;
 }
 
 .post-create__input ::placeholder {
@@ -96,6 +116,13 @@ html, body, section {
     line-height: 150%;
 }
 
+.img_display {
+    max-width: 400px;
+    max-height: 600px;
+    border-radius: 10px;
+    margin-top: 10px;
+}
+
 .form__input--file {
     position: absolute;
     width: 0;
@@ -148,7 +175,7 @@ html, body, section {
 }
 
 /* 카테고리 선택 */
-.post-crate__category {
+.post-create__category {
     margin-bottom: 30px;
 }
 
@@ -157,11 +184,11 @@ html, body, section {
     align-items: center;
 }
 
-.post-crate__category-select input {
+.post-create__category-select input {
     display: none;
 }
 
-.post-crate__category-select label {
+.post-create__category-select label {
     display: inline-block;
     background-color: #ffffff;
     border: 1px solid #BDBDBD;
@@ -171,10 +198,11 @@ html, body, section {
     text-align: center;
     text-decoration: none;
     transition: 0.25s;
-    padding: 10px 46px;
+    padding: 10px 0;
     cursor: pointer;
     font-size: 14px;
     margin: 3px;
+    width: 150px;
 
     font-family: Noto Sans CJK KR;
     font-weight: bold;
@@ -183,12 +211,12 @@ html, body, section {
     color: #4E4E4E;
 }
 
-.post-crate__category-select > input:checked + label {
+.post-create__category-select > input:checked + label {
     background: #4cc4d4;
     color: #fff;
 }
 
-.post-crate__error {
+.post-create__error {
     padding-left: 15px;
     color: rgb(255, 60, 60);
     font-family: Noto Sans CJK KR;
@@ -221,6 +249,7 @@ html, body, section {
     text-decoration: none;
     text-align: center;
     font-family: Noto Sans CJK KR;
+    font-weight: bold;
     font-size: 25px;
     line-height: 50%;
     color: #ffffff;

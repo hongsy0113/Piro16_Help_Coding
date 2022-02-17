@@ -4,6 +4,7 @@
 {% block css %}
 <link rel="stylesheet" href="{% static 'css/signup_login.css' %}">
 {% endblock css %}
+{% block title %} 도와줘, 코딩 | 로그인 {% endblock %}
 
 {% block content %}
 <div class="login__container">
@@ -16,4 +17,11 @@
         </div>
     </form>
 </div>
+<script>
+    const loginContainer = document.querySelector('.login__innercontainer');
+    const emailLabel = loginContainer.children[1].firstElementChild;
+    const pwLabel = loginContainer.children[2].firstElementChild;
+    emailLabel.textContent = '이메일';
+    pwLabel.textContent = '비밀번호';
+</script>
 {% endblock content %}

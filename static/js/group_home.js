@@ -33,15 +33,32 @@ const starHandleResponse = (groupId, is_star) => {
 // 초대 코드 입력 창 
 const groupJoinBtn = document.querySelector('.right__joinbtn');
 const closeJoinBtn = document.querySelector('.group-join__close');
+const publicGroupJoin = document.querySelector('.public-group__join-btn')
+const privateGroupJoin = document.querySelector('.private-group__join-btn')
+const groupWhichJoin =  document.querySelector('.group-join__select-box')
 
 function showGroupJoin() {
+    groupWhichJoin.style.display = 'flex';
+}
+
+function showPrivateGroup() {
     const groupJoinAlert = document.getElementById('join-group');
-    groupJoinAlert.style.display = 'block';
+    const groupCodeAlertText = document.querySelector('.group-code__text');
+
+    groupJoinAlert.style.display = 'flex';
+    groupWhichJoin.style.display = 'none';
+    groupCodeAlertText.style.display = 'none';
 }
 
 function closeGroupJoin() {
     const closeJoinAlert = document.getElementById('join-group');
+    const groupCodeAlertText = document.querySelector('.group-code__text');
+    const groupCodeInput = document.querySelector('.group-code__input')
+
+    groupCodeAlertText.innerHTML = '';
+    groupCodeInput.value = '';
     closeJoinAlert.style.display = 'none';
+    groupWhichJoin.style.display = 'none';
 }
 
 // groupJoinBtn.addEventListener('click', showGroupJoin);
@@ -67,7 +84,22 @@ const onClickGroupCodeSubmit = async(code) => {
 const groupCodeHandleResponse = (message) => {
     const groupCodeAlert = document.querySelector('.group-join__alert-box');
     const groupCodeAlertText = document.querySelector('.group-code__text');
-    
-    groupCodeAlertText.innerHTML = message;
-    groupCodeAlert.style.display = 'block';
+
+    if(message){
+        groupCodeAlertText.innerHTML = message;
+        groupCodeAlertText.style.display = 'flex';
+    } 
+
+    groupCodeAlert.style.display = 'flex';
 }
+
+// if(user_id == null) {
+//     privateGroupJoin.addEventListener('click', function(){
+//         alert('로그인 후 이용해주세요.');
+//     })
+
+//     const groupCreateBtn = document.querySelector('.right__makebtn');
+//     groupCreateBtn.addEventListener('click', function(){
+//         alert('로그인 후 이용해주세요.');
+//     })
+// }

@@ -1,48 +1,112 @@
 {% extends 'user/main.html' %}
 
+{% load static %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/mypage.css' %}">
+{% endblock css %}
+
 {% block content %}
 <div>
   <h3>○ 나의 업적들 ( {{ user.email }} )</h3>
-  {% if rewards %}
-  {% for reward in rewards %}
-  <p>
-    <p>업적 이름 : {{ reward.reward.name }}</p>
-    <p>업적 설명 : {{ reward.reward.info }}</p>
-    <p>획득일 : {{ reward.get_date }}</p>
-  </p>
-  {% endfor %}
-  {% else %}
-  <p>- 아직 업적이 없습니다.</p>
-  {% endif %}
+  <button class="btn btn-secondary"><a class="text-white" href="{% url 'user:mypage' %}" style="text-decoration: none">마이페이지로 돌아가기</a></button>
+  <div class="mypage__reward__container">
+    <div>
+      {% for reward in rewards %}
+      <div class="mypage__reward">
+        <div class="mypage__reward__img__container">
+          <img src="{% if reward.id in user_reward %}{{ reward.img }}{% else %}/static/img/reward/unknown.png{% endif %}" alt="rewardimg">
+        </div>
+        <p class="mypage__reward__name">{{ reward.name }}</p> 
+        <p class="mypage__reward__content">{{ reward.info }}</p>
+        {% if reward.id in user_reward %}
+        <p id="reward-parameter" hidden>{{ user.id }} {{ reward.id }}</p>
+        <p id="reward-{{ reward.id }}-date" class="mypage__reward__date"></p>
+        <p id="reward-{{ reward.id }}-representative" {% if reward != representative_reward %}hidden{% endif %}>대표 배지로 선택됨</p>
+        <button id="reward-{{ reward.id }}-button" onclick="setRepresentativeReward({{ user.id }}, {{ reward.id }})" {% if reward == representative_reward %}hidden{% endif %}>대표 배지 설정</button>
+        {% else %}
+        <p>미획득</p>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
 
-  {% if is_paginated %}
-  <ul class="pagination">
-    {% if page_obj.has_previous %}
-    <li class="page-item">
-      <a class="page-link" href="?page={{ page_obj.previous_page_number }}" tabindex="-1">이전</a>
-    </li>
-    {% else %}
-    <li class="page-item disabled">
-      <a class="page-link" href="#" tabindex="-1">이전</a>
-    </li>
-    {% endif %}
+  <script>
+    const requestSetRepresentativeReward = new XMLHttpRequest();
 
-    {% for page in page_range %}
-    <li class="page-item {% if page == page_obj.number %} activate {% endif %}">
-      <a class="page-link" href="?page={{ page }}">{{ page }}</a>
-    </li>
-    {% endfor %}
+    const setRepresentativeReward = (user_id, reward_id) => {
+        const url = "/mypage/reward/representative_ajax/";
+        requestSetRepresentativeReward.open("POST", url, true);
+        requestSetRepresentativeReward.setRequestHeader(
+            "Content-Type",
+            "application/x-www-form-urlencoded"
+        );
+        requestSetRepresentativeReward.send(JSON.stringify({user_id: user_id, reward_id: reward_id}));
+    };
 
-    {% if page_obj.has_next %}
-    <li class="page-item">
-      <a class="page-link" href="?page={{ page_obj.next_page_number }}">다음</a>
-    </li>
-    {% else %}
-    <li class="page-item disabled">
-      <a class="page-link" href="#">다음</a>
-    </li>
-    {% endif %}
-  </ul>
-  {% endif %}
+    const setHandleResponse = () => {
+        if (requestSetRepresentativeReward.status < 400) {
+            const {previous_id, reward_id} = JSON.parse(requestSetRepresentativeReward.response);
+            console.log(previous_id);
+            console.log(reward_id);
+            const representativeRewardButton1 = document.querySelector(`#reward-${reward_id}-button`);
+            representativeRewardButton1.hidden = true;
+            const representativeRewardButton2 = document.querySelector(`#reward-${previous_id}-button`);
+            representativeRewardButton2.hidden = false;
+            const representativeRewardSelected1 = document.querySelector(`#reward-${reward_id}-representative`);
+            representativeRewardSelected1.hidden = false;
+            const representativeRewardSelected2 = document.querySelector(`#reward-${previous_id}-representative`);
+            representativeRewardSelected2.hidden = true;
+        }
+    };
+
+    requestSetRepresentativeReward.onreadystatechange = () => {
+        if (requestSetRepresentativeReward.readyState === XMLHttpRequest.DONE) {
+          setHandleResponse();
+        }
+    };
+  </script>
+
+  
+<script>
+  const requestGetRewardDate = new XMLHttpRequest();
+
+  const getRewardDate = (user_id, reward_id) => {
+      const url = "/mypage/reward/date_ajax/";
+      requestGetRewardDate.open("POST", url, true);
+      requestGetRewardDate.setRequestHeader(
+          "Content-Type",
+          "application/x-www-form-urlencoded"
+      );
+      requestGetRewardDate.send(JSON.stringify({user_id: user_id, reward_id: reward_id}));
+  };
+
+  const getHandleResponse = () => {
+      if (requestGetRewardDate.status < 400) {
+          const {reward_id, date} = JSON.parse(requestGetRewardDate.response);
+          for (let i = 0; i < reward_id.length; i++) {
+            const rewardDate = document.querySelector(`#reward-${reward_id[i]}-date`);
+            rewardDate.innerHTML = String(date[i]);
+          }
+      }
+  };
+
+  requestGetRewardDate.onreadystatechange = () => {
+      if (requestGetRewardDate.readyState === XMLHttpRequest.DONE) {
+        getHandleResponse();
+      }
+  };
+
+  const rewardIDs = [];
+  const rewardParameterTag = document.querySelectorAll('#reward-parameter');
+  for (let i = 0; i < rewardParameterTag.length; i++) {
+    rewardIDs[i] = rewardParameterTag[i].innerHTML.split(" ")[1];
+  }
+  try {
+    getRewardDate(rewardParameterTag[0].innerHTML.split(" ")[0], rewardIDs);
+  } catch (e) {
+    console.log(e);
+  }
+</script>
 </div>
 {% endblock content %}
