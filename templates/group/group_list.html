@@ -51,7 +51,15 @@
         <span>이름순</span>
         {% endif %}
     </span>
+    <span class="list-sort__btn">
+        {% if sort_by != 'member' %}
+        <a href="{% url 'group:group_list' %}?{% param_replace sort='member' page=1 %}">멤버수순</a>
+        {% else %}
+        <span>멤버수순</span>
+        {% endif %}
+    </span>
 </div>
+
 {%comment %}
 <div class="list-sort">
     <span class="list-sort__btn">

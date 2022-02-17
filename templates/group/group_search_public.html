@@ -38,6 +38,31 @@
     <a class="group__make-btn" href="{% url 'group:group_create' %}">그룹 만들기</a>
 </div>
 
+<!-- 그룹 정렬 sort-box -->
+<div class="list-sort">
+    <span class="list-sort__btn">
+        {% if sort_by != 'interest' %}
+        <a href="{% url 'group:group_search_public' %}?{% param_replace sort='interest' page=1 search=query %}">인기순</a>
+        {% else %}
+        <span>인기순</span>
+        {% endif %}
+    </span>
+    <span class="list-sort__btn">
+        {% if sort_by != 'name' %}
+        <a href="{% url 'group:group_search_public' %}?{% param_replace sort='name' page=1 search=query %}">이름순</a>
+        {% else %}
+        <span>이름순</span>
+        {% endif %}
+    </span>
+    <span class="list-sort__btn">
+        {% if sort_by != 'member' %}
+        <a href="{% url 'group:group_search_public' %}?{% param_replace sort='member' page=1 search=query %}">멤버수순</a>
+        {% else %}
+        <span>멤버수순</span>
+        {% endif %}
+    </span>
+</div>
+
 <div class="group-search__result">  <!-- 검색 결과 시작 -->
     <div class="search-result__top">
         <span class="search-result__top--query">{{ query }}</span>
