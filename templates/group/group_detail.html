@@ -92,7 +92,7 @@
 
         <div class="info-content__member">
             <p class="text-box__top">그룹 인원</p>
-            <p class="text-box__bottom">{{ group.member |  length }}명</p>
+            <p class="text-box__bottom">{{ group.members |  length }}명</p>
         </div>
 
         <div class="info-content__intro">
@@ -148,7 +148,7 @@
         {% if group.mode == 'PRIVATE' %}
             <!-- 그룹 초대 버튼 -->
             <div class="group__code--btn top-right__button">
-                <span>멤버 초대하기</span>
+                <span>멤버 초대코드</span>
             </div>
             <!-- 그룹 초대코드 생성 modal -->
             <div class="group__code--alert-box modal modal__hidden" id="create-code">
@@ -173,6 +173,7 @@
         <!-- 그룹 maker 먼저 -->
         <div class="member-list__maker">
             <div class="member-list__maker--left">
+                
                 <div class="member-list__img">
                     {% if maker.img %}
                     <img src="{{ maker.img.url }}" height="50" width="50" style="border-radius: 50px;"/>
@@ -182,7 +183,7 @@
                 </div>
 
                 <div class="member-list__maker--text member-list__maker--name">
-                    <span class="text__name"><a href="{% url 'user:public_userpage' maker.pk %}">{{ maker }}</a></span>
+                    <span class="text__name"><a href="{% url 'user:public_userpage' maker.pk %}">{{ maker }}👑</a></span>
                 </div>
             </div>
 

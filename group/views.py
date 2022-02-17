@@ -405,7 +405,7 @@ class GroupErrorMessage():
         # 미입력 시 에러 메세지
         if 'group_create' == command or 'group_update' == command:
             if not name:
-                self.name = '그룹명을 입력하세요.'
+                self.name = '그룹 이름을 입력하세요.'
             if not (mode in ['PUBLIC', 'PRIVATE']):
                 self.mode = '그룹 공개모드를 선택하세요.'
 
@@ -413,10 +413,10 @@ class GroupErrorMessage():
         if 'group_update' == command:
             if name != prev:
                 if Group.objects.filter(name=name):
-                    self.name = '이미 사용 중인 그룹명입니다.'
+                    self.name = '이미 사용 중인 그룹 이름이에요.'
         elif 'group_create' == command:
             if Group.objects.filter(name=name):
-                self.name = '이미 사용 중인 그룹명입니다.'
+                self.name = '이미 사용 중인 그룹 이름이에요.'
 
     def has_error_group(self):
         return self.name or self.mode
