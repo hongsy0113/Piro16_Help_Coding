@@ -105,21 +105,6 @@
 
     <!-- 그룹 정렬 (sort) -->
     {% if groups %}
-    {% comment %}
-    <div class="list-sort">  
-        <!-- 피그마 디자인 구현 -->
-        <span class="list-sort__btn">찜하기순</span>
-        <span class="list-sort__btn">이름순</span>
-        <!-- select box -->
-        <form method="get" action="{% url 'group:group_home' %}" class="group_sort float-end me-4">
-            <select id="sort_select" class="sort_select" onchange="location=this.value; getSelectValue(this.form);">
-                <option class="sort-star" value="?sort=star" {% if sort_by == 'star' %} selected {% endif %}>찜하기순</option>
-                <option class="sort-name" value="?sort=name" {% if sort_by == 'name' %} selected {% endif %}>이름순</option>
-            </select>
-        </form>
-    </div>
-    {% endcomment %}
-
     <div class="list-sort">
         <span class="list-sort__btn">
             {% if sort_by != 'star' %}

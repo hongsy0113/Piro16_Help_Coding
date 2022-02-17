@@ -136,19 +136,16 @@ button {
 .filter_by-s:checked + label {
     color: #7D5F42;
     background: #FFEAB3;
-    border: 1px solid #FFEAB3;
 }
 
 .filter_by-q:checked + label {
     color: #404a77;
     background: #a2e4f8;
-    border: 1px solid #a2e4f8;
 }
 
 .filter_by-etc:checked + label {
     color: #40774c;
     background: #c6ffbb;
-    border: 1px solid #c6ffbb;
 }
 
 .post-filter__box--btn {

@@ -44,13 +44,6 @@ function add() {
     }
     // const color = "#FFFFF";
 
-    // if (inputTag.value) {
-    //     newLabel.append(inputTag.value);
-    //     tagBox.append(newTag);
-    //     tagBox.append(newLabel);
-    //     // addTag.style.backgroundColor = color;
-    //     inputTag.value = "";
-    // }
 }
 
 
