@@ -50,7 +50,6 @@
                 </div>
                 <div class="group-post__form-box">  
                     <input  id="img_upload_name" class="group-post__form-input group-post__form-input--image" placeholder="첨부파일" readonly  />
-                    <img id="img_display" src="" height="50" width="50">
                     <label for="img_upload" class="group-post__form-label">사진 올리기</label>
                     <input type="file" id="img_upload" class="form__input--file" name="image" onchange="imageChange(event);">
                     <input name="img_recent" id="img_recent" value="{% if current_image %}{{ current_image }}{% else %}{{ original_information.image }}{% endif %}" hidden />
@@ -93,6 +92,7 @@
                 </div>
             </div>
             {% endcomment %}
+
             <div class="select__category post-create__category">
                 <div class="text-container category-text">
                     <span>카테고리 고르기</span>

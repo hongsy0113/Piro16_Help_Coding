@@ -229,30 +229,15 @@ img {
     -webkit-box-orient: vertical;
 }
 
+.group-search-public__bottom--box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .group-search__bottom {
     display: flex;
     justify-content: center;
-    padding: 10px;
-}
-
-/* 검색 결과가 없으면 */
-.search-result__notresult {
-    display: flex;
-    justify-content: center;
-    text-align: center;
-    padding: 30px;
-}
-
-.notresult-query {
-    font-weight: bold;
-    font-size: 27px;
-    margin-bottom: 5px;
-}
-
-.notresult-text {
-    font-size: 22px;
-    font-weight: normal;
-    color: #4E4E4E;
 }
 
 .group-search__bottom a {
@@ -274,4 +259,24 @@ img {
     color: white;
     background-color: #828282;
     transition: 0.2s;
+}
+
+/* 검색 결과가 없으면 */
+.search-result__notresult {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    padding: 30px;
+}
+
+.notresult-query {
+    font-weight: bold;
+    font-size: 27px;
+    margin-bottom: 5px;
+}
+
+.notresult-text {
+    font-size: 22px;
+    font-weight: normal;
+    color: #4E4E4E;
 }
