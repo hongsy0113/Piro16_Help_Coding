@@ -207,6 +207,9 @@ def question_create(request):
                     for chunk in request.FILES['attached_file'].chunks():
                         destination.write(chunk)
 
+            original_information.image = request.POST['img_recent']
+            original_information.attached_file = request.POST['file_recent']
+            
             ctx = {
                 'form': form, 
                 'error_messages': error_messages,
