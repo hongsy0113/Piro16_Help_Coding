@@ -14,7 +14,7 @@
 {% block content %}
 <div class="group-post__top">   <!-- 게시판 상단 -->
     <div class="group-post__top-left">
-        <div class="group-post__top--title">{{ group.name }}</div>
+        <a href="{% url 'group:post_list' group.pk %}" class="group-post__top--title">{{ group.name }}</a>
         <div class="group-post__top--intro">{{ group.intro }}</div>
     </div>
     <div class="group-post__top--info">

@@ -127,7 +127,7 @@
     <div class="gridbox">
         {% for group, is_star in groups_star_dict.items %}
             <div class="gridbox__item-group">
-                <a href="{% url 'group:post_list' group.pk %}" style="text-decoration: none;">
+                <a href="{% url 'group:post_list' group.pk %}">
                     <div class="img__group">
                         {% if group.image %}
                         <img src="{{ group.image.url }}" height="200" width="200" class="img__group-img" />
