@@ -10,25 +10,25 @@
 {% block content %}
 <div class="mypage__profile__container">
   <div class="mypage__profile__img">
-    {% if user.img %}<img src="{{ user.img.url }}" height="100">{% else %}<p>사진 없음</p>{% endif %}
+    {% if view_user.img %}<img src="{{ view_user.img.url }}" height="100">{% else %}<p>사진 없음</p>{% endif %}
   </div>
   <div class="mypage__profile__text">
-    <p>{{ user.nickname }}</p>
+    <p>{{ view_user.nickname }}</p>
     <div>
       <div class="mypage__profile__text-content">
-        <!-- <div><p>이메일</p><p>{{ user.email }}</p></div>
-        <div><p>생년월일</p><p>{{ user.birth }}</p></div> -->
-        <div><p>직업</p><p>{{ user.get_job_display }}</p></div>
+        <!-- <div><p>이메일</p><p>{{ view_user.email }}</p></div>
+        <div><p>생년월일</p><p>{{ view_user.birth }}</p></div> -->
+        <div><p>직업</p><p>{{ view_user.get_job_display }}</p></div>
       </div>
       <div class="mypage__profile__text-content">
-        <div><p>레벨</p><p>{{ user.get_level }}</p></div>
-        <!-- <div><p>좋아요 수</p><p>{{ user.total_like }}</p></div>
-        <div><p>포인트</p><p>{{ user.points }}</p></div> -->
+        <div><p>레벨</p><p>{{ view_user.get_level }}</p></div>
+        <!-- <div><p>좋아요 수</p><p>{{ view_user.total_like }}</p></div>
+        <div><p>포인트</p><p>{{ view_user.points }}</p></div> -->
       </div>
     </div>
     <div class="mypage__profile__text-content">
-      <div><p>소개</p><p>{{ user.introduction }}</p></div>
-      <div><p>대표 배지</p>{% if user.representative_reward %}<img src="{{ user.representative_reward.img }}" height="15"></img>{% else %}<p>없음</p>{% endif %}</div>
+      <div><p>소개</p><p>{{ view_user.introduction }}</p></div>
+      <div><p>대표 배지</p>{% if view_user.representative_reward %}<img src="{{ view_user.representative_reward.img }}" height="15"></img>{% else %}<p>없음</p>{% endif %}</div>
     </div>
     <!-- <div class="mypage__profile__btn">
       <button class="btn btn-secondary"><a class="text-white" href="{% url 'user:mypage_revise' %}" style="text-decoration: none">개인정보 수정</a></button>
@@ -38,7 +38,7 @@
   </div>
 </div>
   <div class="mypage__options">
-    <h3 class="mypage__options__reward">{{ user.nickname }}의 업적</h3>
+    <h3 class="mypage__options__reward">{{ view_user.nickname }}의 업적</h3>
     <h3 class="mypage__options__question">최근 질문</h3>
     <h3 class="mypage__options__answer">최근 답변</h3>
   </div>

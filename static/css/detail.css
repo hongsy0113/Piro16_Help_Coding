@@ -98,6 +98,7 @@ main > p:first-of-type {
 .answer__input__container{
     position: relative;
 }
+
 .answer__input {
     width: 1080px;
     height: 150px;

@@ -183,9 +183,12 @@ class Alert(models.Model):
     checked = models.BooleanField(default=False)
 
     def related_url(self):
-        if self.alert_type in ['new_comment', 'new_reply']:
+        if self.alert_type in ['new_comment_qna', 'new_reply_qna']:
             # related_id : question id
             return '/qna/{}/'.format(self.related_id)
+        elif self.alert_type in ['new_comment_group', 'new_reply_group']:
+            # related_id : group id + " " + post id
+            return '/group/{}/post_detail/{}'.format(self.related_id.split(" ")[0], self.related_id.split(" ")[1])
         elif self.alert_type in ['level_up', 'level_change']:
             return '/mypage/point/'
         elif self.alert_type in ['get_reward']:
