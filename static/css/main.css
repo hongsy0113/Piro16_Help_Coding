@@ -388,3 +388,17 @@ p.main__title, .main__qna__box p {
     width: 1080px;
     margin: 0 auto;
 }
+
+/* 내 그룹 최근 게시글이 없을 경우 text */
+.landing__group__notpost {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    padding: 30px;
+}
+
+.notpost-text {
+    font-size: 22px;
+    font-weight: normal;
+    color: #4E4E4E;
+}
