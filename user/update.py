@@ -259,6 +259,6 @@ def update_point_history(user, type):
             if '_cancel' not in type:
                 point = POINT[category][type]
             else:
-                point = POINT[category][type.removesuffix('_cancel')] * (-1)
+                point = POINT[category][type[:-7]] * (-1)
             GetPoint.objects.create(
                 user=user, type=type, point=point, get_date=datetime.now())
