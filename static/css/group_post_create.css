@@ -116,6 +116,13 @@ html, body, section {
     line-height: 150%;
 }
 
+.img_display {
+    max-width: 400px;
+    max-height: 600px;
+    border-radius: 10px;
+    margin-top: 10px;
+}
+
 .form__input--file {
     position: absolute;
     width: 0;

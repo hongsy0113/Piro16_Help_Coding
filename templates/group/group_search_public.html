@@ -20,8 +20,11 @@
 
 <!-- 그룹 찾기 상단 -->
 <div class="group-search__top">
-    <span class="top-left__title">그룹 찾기</span>
-    <span class="top-left__intro">{{ user }}님과 함께할 그룹을 찾아보세요!</span>
+    <div class="group-list__top--left">
+        <span class="top-left__title">그룹 찾기</span>
+        <span class="top-left__intro">{{ user }}님과 함께할 그룹을 찾아보세요!</span>
+    </div>
+    <a class="group__make-btn" href="{% url 'group:group_create' %}">그룹 만들기</a>
 </div>
 
 <!-- 그룹 찾기 search-box -->
@@ -35,7 +38,6 @@
             </svg>
         </button>
     </form>
-    <a class="group__make-btn" href="{% url 'group:group_create' %}">그룹 만들기</a>
 </div>
 
 <!-- 그룹 정렬 sort-box -->
@@ -72,46 +74,46 @@
     <div class="search-result__gridbox">    <!-- 검색 결과 grid-box 시작-->
     {% for group in groups %}
         <div class="gridbox__item-group">   <!-- 그룹 grid-item 시작-->
-            <!-- 그룹 이미지 -->
-            <div class="img__group">
-                {% if group.image %}
-                <img src="{{ group.image.url }}" height="200" width="200" class="img__group-img" />
-                {% else %}
-                <img src="{{ ani_image }}" height="200" width="200" class="img__group-img" />
-                {% endif %}
-            </div>
+            <a href="{% url 'group:post_list' group.pk %}">
+                <!-- 그룹 이미지 -->
+                <div class="img__group">
+                    {% if group.image %}
+                    <img src="{{ group.image.url }}" height="200" width="200" class="img__group-img" />
+                    {% else %}
+                    <img src="{{ ani_image }}" height="200" width="200" class="img__group-img" />
+                    {% endif %}
+                </div>
 
-            <div class="like__group">
-                <span class="like__group--heart"><i class="fas fa-heart"></i></span>
-                <span class="like__group--text">좋아요 {{ group.interests.all | length }}개</span>
-            </div>
+                <div class="like__group">
+                    <span class="like__group--heart"><i class="fas fa-heart"></i></span>
+                    <span class="like__group--text">좋아요 {{ group.interests.all | length }}개</span>
+                </div>
 
-            <div class="content__group">    <!-- 그룹 내용 시작 -->
-                <div class="content__group-top">
-                    <div class="content__group-top-left">
-                        <!-- 그룹 이름 -->
-                        <div class="content__group-namebox">
-                            <a href="{% url 'group:group_detail' group.pk %}" class="content__group-name">
-                                <span class="group-name-text">{{ group.name }}</span>
-                            </a>
+                <div class="content__group">    <!-- 그룹 내용 시작 -->
+                    <div class="content__group-top">
+                        <div class="content__group-top-left">
+                            <!-- 그룹 이름 -->
+                            <div class="content__group-namebox">
+                                <span class="group-name-text content__group-name">{{ group.name }}</span>
+                            </div>
+                        </div>
+
+                        <!-- 그룹인원수 -->
+                        <div class="content__group-member">
+                            <span>{{ group.members.all | length }}명</span>
                         </div>
                     </div>
 
-                    <!-- 그룹인원수 -->
-                    <div class="content__group-member">
-                        <span>{{ group.members.all | length }}명</span>
+                    <div class="content__group-bottom">
+                        <!-- 그룹 소개 -->
+                        {% if group.intro %}
+                        <span class="group-intro">{{ group.intro }}</span>
+                        {% else %}
+                        <span class="group-intro">그룹 소개가 없습니다.</span>
+                        {% endif %}
                     </div>
-                </div>
-
-                <div class="content__group-bottom">
-                    <!-- 그룹 소개 -->
-                    {% if group.intro %}
-                    <span class="group-intro">{{ group.intro }}</span>
-                    {% else %}
-                    <span class="group-intro">그룹 소개가 없습니다.</span>
-                    {% endif %}
-                </div>
-            </div>  <!-- 그룹 내용 끝 -->
+                </div>  <!-- 그룹 내용 끝 -->
+            </a>
         </div>  <!-- 그룹 grid-item 끝-->
         <!-- 검색 결과가 없으면 -->
         {% empty %}

@@ -117,54 +117,9 @@ class GetPoint(models.Model):
 
 
 def initializeReward():
-    Reward.objects.create(name='총 좋아요 수 2개 달성',
-                          info='총 좋아요 수 2개 달성',
-                          type='total_like', criteria=2,
-                          img='/static/img/reward/base1.png')
-    Reward.objects.create(name='게시글 좋아요 수 2개 달성',
-                          info='게시글 좋아요 수 2개 달성',
-                          type='question_like', criteria=2,
-                          img='/static/img/reward/base1.png')
-    Reward.objects.create(name='댓글 좋아요 수 2개 달성',
-                          info='댓글 좋아요 수 2개 달성',
-                          type='comment_like', criteria=2,
-                          img='/static/img/reward/base1.png')
-    Reward.objects.create(name='총 질문 수 2개 달성',
-                          info='총 질문 수 2개 달성',
-                          type='total_question', criteria=2,
-                          img='/static/img/reward/base1.png')
-    Reward.objects.create(name='총 답변 수 2개 달성',
-                          info='총 답변 수 2개 달성',
-                          type='total_answer', criteria=2,
-                          img='/static/img/reward/base1.png')
-    Reward.objects.create(name='총 댓글 수 2개 달성',
-                          info='총 댓글 수 2개 달성',
-                          type='total_comment', criteria=2,
-                          img='/static/img/reward/base1.png')
-    Reward.objects.create(name='총 좋아요 수 5개 달성',
-                          info='총 좋아요 수 5개 달성',
-                          type='total_like', criteria=5,
-                          img='/static/img/reward/base1.png')
-    Reward.objects.create(name='게시글 좋아요 수 5개 달성',
-                          info='게시글 좋아요 수 5개 달성',
-                          type='question_like', criteria=5,
-                          img='/static/img/reward/base1.png')
-    Reward.objects.create(name='댓글 좋아요 수 5개 달성',
-                          info='댓글 좋아요 수 5개 달성',
-                          type='comment_like', criteria=5,
-                          img='/static/img/reward/base1.png')
-    Reward.objects.create(name='총 질문 수 5개 달성',
-                          info='총 질문 수 5개 달성',
-                          type='total_question', criteria=5,
-                          img='/static/img/reward/base1.png')
-    Reward.objects.create(name='총 답변 수 5개 달성',
-                          info='총 답변 수 5개 달성',
-                          type='total_answer', criteria=5,
-                          img='/static/img/reward/base1.png')
-    Reward.objects.create(name='총 댓글 수 5개 달성',
-                          info='총 댓글 수 5개 달성',
-                          type='total_comment', criteria=5,
-                          img='/static/img/reward/base1.png')
+    for REWARD in REWARD_ALL:
+        if not Reward.objects.filter(name = REWARD[0]):
+            Reward.objects.create(name = REWARD[0], info = REWARD[1], type = REWARD[2], criteria = REWARD[3], img = REWARD[4])
 
 
 class GetReward(models.Model):
@@ -183,9 +138,12 @@ class Alert(models.Model):
     checked = models.BooleanField(default=False)
 
     def related_url(self):
-        if self.alert_type in ['new_comment', 'new_reply']:
+        if self.alert_type in ['new_comment_qna', 'new_reply_qna']:
             # related_id : question id
             return '/qna/{}/'.format(self.related_id)
+        elif self.alert_type in ['new_comment_group', 'new_reply_group']:
+            # related_id : group id + " " + post id
+            return '/group/{}/post_detail/{}'.format(self.related_id.split(" ")[0], self.related_id.split(" ")[1])
         elif self.alert_type in ['level_up', 'level_change']:
             return '/mypage/point/'
         elif self.alert_type in ['get_reward']:

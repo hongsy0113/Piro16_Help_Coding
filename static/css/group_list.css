@@ -2,6 +2,10 @@ img {
     object-fit: cover;
 }
 
+a {
+    text-decoration: none;
+}
+
 /* 그룹 찾기 상단 */
 .group-list__top {
     display: flex;

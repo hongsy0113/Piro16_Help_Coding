@@ -58,10 +58,10 @@
     </div>
     {% endfor %}
   </div>
-  <button class="btn btn-secondary"><a class="text-white" href="{% url 'user:mypage_reward' %}" style="text-decoration: none">전체 업적 보기</a></button>
   {% else %}
   <p>- 아직 달성한 업적이 없습니다.</p>
   {% endif %}
+  <button class="btn btn-secondary"><a class="text-white" href="{% url 'user:mypage_reward' %}" style="text-decoration: none">전체 업적 보기</a></button>
 </div>
 
 <div class="mypage__question__container">
