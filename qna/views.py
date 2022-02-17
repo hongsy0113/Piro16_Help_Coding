@@ -113,7 +113,8 @@ def search_result(request):
         query = request.GET.get('search')
         questions = Question.objects.all().filter(
             Q(title__icontains=query) | # 제목으로 검색
-            Q(content__icontains=query) # 내용으로 검색
+            Q(content__icontains=query)| # 내용으로 검색
+            Q(tags__tag_name__icontains=query) # 태그로 검색
         )
 
     # 게시물 정렬
