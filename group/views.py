@@ -89,8 +89,14 @@ def group_search_public(request):
     if 'search' in request.GET:
         query = request.GET.get('search')
         groups = Group.objects.all().filter(Q(name__icontains=query) & Q(mode='PUBLIC'))
+
+    # 페이징 처리
+        page = request.GET.get('page', '1')
+        paginator = Paginator(groups, 6)    # 페이지당 6개씩 보여주기
+        page_obj = paginator.get_page(page)
+
         ctx = { 
-            'groups': groups,
+            'groups': page_obj,
             'query': query,
             'ani_image': static('image/helphelp.png'),
         }
@@ -664,6 +670,17 @@ def post_list(request, pk):
     group = Group.objects.get(pk=pk)
     page = request.GET.get('page', '1')    # 페이지
     
+    # 게시글 필터
+    filter_by_list = request.GET.getlist('filter_by')
+    if filter_by_list:
+        num = len(filter_by_list)
+        if num == 1:
+            posts= posts.filter(category=filter_by_list[0]) 
+        elif num == 2:
+            posts= posts.filter(Q(category=filter_by_list[0]) | Q(category=filter_by_list[1]))
+        elif num==3:
+            pass
+
     # 게시물 정렬
     sort_by = request.GET.get('sort', 'recent')
     if sort_by == 'recent':    # 최신순
@@ -692,7 +709,8 @@ def post_list(request, pk):
         'posts': page_obj,
         'posts_value_dict': posts_value_dict,
         'group': group,
-        'sort_by': sort_by
+        'sort_by': sort_by,
+        'filter_by': filter_by_list,
     }
     return render(request, 'group/group_post_list.html', context=ctx)
 
@@ -701,14 +719,13 @@ def search_result(request, pk):
     if 'search' in request.GET:
         group = Group.objects.get(pk=pk)
         query = request.GET.get('search')
-        page = request.GET.get('page', '1')
-
         posts = GroupPost.objects.filter(group__pk=pk).filter(
             Q(title__icontains=query) | # 제목으로 검색
             Q(content__icontains=query) # 내용으로 검색
         )
 
         # 페이징 처리
+        page = request.GET.get('page', '1')
         paginator = Paginator(posts, 6)    # 페이지당 6개씩 보여주기
         page_obj = paginator.get_page(page)
 
@@ -728,7 +745,7 @@ def search_result(request, pk):
             'posts': page_obj,
             'posts_value_dict': posts_value_dict, 
             'group_pk': pk,
-            'group': group,         
+            'group': group,
         }
 
     return render(request, 'group/search_result.html', context=ctx)
