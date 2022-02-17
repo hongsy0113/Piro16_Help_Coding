@@ -58,13 +58,8 @@
                     <input id="img_upload" type="file" name="image" class="form__input--file" onchange="imageChange(event);" />
                     <input name="img_recent" id="img_recent" value="{% if current_image %}{{ current_image }}{% else %}{{ origin.image }}{% endif %}" hidden />
                     <input id="temp_img_location" value="{{ temp_img_location }}" hidden />
-
-                    <!-- <img id="img_display" src="" height="50" width="50" > -->
-                    <!-- <input id="img_upload" type="file" name="image" onchange="imageChange(event);"></input>
-                    <p id="img_upload_name">선택된 이미지 : 없음</p>
-                    <!-- <input name="img_recent" id="img_recent" value="{% if current_image %}{{ current_image }}{% else %}{{ origin.image }}{% endif %}" hidden ></input> -->
-                    <!-- <input id="temp_img_location" value="{{ temp_img_location }}" hidden /> -->
                 </div>
+                <img id="img_display" class="img_display" src="" >
             </div>
 
             <div class="group-crate__mode select__group-mode">
