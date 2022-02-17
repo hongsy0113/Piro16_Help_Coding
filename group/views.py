@@ -89,8 +89,14 @@ def group_search_public(request):
     if 'search' in request.GET:
         query = request.GET.get('search')
         groups = Group.objects.all().filter(Q(name__icontains=query) & Q(mode='PUBLIC'))
+
+    # 페이징 처리
+        page = request.GET.get('page', '1')
+        paginator = Paginator(groups, 6)    # 페이지당 6개씩 보여주기
+        page_obj = paginator.get_page(page)
+
         ctx = { 
-            'groups': groups,
+            'groups': page_obj,
             'query': query,
             'ani_image': static('image/helphelp.png'),
         }
@@ -271,12 +277,9 @@ def group_delete(request, pk):
     #     return redirect('group:group_detail', pk)
 
 # 그룹 탈퇴
-def group_drop(request):
-    req = json.loads(request.body)
-    group_id = req['groupId']
-
+def group_drop(request, pk):
     user = request.user
-    group = get_object_or_404(Group, pk=group_id)
+    group = get_object_or_404(Group, pk=pk)
     members = group.members.all()
 
     if len(members) > 1:
@@ -574,12 +577,13 @@ def wait_list_ajax(request):
         elif request.GET.get('reject'):
             group.waits.remove(wait_member)
             group.save()
+    
 
     return JsonResponse({
         'groupName': group.name,
         'waitsName': wait_member_name,
         'waitsImg': wait_member_img,
-        'waitsId': wait_member_id
+        'waitsId': wait_member_id,
     })
 
 
@@ -700,14 +704,13 @@ def search_result(request, pk):
     if 'search' in request.GET:
         group = Group.objects.get(pk=pk)
         query = request.GET.get('search')
-        page = request.GET.get('page', '1')
-
         posts = GroupPost.objects.filter(group__pk=pk).filter(
             Q(title__icontains=query) | # 제목으로 검색
             Q(content__icontains=query) # 내용으로 검색
         )
 
         # 페이징 처리
+        page = request.GET.get('page', '1')
         paginator = Paginator(posts, 6)    # 페이지당 6개씩 보여주기
         page_obj = paginator.get_page(page)
 
@@ -727,7 +730,7 @@ def search_result(request, pk):
             'posts': page_obj,
             'posts_value_dict': posts_value_dict, 
             'group_pk': pk,
-            'group': group,         
+            'group': group,
         }
 
     return render(request, 'group/search_result.html', context=ctx)
