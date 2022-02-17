@@ -57,7 +57,7 @@
                     <span>사진</span>
                 </div>
                 <div class="group-post__form-box">  
-                    <input id="img_upload_name" class="group-post__form-input group-post__form-input--image" placeholder="첨부파일" readonly  />
+                    <input id="img_upload_name" class="group-post__form-input group-post__form-input--image" placeholder="필요한 사진을 추가하세요" readonly  />
                     <label for="img_upload" class="group-post__form-label">사진 올리기</label>
                     <input type="file" id="img_upload" class="form__input--file" name="image" onchange="imageChange(event);">
                     <input name="img_recent" id="img_recent" value="{% if current_image %}{{ current_image }}{% else %}{{ original_information.image }}{% endif %}" hidden />
@@ -90,7 +90,7 @@
                     <span>파일</span>
                 </div>
                 <div class="group-post__form-box">
-                    <input id="file_upload_name" class="group-post__form-input group-post__form-input--file"  placeholder="첨부파일" readonly/>
+                    <input id="file_upload_name" class="group-post__form-input group-post__form-input--file"  placeholder="필요한 파일(코드)을 추가하세요" readonly/>
                     <label for="file_upload" class="group-post__form-label">파일 올리기</label>
                     <input type="file" class="form__input--file" id="file_upload" name="attached_file" value="{{ form.attached_file.url }}" onchange="fileChange(event); "/>
                     <input name="file_recent" id="file_recent" value="{% if current_file %}{{ current_file }}{% else %}{{ original_information.attached_file }}{% endif %}" hidden />

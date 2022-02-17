@@ -67,7 +67,6 @@
     margin-left: -55px;
 }
 
-
 .question__list-container a {
     color: black;
     text-decoration: none;
@@ -77,6 +76,37 @@
 .question__list-container a:hover {
     background-color: #ececec;
     color: black;
+}
+
+/* 게시물 정렬 (sort) */
+.list-sort {
+    display: flex;
+    align-items: center;
+    padding-bottom: 6px;
+}
+
+.list-sort__btn a {
+    font-family: Noto Sans CJK KR;
+    font-size: 16px;
+    line-height: 150%;
+    display: flex;
+    color: #5e5e5e;
+    margin-right: 10px;
+    text-decoration: none;
+}
+
+.list-sort__btn a:hover {
+    color: black;
+}
+
+.list-sort__btn span {
+    font-family: Noto Sans CJK KR;
+    font-weight: bold;
+    font-size: 18px;
+    line-height: 150%;
+    display: flex;
+    color: #000000;
+    margin-right: 10px;
 }
 
 /* 질문 목록 */
@@ -189,6 +219,7 @@
     font-weight: bold;
     font-size: 27px;
     margin-bottom: 5px;
+    padding: 50px;
 }
 
 .notresult-text {
@@ -196,9 +227,6 @@
     font-weight: normal;
     color: #4E4E4E;
 }
-
-
-
 
 /* 페이지네이션 */
 .pagination-box {

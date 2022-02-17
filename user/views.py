@@ -10,8 +10,9 @@ from .forms import LoginForm, SignupForm, MypageReviseForm
 from .models import *
 from .constants import *
 from .update import *
+from .periodic_tasks import *
 from qna.models import Question, Answer
-from group.models import * 
+from group.models import *
 from group.iframe import *
 from django.contrib import messages
 from django.contrib.sites.shortcuts import get_current_site
@@ -29,27 +30,30 @@ import shutil
 import os
 import time
 from threading import Timer
+from datetime import datetime
+
 
 # Main
 
 
 def main(request):
     user = request.user
-    ctx ={}
+    ctx = {}
     if user != AnonymousUser():
         groups = user.group_set.all()
-        posts = GroupPost.objects.filter(group__in=groups).exclude(user=user).order_by('-created_at')[:3]
+        posts = GroupPost.objects.filter(group__in=groups).exclude(
+            user=user).order_by('-created_at')[:3]
         posts_img_dict = {}
-        for post in posts: 
+        for post in posts:
             if post.attached_link:
                 posts_img_dict[post] = get_img_src(post.attached_link)
             elif post.image:
                 posts_img_dict[post] = post.image.url
-            else: 
+            else:
                 posts_img_dict[post] = ''
 
         ctx['posts_img_dict'] = posts_img_dict
-    
+
     return render(request, 'user/main.html', context=ctx)
 
 # Login
@@ -94,22 +98,24 @@ class ErrorMessages():
             if not re.compile('^[a-zA-Z0-9]+@[a-zA-Z0-9.]+$').match(email):
                 self.email = '올바른 이메일 주소를 입력해주세요.'
             elif User.objects.filter(email=email):  # 예외1-2) 이미 가입된 유저
-                self.email = '이미 가입된 유저입니다.'
+                self.email = '이미 가입된 유저예요. 다른 이메일 주소를 입력해주세요.'
 
         if not nickname:  # 예외2-1) 닉네임 입력하지 않음
             self.nickname = '닉네임을 입력해주세요.'
+        elif len(nickname) > 7:  # 예외2-2) 너무 긴 닉네임
+            self.nickname = '닉네임은 7글자 이내로 지어주세요.'
         else:
-            if 'signup' in command:  # 예외2-2) 이미 사용 중인 닉네임 (회원 가입 시)
+            if 'signup' in command:  # 예외2-3) 이미 사용 중인 닉네임 (회원 가입 시)
                 if User.objects.filter(nickname=nickname):
-                    self.nickname = '이미 사용 중인 닉네임입니다.'
+                    self.nickname = '이미 사용 중인 닉네임이에요. 다른 닉네임을 입력해주세요.'
             else:  # 예외2-3) 이미 사용 중인 닉네임 (닉네임 수정 시)
                 if User.objects.filter(nickname=nickname) and User.objects.get(nickname=nickname).email != email:
-                    self.nickname = '이미 사용 중인 닉네임입니다.'
+                    self.nickname = '이미 사용 중인 닉네임이에요. 다른 닉네임을 입력해주세요.'
 
         if 'password_change' in command:
             # 예외3-1) 현재 비밀번호 오류
             if not check_password(current_password, User.objects.get(email=email).password):
-                self.current_password = '현재 비밀번호가 일치하지 않습니다.'
+                self.current_password = '현재 비밀번호가 일치하지 않아요.'
 
         if 'signup' in command or 'password_change' in command:
             # 예외4-1) 잘못된 비밀번호 형식
@@ -118,7 +124,7 @@ class ErrorMessages():
             elif new_password1 in email:  # 예외4-2) 이메일에 포함되는 비밀번호
                 self.new_password1 = '비밀번호는 이메일 주소에 포함되지 않게 만들어주세요.'
             if new_password1 != new_password2:  # 예외4-3) 비밀번호 불일치
-                self.new_password2 = '비밀번호가 일치하지 않습니다.'
+                self.new_password2 = '비밀번호가 일치하지 않아요.'
 
         # 예외5) 잘못된 생년월일 형식
         if not re.compile('^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$').match(birth):
@@ -236,11 +242,15 @@ def sign_up(request):
             mail_subject = '[도와줘, 코딩] 회원가입 인증 메일입니다.'
             email = EmailMessage(mail_subject, message, to=[user.email])
             # email.send()
-            Timer(24 * 60 * 60, unauthenticated_user_delete,
-                  [request.POST['email']]).start()
+            # Timer(24 * 60 * 60, unauthenticated_user_delete,
+            #      [request.POST['email']]).start()
             ######## 업적 초기화를 위한 임시적인 부분 ########
             if request.POST['email'] == 'reward@reward.com':
                 initializeReward()
+            ################################################
+            ######## 타이머 실행을 위한 임시적인 부분 ########
+            if request.POST['email'] == 'timer@timer.com':
+                Timer(initial_period(datetime.now()), periodic_tasks).start()
             ################################################
             return render(request, 'user/signup_success.html', {'email': user.email})
 
@@ -291,6 +301,20 @@ def unauthenticated_user_delete(email):
 
 
 def my_page(request):
+    schedule, created = IntervalSchedule.objects.get_or_create(
+        every=10, period=IntervalSchedule.SECONDS,)
+    # 'test_task'가 등록되어 있으면,
+    if PeriodicTask.objects.filter(name='test_task').exists():
+        p_test = PeriodicTask.objects.get(name='test_task')
+        p_test.enabled = True  # 실행시킨다.
+        p_test.interval = schedule
+        p_test.save()
+    else:  # 'test_task'가 등록되어 있지 않으면, 새로 생성한다
+        PeriodicTask.objects.create(
+            interval=schedule,  # 앞서 정의한 schedule
+            name='test_task',
+            task='bracken.tasks.test_task',
+        )
     user = request.user
     if user == AnonymousUser():
         return redirect('user:login')
@@ -434,7 +458,8 @@ def my_page_reward(request):
     for get_reward in GetReward.objects.filter(user=user):
         user_reward.append(get_reward.reward.id)
     representative_reward = user.representative_reward
-    ctx = {'user': user, 'rewards': rewards, 'user_reward': user_reward, 'representative_reward': representative_reward}
+    ctx = {'user': user, 'rewards': rewards, 'user_reward': user_reward,
+           'representative_reward': representative_reward}
     return render(request, template_name='user/mypage_reward.html', context=ctx)
 
 
@@ -521,22 +546,28 @@ def date_reward_ajax(request):
     return JsonResponse({'reward_id': reward_ids, 'date': date})
 
 # 공개 프로필 정보
+
+
 def public_userpage(request, pk):
     view_user = get_object_or_404(User, pk=pk)
 
-    rewards = GetReward.objects.filter(user=view_user).order_by('-get_date')[:5]
-    questions = Question.objects.filter(user=view_user).order_by('-updated_at')[:5]
+    rewards = GetReward.objects.filter(
+        user=view_user).order_by('-get_date')[:5]
+    questions = Question.objects.filter(
+        user=view_user).order_by('-updated_at')[:5]
     answers = Answer.objects.filter(user=view_user).order_by('-updated_at')[:5]
     ctx = {
-        'view_user': view_user, 
+        'view_user': view_user,
         'rewards': rewards,
-        'questions': questions, 
+        'questions': questions,
         'answers': answers
     }
-    
+
     return render(request, template_name='user/public_userpage.html', context=ctx)
 
 # 그룹 가입 대기자 프로필 정보
+
+
 @csrf_exempt
 def group_wait_profile(request):
     req = json.loads(request.body)
