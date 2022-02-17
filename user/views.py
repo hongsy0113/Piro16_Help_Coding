@@ -504,13 +504,13 @@ def date_reward_ajax(request):
 
 # 공개 프로필 정보
 def public_userpage(request, pk):
-    user = get_object_or_404(User, pk=pk)
+    view_user = get_object_or_404(User, pk=pk)
 
-    rewards = GetReward.objects.filter(user=user).order_by('-get_date')[:5]
-    questions = Question.objects.filter(user=user).order_by('-updated_at')[:5]
-    answers = Answer.objects.filter(user=user).order_by('-updated_at')[:5]
+    rewards = GetReward.objects.filter(user=view_user).order_by('-get_date')[:5]
+    questions = Question.objects.filter(user=view_user).order_by('-updated_at')[:5]
+    answers = Answer.objects.filter(user=view_user).order_by('-updated_at')[:5]
     ctx = {
-        'user': user, 
+        'view_user': view_user, 
         'rewards': rewards,
         'questions': questions, 
         'answers': answers
