@@ -2,6 +2,7 @@ img {
     object-fit: cover;
 }
 
+
 /* 게시판 상단 */
 .group-post__top {
     display: flex;
@@ -20,9 +21,15 @@ img {
     font-size: 36px;
     line-height: 150%;
     font-weight: bold;
-    margin-right: 25px;
+    /* margin-right: 25px; */
     max-width: 230px;
     word-break: break-all;
+    text-decoration: none;
+    color: #000000;
+}
+
+.group-post__top--title:hover {
+    color: #828282;
 }
 
 .group-post__top--intro {
