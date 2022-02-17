@@ -172,9 +172,19 @@ button {
     align-items: center;
 }
 
-.filter-detail__box > input:checked + label {
-    background: #51b96e;
-    color: #fff;
+.filter_by-scratch:checked + label {
+    background: #C3FFBE;
+    color: #2F7041;
+}
+
+.filter_by-entry:checked + label {
+    background: #FFC7C7;
+    color: #7D4242;
+}
+
+.filter_by-etc:checked + label {
+    background-color: #bebebe;
+    color: #464646;
 }
 
 .qna-filter__box--btn {

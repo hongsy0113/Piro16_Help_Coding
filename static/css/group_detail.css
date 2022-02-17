@@ -266,10 +266,6 @@ button {
     overflow: auto;
 }
 
-.text__name {
-    /* padding: 5px; */
-}
-
 .text__name a {
     text-decoration: none;
     color: #212529;
@@ -294,6 +290,7 @@ button {
     display: flex;
     justify-content: center;
     padding-top: 50px;
+    cursor: pointer;
 }
 
 .bottom-btn__box a,

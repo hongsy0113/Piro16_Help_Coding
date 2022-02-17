@@ -67,11 +67,11 @@
                 <input type="radio" name="answer_filter_by" value="NOT_ANSWERED" id="filter_by-not-answered" class="tag select-answer__tag" {% if 'NOT_ANSWERED' in filter_by %} checked {% endif %}/>
                 <label for="filter_by-not-answered">답변 미완료</label>
                 <div class="filter-detail__box">
-                    <input type="checkbox" name="tag_filter_by" value="S" id="filter_by-scratch" class="tag select-detail__tag" {% if 'S' in filter_by %} checked {% endif %}/ />
+                    <input type="checkbox" name="tag_filter_by" value="S" id="filter_by-scratch" class="tag select-detail__tag filter_by-scratch" {% if 'S' in filter_by %} checked {% endif %}/ />
                     <label for="filter_by-scratch">스크래치</label>
-                    <input type="checkbox" name="tag_filter_by" value="E" id="filter_by-entry" class="tag select-detail__tag" {% if 'E' in filter_by %} checked {% endif %}/  />
+                    <input type="checkbox" name="tag_filter_by" value="E" id="filter_by-entry" class="tag select-detail__tag filter_by-entry" {% if 'E' in filter_by %} checked {% endif %}/  />
                     <label for="filter_by-entry">엔트리</label>
-                    <input type="checkbox" name="tag_filter_by" value="ETC" id="filter_by-etc" class="tag select-detail__tag" {% if 'ETC' in filter_by %} checked {% endif %}//>
+                    <input type="checkbox" name="tag_filter_by" value="ETC" id="filter_by-etc" class="tag select-detail__tag filter_by-etc" {% if 'ETC' in filter_by %} checked {% endif %}//>
                     <label for="filter_by-etc">기타</label>
                 </div>
                 <button type="submit" class="qna-filter__box--btn">적용</button>       
@@ -80,21 +80,6 @@
         </div>
     </div>
 </div>
-
-{% comment %}
-<div class="qna__filterbox">
-    <form method="get" action="{% url 'qna:question_list' %}" class="float-end">
-        <!-- <select class="select_sort" onchange=""> -->
-        <select class="qna__select-filter" onchange="location=this.value; getSelectValue(this.form);">
-            <option class="qna__filter-option qna__filter-option--answered" value="?filter=answered">답변완료된 글</option>
-            <option class="qna__filter-option qna__filter-option--not_answered" value="?filter=not_answered" >답변 없는 글</option>
-            <option class="qna__filter-option qna__filter-option--scratch" value="?filter=scratch">스크래치</option>
-            <option class="qna__filter-option qna__filter-option--entry" value="?filter=scratch">엔트리</option>
-            <option class="qna__filter-option qna__filter-option--etc" value="?filter=scratch">기타</option>
-        </select>
-    </form>
-</div>
-{% endcomment %}
 
 <div class="question__list-container">
     {% for question, answers_count in question_answer_count.items %}
