@@ -263,16 +263,20 @@ def group_delete(request, pk):
 
     if user == group.maker:
         group.delete()
-
+        
         return redirect('group:group_home')
+
     # else:
     #     ### 알림 창 하나 띄우기(alert) "방장만 그룹을 삭제할 수 있습니다."
     #     return redirect('group:group_detail', pk)
 
 # 그룹 탈퇴
-def group_drop(request, pk):
+def group_drop(request):
+    req = json.loads(request.body)
+    group_id = req['groupId']
+
     user = request.user
-    group = get_object_or_404(Group, pk=pk)
+    group = get_object_or_404(Group, pk=group_id)
     members = group.members.all()
 
     if len(members) > 1:
@@ -291,7 +295,6 @@ def group_drop(request, pk):
         group.delete()
 
         # group_delete(request, pk)  # 그룹 삭제 함수 호출
-
     return redirect('group:group_home')
 
 # 그룹 상세 페이지
@@ -402,10 +405,13 @@ class OriginalGroupInfo():
 # 7일의 코드 유효 기간
 def group_code_save(pk):
     group = get_object_or_404(Group, pk=pk)
-    print(group.code)
     group.code = get_invite_code()
     group.save()
-    print(group.code)
+
+    time = Timer(7 * 24 * 60 * 60, group_code_save, [group.pk])
+    time.start()
+
+    return group.code
 
 # 초대 코드 발급
 def get_invite_code(length=6):
@@ -420,12 +426,12 @@ def create_code_ajax(request):
     group_id = req['groupId']
 
     group = get_object_or_404(Group, pk=group_id)
-    if group.code != '':
+    if group.code != None:
         code = group.code
     else:
-        time = Timer(7 * 24 * 60 * 60, group_code_save, [group_id])
-        time.start()
-        code = group.code
+        # time = Timer(7 * 24 * 60 * 60, group_code_save, [group_id])
+        code = group_code_save(group_id)
+        # code = group.code
         
         if time.finished:
             group.code = ''
@@ -576,12 +582,6 @@ def wait_list_ajax(request):
         'waitsId': wait_member_id
     })
 
-def wait_member_detail(request, pk):
-    wait_user = get_object_or_404(User, pk=pk)
-
-    ctx = { 'user': wait_user }
-    
-    return render(request, 'group/wait_member_detail.html', ctx=ctx)
 
 # 공개그룹 대기자 수락 여부
 # @csrf_exempt

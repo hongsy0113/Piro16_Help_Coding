@@ -43,8 +43,11 @@ function showGroupJoin() {
 
 function showPrivateGroup() {
     const groupJoinAlert = document.getElementById('join-group');
+    const groupCodeAlertText = document.querySelector('.group-code__text');
+
     groupJoinAlert.style.display = 'flex';
     groupWhichJoin.style.display = 'none';
+    groupCodeAlertText.style.display = 'none';
 }
 
 function closeGroupJoin() {
@@ -81,7 +84,7 @@ const onClickGroupCodeSubmit = async(code) => {
 const groupCodeHandleResponse = (message) => {
     const groupCodeAlert = document.querySelector('.group-join__alert-box');
     const groupCodeAlertText = document.querySelector('.group-code__text');
-    
+
     if(message){
         groupCodeAlertText.innerHTML = message;
         groupCodeAlertText.style.display = 'flex';

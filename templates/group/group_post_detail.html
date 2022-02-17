@@ -38,7 +38,7 @@
 <main>
     <h1>{{ post.title }}</h1>
     <div style="display: flex; justify-content: space-between;">
-        <p class="post__info">{{ post.created_at|date:'y.m.d'}} · 조회 {% get_hit_count for post %} · 좋아요 {{ total_likes }} · {{ username }}</p>
+        <p class="post__info">{{ post.created_at|date:'y.m.d'}} · 조회 {% get_hit_count for post %} · 좋아요 {{ total_likes }} · <a href="{% url 'user:public_userpage' post.user.pk %}" style="text-decoration: none; color:#212529;">{{ username }}</a></p>
         <div>
             {% if post.user.id == user.id %}
             <a href="{% url 'group:post_update' group.pk post.pk %}" class="post__edit-btn">수정</a>
@@ -136,7 +136,7 @@
                         <div> <!-- 이름, 글쓴이, 날짜 -->
                             <div class="answer__user__name answer__user__name--{{ answer.id }}">
                                 {% if answer.user %}
-                                <h2>{{ answer.user }}</h2>
+                                <h2><a href="{% url 'user:public_userpage' answer.user.pk %}" style="text-decoration: none; color:#212529;">{{ answer.user }}</a></h2>
                                 {% if answer.user.id == post.user.id %}
                                 <span class="answer__writer-mark">글쓴이</span>
                                 {% endif %}

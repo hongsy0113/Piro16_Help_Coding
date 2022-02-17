@@ -95,7 +95,7 @@
             {% endcomment %}
             <div class="select__category post-create__category">
                 <div class="text-container category-text">
-                    <span>카테고리 선택</span>
+                    <span>카테고리 고르기</span>
                 </div>
                 {% if error_messages.s_or_e_tag %}
                 <span class="input-error">
@@ -119,9 +119,9 @@
             </div>
             <div class="select__tag post-create__category">
                 <div class="text-container category-text">
-                    <span>상세 태그 선택</span>
+                    <span>상세 태그 고르기</span>
                 </div>
-                <div class="post-create__category-select">
+                <div class="post-create__category-select post-create__tag-select">
                     <input type="checkbox" name="detail_tag" value="동작" id="motion" class="tag" {% if '동작' in basic_tag_names %} checked {% endif %} />
                     <label for="motion">동작</label>
                     <input type="checkbox" name="detail_tag" value="형태" id="looks" class="tag"  {% if '형태' in basic_tag_names %} checked {% endif %} />
@@ -150,8 +150,8 @@
                     
                     <input type="checkbox" name="add_tag" value="ADD_TAG" id="add_tag" class="tag" />
                     <label for="add_tag">태그 추가</label>
-                    <div class="add_tag__error-msg"></div>
                 </div>
+                <div class="add_tag__error-msg"></div>
             </div>
             <div class="tag_input_box"></div>
             <div class="post-create__btn">

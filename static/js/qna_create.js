@@ -15,7 +15,7 @@ function create_tag() {
 
 function add() {
     // 태그 div
-    const tagBox = document.querySelector(".select__tag");
+    const tagBox = document.querySelector(".post-create__tag-select");
     // 태그 입력창
     const inputTag = document.querySelector(".input_tag");
     // 새로운 태그 추가

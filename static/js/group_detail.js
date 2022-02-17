@@ -159,7 +159,7 @@ const groupWaitHandleResponse = (groupName, waitsName, waitsImg, waitsId) => {
                     <div class="wait-member__img">
                         ${ waitImg }
                     </div>  
-                    <span class="wait-member__name"><a href="{% url 'group:wait_member_detail' waitMemberId %}">${ waitsName[i] }</a></span>  
+                    <span class="btn wait-member__name wait-member__name--${ waitMemberId }" id="wait-name-${ waitMemberId }">${ waitsName[i] }</span>  
                 </div>          
                 <div class="wait__text--${ waitMemberId } wait-member__text"><span>가입을 기다리고 있어요!<span></div>
                 <div class="wait-member__btnbox">
@@ -209,7 +209,6 @@ const groupWaitHandleResponse = (groupName, waitsName, waitsImg, waitsId) => {
         const {data} = await axios.post(url, {
             userId, groupId
         });
-        console.log('!')
         joinAcceptHandleResponse(
             data.userId
         )
@@ -237,23 +236,118 @@ const groupWaitHandleResponse = (groupName, waitsName, waitsImg, waitsId) => {
 
         memberWaitAlertText.innerHTML = `<span class="alert__text">가입을 거절했습니다.</span>`
     }
+
+    const waitMemberProfile = document.querySelectorAll('.wait-member__name');
+    waitMemberProfile.forEach(function(btn) {
+        btn.addEventListener('click', function(){
+            const [txt1, txt2, waitId] = btn.getAttribute('id').split('-');
+            onClickWaitUserProfile(waitId);
+        })
+    })
+
+    const onClickWaitUserProfile = async (userId) => {
+        const url = '/user/group_wait_profile/';
+        const { data } = await axios.post(url, {
+            userId
+        });
+        waitProfileHandleResponse(
+            data.userId
+        )
+    }
+
+    waitProfileHandleResponse = (userId) => {
+        window.location.href = `http://127.0.0.1:8000/user/${userId}/public_userpage`;
+    }
 }
 
-// alert(삭제 시, 탈퇴 시)
-const groupOutBtn = document.querySelector('.btn-out');
-groupOutBtn.addEventListener('click', function(){
-    alert('탈퇴되었습니다.');
-})
-
+// 그룹 삭제 전 확인
 const groupDeleteBtn = document.querySelector('.btn__delete');
-groupDeleteBtn.addEventListener('click', function(){
-    alert('삭제되었습니다.');
-})
-
-// 그룹 가입 신청 완료 alert
-const signUpButton = document.querySelector('.btn-signup');
-signUpButton.addEventListener('click', signUpAlert);
-
-function signUpAlert() {
-    alert("가입 신청이 완료되었어요.\n그룹에서 가입 신청을 수락하면 활동할 수 있어요!");
+if(groupDeleteBtn){
+    groupDeleteBtn.addEventListener('click', function(){
+        if(confirm('정말 삭제하시겠습니까?')){
+            window.location.href = `http://127.0.0.1:8000/group/${group_id}/group_delete`;
+        }
+        else{
+            return false
+        }
+    })
 }
+
+// 그룹 탈퇴 전 확인
+const groupOutBtn = document.querySelector('.btn-out');
+if(groupOutBtn){
+    groupOutBtn.addEventListener('click', function(){
+        if(confirm('정말 탈퇴하시겠습니까?')){
+            window.location.href = `http://127.0.0.1:8000/group/${group_id}/group_drop`;
+        }
+    })
+}
+
+// 그룹 가입 전 확인
+const groupJoinBtn = document.querySelector('.btn-signup');
+if(groupJoinBtn){
+    groupJoinBtn.addEventListener('click', function(){
+        if(confirm('가입하시겠습니까?')){
+            window.location.href = `http://127.0.0.1:8000/group/${group_id}/public_group_join`;
+        }
+    })
+}
+// // 그룹 탈퇴 시 alert
+// const groupOutBtn = document.querySelector('.group__drop--yes');
+// groupOutBtn.addEventListener('click', function(){
+//     // alert('탈퇴되었습니다.');
+//     onClickGroupOut(group_id);
+// })
+
+// const onClickGroupOut = async (groupId) => {
+//     console.log("!")
+//     const url = `/group/${groupId}/group_drop/`;
+//     const {data} = await axios.post(url, {
+//         groupId
+//     });
+//     console.log("!")
+//     groupOutHandleResponse()
+// }
+
+// const groupOutHandleResponse = () => {
+//     document.location.href = '/group/group_home';
+// }
+
+// const groupOutContainer = document.querySelector('.group__drop--alert');
+
+// function groupOutAlert() {
+//     groupOutContainer.style.display = 'flex';
+// }
+
+// function closeGroupOutAlert() {
+//     groupOutContainer.style.display = 'none';
+// }
+
+
+// // 그룹 삭제 시 alert
+// const groupDeleteBtn = document.querySelector('.group__delete--yes');
+// groupDeleteBtn.addEventListener('click', function(){
+//     onClickGroupDelete(group_id);
+// })
+
+// const onClickGroupDelete = async (groupId) => {
+//     const url = `/group/group_delete/`;
+//     const {data} = await axios.post(url, {
+//         groupId
+//     });
+//     groupDeleteHandleResponse()
+// }
+
+// const groupDeleteHandleResponse = () => {
+//     document.location.href = '/group';
+// }
+
+// const groupDeleteContainer = document.querySelector('.group__delete--alert');
+
+// function groupDeleteAlert() {
+//     groupDeleteContainer.style.display = 'flex';
+// }
+
+// function closeGroupDeleteAlert() {
+//     groupDeleteContainer.style.display = 'none';
+// }

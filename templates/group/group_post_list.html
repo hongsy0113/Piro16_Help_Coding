@@ -105,7 +105,7 @@
                     </div>
                     <!-- 글 정보 -->
                     <div class="content__post-info">
-                        <span class="post-info">{{ post.created_at | date:'y.m.d' }} · {% if post.user %}{{ post.user }}{% else %}(알 수 없음){% endif %} · 조회  {% get_hit_count for post %} · 좋아요 {{ post.like_user.all | length }}</span>
+                        <span class="post-info">{{ post.created_at | date:'y.m.d' }} · {% if post.user %}<a href="{% url 'user:public_userpage' post.user.pk %}" style="text-decoration: none; color:#828282;">{{ post.user }}</a>{% else %}(알 수 없음){% endif %} · 조회  {% get_hit_count for post %} · 좋아요 {{ post.like_user.all | length }}</span>
                         <!-- <div class="info-like post-info"> · 좋아요 {{ post.like_user.all | length }}</div>  -->
                     </div>
                 </div>

@@ -115,8 +115,14 @@ def search_result(request):
             Q(title__icontains=query) | # 제목으로 검색
             Q(content__icontains=query) # 내용으로 검색
         )
-
-    return render(request, 'qna/search_result.html', {'query': query, 'questions': questions})
+    page = request.GET.get('page', '1')    # 페이지
+    paginator = Paginator(questions, 5)    # 페이지당 5개씩 보여주기
+    page_obj = paginator.get_page(page)
+    dict ={}
+    for page in page_obj:
+        answers_count = Answer.objects.filter(question_id =page, answer_depth=0, is_deleted = False).count()
+        dict[page] = answers_count
+    return render(request, 'qna/search_result.html', {'query': query, 'questions': page_obj, 'question_answer_count':dict})
 
 def question_create(request):
     if request.method == 'POST':
