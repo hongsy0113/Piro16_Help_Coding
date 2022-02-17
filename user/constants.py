@@ -6,7 +6,7 @@
 '''
 
 # 기본 이미지 선택지
-BASE_IMAGES = ('base1.png', 'base2.jpg')
+BASE_IMAGES = ('profile1.png', 'profile2.png', 'profile3.png', 'profile4.png')
 
 # 직업 선택지
 JOB_CHOICE = (('elementary_school', '초등학생'), ('middle_school', '중학생'), ('high_school', '고등학생'),
