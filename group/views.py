@@ -1010,6 +1010,12 @@ class GroupPostDetailView(HitCountDetailView):
         else:
             username = '(알 수 없음)'
 
+        ## 그룹 탈퇴한 유저인지 여부
+
+        if post.user in post.group.members.all():
+            is_member = True
+        else: is_member = False
+
         total_likes = len(post.like_user.all())
         is_liked = self.request.user in post.like_user.all()
 
@@ -1038,6 +1044,7 @@ class GroupPostDetailView(HitCountDetailView):
         # context['answers']= answers
         context['answers_count'] = answers_count
         context['answers_reply_dict'] = answers_reply_dict
+        context['is_member'] = is_member
         return context
 
 
