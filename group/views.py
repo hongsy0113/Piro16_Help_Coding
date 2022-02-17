@@ -89,17 +89,25 @@ def group_search_public(request):
     if 'search' in request.GET:
         query = request.GET.get('search')
         groups = Group.objects.all().filter(Q(name__icontains=query) & Q(mode='PUBLIC'))
+    
+    sort_by = request.GET.get('sort', 'interest')
+    if sort_by == 'name':
+        groups = groups.order_by('name')
+    elif sort_by == 'interest':
+        groups = groups.annotate(total_likes=Count('interests')).order_by('-total_likes')
+    elif sort_by == 'member':
+        groups = groups.annotate(total_members=Count('members')).order_by('-total_members')
 
     # 페이징 처리
-        page = request.GET.get('page', '1')
-        paginator = Paginator(groups, 6)    # 페이지당 6개씩 보여주기
-        page_obj = paginator.get_page(page)
+    page = request.GET.get('page', '1')
+    paginator = Paginator(groups, 6)    # 페이지당 6개씩 보여주기
+    page_obj = paginator.get_page(page)
 
-        ctx = { 
-            'groups': page_obj,
-            'query': query,
-            'ani_image': static('image/helphelp.png'),
-        }
+    ctx = { 
+        'groups': page_obj,
+        'query': query,
+        'ani_image': static('image/helphelp.png'),
+    }
 
     return render(request, 'group/group_search_public.html', context=ctx)
 
@@ -489,9 +497,11 @@ def group_list(request):
 
     sort_by = request.GET.get('sort', 'interest')
     if sort_by == 'name':
-        groups = group.order_by('name')
+        groups = groups.order_by('name')
     elif sort_by == 'interest':
-        groups = group.annotate(total_likes=Count('interests')).order_by('-total_likes')
+        groups = groups.annotate(total_likes=Count('interests')).order_by('-total_likes')
+    elif sort_by == 'member':
+        groups = groups.annotate(total_members=Count('members')).order_by('-total_members')
 
     pagintor = Paginator(groups, 6)
     page_obj = pagintor.get_page(page)
@@ -724,29 +734,39 @@ def search_result(request, pk):
             Q(content__icontains=query) # 내용으로 검색
         )
 
-        # 페이징 처리
-        page = request.GET.get('page', '1')
-        paginator = Paginator(posts, 6)    # 페이지당 6개씩 보여주기
-        page_obj = paginator.get_page(page)
+    # 게시물 정렬
+    sort_by = request.GET.get('sort', 'recent')
+    if sort_by == 'recent':    # 최신순
+        posts = posts.order_by('-created_at')
+    elif sort_by == 'liked':   # 좋아요순
+        posts = posts.annotate(total_likes=Count('like_user')).order_by('-total_likes')
+    elif sort_by == 'view':    # 조회수순
+        posts = posts.order_by('-hit_count_generic__hits')
 
-        ## 각 게시글과 iframe 관련 썸네일의 이미지 경로 딕셔너리 생성
-        ## key 는 각 게시글이고, value는 (댓글 수, 썸네일 이미지 경로) tuple인 딕셔너리
-        posts_value_dict = {}
-        for page in page_obj:
-            answers_count = GroupAnswer.objects.filter(post_id =page, answer_depth=0, is_deleted = False).count()
-            
-            if page.attached_link:
-                posts_value_dict[page] = (answers_count, get_img_src(page.attached_link))
-            else:
-                posts_value_dict[page] = (answers_count, None)
+    # 페이징 처리
+    page = request.GET.get('page', '1')
+    paginator = Paginator(posts, 6)    # 페이지당 6개씩 보여주기
+    page_obj = paginator.get_page(page)
 
-        ctx = {
-            'query': query, 
-            'posts': page_obj,
-            'posts_value_dict': posts_value_dict, 
-            'group_pk': pk,
-            'group': group,
-        }
+    ## 각 게시글과 iframe 관련 썸네일의 이미지 경로 딕셔너리 생성
+    ## key 는 각 게시글이고, value는 (댓글 수, 썸네일 이미지 경로) tuple인 딕셔너리
+    posts_value_dict = {}
+    for page in page_obj:
+        answers_count = GroupAnswer.objects.filter(post_id =page, answer_depth=0, is_deleted = False).count()
+        
+        if page.attached_link:
+            posts_value_dict[page] = (answers_count, get_img_src(page.attached_link))
+        else:
+            posts_value_dict[page] = (answers_count, None)
+
+    ctx = {
+        'query': query, 
+        'posts': page_obj,
+        'posts_value_dict': posts_value_dict, 
+        'group_pk': pk,
+        'group': group,
+        'sort_by': sort_by,
+    }
 
     return render(request, 'group/search_result.html', context=ctx)
 
