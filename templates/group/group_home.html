@@ -57,8 +57,15 @@
             </div>
             <div class="modal__content--bottom which-join-modal__bottom">
                 <div class="which-join__box which-join__box--top">
-                    <button class="public-group__join-btn"><a href="{% url 'group:group_list' %}">공개그룹</a></button>
-                    <button class="private-group__join-btn" onclick="showPrivateGroup()">비공개그룹</button>
+                    <div class="d-flex flex-column">
+                        <button class="public-group__join-btn"><a href="{% url 'group:group_list' %}">공개그룹</a></button>
+                        <span>다양한 사람들과 함께하고 싶다면!</span>
+                    </div>
+                    <div>
+                        <button class="private-group__join-btn" onclick="showPrivateGroup()">비공개그룹</button>
+                        <span>친한 친구들과 함께하고 싶다면!</span>
+                    </div>
+                    
                 </div>
                 <div class="which-join__box which-join__box--bottom">
                     <button class="join__code--close modal__close" onclick="closeGroupJoin()">닫기</button>
@@ -87,6 +94,7 @@
                     <!-- 초대 코드 입력 input -->
                     <div class="group-join__inputbox--input">
                         <input type="text" name="group_code" placeholder="초대코드를 입력하세요!" class="group-code__input">
+                        <input class="group__code--guide-hover" type="button" value="도움말"></input>
                     </div>
 
                     <!-- 에러메세지 -->
@@ -100,8 +108,29 @@
                     </div>
                 </div>
             </div>
+
         </div>
-    </div>    
+    </div>   
+    
+    <!-- 그룹 초대코드 입력 Guide Modal-->
+    <div class="group__code--guide">
+        <div class="group__code--guide-text">
+            <div class="group__code--guide-image">
+                <div class="group-post__top--info">
+                    <span>그룹 정보</span>
+                </div> 
+                <div class="group__code--guide-right">➪</div>
+                <div class="group__code--btn top-right__button">
+                    <span>멤버 초대코드</span>
+                </div>
+            </div>
+            <div>
+                <image src="{{ code_ex }}" style=" width: 350px;"></image>
+                <span>멤버 초대코드는 여기에 있어요! 친구와 코드를 공유하고 여기에 입력해서 그룹에 가입해보아요</span>
+                <span>🚨주의🚨 초대코드는 7일마다 바뀌어요</span>
+            </div>
+        </div>
+    </div>
 
     <!-- 그룹 정렬 (sort) -->
     {% if groups %}
