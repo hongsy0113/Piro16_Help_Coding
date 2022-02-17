@@ -89,17 +89,25 @@ def group_search_public(request):
     if 'search' in request.GET:
         query = request.GET.get('search')
         groups = Group.objects.all().filter(Q(name__icontains=query) & Q(mode='PUBLIC'))
+    
+    sort_by = request.GET.get('sort', 'interest')
+    if sort_by == 'name':
+        groups = groups.order_by('name')
+    elif sort_by == 'interest':
+        groups = groups.annotate(total_likes=Count('interests')).order_by('-total_likes')
+    elif sort_by == 'member':
+        groups = groups.annotate(total_members=Count('members')).order_by('-total_members')
 
     # 페이징 처리
-        page = request.GET.get('page', '1')
-        paginator = Paginator(groups, 6)    # 페이지당 6개씩 보여주기
-        page_obj = paginator.get_page(page)
+    page = request.GET.get('page', '1')
+    paginator = Paginator(groups, 6)    # 페이지당 6개씩 보여주기
+    page_obj = paginator.get_page(page)
 
-        ctx = { 
-            'groups': page_obj,
-            'query': query,
-            'ani_image': static('image/helphelp.png'),
-        }
+    ctx = { 
+        'groups': page_obj,
+        'query': query,
+        'ani_image': static('image/helphelp.png'),
+    }
 
     return render(request, 'group/group_search_public.html', context=ctx)
 
@@ -487,9 +495,11 @@ def group_list(request):
 
     sort_by = request.GET.get('sort', 'interest')
     if sort_by == 'name':
-        groups = group.order_by('name')
+        groups = groups.order_by('name')
     elif sort_by == 'interest':
-        groups = group.annotate(total_likes=Count('interests')).order_by('-total_likes')
+        groups = groups.annotate(total_likes=Count('interests')).order_by('-total_likes')
+    elif sort_by == 'member':
+        groups = groups.annotate(total_members=Count('members')).order_by('-total_members')
 
     pagintor = Paginator(groups, 6)
     page_obj = pagintor.get_page(page)
