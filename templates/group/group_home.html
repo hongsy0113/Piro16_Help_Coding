@@ -203,6 +203,7 @@
 </div>  <!-- 그룹 컨테이너 끝 -->
 
 <!-- 페이지네이션 -->
+{% if groups %}
 <div class="pagination-box">
     <ul class="all__pagination">
         {% if groups.has_previous %}
@@ -258,5 +259,6 @@
         {% endif %}
     </ul>
 </div>
+{% endif %}
 
 {% endblock %}

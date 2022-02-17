@@ -14,6 +14,7 @@ urlpatterns = [
     path('<int:pk>/group_detail/', view=views.group_detail, name='group_detail' ),
     path('group_list/', view=views.group_list, name='group_list'),
     path('<int:pk>/public_group_join/', view=views.public_group_join, name='public_group_join'),
+    path('<int:pk>/group_wait_cancel/', view=views.group_wait_cancel, name='group_wait_cancel'),
     path('interest_ajax/', view=views.interest_ajax, name='interest_ajax'),
     path('join_code_ajax/', view=views.join_code_ajax, name='join_code_ajax'),
     path('create_code_ajax/', view=views.create_code_ajax, name='create_code_ajax'),

@@ -255,7 +255,7 @@ const groupWaitHandleResponse = (groupName, waitsName, waitsImg, waitsId) => {
     })
 
     const onClickWaitUserProfile = async (userId) => {
-        const url = '/user/group_wait_profile/';
+        const url = '/group_wait_profile/';
         const { data } = await axios.post(url, {
             userId
         });
@@ -265,7 +265,7 @@ const groupWaitHandleResponse = (groupName, waitsName, waitsImg, waitsId) => {
     }
 
     waitProfileHandleResponse = (userId) => {
-        window.location.href = `http://127.0.0.1:8000/user/${userId}/public_userpage`;
+        window.location.href = `http://127.0.0.1:8000/${userId}/public_userpage`;
     }
 }
 
@@ -289,6 +289,9 @@ if(groupOutBtn){
         if(confirm('정말 탈퇴하시겠습니까?')){
             window.location.href = `http://127.0.0.1:8000/group/${group_id}/group_drop`;
         }
+        else{
+            return false
+        }
     })
 }
 
@@ -298,6 +301,22 @@ if(groupJoinBtn){
     groupJoinBtn.addEventListener('click', function(){
         if(confirm('가입하시겠습니까?')){
             window.location.href = `http://127.0.0.1:8000/group/${group_id}/public_group_join`;
+        }
+        else{
+            return false
+        }
+    })
+}
+
+// 그룹 가입 후 취소
+const groupJoinCancelBtn = document.querySelector('.btn-join-out');
+if(groupJoinCancelBtn){
+    groupJoinCancelBtn.addEventListener('click', function(){
+        if(confirm('가입을 취소하시겠습니끼?')){
+            window.location.href = `http://127.0.0.1:8000/group/${group_id}/group_wait_cancel`;
+        }
+        else{
+            return false
         }
     })
 }
