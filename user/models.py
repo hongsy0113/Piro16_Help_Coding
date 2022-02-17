@@ -2,7 +2,6 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from .constants import *
 from datetime import datetime
-
 # user 대표 이미지
 
 
@@ -21,15 +20,16 @@ def reward_thumbnail_path(instance, filename):
 class Reward(models.Model):
     name = models.CharField(max_length=20)
     info = models.TextField()
-    type = models.CharField(max_length=50, choices=REWARD_TYPE, default='total_like')
+    type = models.CharField(
+        max_length=50, choices=REWARD_TYPE, default='total_like')
     criteria = models.IntegerField(null=True, blank=True)
     img = models.CharField(max_length=100)
 
     def __str__(self):
         return self.name
-    
+
     def has_reward(self, user):
-        if GetReward.objects.get(user = user, reward = self):
+        if GetReward.objects.get(user=user, reward=self):
             return True
         else:
             return False
@@ -190,5 +190,10 @@ class Alert(models.Model):
             return '/mypage/point/'
         elif self.alert_type in ['get_reward']:
             return '/mypage/reward/'
+        elif self.alert_type in ['group_create', 'group_join', 'group_reject', 'group_register', 'group_maker']:
+            # if Group.objects.filter(pk=self.related_id):
+            return '/group/{}/group_detail/'.format(self.related_id)
+            # else:
+            #    return '#'
         else:
             return '#'
