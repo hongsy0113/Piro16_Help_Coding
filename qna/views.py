@@ -156,9 +156,9 @@ def question_create(request):
                 title=request.POST.get('title'),
                 #content=form.data['content'],
                 content=request.POST.get('content'),
-                image=request.FILES.get('image'),
-                #attached_file=form.data['attached_file'],
-                attached_file=request.FILES.get('attached_file'),
+                # image=request.FILES.get('image'),
+                # #attached_file=form.data['attached_file'],
+                # attached_file=request.FILES.get('attached_file'),
                 s_or_e_tag=request.POST.get('s_or_e_tag'),
                 user=request.user
             )
