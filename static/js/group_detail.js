@@ -161,8 +161,8 @@ const groupWaitHandleResponse = (groupName, waitsName, waitsImg, waitsId) => {
                     </div>  
                     <span class="btn wait-member__name wait-member__name--${ waitMemberId }" id="wait-name-${ waitMemberId }">${ waitsName[i] }</span>  
                 </div>          
-                <div class="wait__text--${ waitMemberId } wait-member__text"><span>가입을 기다리고 있어요!<span></div>
-                <div class="wait-member__btnbox">
+            
+                <div class="wait-member__btnbox wait-member__btnbox--${ waitMemberId }">
                     <input type="button" value="수락" name="accept" class="wait__accept--btn wait__accept--btn--${ waitMemberId } wait-accept__btn" id="accept-btn-${ waitMemberId }">
                     <input type="button" value="거절" name="reject" class="wait__reject--btn wait__reject--btn--${ waitMemberId } wait-reject__btn" id="reject-btn-${ waitMemberId }">
                 </div>
@@ -224,8 +224,12 @@ const groupWaitHandleResponse = (groupName, waitsName, waitsImg, waitsId) => {
     }
 
     joinAcceptHandleResponse = (userId) => {
-        const memberWaitAlertText = document.querySelector(`.wait__text--${userId}`);
+        const memberWaitAlertText = document.querySelector(`.wait-member__btnbox--${ userId }`);
+        const memberWaitAcceptBtn = document.querySelector(`.wait__accept--btn--${ userId }`);
+        const memberWaitRejectBtn = document.querySelector(`.wait__reject--btn--${ userId }`);
 
+        memberWaitAcceptBtn.style.display = 'none';
+        memberWaitRejectBtn.style.display = 'none';
         memberWaitAlertText.innerHTML = `<span class="alert__text">가입을 수락했습니다.</span>`
     }
 
@@ -241,7 +245,12 @@ const groupWaitHandleResponse = (groupName, waitsName, waitsImg, waitsId) => {
     }
 
     joinRejectHandleResponse = (userId) => {
-        const memberWaitAlertText = document.querySelector(`.wait__text--${userId}`);
+        const memberWaitAlertText = document.querySelector(`.wait-member__btnbox--${ userId }`);
+        const memberWaitAcceptBtn = document.querySelector(`.wait__accept--btn--${ userId }`);
+        const memberWaitRejectBtn = document.querySelector(`.wait__reject--btn--${ userId }`);
+
+        memberWaitAcceptBtn.style.display = 'none';
+        memberWaitRejectBtn.style.display = 'none';
 
         memberWaitAlertText.innerHTML = `<span class="alert__text">가입을 거절했습니다.</span>`
     }
@@ -255,7 +264,7 @@ const groupWaitHandleResponse = (groupName, waitsName, waitsImg, waitsId) => {
     })
 
     const onClickWaitUserProfile = async (userId) => {
-        const url = '/user/group_wait_profile/';
+        const url = '/group_wait_profile/';
         const { data } = await axios.post(url, {
             userId
         });
@@ -265,7 +274,7 @@ const groupWaitHandleResponse = (groupName, waitsName, waitsImg, waitsId) => {
     }
 
     waitProfileHandleResponse = (userId) => {
-        window.location.href = `http://127.0.0.1:8000/user/${userId}/public_userpage`;
+        window.location.href = `http://127.0.0.1:8000/${userId}/public_userpage`;
     }
 }
 
@@ -289,6 +298,9 @@ if(groupOutBtn){
         if(confirm('정말 탈퇴하시겠습니까?')){
             window.location.href = `http://127.0.0.1:8000/group/${group_id}/group_drop`;
         }
+        else{
+            return false
+        }
     })
 }
 
@@ -298,6 +310,22 @@ if(groupJoinBtn){
     groupJoinBtn.addEventListener('click', function(){
         if(confirm('가입하시겠습니까?')){
             window.location.href = `http://127.0.0.1:8000/group/${group_id}/public_group_join`;
+        }
+        else{
+            return false
+        }
+    })
+}
+
+// 그룹 가입 후 취소
+const groupJoinCancelBtn = document.querySelector('.btn-join-out');
+if(groupJoinCancelBtn){
+    groupJoinCancelBtn.addEventListener('click', function(){
+        if(confirm('가입을 취소하시겠습니끼?')){
+            window.location.href = `http://127.0.0.1:8000/group/${group_id}/group_wait_cancel`;
+        }
+        else{
+            return false
         }
     })
 }

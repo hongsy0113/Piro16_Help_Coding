@@ -29,8 +29,12 @@ POINT = {'student': {'question_like': 20, 'comment_like': 15, 'question': 10, 'a
 REWARD_TYPE = (('total_like', '총 좋아요 수'), ('question_like', '게시글 좋아요 수'),
                ('comment_like', '댓글 좋아요 수'), ('total_question', '총 질문 수'),
                ('total_answer', '총 답변 수'), ('total_comment', '총 댓글 수'),
-               ('total_group_joined', '총 가입한 그룹 수'), ('total_group_created', '총 개설한 그룹 수'))
+               ('total_group_joined', '총 가입한 그룹 수'), ('total_group_created',
+                                                      '총 개설한 그룹 수 (위임 포함)'),
+               ('total_group_post', '그룹에서 공유한 글 수'))
 
 # 알림 체계
 ALERT_TYPE = (('level_up', '레벨 상승'), ('level_change', '레벨 변경'), ('get_reward', '배지 획득'), ('new_comment', '새 댓글'), ('new_reply', '새 대댓글'),
-              ('group_create', '그룹 생성'), ('group_join', '그룹 가입'), ('etc', '기타'))
+              ('group_create', '그룹 생성'), ('group_join', '그룹 가입'), ('group_reject',
+                                        '그룹 거절'), ('group_register', '그룹 가입 신청'),
+              ('group_delete', '그룹 삭제'), ('group_drop', '그룹 탈퇴'), ('group_maker', '그룹 대표 위임'), ('etc', '기타'))

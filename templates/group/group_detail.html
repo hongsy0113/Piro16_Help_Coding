@@ -263,7 +263,11 @@
     {% endif %}
 
     <!-- 공개 그룹 + 유저가 member가 아닌 경우 -->
-    {% if group.mode == 'PUBLIC' and user not in members %}
+    {% if group.mode == 'PUBLIC' and user in waits %}
+        <div class="bottom-btn__box">
+            <span class="btn-join-out">가입 대기중 🐱</span>
+        </div>
+    {% elif group.mode == 'PUBLIC' and user not in members %}
         <div class="bottom-btn__box">
             <span class="btn-signup">그룹 가입하기</span>
         </div>
