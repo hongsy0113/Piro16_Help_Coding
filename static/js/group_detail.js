@@ -184,6 +184,15 @@ const groupWaitHandleResponse = (groupName, waitsName, waitsImg, waitsId) => {
 
     };
     flag = 1;
+
+    if(waitsName.length == 0){
+        groupWaitAlertText.innerHTML = `
+            <div class="group__Wait--text">
+                <span>지금은 대기자가 없어요 😌</span>
+            </div>
+        `
+    }
+
     
     groupWaitAlert.style.display = 'flex';
 

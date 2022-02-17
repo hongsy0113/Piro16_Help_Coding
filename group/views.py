@@ -271,12 +271,9 @@ def group_delete(request, pk):
     #     return redirect('group:group_detail', pk)
 
 # 그룹 탈퇴
-def group_drop(request):
-    req = json.loads(request.body)
-    group_id = req['groupId']
-
+def group_drop(request, pk):
     user = request.user
-    group = get_object_or_404(Group, pk=group_id)
+    group = get_object_or_404(Group, pk=pk)
     members = group.members.all()
 
     if len(members) > 1:
@@ -574,12 +571,13 @@ def wait_list_ajax(request):
         elif request.GET.get('reject'):
             group.waits.remove(wait_member)
             group.save()
+    
 
     return JsonResponse({
         'groupName': group.name,
         'waitsName': wait_member_name,
         'waitsImg': wait_member_img,
-        'waitsId': wait_member_id
+        'waitsId': wait_member_id,
     })
 
 
