@@ -3,10 +3,6 @@
 {% load hitcount_tags %}
 {% load my_tags %}
 
-{% block js %}
-    <script type="text/javascript" src="/static/js/group_post_list.js" defer></script>
-{% endblock %}
-
 {% block css %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/group_post_list.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}">
@@ -27,52 +23,59 @@
         </div>
     </div>
 
-    <div class="list-sort">    <!-- 최신순 조회수순 좋아요순 -->
-        <span class="list-sort__btn">
-            {% if sort_by != 'recent' %}
-            <a href="{% url 'group:post_list' group.pk %}?{% param_replace sort='recent' page=1 %}">최신순</a>
-            {% else %}
-            <span>최신순</span>
-            {% endif %}
-        </span>
-        <span class="list-sort__btn">
-            {% if sort_by != 'view' %}
-            <a href="{% url 'group:post_list' group.pk %}?{% param_replace sort='view' page=1 %}">조회수순</a>
-            {% else %}
-            <span>조회수순</span>
-            {% endif %}
-        </span>
-        <span class="list-sort__btn">
-            {% if sort_by != 'liked' %}
-            <a href="{% url 'group:post_list' group.pk %}?{% param_replace sort='liked' page=1 %}">좋아요순</a>
-            {% else %}
-            <span>좋아요순</span>
-            {% endif %}
-        </span>
+    <div class="post-sort-filter__box">
+        <div class="list-sort">    <!-- 최신순 조회수순 좋아요순 -->
+            <span class="list-sort__btn">
+                {% if sort_by != 'recent' %}
+                <a href="{% url 'group:post_list' group.pk %}?{% param_replace sort='recent' page=1 %}">최신순</a>
+                {% else %}
+                <span>최신순</span>
+                {% endif %}
+            </span>
+            <span class="list-sort__btn">
+                {% if sort_by != 'view' %}
+                <a href="{% url 'group:post_list' group.pk %}?{% param_replace sort='view' page=1 %}">조회수순</a>
+                {% else %}
+                <span>조회수순</span>
+                {% endif %}
+            </span>
+            <span class="list-sort__btn">
+                {% if sort_by != 'liked' %}
+                <a href="{% url 'group:post_list' group.pk %}?{% param_replace sort='liked' page=1 %}">좋아요순</a>
+                {% else %}
+                <span>좋아요순</span>
+                {% endif %}
+            </span>
+        </div>
 
-        {% comment %}
-        <!-- select box -->
-        <form method="get" action="{% url 'group:post_list' group.pk %}">
-            <select id="select_sort-test"class="select_sort" onchange="location=this.value; getSelectValue(this.form); ">
-                <option class="sort-recent" value="?{% param_replace sort='recent' %}" {% if sort_by == 'recent' %} selected {% endif %}>최신순</option>
-                <option class="sort-liked" value="?{% param_replace sort='liked' %}" {% if sort_by == 'liked' %} selected {% endif %}>좋아요순</option>
-                <option class="sort-view" value="?{% param_replace sort='view' %}" {% if sort_by == 'view' %} selected {% endif %}>조회수순</option>
-            </select>
-        </form>
-        {% endcomment %}    
+        <!-- 게시글 필터 -->
+        <div class="post-filter__box">
+            <form method="GET" action="{% url 'group:post_list' group.pk %}" class="post__filterbox--form" >
+                <div class="filter-detail__box">
+                    <input type="checkbox" name="filter_by" value="S" id="filter_by-s" class="tag filter_by-s" {% if 'S' in filter_by %} checked {% endif %}/ />
+                    <label for="filter_by-s">자랑글</label>
+                    <input type="checkbox" name="filter_by" value="Q" id="filter_by-q" class="tag filter_by-q" {% if 'Q' in filter_by %} checked {% endif %}/  />
+                    <label for="filter_by-q">질문글</label>
+                    <input type="checkbox" name="filter_by" value="ETC" id="filter_by-etc" class="tag filter_by-etc" {% if 'ETC' in filter_by %} checked {% endif %}//>
+                    <label for="filter_by-etc">기타</label>
+                </div>
+                <button type="submit" class="post-filter__box--btn">적용</button>       
+            </form>
+            <a href="{% url 'group:post_list' group.pk %}" class="post__filterbox--reset">초기화</a>
+        </div>
     </div>
 
     <div class="group-post__list">  <!-- 게시글 목록 시작 -->
 
         <div class="gridbox">  
-            {% for post, img_src in posts_img_dict.items %}
+            {% for post, value in posts_value_dict.items %}
             <div class="gridbox__item-post">    <!-- 그룹 게시글 하나 시작 -->
                 <div class="img__post">
                     {% if post.image %}
                     <img src="{{ post.image.url }}" height="200" width="200" class="img__post-img" />
-                    {% elif img_src %}
+                    {% elif value.1 %}
                     <!-- 스크래치, 엔트리 iframe이 들어가있다면 해당하는 썸네일이 목록에서 보이도록 -->
-                    <img alt="" src="{{ img_src }}" height="200" width="200" class="img__post-img">
+                    <img alt="" src="{{ value.1 | safe}}" height="200" width="200" class="img__post-img">
                     {% else %}
                     <img src="/static/image/none_image_group_post.jpeg" height="200" width="200" class="img__post-img" />
                     {% endif %}
@@ -80,11 +83,11 @@
 
                 <div class="group_post-tag">   <!-- 게시글 태그 수정 여기서 해주세요 -->
                     {% if post.category == 'S' %}
-                    <span class="post-tag">자랑</span>
+                    <span class="post-tag post-tag__S">자랑</span>
                     {% elif post.category == 'Q' %}
-                    <span class="post-tag">질문</span>
+                    <span class="post-tag post-tag__Q">질문</span>
                     {% else %}
-                    <span class="post-tag">기타</span>
+                    <span class="post-tag post-tag__E">기타</span>
                     {% endif %}
                 </div>
 
@@ -92,7 +95,7 @@
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
                     <path d="M13.1592 0.505859H1.90918C0.875 0.505859 0.0341797 1.34668 0.0341797 2.38086V10.8184C0.0341797 11.8525 0.875 12.6934 1.90918 12.6934H4.72168V15.1543C4.72168 15.4414 5.0498 15.6084 5.28125 15.4385L8.94043 12.6934H13.1592C14.1934 12.6934 15.0342 11.8525 15.0342 10.8184V2.38086C15.0342 1.34668 14.1934 0.505859 13.1592 0.505859Z" fill="white"/>
                     </svg>
-                    <span>{{ post.groupanswer_set.all | length }}</span>    <!-- 댓글 개수 수정 여기서 해주세요 -->
+                    <span>{{ value.0 }}</span>    <!-- 댓글 개수 수정 여기서 해주세요 -->
                 </div>
 
                 <div class="content__post">
@@ -109,7 +112,7 @@
                     </div>
                     <!-- 글 정보 -->
                     <div class="content__post-info">
-                        <span class="post-info">{{ post.created_at | date:'y.m.d' }} · {{ post.user }} · 조회  {% get_hit_count for post %} · 좋아요 {{ post.like_user.all | length }}</span>
+                        <span class="post-info">{{ post.created_at | date:'y.m.d' }} · {% if post.user %}<a href="{% url 'user:public_userpage' post.user.pk %}" style="text-decoration: none; color:#828282;">{{ post.user }}</a>{% else %}(알 수 없음){% endif %} · 조회  {% get_hit_count for post %} · 좋아요 {{ post.like_user.all | length }}</span>
                         <!-- <div class="info-like post-info"> · 좋아요 {{ post.like_user.all | length }}</div>  -->
                     </div>
                 </div>

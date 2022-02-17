@@ -5,7 +5,7 @@
 <link rel="stylesheet" href="{% static 'css/mypage.css' %}">
 {% endblock css %}
 
-{% block title %} 도와줘, 코딩 | 마이 페이지 {% endblock %}
+{% block title %} 도와줘, 코딩 | 프로필 정보 {% endblock %}
 
 {% block content %}
 <div class="mypage__profile__container">
@@ -16,29 +16,29 @@
     <p>{{ user.nickname }}</p>
     <div>
       <div class="mypage__profile__text-content">
-        <div><p>이메일</p><p>{{ user.email }}</p></div>
-        <div><p>생년월일</p><p>{{ user.birth }}</p></div>
+        <!-- <div><p>이메일</p><p>{{ user.email }}</p></div>
+        <div><p>생년월일</p><p>{{ user.birth }}</p></div> -->
         <div><p>직업</p><p>{{ user.get_job_display }}</p></div>
       </div>
       <div class="mypage__profile__text-content">
         <div><p>레벨</p><p>{{ user.get_level }}</p></div>
-        <div><p>좋아요 수</p><p>{{ user.total_like }}</p></div>
-        <div><p>포인트</p><p>{{ user.points }}</p></div>
+        <!-- <div><p>좋아요 수</p><p>{{ user.total_like }}</p></div>
+        <div><p>포인트</p><p>{{ user.points }}</p></div> -->
       </div>
     </div>
     <div class="mypage__profile__text-content">
       <div><p>소개</p><p>{{ user.introduction }}</p></div>
       <div><p>대표 배지</p>{% if user.representative_reward %}<img src="{{ user.representative_reward.img }}" height="15"></img>{% else %}<p>없음</p>{% endif %}</div>
     </div>
-    <div class="mypage__profile__btn">
+    <!-- <div class="mypage__profile__btn">
       <button class="btn btn-secondary"><a class="text-white" href="{% url 'user:mypage_revise' %}" style="text-decoration: none">개인정보 수정</a></button>
       <button class="btn btn-secondary"><a class="text-white" href="{% url 'user:mypage_point' %}" style="text-decoration: none">나의 포인트 현황</a></button>
-    </div>
+    </div> -->
     {% if messages %}{% for message in messages %}<p class="mypage__message">{{ message.message }}</p>{% endfor %}{% endif %}
   </div>
 </div>
   <div class="mypage__options">
-    <h3 class="mypage__options__reward">나의 업적</h3>
+    <h3 class="mypage__options__reward">{{ user.nickname }}의 업적</h3>
     <h3 class="mypage__options__question">최근 질문</h3>
     <h3 class="mypage__options__answer">최근 답변</h3>
   </div>
@@ -85,7 +85,7 @@
   {% else %}
   <p>- 질문 기록이 없습니다.</p>
   {% endif %}
-  <button class="btn btn-secondary"><a class="text-white" href="{% url 'qna:question_list' %}" style="text-decoration: none">질문하러 가기</a></button>
+  <!-- <button class="btn btn-secondary"><a class="text-white" href="{% url 'qna:question_list' %}" style="text-decoration: none">질문하러 가기</a></button> -->
 </div>
 
 <div class="mypage__answer__container">
@@ -100,7 +100,7 @@
   {% else %}
   <p>- 답변 기록이 없습니다.</p>
   {% endif %}
-  <button class="btn btn-secondary"><a class="text-white" href="{% url 'qna:question_list' %}" style="text-decoration: none">답변하러 가기</a></button>
+  <!-- <button class="btn btn-secondary"><a class="text-white" href="{% url 'qna:question_list' %}" style="text-decoration: none">답변하러 가기</a></button> -->
 </div>
 
 <script>

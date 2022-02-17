@@ -1,9 +1,11 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load my_tags %}
 
 {% block css %}
     <link rel="stylesheet" href="{% static 'css/base.css' %}" />
     <link rel="stylesheet" href="{% static 'css/group_search_public.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/pagination.css' %}" />
 {% endblock %}
 
 {% block js %}
@@ -34,6 +36,31 @@
             </button>
     </form>
     <a class="group__make-btn" href="{% url 'group:group_create' %}">그룹 만들기</a>
+</div>
+
+<!-- 그룹 정렬 sort-box -->
+<div class="list-sort">
+    <span class="list-sort__btn">
+        {% if sort_by != 'interest' %}
+        <a href="{% url 'group:group_search_public' %}?{% param_replace sort='interest' page=1 search=query %}">인기순</a>
+        {% else %}
+        <span>인기순</span>
+        {% endif %}
+    </span>
+    <span class="list-sort__btn">
+        {% if sort_by != 'name' %}
+        <a href="{% url 'group:group_search_public' %}?{% param_replace sort='name' page=1 search=query %}">이름순</a>
+        {% else %}
+        <span>이름순</span>
+        {% endif %}
+    </span>
+    <span class="list-sort__btn">
+        {% if sort_by != 'member' %}
+        <a href="{% url 'group:group_search_public' %}?{% param_replace sort='member' page=1 search=query %}">멤버수순</a>
+        {% else %}
+        <span>멤버수순</span>
+        {% endif %}
+    </span>
 </div>
 
 <div class="group-search__result">  <!-- 검색 결과 시작 -->
@@ -99,11 +126,65 @@
     {% endfor %}
 </div>  <!-- 검색 결과 끝 -->
 
-<div class="group-search__bottom">
+<!-- <div class="group-search__bottom">
     <a href="{% url 'group:group_list' %}">이전 페이지로</a>
-</div>
+</div> -->
 
 <!-- 페이지네이션 -->
+<div class="pagination-box">
+    <ul class="all__pagination">
+        {% if groups.has_previous %}
+        <li class="all__page-item">
+            <a class="all__page-sign" href="?{% param_replace page=groups.previous_page_number %}">
+                <!-- 이전페이지 -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="24" viewBox="0 0 14 24" fill="none">
+                <path d="M12.7688 22.5918L2.02827 11.8513L12.7688 1.11076" stroke="#C4C4C4" stroke-width="2"/>
+                </svg>
+            </a>
+        </li>
+        {% else %}
+        <li class="all__page-item">
+            <a class="all__page-sign" href="#">
+                <!-- 이전페이지 -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="24" viewBox="0 0 14 24" fill="none">
+                <path d="M12.7688 22.5918L2.02827 11.8513L12.7688 1.11076" stroke="#C4C4C4" stroke-width="2"/>
+                </svg>
+            </a>
+        </li>
+        {% endif %}
 
+        {% for page_number in groups.paginator.page_range %}
+            {% if page_number == groups.number %}
+            <li class="all__page-item">
+                <a class="all__page-item-active" href="?{% param_replace page=page_number %}">{{ page_number }}</a>
+            </li>
+            {% else %}
+            <li class="all__page-item">
+                <a class="all__page-link" href="?{% param_replace page=page_number %}">{{ page_number }}</a>
+            </li>
+            {% endif %}
+        {% endfor %}
+
+        {% if groups.has_next %}
+        <li class="all__page-item">
+            <a class="all__page-sign sign-next" href="?{% param_replace page=groups.next_page_number %}">
+                <!-- 다음페이지 -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="24" viewBox="0 0 14 24" fill="none">
+                <path d="M1.23096 1.11035L11.9715 11.8509L1.23096 22.5914" stroke="#C4C4C4" stroke-width="2"/>
+                </svg>
+            </a>
+        </li>
+        {% else %}
+        <li class="all__page-item">
+            <a class="all__page-sign sign-next" href="#">
+                <!-- 다음페이지 -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="24" viewBox="0 0 14 24" fill="none">
+                <path d="M1.23096 1.11035L11.9715 11.8509L1.23096 22.5914" stroke="#C4C4C4" stroke-width="2"/>
+                </svg>
+            </a>
+        </li>
+        {% endif %}
+    </ul>
+</div>
 
 {% endblock %}

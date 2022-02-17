@@ -14,12 +14,13 @@ main > p:first-of-type {
     color: #828282;
 }
 
-.question__detail__tagcontainer {
+.question__detail__tagcontainer, .post__detail__tagcontainer {
     display: flex;
     gap: 10px;
+    margin-top: 10px;
 }
 
-.question__detail__tag {
+.question__detail__tag, .post__detail__tag {
     color: #828282;
     font-size: 18px;
     line-height: 150%;
@@ -33,7 +34,7 @@ main > p:first-of-type {
     padding: 4px 15px 5px 15px;
 }
 
-.question__detail__entryhtag {
+.question__detail__entrytag {
     background-color: #ffc7c7;
     color: #7d4242;
     border: #ffc7c7;
@@ -49,7 +50,7 @@ main > p:first-of-type {
 
 }
 
-.question__detail__content {
+.question__detail__content, .post__detail__content {
     padding: 10px;
     font-size: 16px;
     line-height: 200%;
@@ -60,7 +61,11 @@ main > p:first-of-type {
     flex-direction: column;
 }
 
-.question__like-btn {
+.question__detail__content p, .post__detail__content p {
+    word-wrap: break-word;
+}
+
+.question__like-btn, .post__like-btn {
     display: flex;
     padding: 12px 18px;
     border: 1px solid #37c6e6;
@@ -75,14 +80,15 @@ main > p:first-of-type {
     justify-content: center;
     align-items: center;
     transition: 0.2s;
+    margin-top: 10px;
 }
 
-.question__like-btn span {
+.question__like-btn span, .post__like-btn span {
     color: #4e4e4e;
     transition: 0.2s;
 }
 
-.question__like-btn:hover, .question__like-btn:hover span {
+.question__like-btn:hover, .question__like-btn:hover span, .post__like-btn:hover, .post__like-btn:hover span {
     background-color: #37c6e6;
     color: white;
 }
@@ -211,9 +217,11 @@ main > p:first-of-type {
     height: 22px;
 }
 
-.question__edit-btn, .question__delete-btn,.question__list-btn, .question__prev-btn, .question__next-btn  {
+.question__edit-btn, .question__delete-btn,.question__list-btn, .question__prev-btn, .question__next-btn,
+.post__edit-btn, .post__delete-btn, .post__list-btn, .post__prev-btn, .post__next-btn {
     color: #828282;
     text-decoration: none;
+    cursor: pointer;
 }
 .answer__edit-btn, .answer__delete-btn{
     border: none;
@@ -297,6 +305,6 @@ main > p:first-of-type {
     padding: 10px 20px 12px;
 }
 
-.answer__like-btn, .answer__reply-btn, .question__like-btn {
+.answer__like-btn, .answer__reply-btn, .question__like-btn, .post__like-btn {
     cursor: pointer;
 }

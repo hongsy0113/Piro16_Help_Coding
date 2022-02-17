@@ -168,7 +168,7 @@ html, body, section {
 }
 
 /* 카테고리 선택 */
-.post-crate__category {
+.post-create__category {
     margin-bottom: 30px;
 }
 
@@ -177,11 +177,11 @@ html, body, section {
     align-items: center;
 }
 
-.post-crate__category-select input {
+.post-create__category-select input {
     display: none;
 }
 
-.post-crate__category-select label {
+.post-create__category-select label {
     display: inline-block;
     background-color: #ffffff;
     border: 1px solid #BDBDBD;
@@ -191,10 +191,11 @@ html, body, section {
     text-align: center;
     text-decoration: none;
     transition: 0.25s;
-    padding: 10px 46px;
+    padding: 10px 0;
     cursor: pointer;
     font-size: 14px;
     margin: 3px;
+    width: 150px;
 
     font-family: Noto Sans CJK KR;
     font-weight: bold;
@@ -203,12 +204,12 @@ html, body, section {
     color: #4E4E4E;
 }
 
-.post-crate__category-select > input:checked + label {
+.post-create__category-select > input:checked + label {
     background: #4cc4d4;
     color: #fff;
 }
 
-.post-crate__error {
+.post-create__error {
     padding-left: 15px;
     color: rgb(255, 60, 60);
     font-family: Noto Sans CJK KR;
@@ -241,6 +242,7 @@ html, body, section {
     text-decoration: none;
     text-align: center;
     font-family: Noto Sans CJK KR;
+    font-weight: bold;
     font-size: 25px;
     line-height: 50%;
     color: #ffffff;

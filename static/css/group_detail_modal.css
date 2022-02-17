@@ -241,3 +241,17 @@
     text-align: center;
     color: #4E4E4E;
 }
+
+.alert__text {
+    font-family: Noto Sans CJK KR;
+    font-size: 17px;
+    line-height: 150%;
+    display: flex;
+    align-items: center;
+    color: #828282;
+}
+
+/* 그룹 삭제, 탈퇴, 가입 시 alert 임시로 만들었어요-! */
+.group__delete--alert, .group__drop--alert {
+    display: none;
+}

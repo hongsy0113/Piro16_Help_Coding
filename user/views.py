@@ -1,7 +1,7 @@
 import json
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
-from django.shortcuts import render, redirect, HttpResponse
+from django.shortcuts import render, redirect, HttpResponse, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import AnonymousUser
 from django.views import View
@@ -501,3 +501,33 @@ def date_reward_ajax(request):
         date.append(GetReward.objects.get(
             user=user, reward=reward).get_date.strftime("%Y.%m.%d")[2:])
     return JsonResponse({'reward_id': reward_ids, 'date': date})
+
+# 공개 프로필 정보
+def public_userpage(request, pk):
+    user = get_object_or_404(User, pk=pk)
+
+    rewards = GetReward.objects.filter(user=user).order_by('-get_date')[:5]
+    questions = Question.objects.filter(user=user).order_by('-updated_at')[:5]
+    answers = Answer.objects.filter(user=user).order_by('-updated_at')[:5]
+    ctx = {
+        'user': user, 
+        'rewards': rewards,
+        'questions': questions, 
+        'answers': answers
+    }
+    
+    return render(request, template_name='user/public_userpage.html', context=ctx)
+
+# 그룹 가입 대기자 프로필 정보
+@csrf_exempt
+def group_wait_profile(request):
+    req = json.loads(request.body)
+    wait_user_id = req['userId']
+
+    wait_user = get_object_or_404(User, pk=wait_user_id)
+
+    wait_id = wait_user.id
+
+    return JsonResponse({
+        'userId': wait_id
+    })

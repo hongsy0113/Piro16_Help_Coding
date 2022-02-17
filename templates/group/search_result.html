@@ -1,10 +1,15 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load hitcount_tags %}
+{% load my_tags %}
 
 {% block css %}
     <link rel="stylesheet" href="{% static 'css/base.css' %}" />
     <link rel="stylesheet" href="{% static 'css/group_post_search_result.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/pagination.css' %}" />
 {% endblock %}
+
+{% block title %} 도와줘, 코딩 | {{ group.name }} | 검색 결과 {% endblock %}
 
 {% block content %}
 <div class="group-post__top">   <!-- 게시판 상단 -->
@@ -17,29 +22,44 @@
     </div>
 </div>
 
-<div class="list-sort">    <!-- 최신순 조회수순 좋아요순 -->
-    <span class="list-sort__btn">
-        <span>최신순</span>
-    </span>
-    <span class="list-sort__btn">
-        <span>조회수순</span>
-    </span>
-    <span class="list-sort__btn">
-        <span>좋아요순</span>
-    </span>
+<div class="qna-sort-filter__box">
+    <!-- 최신순 조회수순 좋아요순 -->
+    <div class="list-sort">
+        <span class="list-sort__btn">
+            {% if sort_by != 'recent' %}
+            <a href="{% url 'group:search_result' group.pk %}?{% param_replace sort='recent' page=1 search=query %}">최신순</a>
+            {% else %}
+            <span>최신순</span>
+            {% endif %}
+        </span>
+        <span class="list-sort__btn">
+            {% if sort_by != 'view' %}
+            <a href="{% url 'group:search_result' group.pk %}?{% param_replace sort='view' page=1 search=query %}">조회수순</a>
+            {% else %}
+            <span>조회수순</span>
+            {% endif %}
+        </span>
+        <span class="list-sort__btn">
+            {% if sort_by != 'liked' %}
+            <a href="{% url 'group:search_result' group.pk %}?{% param_replace sort='liked' page=1 search=query %}">좋아요순</a>
+            {% else %}
+            <span>좋아요순</span>
+            {% endif %}
+        </span>
+    </div>
 </div>
 
 <div class="group-post__list">  <!-- 게시글 목록 시작 -->
 
     <div class="gridbox"> 
-        {% for post, img_src in posts_img_dict.items %}
+        {% for post, value in posts_value_dict.items %}
         <div class="gridbox__item-post">    <!-- 그룹 게시글 하나 시작 -->
             <div class="img__post">
                 {% if post.image %}
                 <img src="{{ post.image.url }}" height="200" width="200" class="img__post-img" />
-                {% elif img_src %}
+                {% elif value.1 %}
                 <!-- 스크래치, 엔트리 iframe이 들어가있다면 해당하는 썸네일이 목록에서 보이도록 -->
-                <img alt="" src="{{ img_src }}" height="200" width="200" class="img__post-img">
+                <img alt="" src="{{ value.1 | safe }}" height="200" width="200" class="img__post-img">
                 {% else %}
                 <img src="/static/image/none_image_group_post.jpeg" height="200" width="200" class="img__post-img" />
                 {% endif %}
@@ -59,7 +79,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
                 <path d="M13.1592 0.505859H1.90918C0.875 0.505859 0.0341797 1.34668 0.0341797 2.38086V10.8184C0.0341797 11.8525 0.875 12.6934 1.90918 12.6934H4.72168V15.1543C4.72168 15.4414 5.0498 15.6084 5.28125 15.4385L8.94043 12.6934H13.1592C14.1934 12.6934 15.0342 11.8525 15.0342 10.8184V2.38086C15.0342 1.34668 14.1934 0.505859 13.1592 0.505859Z" fill="white"/>
                 </svg>
-                <span>{{ post.groupanswer_set.all | length }}</span>    <!-- 댓글 개수 수정 여기서 해주세요 -->
+                <span>{{ value.0 }}</span>    <!-- 댓글 개수 수정 여기서 해주세요 -->
             </div>
 
             <div class="content__post">
@@ -76,7 +96,7 @@
                 </div>
                 <!-- 글 정보 -->
                 <div class="content__post-info">
-                    <span class="post-info">{{ post.created_at | date:'y.m.d' }} · {{ post.user }} · 조회   · 좋아요 {{ post.like_user.all | length }}</span>
+                    <span class="post-info">{{ post.created_at | date:'y.m.d' }} · {{ post.user }} · 조회  {% get_hit_count for post %} · 좋아요 {{ post.like_user.all | length }}</span>
                 </div>
             </div>
         </div>  <!-- 그룹 게시글 하나 끝 -->
@@ -107,5 +127,60 @@
 </div>
 
 <!-- 페이지네이션 -->
+<div class="pagination-box">
+    <ul class="all__pagination">
+        {% if posts.has_previous %}
+        <li class="all__page-item">
+            <a class="all__page-sign" href="?{% param_replace page=posts.previous_page_number %}">
+                <!-- 이전페이지 -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="24" viewBox="0 0 14 24" fill="none">
+                <path d="M12.7688 22.5918L2.02827 11.8513L12.7688 1.11076" stroke="#C4C4C4" stroke-width="2"/>
+                </svg>
+            </a>
+        </li>
+        {% else %}
+        <li class="all__page-item">
+            <a class="all__page-sign" href="#">
+                <!-- 이전페이지 -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="24" viewBox="0 0 14 24" fill="none">
+                <path d="M12.7688 22.5918L2.02827 11.8513L12.7688 1.11076" stroke="#C4C4C4" stroke-width="2"/>
+                </svg>
+            </a>
+        </li>
+        {% endif %}
+
+        {% for page_number in posts.paginator.page_range %}
+            {% if page_number == posts.number %}
+            <li class="all__page-item">
+                <a class="all__page-item-active" href="?{% param_replace page=page_number %}">{{ page_number }}</a>
+            </li>
+            {% else %}
+            <li class="all__page-item">
+                <a class="all__page-link" href="?{% param_replace page=page_number %}">{{ page_number }}</a>
+            </li>
+            {% endif %}
+        {% endfor %}
+
+        {% if posts.has_next %}
+        <li class="all__page-item">
+            <a class="all__page-sign sign-next" href="?{% param_replace page=posts.next_page_number %}">
+                <!-- 다음페이지 -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="24" viewBox="0 0 14 24" fill="none">
+                <path d="M1.23096 1.11035L11.9715 11.8509L1.23096 22.5914" stroke="#C4C4C4" stroke-width="2"/>
+                </svg>
+            </a>
+        </li>
+        {% else %}
+        <li class="all__page-item">
+            <a class="all__page-sign sign-next" href="#">
+                <!-- 다음페이지 -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="24" viewBox="0 0 14 24" fill="none">
+                <path d="M1.23096 1.11035L11.9715 11.8509L1.23096 22.5914" stroke="#C4C4C4" stroke-width="2"/>
+                </svg>
+            </a>
+        </li>
+        {% endif %}
+    </ul>
+</div>
 
 {% endblock %}

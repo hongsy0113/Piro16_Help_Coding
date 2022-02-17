@@ -8,6 +8,8 @@ class GroupForm(forms.ModelForm):
         fields = ('name', 'image', 'intro')
 
 class PostForm(forms.ModelForm):
+    img_recent = forms.CharField(required=False)
+    file_recent = forms.CharField(required=False)
     class Meta:
         model = GroupPost
         exclude = ('hit', 'user', 'group')

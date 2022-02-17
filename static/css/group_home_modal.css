@@ -30,7 +30,7 @@ button {
     position: relative;
     top: 0px;
     width: 40%;
-    height: 70%;
+    height: 500px;
     background-color: #FAFAFA;
     border: 2px solid #BDBDBD;
     box-sizing: border-box;
@@ -83,6 +83,7 @@ button {
     padding: 18px 38px 21px;
 }
 
+/* 그룹 가입하기 - 공개, 비공개 그룹 선택 모달  */
 .which-join__box--top {
     display: flex;
     gap: 30px;
@@ -138,4 +139,84 @@ button {
 .private-group__join-btn:hover {
     background-color: white;
     color: #FF8989;
+}
+
+/* 그룹 가입하기 - 초대코드 입력 모달 */
+.join__close--btn {
+    position: absolute;
+    right: 40px;
+    top: 42px;
+}
+
+.modal__content--join {
+    position: relative;
+    top: 0px;
+    width: 40%;
+    max-height: 500px;
+    background-color: #FAFAFA;
+    border: 2px solid #BDBDBD;
+    box-sizing: border-box;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+}
+
+.group-join__inputbox {
+    display: flex;
+    flex-direction: column;
+    /* gap: 60px; */
+}
+
+.group-code__input {
+    padding: 18px 32px 17px 20px;
+    background: #FFFFFF;
+    border: 1px solid #BDBDBD;
+    box-sizing: border-box;
+    border-radius: 5px;
+    font-family: Noto Sans CJK KR;
+    font-size: 24px;
+    line-height: 100%;
+    color: #828282;
+}
+
+.group-code__input::placeholder {
+    font-family: Noto Sans CJK KR;
+    font-size: 24px;
+    line-height: 100%;
+    color: #828282;
+}
+
+.group-code__submit {
+    padding: 20px 42px 21px;
+    margin-top: 55px;
+    background: #FF8989;
+    border: 2px solid #FF8989;
+    box-sizing: border-box;
+    border-radius: 41px;
+
+    font-family: Noto Sans CJK KR;
+    font-weight: bold;
+    font-size: 24px;
+    line-height: 105%;
+    color: #FFFFFF;
+}
+
+.group-code__error {
+    background-color: #FFE6E6;
+    border: 1px solid #eb6464;
+    color: #eb6464;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-weight: bold;
+    font-size: 18px;
+    padding: 10px 20px;
+    margin-top: 10px;
+    width: 388px;
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.group-code__text {
+    display: none;
 }
