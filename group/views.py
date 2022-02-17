@@ -109,6 +109,7 @@ def group_search_public(request):
         'groups': page_obj,
         'query': query,
         'ani_image': static('image/helphelp.png'),
+        'sort_by': sort_by,
     }
 
     return render(request, 'group/group_search_public.html', context=ctx)
