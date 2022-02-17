@@ -81,6 +81,19 @@
     </div>
 </div>
 
+{% if not question_answer_count %}
+<div class="no-post__box">
+    <div class="no-post__text">
+        <h2>아직 게시글이 👌개예요</h2>
+        <h2>여러분이 첫 글의 주인공이 되어보세요!</h2>
+    </div>
+
+    <div class='no-post__btnbox'>
+        <a class="qna__ask-btn" href="{% url 'qna:question_create' %}">질문 작성</a>
+    </div>
+</div>
+{% endif %}
+
 <div class="question__list-container">
     {% for question, answers_count in question_answer_count.items %}
     <div class="question__container">
