@@ -1,9 +1,13 @@
 {% extends 'base.html' %}
 {% block title %} 도와줘, 코딩 | 가입 완료 {% endblock %}
+{% load static %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/user/signup_login.css' %}">
+{% endblock %}
 
 {% block content %}
-<p>{{ email }} 로 회원가입 인증 메일이 발송되었어요.
-  가입한 이메일 주소로 로그인한 후, 메일을 열어 링크를 클릭해주세요!
+<p style="font-weight: bold; font-size: 24px; line-height: 200%; color: #4f4f4f; padding-bottom: 16px; text-align: center;">{{ email }} 로 회원가입 인증 메일이 발송되었어요. <br>
+  가입한 이메일 주소로 로그인한 후, 메일을 열어 링크를 클릭해주세요! <br>
   24시간 이내에 인증 메일을 확인하지 않으면 회원가입이 취소돼요.</p>
-<button class="btn btn-secondary"><a class="text-white" href="{% url 'user:main' %}" style="text-decoration: none">메인으로 돌아가기</a></button>
+<a href="{% url 'user:main' %}" class="signup_success__btn">메인으로 돌아가기</a>
 {% endblock content %}

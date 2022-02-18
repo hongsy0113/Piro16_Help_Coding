@@ -33,7 +33,7 @@
     flex-direction: column;
     gap: 10px;
 }
-form label {
+form label, .signup_success__text {
     font-weight: bold;
     font-size: 24px;
     line-height: 150%;
@@ -223,4 +223,36 @@ form input::placeholder, form textarea::placeholder {
     display: flex;
     gap: 15px;
     align-items: center;
+}
+
+
+/* 회원가입 성공시 */
+
+.signup_success__text {
+    font-size: 24px;
+    line-height: 200%;
+    color: black;
+    text-align: center;
+}
+
+.signup_success__btn {
+    background: #37C6E5;
+    color: white;
+    width: 235px;
+    height: 66px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 33px;
+    gap: 15px;
+    text-decoration: none;
+    font-size: 24px;
+    font-weight: bold;
+    transition: 0.5s;
+}
+
+.signup_success__btn:hover{
+    color: white;
+    font-size: 26px;
+    background-color: #37aee5;
 }

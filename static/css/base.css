@@ -79,7 +79,7 @@ header li, header a {
     display: none;
     top: 0;
     right: 0;
-    /* width: 1080px; */
+    width: 300px;
     position: absolute;
     background-color: white;
     padding: 0;
