@@ -1,16 +1,18 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load my_tags %}
 
 {% block css %}
     <link rel="stylesheet" href="{% static 'css/base.css' %}" />
     <link rel="stylesheet" href="{% static 'css/group_home.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/group_home_modal.css' %}" />
 {% endblock %}
 
 {% block js %}
-    <script src="{% static 'js/group_star.js' %}" defer></script>
+    <script src="{% static 'js/group_home.js' %}" defer></script>
 {% endblock %}
 
-{% block title %} 나의 그룹 {% endblock %}
+{% block title %} 도와줘, 코딩 | 내 그룹 {% endblock %}
 
 {% block content %}
 {{ request.user.id|json_script:"user_id" }}
@@ -23,27 +25,166 @@
         <div class="mygroup__top-left">
             <span>내 그룹</span>
         </div>
+        {% if groups %}
         <div class="mygroup__top-right">
             <a href="{% url 'group:group_create' %}" class="right__makebtn">그룹 만들기</a>
-            <a href="{% url 'group:join_group' %}" class="right__joinbtn">그룹 가입하기</a>
+            <a class="right__joinbtn" onclick="showGroupJoin()">그룹 가입하기</a>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- 가입한 내 그룹이 없을 때 -->
+    {% if not groups %}
+    <div class="mygroup__nogroup">
+        <div class="mygroup__nogroup--text">
+            <h2>아직 가입한 그룹이 없어요 👀</h2>
+            <h2>그룹에 가입해서 다른 친구들과 교류해보세요!</h2>
+        </div>
+
+        <div class="mygroup__nogroup--btnbox">
+            <a href="{% url 'group:group_create' %}" class="right__makebtn">그룹 만들기</a>
+            <a class="right__joinbtn" onclick="showGroupJoin()">그룹 가입하기</a>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- 공개, 비공개 모드 선택 modal-->
+    <div class="group-join__select-box modal modal__hidden">
+        <div class="modal__overlay"></div>  <!-- 모달 배경 -->
+        <div class="modal__content">    <!-- 모달 내용 -->
+            <div class="modal__content--top">
+                <span>어떤 그룹에 가입하고 싶나요?</span>
+            </div>
+            <div class="modal__content--bottom which-join-modal__bottom">
+                <div class="which-join__box which-join__box--top">
+                    <div class="group__join--box">
+                        <button class="public-group__join-btn"><a href="{% url 'group:group_list' %}">공개그룹</a></button>
+                        <span>다양한 사람들과 함께하고 싶어요</span>
+                    </div>
+                    <div class="group__join--box">
+                        <button class="private-group__join-btn" onclick="showPrivateGroup()">비공개그룹</button>
+                        <span>내 친구들과 함께하고 싶어요</span>
+                    </div>           
+                </div>
+                <div class="which-join__box which-join__box--bottom">
+                    <button class="join__code--close modal__close" onclick="closeGroupJoin()">닫기</button>
+                </div>
+            </div>
         </div>
     </div>
 
+
+    <!-- 그룹 초대코드 입력 modal -->
+    <div class="group-join__alert-box modal modal__hidden" id="join-group">
+        <div class="modal__overlay"></div>  <!-- 모달 배경 -->
+        <div class="modal__content--join">    <!-- 모달 내용 -->
+            <div class="modal__content--top">
+                <span>그룹 가입하기</span>
+                <button class="join__code--close join__close--btn" onclick="closeGroupJoin()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="37" height="36" viewBox="0 0 37 36" fill="none">
+                    <path d="M1.77148 1.57764L35.0672 34.582M1.77148 34.582L35.0672 1.57764" stroke="#4E4E4E" stroke-width="3"/>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="group-join__box modal__content--bottom">
+                <div class="group-join__inputbox">
+
+                    <!-- 초대 코드 입력 input -->
+                    <div class="group-join__inputbox--input">
+                        <input type="text" name="group_code" placeholder="초대코드를 입력하세요!" class="group-code__input">
+                        <button class="group__code--guide-hover"> <!-- 초대코드 도움말 favicon -->
+                            <svg xmlns="http://www.w3.org/2000/svg" width="57" height="56" viewBox="0 0 57 56" fill="none">
+                            <path d="M15.8843 18.6931L15.8844 18.6931L19.8719 21.6636C20.6838 22.2684 21.8409 22.1272 22.4757 21.336C23.506 20.0521 24.3298 19.0978 25.2608 18.4542C26.1685 17.8268 27.2003 17.4814 28.671 17.4814C29.7514 17.4814 30.9706 17.8263 31.9082 18.4247C32.8508 19.0264 33.4226 19.8217 33.4226 20.7025C33.4226 21.3745 33.1536 21.8884 32.5856 22.4063C31.9924 22.9471 31.1132 23.4557 29.9426 24.1005C29.8651 24.1432 29.7865 24.1864 29.707 24.23C27.0627 25.6819 23.4032 27.6911 23.4032 32.5161V32.9677C23.4032 34.0004 24.2529 34.8226 25.2823 34.8226H31.7177C32.7471 34.8226 33.5968 34.0004 33.5968 32.9677V32.8172C33.5968 32.2942 33.9778 31.8149 34.8687 31.2181C35.2985 30.9302 35.8044 30.642 36.3681 30.3224L36.4132 30.2968C36.9589 29.9874 37.5514 29.6515 38.1452 29.2733C39.3658 28.496 40.6228 27.5214 41.5729 26.1585C42.529 24.7871 43.1565 23.048 43.1565 20.7742C43.1565 17.3136 41.3292 14.3026 38.7048 12.1722C36.0822 10.0432 32.6242 8.75806 29.2648 8.75806C26.0614 8.75806 23.4099 9.42187 21.1503 10.6942C18.8929 11.9652 17.0571 13.8262 15.4578 16.1751L15.8555 16.446L15.4578 16.1751C14.8998 16.9947 15.0884 18.1001 15.8843 18.6931ZM56.5 28C56.5 43.1829 43.9713 55.5 28.5 55.5C13.0287 55.5 0.5 43.1829 0.5 28C0.5 12.826 13.0288 0.5 28.5 0.5C43.9712 0.5 56.5 12.826 56.5 28ZM28.5 36.7581C25.3173 36.7581 22.7137 39.3034 22.7137 42.4516C22.7137 45.5997 25.3173 48.1452 28.5 48.1452C31.6827 48.1452 34.2863 45.5997 34.2863 42.4516C34.2863 39.3034 31.6827 36.7581 28.5 36.7581Z" fill="#4e4e4e" stroke="#4e4e4e"/>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- 그룹 초대코드 입력 Guide Modal-->
+                    <div class="group__code--guide">
+                        <div class="group__code--guide-content">
+                            <div class="group__code--guide-title">
+                                <span>초대코드는 어떻게 받나요?</span>
+                            </div>
+    
+                            <div class="group__code--guide-text">
+                                <p>1️⃣ 초대하고 싶은 그룹의 <span class="group-info__btn">그룹 정보</span>로 이동</p>
+                                <p>2️⃣ <span class="group-code__btn">멤버 초대코드</span> 클릭</p>
+                                <!-- <image src="{{ code_ex }}" style=" width: 150px;"></image> -->
+                                <p>3️⃣ 코드를 공유해서 친구와 같은 그룹에서 활동해요!</p>
+                            
+                                <p class="code-caution"><span>🚨🚨 <span class="text-bold">초대코드</span>는 <span class="text-bold">일주일 이내에 입력</span>해주세요 🚨🚨</span></p>
+                            </div>
+                        </div>
+                    </div>
+                        <!-- <div class="group__code--guide-text">
+                            <div class="group__code--guide-image">
+                                <div class="group-post__top--info">
+                                    <span>그룹 정보</span>
+                                </div> 
+                                <div class="group__code--guide-right">➪</div>
+                                <div class="group__code--btn top-right__button">
+                                    <span>멤버 초대코드</span>
+                                </div>
+                            </div>
+                            <div>
+                                <span>멤버 초대코드는 여기에 있어요! 친구와 코드를 공유하고 여기에 입력해서 그룹에 가입해보아요</span>
+                                <span>🚨주의🚨 초대코드는 7일마다 바뀌어요</span>
+                            </div>
+                        </div> -->
+
+                    <!-- 에러메세지 -->
+                    <span class="group-code__text group-code__error"><svg width="5" height="14" viewBox="0 0 9 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M8.3125 21.5825C8.3125 23.7364 6.56016 25.4888 4.40625 25.4888C2.25234 25.4888 0.5 23.7364 0.5 21.5825C0.5 19.4286 2.25234 17.6763 4.40625 17.6763C6.56016 17.6763 8.3125 19.4286 8.3125 21.5825ZM0.952148 1.71919L1.61621 15.0004C1.64741 15.6241 2.16216 16.1138 2.78662 16.1138H6.02588C6.65034 16.1138 7.16509 15.6241 7.19629 15.0004L7.86035 1.71919C7.8938 1.0498 7.36016 0.48877 6.68994 0.48877H2.12256C1.45234 0.48877 0.918701 1.0498 0.952148 1.71919Z" fill="#EB6464"/>
+                    </svg>{{ message }}</span>
+
+                    <!-- 그룹 찾기 버튼 -->
+                    <div class="group-join__inputbox--btn">
+                        <input type="submit" value="그룹 찾기" class="group-code__submit">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>   
+
+    <!-- 그룹 정렬 (sort) -->
+    {% if groups %}
+    <div class="list-sort">
+        <span class="list-sort__btn">
+            {% if sort_by != 'star' %}
+            <a href="{% url 'group:group_home' %}?{% param_replace sort='star' page=1 %}">찜하기순</a>
+            {% else %}
+            <span>찜하기순</span>
+            {% endif %}
+        </span>
+        <span class="list-sort__btn">
+            {% if sort_by != 'name' %}
+            <a href="{% url 'group:group_home' %}?{% param_replace sort='name' page=1 %}">이름순</a>
+            {% else %}
+            <span>이름순</span>
+            {% endif %}
+        </span>
+    </div>
+    {% endif %}
+
     <!-- 내 그룹 목록 -->
     <div class="gridbox">
-        {% for group in groups %}
+        {% for group, is_star in groups_star_dict.items %}
             <div class="gridbox__item-group">
-                <div class="img__group">
-                    {% if group.image %}
-                    <img src="{{ group.image.url }}" height="200" width="200" class="img__group-img" />
-                    {% else %}
-                    <img src="{{ ani_image }}" height="200" width="200" class="img__group-img" />
-                    {% endif %}
-                </div>
+                <a href="{% url 'group:post_list' group.pk %}">
+                    <div class="img__group">
+                        {% if group.image %}
+                        <img src="{{ group.image.url }}" height="200" width="200" class="img__group-img" />
+                        {% else %}
+                        <img src="{{ ani_image }}" height="200" width="200" class="img__group-img" />
+                        {% endif %}
+                    </div>
+                </a>
 
                 <div class="star__group">
                     <span class="star group__keyword-star group__keyword-star--{{ group.id }}" id="keyword-star-{{ group.id }}">  
-                        {% if group.is_star %} <!-- 꽉 찬 별 -->
+                        {% if is_star %} <!-- 꽉 찬 별 -->
                         <svg xmlns="http://www.w3.org/2000/svg" width="33" height="33" viewBox="0 0 33 33" fill="none"><path d="M14.2841 1.9274L14.284 1.92759L10.7818 9.44224L2.95814 10.6493C1.06844 10.9394 0.387624 13.3429 1.69516 14.6904C1.69521 14.6905 1.69526 14.6905 1.6953 14.6906L7.37193 20.5445L6.02817 28.821L6.02812 28.8213C5.72253 30.7113 7.63006 32.2674 9.33438 31.3119C9.33462 31.3118 9.33486 31.3117 9.33509 31.3115L16.3261 27.4227L23.3185 31.3124C23.3186 31.3124 23.3186 31.3124 23.3186 31.3124C25.0196 32.2589 26.9302 30.7151 26.624 28.8213L26.6239 28.821L25.2802 20.5446L30.9568 14.6906C32.2645 13.3431 31.5837 10.9394 29.694 10.6493L21.8703 9.44224L18.3681 1.92759L18.3677 1.92669C17.5428 0.165947 15.1196 0.136632 14.2841 1.9274Z" fill="#FFD76F" stroke="#828282"/></svg>
                         <!-- <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 18.26l-7.053 3.948 1.575-7.928L.587 8.792l8.027-.952L12 .5l3.386 7.34 8.027.952-5.935 5.488 1.575 7.928z"/></svg> -->
                         {% else %} <!-- 빈 별 -->
@@ -53,108 +194,102 @@
                     </span>
                 </div>
 
-                <div class="content__group">
-                    <div class="content__group-top">
-                        <div class="content__group-top-left">
-                            <!-- 그룹 이름 -->
-                            <div class="content__group-namebox">
-                                <a href="{% url 'group:group_detail' group.pk %}" class="content__group-name">
-                                    <span class="group-name-text">
-                                    {{ group.name }}
-                                    </span>
-                                </a>
-                            </div>
+                <a href="{% url 'group:post_list' group.pk %}">
+                    <div class="content__group">
+                        <div class="content__group-top">
+                            <div class="content__group-top-left">
+                                <!-- 그룹 이름 -->
+                                <div class="content__group-namebox">
+                                    <span class="group-name-text content__group-name">{{ group.name }}</span>
+                                </div>
 
-                            <!-- 비공개 / 공개 그룹 (자물쇠) -->
-                            <div class="content__group-mode">
-                                {% if group.mode == 'PUBLIC' %}
-                                {% else %}
-                                <i class="ri-lock-2-fill"></i>
-                                {% endif %}
+                                <!-- 비공개 / 공개 그룹 (자물쇠) -->
+                                <div class="content__group-mode">
+                                    {% if group.mode == 'PRIVATE' %}
+                                    <i class="ri-lock-2-fill"></i>
+                                    {% endif %}
+                                </div> 
+                            </div>    
+                            
+                            <!-- 그룹인원수 -->
+                            <div class="content__group-member">
+                                <span>{{ group.members.all | length }}명</span>
                             </div>
                         </div>
 
-                        <!-- 그룹인원수 -->
-                        <div class="content__group-member">
-                            <span>{{ group.members.all | length }}명</span>
+                        <div class="content__group-bottom">
+                            <!-- 그룹 소개 -->
+                            {% if group.intro %}
+                            <span class="group-intro">{{ group.intro }}</span>
+                            {% else %}
+                            <span class="group-intro">그룹 소개가 없습니다.</span>
+                            {% endif %}
                         </div>
                     </div>
-
-                    <div class="content__group-bottom">
-                        <!-- 그룹 소개 -->
-                        {% if group.intro %}
-                        <span class="group-intro">{{ group.intro }}</span>
-                        {% else %}
-                        <span class="group-intro">그룹 소개가 없습니다.</span>
-                        {% endif %}
-                    </div>
-                </div>
+                </a>
             </div>
         {% endfor %}
     </div>
-    
-</div>  <!-- 그룹 컨테이너 끝 -->
-    
-    <!-- <div class="group-join__alert-box" id="join-group">
-        <div class="group-join__box">
-            <form method="GET" class="group-join__code">
-                <input placeholder="초대 코드 입력" type="text" name="code" />
-                <a href="{% url 'group:join_group' %}"><button>Submit</button> </a>
-            </form>
-            <div class="group-join__message">
-                <h4>{{ message }}</h4>
-    
-            </div>
-        </div>
-        <button class="join__code--close btn btn-dark" onclick="closeJoin()">닫기</button>
-    </div>
-    <button class="group-join__btn btn btn-dark" onclick="groupJoin()">그룹 가입하기</button> -->
 
-    <!-- 그룹 정렬 -->
-    <!-- <form method="get" action="" class="movie_sort float-end me-4">
-            <select id="sort_select" class="sort_select" onchange="location=this.value; getSelectValue(this.form);">
-                <option class="sort-name" value="/">--정렬기준--</option>
-                <option class="sort-name" value="?sort=name" {% if sort_by == 'name' %} selected {% endif %}>이름순</option>
-                <option class="sort-star" value="?sort=star" {% if sort_by == 'star' %} selected {% endif %}>찜하기순</option>
-                <!-- <option class="sort-member" value="?sort=member">멤버수</option> -->
-            <!-- </select> -->
-    <!-- </form> -->
+</div>  <!-- 그룹 컨테이너 끝 -->
 
 <!-- 페이지네이션 -->
-<ul class="pagination justify-content-center">
-    {% if groups.has_previous %}
-    <li class="page-item">
-        <a class="page-link" href="?page={{ groups.previous_page_number }}&sort={{ sort_by }}">이전</a>
-    </li>
-    {% else %}
-    <li class="page-item disabled">
-        <a class="page-link" tabindex="-1" aria-disabled="true" href="#">이전</a>
-    </li>
-    {% endif %}
-
-    {% for page_number in groups.paginator.page_range %}
-        {% if page_number == groups.number %}
-        <li class="page-item active" aria-current="page">
-            <a class="page-link" href="?page={{ page_number }}&sort={{ sort_by }}">{{ page_number }}</a>
+{% if groups %}
+<div class="pagination-box">
+    <ul class="all__pagination">
+        {% if groups.has_previous %}
+        <li class="all__page-item">
+            <a class="all__page-sign" href="?page={{ groups.previous_page_number }}&sort={{ sort_by }}">
+                <!-- 이전페이지 -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="24" viewBox="0 0 14 24" fill="none">
+                <path d="M12.7688 22.5918L2.02827 11.8513L12.7688 1.11076" stroke="#C4C4C4" stroke-width="2"/>
+                </svg>
+            </a>
         </li>
         {% else %}
-        <li class="page-item">
-            <a class="page-link" href="?page={{ page_number }}&sort={{ sort_by }}">{{ page_number }}</a>
+        <li class="all__page-item">
+            <a class="all__page-sign" href="#">
+                <!-- 이전페이지 -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="24" viewBox="0 0 14 24" fill="none">
+                <path d="M12.7688 22.5918L2.02827 11.8513L12.7688 1.11076" stroke="#C4C4C4" stroke-width="2"/>
+                </svg>
+            </a>
         </li>
         {% endif %}
-    {% endfor %}
-    </div>
-    
 
-    {% if groups.has_next %}
-    <li class="page-item">
-        <a class="page-link" href="?page={{ groups.next_page_number }}&sort={{ sort_by }}">다음</a>
-    </li>
-    {% else %}
-    <li class="page-item">
-        <a class="page-link" tabindex="-1" aria-disabled="true" href="#">다음</a>
-    </li>
-    {% endif %}
-</ul>
+        {% for page_number in groups.paginator.page_range %}
+            {% if page_number == groups.number %}
+            <li class="all__page-item">
+                <a class="all__page-item-active" href="?page={{ page_number }}&sort={{ sort_by }}">{{ page_number }}</a>
+            </li>
+            {% else %}
+            <li class="all__page-item">
+                <a class="all__page-link" href="?page={{ page_number }}&sort={{ sort_by }}">{{ page_number }}</a>
+            </li>
+            {% endif %}
+        {% endfor %}
+        
+        {% if groups.has_next %}
+        <li class="all__page-item">
+            <a class="all__page-sign sign-next" href="?page={{ groups.next_page_number }}&sort={{ sort_by }}">
+                <!-- 다음페이지 -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="24" viewBox="0 0 14 24" fill="none">
+                <path d="M1.23096 1.11035L11.9715 11.8509L1.23096 22.5914" stroke="#C4C4C4" stroke-width="2"/>
+                </svg>
+            </a>
+        </li>
+        {% else %}
+        <li class="all__page-item">
+            <a class="all__page-sign sign-next" href="#">
+                <!-- 다음페이지 -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="24" viewBox="0 0 14 24" fill="none">
+                <path d="M1.23096 1.11035L11.9715 11.8509L1.23096 22.5914" stroke="#C4C4C4" stroke-width="2"/>
+                </svg>
+            </a>
+        </li>
+        {% endif %}
+    </ul>
+</div>
+{% endif %}
 
 {% endblock %}

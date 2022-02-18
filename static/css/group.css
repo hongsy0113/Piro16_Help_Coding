@@ -1,0 +1,33 @@
+/* .star, .heart {
+    padding: 0;
+    border: none;
+    background: none;
+} */
+
+.group-join__alert-box, .group-join__select-box {
+    background: rgb(195, 195, 247);
+    color: rgb(0, 0, 0);
+    padding: 20px;
+    border-radius: 5px;
+    display: none;
+}
+
+/* .hidden {
+    display: none;
+}
+
+.align-center {
+    display: grid;
+    place-items: center;
+    min-height: 100vh;
+}
+
+.mygroup__list, .all-group__list {
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+.group__wait--member-list, 
+.group__origin--member-list,
+.group-info__intro {
+    border: 1px solid #000;
+} */

@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
-
 {% load static %}
+
 {% block css %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
 {% endblock %}
@@ -8,12 +8,100 @@
 {% block content %}
 
 {% if user.is_authenticated %}
-<button class="btn btn-primary"><a class="text-white" href="{% url 'user:mypage' %}" style="text-decoration: none">My Page</a></button>
-<button class="btn btn-danger"><a class="text-white" href="{% url 'user:logout' %}" style="text-decoration: none">Logout</a></button>
-<div>
-    <p>로그인 중인 유저 : {{ user.email }}</p>
-    {% if user.img %}<img src="{{ user.img.url }}" height="100">{% else %}<p>사진 없음</p>{% endif %}
+<div class="main__container">
+    <div class="main__element main__search">
+        <h1 style="color: white;">궁금한 내용을 검색해보세요!</h1>
+        <div class="qna__search-container">
+            <form class="qna__search-box" action="{% url 'qna:search_result' %}" method="get">
+                {% csrf_token %}
+                <input type="search" placeholder="엔트리는 뭔가요?" name="search" />
+                <button type="submit">
+                    <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M25.1504 22.115L20.2822 17.2468C20.0625 17.0271 19.7646 16.905 19.4521 16.905H18.6562C20.0039 15.1814 20.8047 13.0134 20.8047 10.655C20.8047 5.04468 16.2588 0.498779 10.6484 0.498779C5.03809 0.498779 0.492188 5.04468 0.492188 10.655C0.492188 16.2654 5.03809 20.8113 10.6484 20.8113C13.0068 20.8113 15.1748 20.0105 16.8984 18.6628V19.4587C16.8984 19.7712 17.0205 20.0691 17.2402 20.2888L22.1084 25.157C22.5674 25.616 23.3096 25.616 23.7637 25.157L25.1455 23.7751C25.6045 23.3162 25.6045 22.574 25.1504 22.115ZM10.6484 16.905C7.19629 16.905 4.39844 14.1121 4.39844 10.655C4.39844 7.20288 7.19141 4.40503 10.6484 4.40503C14.1006 4.40503 16.8984 7.198 16.8984 10.655C16.8984 14.1072 14.1055 16.905 10.6484 16.905Z" fill="#4E4E4E"/>
+                    </svg>
+                </button>
+            </form>
+        </div>
+    </div>
 </div>
+<div class="main__container">
+    <div class="main__element main__qna">
+        <div class="main__qna__title">
+            <p class="main__title">묻고 답하기</p>
+        </div>
+        <div class="main__qna__slidecontainer">
+            <div class="main__qna__slideinner">
+                <div class="main__qna__box">
+                    <div class="main__qna__question">
+                        <p>Q. 회전 방식을 바꾸면 무슨 변화가 있나요?</p>
+                    </div>
+                    <div class="main__qna__answer">
+                        <p>A. 회전 방식을 왼쪽 - 오른쪽으로 설정하면 오브젝트 좌우 반전이 가능해요.</p>
+                    </div>
+                </div>
+                <div class="main__qna__box">
+                    <div class="main__qna__question">
+                        <p>Q. 여기서 오브젝트가 왜 원하는 대로 안 움직일까요? ㅜㅜ</p>
+                    </div>
+                    <div class="main__qna__answer">
+                        <p>A. 무한 반복하기를 안 넣으셨네요! </p>
+                    </div>
+                </div>
+                <div class="main__qna__box">
+                    <div class="main__qna__question">
+                        <p>Q. 저도 피로그래밍에 들어갈 수 있을까요? </p>
+                    </div>
+                    <div class="main__qna__answer">
+                        <p>A. 그럼요! 나중에 대학생이 되면 피로그래밍에서 재미있게 프로그래밍 해봐요.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="main__arrow-container-outer" style="position: absolute; width: 100vw;">
+            <div class="main__arrow-container">
+                <!-- 왼쪽 화살표 -->
+                <svg id="qna__arrow-left" width="17" height="30" viewBox="0 0 17 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15.8042 28.1117L2.69251 15L15.8042 1.88832" stroke="#C4C4C4" stroke-width="3"/>
+                </svg>
+                <!-- 오른쪽 화살표 -->
+                <svg id="qna__arrow-right" width="17" height="30" viewBox="0 0 17 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M1.65576 1.88831L14.7675 15L1.65576 28.1117" stroke="#C4C4C4" stroke-width="3"/>
+                </svg>            
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="main__container">
+    <div class="main__element main__group">
+        <p class="main__title">내 그룹에 올라온 글</p>
+        <div class="landing__group__cardcontainer">
+            {% for post, img_src in posts_img_dict.items %}
+            <a href="{% url 'group:post_detail' post.group.pk post.pk %}" class="landing__group__card">
+                <img src="{{ img_src }}" alt="">
+                <div class="landing__group__card__text">
+                    <h6>{{ post.title }}</h6>
+                    <p>{{ post.group.name }}</p>
+                </div>
+            </a>
+            {% empty %}
+            <div class="landing__group__notpost">
+                <span class="notpost-text">내 그룹에 글이 아직 없어요🥺</span>
+                <span class="notpost-text">그룹 커뮤니티에 글을 올려보세요!</span>
+                
+                    <a href="{% url 'group:group_home' %}" class="landing__ctabtn--group">
+                        <span>글 쓰러 가기</span>
+                        <svg width="11" height="20" viewBox="0 0 11 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M2 2.2243L9.06853 9.29294C9.45905 9.68346 9.45905 10.3166 9.06853 10.7071L2 17.7757" stroke="white" stroke-width="3" stroke-linecap="round"/>
+                        </svg>
+                    </a>
+                
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
 {% else %}
 <div class="landing__container landing__container-first">
     <div class="landing__element landing__first">
@@ -63,10 +151,10 @@
         <h3>공부를 하면<br>업적이 쌓여요!</h3>
         <div class="landing__reward__imgcontainer">
             <!-- 리워드 이미지 넣기 -->
-            <img src="#" alt="">
-            <img src="#" alt="">
-            <img src="#" alt="">
-            <img src="#" alt="">
+            <img src="{% static 'img/reward/question/question20.png' %}" alt="">
+            <img src="{% static 'img/reward/answer/answer5.png' %}" alt="">
+            <img src="{% static 'img/reward/heart/heart100.png' %}" alt="">
+            <img src="{% static 'img/reward/question/question50.png' %}" alt="">
         </div>
     </div>
 </div>
@@ -77,30 +165,30 @@
             <p>누구나 그룹을 만들어 친구들과 작품을 공유할 수 있어요.</p>
         </div>
         <div class="landing__group__cardcontainer">
-            <a href="{% url 'group:group_home' %}" class="landing__group__card">
-                <img src="#" alt="">
+            <a href="{% url 'user:signup' %}" class="landing__group__card">
+                <img src="/static/img/sample/group_post_sample1.png" alt="">
                 <div class="landing__group__card__text">
-                    <h6>이런 작품을 만들었어요.</h6>
-                    <p>작품 내용</p>
+                    <h6>강낭콩 키우기</h6>
+                    <p>oo 초등학교 4학년 3반 💖</p>
                 </div>
             </a>
-            <a href="{% url 'group:group_home' %}" class="landing__group__card">
-                <img src="#" alt="">
+            <a href="{% url 'user:signup' %}" class="landing__group__card">
+                <img src="/static/img/sample/group_post_sample2.png" alt="">
                 <div class="landing__group__card__text">
-                    <h6>이런 작품을 만들었어요.</h6>
-                    <p>작품 내용</p>
+                    <h6>몽키런 게임</h6>
+                    <p>△△ 초등학교 모여라 🍗</p>
                 </div>
             </a>
-            <a href="{% url 'group:group_home' %}" class="landing__group__card">
-                <img src="#" alt="">
+            <a href="{% url 'user:signup' %}" class="landing__group__card">
+                <img src="/static/img/sample/group_post_sample3.png" alt="">
                 <div class="landing__group__card__text">
-                    <h6>이런 작품을 만들었어요.</h6>
-                    <p>작품 내용</p>
+                    <h6>펭귄 골 넣기 게임</h6>
+                    <p>😍성윤과 친구들🥰</p>
                 </div>
             </a>
         </div>
-        <a href="{% url 'group:group_home' %}" class="landing__ctabtn">
-            <span>작품 구경하기</span>
+        <a href="{% url 'user:signup' %}" class="landing__ctabtn">
+            <span>지금 시작하기</span>
             <svg width="11" height="20" viewBox="0 0 11 20" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M2 2.2243L9.06853 9.29294C9.45905 9.68346 9.45905 10.3166 9.06853 10.7071L2 17.7757" stroke="white" stroke-width="3" stroke-linecap="round"/>
             </svg>
@@ -108,5 +196,48 @@
     </div>
 </div>
 {% endif %}
+
+<script>
+    let current = 0;
+    const element = document.querySelector('.main__qna__slideinner');
+    const qnaBox = document.querySelector('.main__qna__box');
+    console.log(element);
+    const leftbtn = document.getElementById('qna__arrow-left');
+    const rightbtn = document.getElementById('qna__arrow-right');
+    const count = 3;
+    let num = (window.innerWidth - 1080) / 2;
+    let width = window.innerWidth;
+    console.log('innerwidth: ',window.innerWidth);
+    console.log(num);
+
+    function slideNext() {
+        if (current >= count - 1) {
+            current = 0;
+        } else {
+            current++;
+        }
+        element.style.transform =`translate(-${width * current}px)`;
+    }
+    function slidePrev() {
+        if(current <= 0) {
+            current = count -1;
+        } else {
+            current--;
+        }
+        element.style.transform =`translate(-${width * current}px)`;
+        console.log('slidePrev')
+    }
+
+
+    function resetWidth() {
+        width = window.innerWidth;
+        console.log('innerwidth: ',window.innerWidth);
+        element.style.transform =`translate(-${width * current}px)`;
+    }
+
+    window.addEventListener('resize', resetWidth);
+    leftbtn.addEventListener('click', slidePrev);
+    rightbtn.addEventListener('click', slideNext);
+</script>
 
 {% endblock content %}

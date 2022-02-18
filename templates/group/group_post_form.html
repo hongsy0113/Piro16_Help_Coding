@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/group_post_create.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/help_template.css' %}" />
+{% endblock %}
+
+{% block js %}
+    <script type="text/javascript" src="/static/js/group_post_form.js" defer></script>
+    <script type="text/javascript" src="/static/js/help_template.js" defer></script>
+{% endblock %} 
+
+{% block title %} 도와줘, 코딩 | {{ group.name }} | 게시글 작성 {% endblock %}
+
+{% block content %}
+<div class="post-create__container">  
+
+<!-- 게시글 생성 상단 -->
+    <div class="post-create__top">
+        <span>만든 작품을 자랑하거나 궁금한 내용을 물어보세요!</span>
+    </div>
+
+    <!-- 게시글 생성 form -->
+    <div class="post-create-form">
+        <form action="" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="post-create__input post-create__input--title">
+                <!-- 제목 에러 메시지 -->
+                {% if error_messages.title %}
+                <span class="input-error">
+                    <svg width="5" height="14" viewBox="0 0 9 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M8.3125 21.5825C8.3125 23.7364 6.56016 25.4888 4.40625 25.4888C2.25234 25.4888 0.5 23.7364 0.5 21.5825C0.5 19.4286 2.25234 17.6763 4.40625 17.6763C6.56016 17.6763 8.3125 19.4286 8.3125 21.5825ZM0.952148 1.71919L1.61621 15.0004C1.64741 15.6241 2.16216 16.1138 2.78662 16.1138H6.02588C6.65034 16.1138 7.16509 15.6241 7.19629 15.0004L7.86035 1.71919C7.8938 1.0498 7.36016 0.48877 6.68994 0.48877H2.12256C1.45234 0.48877 0.918701 1.0498 0.952148 1.71919Z" fill="#EB6464"></path>
+                    </svg>
+                    {{ error_messages.title }}
+                </span>
+                {% endif %}
+                <input class="input-title" placeholder="제목을 50자 이내로 입력하세요." name="title" type="text"  
+                value="{% if original_information %}{{ original_information.title }}{% else %}{{ post.title }}{% endif %}"/>
+                
+            </div>
+            <div class="post-create__input post-create__input--content">
+                <!-- 내용 에러 메시지 --> 
+                {% if error_messages.content %}
+                <span class="input-error">
+                    <svg width="5" height="14" viewBox="0 0 9 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M8.3125 21.5825C8.3125 23.7364 6.56016 25.4888 4.40625 25.4888C2.25234 25.4888 0.5 23.7364 0.5 21.5825C0.5 19.4286 2.25234 17.6763 4.40625 17.6763C6.56016 17.6763 8.3125 19.4286 8.3125 21.5825ZM0.952148 1.71919L1.61621 15.0004C1.64741 15.6241 2.16216 16.1138 2.78662 16.1138H6.02588C6.65034 16.1138 7.16509 15.6241 7.19629 15.0004L7.86035 1.71919C7.8938 1.0498 7.36016 0.48877 6.68994 0.48877H2.12256C1.45234 0.48877 0.918701 1.0498 0.952148 1.71919Z" fill="#EB6464"></path>
+                    </svg>
+                    {{ error_messages.content }}
+                </span>
+                {% endif %}
+                <!-- textarea 한줄에 안 쓰면 공백도 계속 추가되어 버림. 이대로 두거나 공백 없애주는 방법 찾거나 -->
+                <textarea class="input-content" placeholder="내용을 입력하세요." name="content">{% if original_information %}{{ original_information.content }}{% else %}{{ post.content }}{% endif %}</textarea>
+            </div>
+
+            <div class="post-create__img post-create__form">
+                <div class="text-container">
+                    <span>사진</span>
+                </div>
+                <div class="group-post__form-box">  
+                    <input id="img_upload_name" class="group-post__form-input group-post__form-input--image" placeholder="필요한 사진을 추가하세요" readonly  />
+                    <label for="img_upload" class="group-post__form-label">사진 올리기</label>
+                    <input type="file" id="img_upload" class="form__input--file" name="image" onchange="imageChange(event);">
+                    <input name="img_recent" id="img_recent" value="{% if current_image %}{{ current_image }}{% else %}{{ original_information.image }}{% endif %}" hidden />
+                    <input id="temp_img_location" value="{{ temp_img_location }}" hidden></input>
+                </div>
+                <img id="img_display" class="img_display" src="">
+            </div>
+            
+            <div class="post-create__link post-create__form">
+                <div class="text-container">
+                    <span>링크</span>
+                </div>
+
+                <!-- 링크 달기 설명 modal -->
+                <button class="modal__help-btn" type="button" onclick="showCaution()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="57" height="56" viewBox="0 0 57 56" fill="none">
+                    <path d="M15.8843 18.6931L15.8844 18.6931L19.8719 21.6636C20.6838 22.2684 21.8409 22.1272 22.4757 21.336C23.506 20.0521 24.3298 19.0978 25.2608 18.4542C26.1685 17.8268 27.2003 17.4814 28.671 17.4814C29.7514 17.4814 30.9706 17.8263 31.9082 18.4247C32.8508 19.0264 33.4226 19.8217 33.4226 20.7025C33.4226 21.3745 33.1536 21.8884 32.5856 22.4063C31.9924 22.9471 31.1132 23.4557 29.9426 24.1005C29.8651 24.1432 29.7865 24.1864 29.707 24.23C27.0627 25.6819 23.4032 27.6911 23.4032 32.5161V32.9677C23.4032 34.0004 24.2529 34.8226 25.2823 34.8226H31.7177C32.7471 34.8226 33.5968 34.0004 33.5968 32.9677V32.8172C33.5968 32.2942 33.9778 31.8149 34.8687 31.2181C35.2985 30.9302 35.8044 30.642 36.3681 30.3224L36.4132 30.2968C36.9589 29.9874 37.5514 29.6515 38.1452 29.2733C39.3658 28.496 40.6228 27.5214 41.5729 26.1585C42.529 24.7871 43.1565 23.048 43.1565 20.7742C43.1565 17.3136 41.3292 14.3026 38.7048 12.1722C36.0822 10.0432 32.6242 8.75806 29.2648 8.75806C26.0614 8.75806 23.4099 9.42187 21.1503 10.6942C18.8929 11.9652 17.0571 13.8262 15.4578 16.1751L15.8555 16.446L15.4578 16.1751C14.8998 16.9947 15.0884 18.1001 15.8843 18.6931ZM56.5 28C56.5 43.1829 43.9713 55.5 28.5 55.5C13.0287 55.5 0.5 43.1829 0.5 28C0.5 12.826 13.0288 0.5 28.5 0.5C43.9712 0.5 56.5 12.826 56.5 28ZM28.5 36.7581C25.3173 36.7581 22.7137 39.3034 22.7137 42.4516C22.7137 45.5997 25.3173 48.1452 28.5 48.1452C31.6827 48.1452 34.2863 45.5997 34.2863 42.4516C34.2863 39.3034 31.6827 36.7581 28.5 36.7581Z" fill="#4e4e4e" stroke="#4e4e4e"/>
+                    </svg>
+                </button>
+        
+                <div class="help__container" style="display: none;">
+                    <div class="help-modal__name">
+                        <h2>유의사항</h2>
+                    </div>
+        
+                    <!-- 닫기 버튼 -->
+                    <button class="modal__help--close-btn" type="button" onclick="closeCaution()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="37" height="36" viewBox="0 0 37 36" fill="none">
+                        <path d="M1.77148 1.57764L35.0672 34.582M1.77148 34.582L35.0672 1.57764" stroke="#4E4E4E" stroke-width="3"/>
+                        </svg>
+                    </button>
+                </div>
+                
+                <!-- 링크 에러 메시지 -->
+                {% if error_messages.attached_link %}
+                <span class="input-error">
+                    <svg width="5" height="14" viewBox="0 0 9 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M8.3125 21.5825C8.3125 23.7364 6.56016 25.4888 4.40625 25.4888C2.25234 25.4888 0.5 23.7364 0.5 21.5825C0.5 19.4286 2.25234 17.6763 4.40625 17.6763C6.56016 17.6763 8.3125 19.4286 8.3125 21.5825ZM0.952148 1.71919L1.61621 15.0004C1.64741 15.6241 2.16216 16.1138 2.78662 16.1138H6.02588C6.65034 16.1138 7.16509 15.6241 7.19629 15.0004L7.86035 1.71919C7.8938 1.0498 7.36016 0.48877 6.68994 0.48877H2.12256C1.45234 0.48877 0.918701 1.0498 0.952148 1.71919Z" fill="#EB6464"></path>
+                    </svg>
+                    {{ error_messages.attached_link }} 
+                </span>
+                {% endif %}
+                <input class="group-post__form-input--link" placeholder="작품 링크를 추가하세요." name="attached_link" type="text" maxlength="255" 
+                value="{% if original_information %}{{ original_information.attached_link }}{% else %}{% if post.attached_link %}{{ post.attached_link }}{% endif %}{% endif %}"/>
+                <!-- 여기도 한줄에 안 쓰면 공백도 계속 추가되어 버림. 이대로 두거나 공백 없애주는 방법 찾거나 -->
+            </div>
+            <!-- input type 을 url로 하면 자체적으로 url 아니면 제출을 안 받아서 에러메시지 커스톰 하기 위해 text type으로 바꿈 -->
+            
+            <div class="post-create__attached-file post-create__form">
+                <div class="text-container">
+                    <span>파일</span>
+                </div>
+                <div class="group-post__form-box">
+                    <input id="file_upload_name" class="group-post__form-input group-post__form-input--file"  placeholder="필요한 파일(코드)을 추가하세요" readonly/>
+                    <label for="file_upload" class="group-post__form-label">파일 올리기</label>
+                    <input type="file" class="form__input--file" id="file_upload" name="attached_file" value="{{ form.attached_file.url }}" onchange="fileChange(event); "/>
+                    <input name="file_recent" id="file_recent" value="{% if current_file %}{{ current_file }}{% else %}{{ original_information.attached_file }}{% endif %}" hidden />
+                    <input id="temp_file_location" value="{{ temp_file_location }}" hidden></input>
+                </div>
+            </div>
+
+            {% comment %} <!-- 기존 파일 업로드 부분-->
+            <div class="post-create__attached-file post-create__form">
+                <div class="text-container">
+                    <span>파일</span>
+                </div>
+                <div class="group-post__form-box">
+                    <input class="group-post__form-input group-post__form-input--file"  placeholder="첨부파일" readonly/>
+                    <label for="attached_file" class="group-post__form-label">파일 올리기</label>
+                    <input type="file" class="form__input--file" id="attached_file" name="attached_file" value="{{ form.attached_file.url }}" />
+                </div>
+            </div>
+            {% endcomment %}
+            <div class="post-crate__category">
+                <div class="text-container category-text">
+                    <span>카테고리</span>
+                    <span class="post-create__error">{{ category_error }}</span>
+                </div>
+                <!-- 카테고리 에러 메시지 -->
+                {% if error_messages.category %}
+                <span class="input-error">
+                    <svg width="5" height="14" viewBox="0 0 9 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M8.3125 21.5825C8.3125 23.7364 6.56016 25.4888 4.40625 25.4888C2.25234 25.4888 0.5 23.7364 0.5 21.5825C0.5 19.4286 2.25234 17.6763 4.40625 17.6763C6.56016 17.6763 8.3125 19.4286 8.3125 21.5825ZM0.952148 1.71919L1.61621 15.0004C1.64741 15.6241 2.16216 16.1138 2.78662 16.1138H6.02588C6.65034 16.1138 7.16509 15.6241 7.19629 15.0004L7.86035 1.71919C7.8938 1.0498 7.36016 0.48877 6.68994 0.48877H2.12256C1.45234 0.48877 0.918701 1.0498 0.952148 1.71919Z" fill="#EB6464"></path>
+                    </svg>
+                    {{ error_messages.category }}
+                </span>
+                {% endif %}
+                <div class="post-create__category-select">
+                    <input type="radio" name="category" value="S" id="show" class="tag" 
+                    {% if original_information.category == 'S' or post.category == 'S' %} checked {% endif %}/>
+                    <label for="show">자랑하기</label>
+                    <input type="radio" name="category" value="Q" id="question" class="tag" 
+                    {% if original_information.category == 'Q' or post.category == 'Q' %} checked {% endif %} />
+                    <label for="question">질문하기</label>
+                    <input type="radio" name="category" value="ETC" id="etc" class="tag"  
+                    {% if original_information.category == 'ETC' or post.category == 'ETC' %} checked {% endif %}/>
+                    <label for="etc">기타</label>
+                </div>
+            </div>
+
+            <div class="post-create__btn">
+                <button type="submit" class="btn-save btn-effect">올리기</button>
+                <a href="{% url 'group:post_list' group.pk %}" class="btn-return btn-effect">취소</a>
+            </div>
+        </div>
+    </form>
+
+</div>
+{% endblock %}

@@ -1,54 +1,125 @@
 {% extends 'base.html' %}
 
+{% load static %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/signup_login.css' %}">
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript" src="/static/js/user_profile_img.js" defer></script>
+{% endblock %}
+{% block title %} 도와줘, 코딩 | 마이 페이지 {% endblock %}
+
 {% block content %}
-{% if revise_error %}<span>{{ revise_error }}</span>{% endif %}
-<form method="POST" enctype="multipart/form-data" action="">
-    {% csrf_token %}
-    <div>
-        <label for="nickname">닉네임</label><br />
-        <input type="text" name="nickname" id="nickname" value="{{ user.nickname }}"/>
-    </div>
-    <div>
-        <label for="birth">생년월일</label><br />
-        <input type="text" name="birth-y" id="birth-y" value="{{ user.birth.year }}"/>년
-        <input type="text" name="birth-m" id="birth-m" value="{{ user.birth.month }}"/>월
-        <input type="text" name="birth-d" id="birth-d" value="{{ user.birth.day }}"/>일
-    </div>
-    <div>
-        <label for="image">이미지 업로드</label><br />
-        <p>{{ form.img }}</p>
-        <img src="/static/img/base1.png" height="50">
-        <label><input type="radio" name="img_setting" value="base1.png"> 기본 이미지1</label> <!-- value를 기본 파일 이름으로 설정 -->
-        <img src="/static/img/base2.jpg" height="50">
-        <label><input type="radio" name="img_setting" value="base2.jpg"> 기본 이미지2</input> <!-- value를 기본 파일 이름으로 설정 -->
-        <label><input type="radio" name="img_setting" value="own_img" checked> 직접 설정</label> <!-- value를 기본 파일 이름으로 설정 -->
-    </div>
-    <div>
-        <label for="introduction">소개</label><br />
-        <textarea name="introduction" id="introduction" cols="30" rows="10" value="{{ user.introduction }}"></textarea>
-    </div>
-    <div>
-        <label for="job">직업</label><br />
-        <input type="radio" name="job" value="elementary_school" {% if user.job == 'elementary_school' %}checked{% endif %}/>초등학생
-        <input type="radio" name="job" value="middle_school" {% if user.job == 'middle_school' %}checked{% endif %}/>중학생
-        <input type="radio" name="job" value="high_school" {% if user.job == 'high_school' %}checked{% endif %}/>고등학생
-        <input type="radio" name="job" value="university" {% if user.job == 'university' %}checked{% endif %}/>대학생
-        <input type="radio" name="job" value="programmer" {% if user.job == 'programmer' %}checked{% endif %}/>개발자
-        <input type="radio" name="job" value="parents" {% if user.job == 'parents' %}checked{% endif %}/>학부모
-        <input type="radio" name="job" value="etc" {% if user.job == 'etc' %}checked{% endif %}/>기타
-    </div>
-    <div>
-        <label for="current_password">현재 비밀번호</label><br />
-        <input type="password" name="current_password" id="current_password"/>
-    </div>
-    <div>
-        <label for="new_password1">새 비밀번호</label><br />
-        <input type="password" name="new_password1" id="new_password1"/>
-    </div>
-    <div>
-        <label for="new_password2">새 비밀번호 확인</label><br />
-        <input type="password" name="new_password2" id="new_password2"/>
-    </div>
-    <input type="submit" value="MypageRevise">
-</form>
-{% endblock content %}
+<div class="userform__container">
+    <h1>개인정보 수정</h1>
+    <form method="POST" enctype="multipart/form-data" action="">
+        <div class="revise__container">
+            {% csrf_token %}
+            <p id="password_change" class="password_change" onclick="passwordChange()">비밀번호를 변경하려면 여기를 클릭하세요</p> <!-- 버튼 같이 만들어주면 될 듯! -->
+            <input id="password_change_recent_1" value="{{ original_information.current_password }}" hidden></input>
+            <input id="password_change_recent_2" value="{{ original_information.new_password1 }}" hidden></input>
+            <input id="password_change_recent_3" value="{{ original_information.new_password2 }}" hidden></input>
+            <div id="password_change_block">
+                <div style="margin-bottom: 20px;">
+                    <label for="current_password">현재 비밀번호</label><br />
+                    <input type="password" name="current_password" id="current_password" value="{{ original_information.current_password }}" placeholder="비밀번호를 바꾸기 위해 현재 비밀번호를 입력해주세요."/>
+                    {% if revise_error.current_password %}<span class="userform__error"><svg width="5" height="14" viewBox="0 0 9 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M8.3125 21.5825C8.3125 23.7364 6.56016 25.4888 4.40625 25.4888C2.25234 25.4888 0.5 23.7364 0.5 21.5825C0.5 19.4286 2.25234 17.6763 4.40625 17.6763C6.56016 17.6763 8.3125 19.4286 8.3125 21.5825ZM0.952148 1.71919L1.61621 15.0004C1.64741 15.6241 2.16216 16.1138 2.78662 16.1138H6.02588C6.65034 16.1138 7.16509 15.6241 7.19629 15.0004L7.86035 1.71919C7.8938 1.0498 7.36016 0.48877 6.68994 0.48877H2.12256C1.45234 0.48877 0.918701 1.0498 0.952148 1.71919Z" fill="#EB6464"/>
+                    </svg>{{ revise_error.current_password }}</span>{% endif %}
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <label for="new_password1">새 비밀번호</label><br />
+                    <input type="password" name="new_password1" id="new_password1" value="{{ original_information.new_password1 }}" placeholder="영문자, 숫자 혼합 8자리 이상의 비밀번호를 입력해주세요."/>
+                    {% if revise_error.new_password1 %}<span class="userform__error"><svg width="5" height="14" viewBox="0 0 9 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M8.3125 21.5825C8.3125 23.7364 6.56016 25.4888 4.40625 25.4888C2.25234 25.4888 0.5 23.7364 0.5 21.5825C0.5 19.4286 2.25234 17.6763 4.40625 17.6763C6.56016 17.6763 8.3125 19.4286 8.3125 21.5825ZM0.952148 1.71919L1.61621 15.0004C1.64741 15.6241 2.16216 16.1138 2.78662 16.1138H6.02588C6.65034 16.1138 7.16509 15.6241 7.19629 15.0004L7.86035 1.71919C7.8938 1.0498 7.36016 0.48877 6.68994 0.48877H2.12256C1.45234 0.48877 0.918701 1.0498 0.952148 1.71919Z" fill="#EB6464"/>
+                    </svg>{{ revise_error.new_password1 }}</span>{% endif %}
+                </div>
+                <div>
+                    <label for="new_password2">새 비밀번호 확인</label><br />
+                    <input type="password" name="new_password2" id="new_password2" value="{{ original_information.new_password2 }}" placeholder="새 비밀번호를 다시 한 번 입력해주세요."/>
+                    {% if revise_error.new_password2 %}<spa class="userform__error"n><svg width="5" height="14" viewBox="0 0 9 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M8.3125 21.5825C8.3125 23.7364 6.56016 25.4888 4.40625 25.4888C2.25234 25.4888 0.5 23.7364 0.5 21.5825C0.5 19.4286 2.25234 17.6763 4.40625 17.6763C6.56016 17.6763 8.3125 19.4286 8.3125 21.5825ZM0.952148 1.71919L1.61621 15.0004C1.64741 15.6241 2.16216 16.1138 2.78662 16.1138H6.02588C6.65034 16.1138 7.16509 15.6241 7.19629 15.0004L7.86035 1.71919C7.8938 1.0498 7.36016 0.48877 6.68994 0.48877H2.12256C1.45234 0.48877 0.918701 1.0498 0.952148 1.71919Z" fill="#EB6464"/>
+                    </svg>{{ revise_error.new_password2 }}</spa>{% endif %}
+                </div>
+            </div>
+
+            <div>
+                <label for="nickname">닉네임</label><br />
+                <input type="text" name="nickname" id="nickname" value="{% if original_information %}{{ original_information.nickname }}{% else %}{{ user.nickname }}{% endif %}" placeholder="닉네임을 7글자 이내로 지어주세요."/>
+                {% if revise_error.nickname %}<span class="userform__error">
+                    <svg width="5" height="14" viewBox="0 0 9 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M8.3125 21.5825C8.3125 23.7364 6.56016 25.4888 4.40625 25.4888C2.25234 25.4888 0.5 23.7364 0.5 21.5825C0.5 19.4286 2.25234 17.6763 4.40625 17.6763C6.56016 17.6763 8.3125 19.4286 8.3125 21.5825ZM0.952148 1.71919L1.61621 15.0004C1.64741 15.6241 2.16216 16.1138 2.78662 16.1138H6.02588C6.65034 16.1138 7.16509 15.6241 7.19629 15.0004L7.86035 1.71919C7.8938 1.0498 7.36016 0.48877 6.68994 0.48877H2.12256C1.45234 0.48877 0.918701 1.0498 0.952148 1.71919Z" fill="#EB6464"/>
+                    </svg>
+                    {{ revise_error.nickname }}</span>{% endif %}
+            </div>
+
+            <div class="userform__birth">
+                <label for="birth">생년월일</label><br />
+                <div class="userform__birth__inputcontainer">
+                    <input type="text" name="birth-y" id="birth-y" value="{% if original_information %}{{ original_information.birth_y }}{% else %}{{ user.birth.year }}{% endif %}" placeholder="년"/>
+                    <input type="text" name="birth-m" id="birth-m" value="{% if original_information %}{{ original_information.birth_m }}{% else %}{{ user.birth.month }}{% endif %}" placeholder="월"/>
+                    <input type="text" name="birth-d" id="birth-d" value="{% if original_information %}{{ original_information.birth_d }}{% else %}{{ user.birth.day }}{% endif %}" placeholder="일"/>
+                </div>
+                {% if revise_error.birth %}<span class="userform__error">
+                    <svg width="5" height="14" viewBox="0 0 9 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M8.3125 21.5825C8.3125 23.7364 6.56016 25.4888 4.40625 25.4888C2.25234 25.4888 0.5 23.7364 0.5 21.5825C0.5 19.4286 2.25234 17.6763 4.40625 17.6763C6.56016 17.6763 8.3125 19.4286 8.3125 21.5825ZM0.952148 1.71919L1.61621 15.0004C1.64741 15.6241 2.16216 16.1138 2.78662 16.1138H6.02588C6.65034 16.1138 7.16509 15.6241 7.19629 15.0004L7.86035 1.71919C7.8938 1.0498 7.36016 0.48877 6.68994 0.48877H2.12256C1.45234 0.48877 0.918701 1.0498 0.952148 1.71919Z" fill="#EB6464"/>
+                </svg>{{ revise_error.birth }}</span>{% endif %}
+            </div>
+            <div>
+                <label for="image" class="userform__image__text">프로필 사진</label><br />
+                <div class="userform__image__inputcontainer">
+                    <div class="user-base__image">
+                        {% for base_image in base_images %}<input type="radio" name="img_setting" value="{{ base_image }}" {% if original_information %}{% if original_information.img_setting == base_image %}checked{% endif %}{% else %}{% if current_image == base_image %}checked{% endif %}{% endif %}>
+                        <img src="/static/img/user_thumbnail/{{ base_image }}" height="50" width="50">
+                        {% endfor %}
+                    </div>
+
+                    <div class="user-select__image">
+                        <div class="user-select__image--top">
+                            <input id="img_setting_own" type="radio" name="img_setting" value="own_img" {% if original_information.img_setting == "own_img" %}checked{% endif %}></label>
+                            <img id="img_display" class="img_display" src="" height="50" width="50">
+                            <label for="img_upload">직접 설정하기</label>
+                            <input id="img_upload" class="input_img_upload" name="img" type="file" onchange="imageChange(event);" hidden /></input>
+                        </div>
+                        <p id="img_upload_name">선택된 이미지: 없음</p>
+                        <input name="img_recent" id="img_recent" value="{{ original_information.img }}" hidden></input>
+                        <input id="temp_img_location" value="{{ temp_img_location }}" hidden></input>
+                    </div>
+
+                    <div class="user-not-change__image">
+                        {% if current_image not in base_images %}
+                        <input type="radio" name="img_setting" value="no_change_img" {% if original_information %}{% if original_information.img_setting == "no_change_img" %}checked{% endif %}{% else %}{% if current_image not in base_images %}checked{% endif %}{% endif %}></input>
+                        <img src="{{ user.img.url }}" class="img_display not-change-img__display" height="50" width="50">
+                        <label>이미지 변경 안 함</label>
+                        {% endif %}
+                    </div>
+                </div>
+
+                {% if revise_error.img %}<span class="userform__error"><svg width="5" height="14" viewBox="0 0 9 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M8.3125 21.5825C8.3125 23.7364 6.56016 25.4888 4.40625 25.4888C2.25234 25.4888 0.5 23.7364 0.5 21.5825C0.5 19.4286 2.25234 17.6763 4.40625 17.6763C6.56016 17.6763 8.3125 19.4286 8.3125 21.5825ZM0.952148 1.71919L1.61621 15.0004C1.64741 15.6241 2.16216 16.1138 2.78662 16.1138H6.02588C6.65034 16.1138 7.16509 15.6241 7.19629 15.0004L7.86035 1.71919C7.8938 1.0498 7.36016 0.48877 6.68994 0.48877H2.12256C1.45234 0.48877 0.918701 1.0498 0.952148 1.71919Z" fill="#EB6464"/>
+                </svg>{{ revise_error.img }}</span>{% endif %}
+            </div>
+            <div>
+                <label for="introduction">소개</label><br />
+                <textarea name="introduction" id="introduction" cols="30" rows="10">{% if original_information %}{{ original_information.introduction }}{% else %}{{ user.introduction }}{% endif %}</textarea>
+            </div>
+            <div>
+                <label for="job" class="userform__job__text">직업</label><br />
+                <div class="userform__job__inputcontainer">
+                    {% for job in job_choice %}
+                    <div>
+                        <input type="radio" name="job" value="{{ job.0 }}" {% if original_information %}{% if original_information.job == job.0 %}checked{% endif %}{% else %}{% if user.job == job.0 %}checked{% endif %}{% endif %}/>
+                        <p>{{ job.1 }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="userform__btncontainer">
+                <input type="submit" value="수정하기" class="userform__submitbtn">
+            </div>
+        </div>
+    </form>
+</div>
+    {% endblock content %}

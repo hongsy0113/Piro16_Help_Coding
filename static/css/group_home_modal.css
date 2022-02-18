@@ -1,0 +1,346 @@
+button {
+    all: unset;
+}
+
+a {
+    margin: 0;
+}
+
+/* 모달 */
+.modal {  
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal__overlay {
+    background-color: rgba(0, 0, 0, 0.6);
+    width: 100%;
+    height: 100%;
+    position: absolute;
+}
+
+.modal__hidden {
+    display: none;
+}
+
+/* 모달 디자인 */
+.modal__content {
+    position: relative;
+    top: 0px;
+    width: 600px;
+    height: 500px;
+    background-color: #FAFAFA;
+    border: 2px solid #BDBDBD;
+    box-sizing: border-box;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+}
+
+.modal__content--top {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 41px 0px 33px 0px;
+    border-bottom: 2px solid #BDBDBD;
+}
+
+.modal__content--top span {
+    font-family: Noto Sans CJK KR;
+    font-weight: bold;
+    font-size: 36px;
+    line-height: 105%;
+    text-align: center;
+    color: #000000;
+}
+
+.modal__content--bottom {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 35px 0px 35px 0px;
+}
+
+.modal__close {
+    position: static;
+    background: #bdbdbd;
+    border: 2px solid #bdbdbd;
+    box-sizing: border-box;
+    border-radius: 41px;
+
+    font-family: Noto Sans CJK KR;
+    font-weight: bold;
+    font-size: 24px;
+    line-height: 105%;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: white;
+    padding: 18px 38px 21px;
+}
+
+/* 그룹 가입하기 - 공개, 비공개 그룹 선택 모달  */
+.which-join__box--top {
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 0px 77px 0px;
+    width: 100%;
+    border-bottom: 2px solid #BDBDBD;
+    margin-bottom: 28px;
+}
+
+.group__join--box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+}
+
+.group__join--box span {
+    font-family: Roboto;
+    font-size: 16px;
+    color: #000000;
+}
+
+.public-group__join-btn a {
+    width: 220px;
+    margin-left: 8px;
+    padding: 21px 43px 22px;
+    background: #37C6E6;
+    border: 2px solid #37C6E6;
+    box-sizing: border-box;
+    border-radius: 41px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: Noto Sans CJK KR;
+    font-weight: bold;
+    font-size: 26px;
+    line-height: 105%;
+    color: #FFFFFF;
+    text-decoration: none;
+}
+
+.public-group__join-btn a:hover {
+    background-color: white;
+    color: #37C6E6;
+}
+
+.private-group__join-btn {
+    width: 220px;
+    background: #FF8989;
+    border: 2px solid #FF8989;
+    box-sizing: border-box;
+    border-radius: 41px;
+    font-family: Noto Sans CJK KR;
+    font-weight: bold;
+    font-size: 26px;
+    line-height: 105%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #FFFFFF;
+    padding: 21px 43px 22px;
+    text-decoration: none;
+}
+
+.private-group__join-btn:hover {
+    background-color: white;
+    color: #FF8989;
+}
+
+/* 그룹 가입하기 - 초대코드 입력 모달 */
+.join__close--btn {
+    position: absolute;
+    right: 40px;
+    top: 42px;
+}
+
+.modal__content--join {
+    position: relative;
+    top: 0px;
+    width: 40%;
+    max-height: 800px;
+    background-color: #FAFAFA;
+    border: 2px solid #BDBDBD;
+    box-sizing: border-box;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+}
+
+.group-join__inputbox {
+    display: flex;
+    flex-direction: column;
+    /* gap: 60px; */
+}
+
+.group-join__inputbox--input {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.group-code__input {
+    padding: 18px 32px 17px 20px;
+    background: #FFFFFF;
+    border: 1px solid #BDBDBD;
+    box-sizing: border-box;
+    border-radius: 5px;
+    font-family: Noto Sans CJK KR;
+    font-size: 24px;
+    line-height: 100%;
+    color: #828282;
+}
+
+.group-code__input::placeholder {
+    font-family: Noto Sans CJK KR;
+    font-size: 24px;
+    line-height: 100%;
+    color: #828282;
+}
+
+.group-code__submit {
+    padding: 20px 42px 21px;
+    margin-top: 55px;
+    background: #FF8989;
+    border: 2px solid #FF8989;
+    box-sizing: border-box;
+    border-radius: 41px;
+
+    font-family: Noto Sans CJK KR;
+    font-weight: bold;
+    font-size: 24px;
+    line-height: 105%;
+    color: #FFFFFF;
+}
+
+.group-code__error {
+    background-color: #FFE6E6;
+    border: 1px solid #eb6464;
+    color: #eb6464;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-weight: bold;
+    font-size: 18px;
+    padding: 10px 20px;
+    margin-top: 10px;
+    width: 388px;
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+/* 초대코드 input 옆 도움말 버튼 */
+.group__code--guide-hover svg {
+    width: 35px;
+}
+
+/* 초대코드 도움말 모달 */
+.group__code--guide {
+    display: none;
+    background-color: #dddddd;
+    border: 1px solid #4e4e4e;
+    border-radius: 20px;
+    width: 450px;
+    height: 255px;
+    margin-top: 20px;
+    padding: 15px 0px;
+    border-radius: 20px;
+}
+
+.group__code--guide-title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2px 0px 14px 0px;
+    /* font-family: Noto Sans CJK KR; */
+    font-size: 21px;
+    font-weight: bold;
+    line-height: 100%;
+    color: #000000;
+    border-bottom: 1px solid #4e4e4e;
+}
+
+.group__code--guide-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 17px 21px 0px 21px;
+    gap: 15px;
+
+    font-size: 17px;
+    line-height: 100%;
+    color: #000000;
+    font-weight: bold;
+}
+
+.group__code--guide-text p {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.group-info__btn {
+    padding: 5px 13px 7px;
+    background: #FFFFFF;
+    border: 2px solid #37C6E5;
+    box-sizing: border-box;
+    border-radius: 26px;
+    text-decoration: none;
+    color: #37C6E5;
+    font-family: Noto Sans CJK KR;
+    font-weight: bold;
+    font-size: 16px;
+    line-height: 100%;
+    width: fit-content;
+    margin-left: 6px;
+}
+
+.group-code__btn {
+    display: flex;
+    align-items: center;
+    padding: 7px 11px 6px;
+    background: #37C6E6;
+    border: 1px solid #37C6E6;
+    box-sizing: border-box;
+    border-radius: 26px;
+    width: fit-content;
+    color: #FFFFFF;
+    font-size: 16px;
+    margin: 0px 6px 0px 6px;
+}
+
+.code-caution {
+    text-align: center;
+    padding: 15px 0px;
+    margin-bottom: 10px;
+    color: rgb(77, 77, 77);
+}
+
+.text-bold {
+    color: black;
+    font-weight: bold;
+}
+
+.group__code--guide-image {
+    display: flex;
+    align-items: center;
+}
+
+.group__code--guide-hover {
+    cursor: pointer;
+    transition: all 0.4s ease-in-out;
+}

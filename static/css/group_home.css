@@ -1,7 +1,16 @@
-/* 내 그룹 navbar */
+img {
+    object-fit: cover;
+}
+
+a {
+    text-decoration: none;
+}
+
+/* 내 그룹 상단 */
 .mygroup__top {
     display: flex;
     justify-content: space-between;
+    margin-bottom: 60px;
 }
 
 .mygroup__top-left {
@@ -29,7 +38,6 @@
     color: #FFFFFF;
     font-size: 24px;
     line-height: 105%;
-
     margin-right: 30px;
 }
 
@@ -48,16 +56,81 @@
     color: #FFFFFF;
     font-size: 24px;
     line-height: 105%;
+    cursor: pointer;
 }
 
+/* 게시물 정렬 (sort) */
+.list-sort {
+    display: flex;
+    align-items: center;
+}
+
+.list-sort__btn a {
+    font-family: Noto Sans CJK KR;
+    font-size: 16px;
+    line-height: 150%;
+    display: flex;
+    color: #5e5e5e;
+    margin-right: 10px;
+    text-decoration: none;
+}
+
+.list-sort__btn a:hover {
+    color: black;
+}
+
+.list-sort__btn span {
+    font-family: Noto Sans CJK KR;
+    font-weight: bold;
+    font-size: 18px;
+    line-height: 150%;
+    display: flex;
+    color: #000000;
+    margin-right: 10px;
+}
+
+/* 가입한 내 그룹이 없을 때 */
+.mygroup__nogroup {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 45px;
+    height: 250px;
+}
+
+.mygroup__nogroup--text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    /* height: 250px; */
+}
+
+.mygroup__nogroup--text h2 {
+    font-family: Noto Sans CJK KR;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 35px;
+    line-height: 105%;
+    color: #4F4F4F;
+    margin-bottom: 10px;
+}
+
+.mygroup__nogroup--btnbox {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
 
 /* 내 그룹 목록 */
 .gridbox {
-    margin-top: 60px;
+    margin-top: 24px;
     margin-bottom: 20px;
-    display: flex;
-    flex-flow: row wrap;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
 }
 
 .gridbox__item-group {
@@ -75,7 +148,6 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 0;
 }
 
 .img__group-img {
@@ -90,7 +162,6 @@
 }
 
 .content__group {
-    /* border: 1px solid black; */
     width: 100%;
     height: 135px;
 
@@ -112,18 +183,31 @@
 .content__group-top-left {
     display: flex;
     align-items: center;
+    width: 215px;
+}
+
+.content__group-namebox {
+    display: flex;
+    align-items: center;
 }
 
 /* 그룹 이름 두 줄 이상 넘어가지 않도록 설정 */
-.content__group-namebox {
-    
+.content__group-namebox span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-wrap: break-word;
+    word-break: break-all;
+    display : -webkit-box;
+    -webkit-line-clamp: 1;  /* 줄 개수 설정 */
+    -webkit-box-orient: vertical;
+    padding-bottom: 2px;
 }
 
 .content__group-name {
     text-decoration: none;
     font-weight: bold;
     font-size: 25px;
-    line-height: 105%;
+    line-height: 107%;
     margin-right: 3px;
     color: #000000;
 }
@@ -138,6 +222,12 @@
     border-radius: 8px;
     padding: 5px 15px;
     text-align: center;
+}
+
+.content__group-member span {
+    color: #4E4E4E;
+    font-family: Noto Sans CJK KR;
+    font-size: 16px;
 }
 
 .content__group-bottom {
@@ -156,4 +246,75 @@
     display : -webkit-box;
     -webkit-line-clamp: 2;  /* 줄 개수 설정 */
     -webkit-box-orient: vertical;
+}
+
+/* 페이지네이션 */
+.pagination-box {
+    display: flex;
+    justify-content: center;
+    padding-top: 20px;
+    padding-bottom: 30px;
+}
+
+.all__pagination {
+    display: flex;
+    list-style: none;
+}
+
+/* 현재 페이지가 아닐 경우 */
+.all__page-link {
+    border: 1px solid #37C6E6;
+    box-sizing: border-box;
+    text-decoration: none;
+    font-family: Noto Sans CJK KR;
+    font-weight: bold;
+    font-size: 18px;
+    line-height: 150%;
+    text-align: center;
+    color: #37C6E5;
+    padding: 6px 14px;
+    background-color: #ffffff;
+    border-radius: 100%;
+    margin-right: 10px;
+    box-sizing: border-box;
+}
+
+/* 현재 페이지 표시 */
+.all__page-link:hover {
+    text-decoration: none;
+    font-family: Noto Sans CJK KR;
+    font-weight: bold;
+    font-size: 18px;
+    line-height: 150%;
+    text-align: center;
+    color: #FFFFFF;
+    padding: 6px 14px;
+    background-color: #37C6E5;
+    border-radius: 100%;
+    margin-right: 10px;
+    box-sizing: border-box;
+}
+
+.all__page-item-active {
+    text-decoration: none;
+    font-family: Noto Sans CJK KR;
+    font-weight: bold;
+    font-size: 18px;
+    line-height: 150%;
+    text-align: center;
+    color: #FFFFFF;
+    padding: 6px 14px;
+    background-color: #37C6E5;
+    border-radius: 100%;
+    margin-right: 10px;
+    box-sizing: border-box;
+}
+
+.all__page-sign {
+    background-color: none;
+    margin-right: 20px;
+}
+
+.sign-next {
+    margin-left: 10px;
 }

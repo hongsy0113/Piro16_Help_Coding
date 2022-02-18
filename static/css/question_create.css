@@ -1,8 +1,10 @@
-.select__category input {
+.select__category input,
+.select__group-mode input {
     display: none;
 }
 
-.select__category label {
+.select__category label, 
+.select__group-mode label {
     display: inline-block;
     border-radius: 20px;
     text-align: center;
@@ -15,7 +17,8 @@
     margin: 3px;
 }
 
-.select__category > input:checked + label {
+.select__category > input:checked + label,
+.select__group-mode > input:checked + label {
     background: #4cc4d4;
     color: #fff;
 }
@@ -40,4 +43,38 @@
 .select__tag > input:checked + label {
     background: #78e68f;
     color: #fff;
+}
+
+#scratch:checked + label {
+    background: #c3ffbe;
+    color: #2f7041;
+    border-color: #22d053;
+}
+
+#entry:checked + label {
+    background: #ffc7c7;
+    color: #7d4242;
+    border-color: #eb6464;
+}
+
+#etc:checked + label {
+    background: #cae2ff;
+    color: #3a597c;
+    border-color: #669fe1;
+}
+
+.post-create__category-select label{
+    width: 150px;
+    padding: 0;
+}
+
+.add_btn {
+    border: none;
+}
+
+.img_display {
+    max-width: 400px;
+    max-height: 600px;
+    border-radius: 10px;
+    margin-top: 10px;
 }

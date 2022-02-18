@@ -1,12 +1,12 @@
-
-from multiprocessing.dummy import JoinableQueue
-import queue
+#-*-coding:utf-8-*-
+from datetime import date
+from wsgiref.simple_server import sys_version
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import *
 from .forms import *
-from django.contrib import messages
 from django.db.models import Q
 import json
+import shutil, os
 from django.http import JsonResponse, FileResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator 
@@ -15,34 +15,13 @@ from django.views.generic import ListView, View
 from hitcount.views import HitCountDetailView
 from django.views.generic.detail import SingleObjectMixin
 from django.core.files.storage import FileSystemStorage
+from config.settings import MEDIA_ROOT
 import mimetypes
+from user.update import *
+from .forms import FileFieldForm
 
-# class QuestionView(ListView):
-#     model = Question
-#     paginate_by = 5
-#     template_name = 'qna/question_list.html'
-#     context_object_name = 'questions'
-    
-#     def get_queryset(self):
-#         questions = Question.objects.order_by('-updated_at') 
-#         return questions
+basic_tags = ['동작', '형태', '소리', '이벤트', '제어',' 감지', '연산', '변수', '내 블록', '기타']
 
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         paginator = context['paginator']
-#         page_numbers_range = 5
-#         max_index = len(paginator.page_range)
-#         page = self.request.GET.get('page')
-#         current_page = int(page) if page else 1
-#         start_index = int((current_page - 1) / page_numbers_range) * page_numbers_range
-#         end_index = start_index + page_numbers_range
-#         if end_index >= max_index:
-#             end_index = max_index
-#         page_range = paginator.page_range[start_index:end_index]
-#         context['page_range'] = page_range
-#         return context
-## filter 함수
-## 아무래도 s or e 랑 답변여부는 따로 관리하는 게 맞을 듯
 def question_tag_filter(questions, tag_filter_by_list):
     num = len(tag_filter_by_list)
     if num == 1:
@@ -59,6 +38,40 @@ def question_answer_filter(questions, answer_filter_by):
     else:
         questions = questions.annotate(answer_count=models.Count("answer")).filter(answer_count__gt = 0)
     return questions
+
+### Error messages
+# 이름이 user.view에 있는 것과 겹쳐서, 헷갈릴 여지가 있을 것 같습니다.
+# QnaErrorMessages가 좋을 것 같습니다.
+ # TODO : validation 체크할 때 request 객체와 form을 넘겨주는 건 어떨까요?
+# TODO : 넘겨주는 인자가 너무 많고, 순서 헷갈릴 여지도 있어보입니다.
+class QnaErrorMessages():
+    title, content, image, attached_file, s_or_e_tag, tags = '', '', '', '', '', ''
+
+    def validation_check(self, request, command):
+        if 'create' in command or 'update' in command:
+            if not request.POST.get('title'):
+                self.title = '제목을 입력해주세요'
+            elif len(request.POST.get('title'))>50:
+                self.title = '제목은 50자 이내로 입력해주세요'
+            if not request.POST.get('content'):
+                self.content = '내용을 입력해주세요'
+            if not request.POST.get('s_or_e_tag'):
+                self.s_or_e_tag = '카테고리를 선택해주세요'
+
+    def has_error(self):
+        return self.title or self.content or self.image or self.attached_file or self.s_or_e_tag or self.tags
+
+class OriginalInformation():
+    def remember(self, request, command):
+        self.title = request.POST.get('title')
+        self.content = request.POST.get('content')
+        self.image = request.FILES.get('image')
+        self.attached_file = request.FILES.get('attached_file')
+        self.s_or_e_tag = request.POST.get('s_or_e_tag')
+        self.tags = request.POST.getlist('detail_tag')
+        self.command = command
+
+##### view 시작
 
 def question_list(request):
     questions = Question.objects.all().order_by('-created_at')
@@ -78,7 +91,6 @@ def question_list(request):
     if sort_by == 'recent':    # 최신순
         questions = questions.order_by('-created_at')
     elif sort_by == 'liked':   # 좋아요순
-        #questions = Question.objects.order_by('-like_user')
         questions = questions.annotate(total_likes=Count('like_user')).order_by('-total_likes')
     elif sort_by == 'view':    # 조회수순
         questions = questions.order_by('-hit_count_generic__hits')
@@ -86,74 +98,74 @@ def question_list(request):
     paginator = Paginator(questions, 5)    # 페이지당 5개씩 보여주기
     page_obj = paginator.get_page(page)
 
+    dict ={}
+    for page in page_obj:
+        answers_count = Answer.objects.filter(question_id =page, answer_depth=0, is_deleted = False).count()
+        dict[page] = answers_count
     ctx = {
         'questions': page_obj,
         'sort_by':sort_by,
         'filter_by':tag_filter_by+[answer_filter_by],
+        'question_answer_count':dict,
     }
 
     return render(request, 'qna/question_list.html', context=ctx)
-
-# # 검색 조건
-# def search_condition(self):
-#     search_keyword = self.request.GET.get('query', '')
-#     search_type = self.request.GET.get('type', '')
-#     questions = Question.objects.order_by('-id')
-
-#     if search_keyword :
-#         if len(search_keyword) > 1:
-#             if search_type == 'all':
-#                 search_questions = questions.filter(Q (title__icontains=search_keyword) | Q (content__icontains=search_keyword) | Q (writer__user_id__icontains=search_keyword))
-#             elif search_type == 'title_content':    # 제목, 내용
-#                 search_questions = questions.filter(Q (title__icontains=search_keyword) | Q (content__icontains=search_keyword))
-#             elif search_type == 'title':    # 제목
-#                 search_questions = questions.filter(title__icontains=search_keyword)    
-#             elif search_type == 'content':  # 내용
-#                 search_questions = questions.filter(content__icontains=search_keyword)    
-#             elif search_type == 'writer':   # 작성자
-#                 search_questions = questions.filter(writer__user_id__icontains=search_keyword)
-            
-#             return search_questions
-
-#         else:
-#             messages.error(self.request, '검색어는 2글자 이상 입력해주세요.')
-
-#     return questions
-
-# def search_result(self, **kwargs):
-#     search_keyword = self.request.GET.get('search', '')
-#     search_type = self.request.GET.get('type', '')
-
-#     if len(search_keyword) > 1:
-#         context['search'] = search_keyword
-#         context['type'] = search_type
-
-#     return context
 
 def search_result(request):
     if 'search' in request.GET:
         query = request.GET.get('search')
         questions = Question.objects.all().filter(
             Q(title__icontains=query) | # 제목으로 검색
-            Q(content__icontains=query) # 내용으로 검색
+            Q(content__icontains=query)| # 내용으로 검색
+            Q(tags__tag_name__icontains=query) # 태그로 검색
         )
 
-    return render(request, 'qna/search_result.html', {'query': query, 'questions': questions})
+    # 게시물 정렬
+    sort_by = request.GET.get('sort', 'recent')
+    if sort_by == 'recent':    # 최신순
+        questions = questions.order_by('-created_at')
+    elif sort_by == 'liked':   # 좋아요순
+        questions = questions.annotate(total_likes=Count('like_user')).order_by('-total_likes')
+    elif sort_by == 'view':    # 조회수순
+        questions = questions.order_by('-hit_count_generic__hits')
+
+    page = request.GET.get('page', '1')    # 페이지
+    paginator = Paginator(questions, 5)    # 페이지당 5개씩 보여주기
+    page_obj = paginator.get_page(page)
+    
+    dict ={}
+    for page in page_obj:
+        answers_count = Answer.objects.filter(question_id =page, answer_depth=0, is_deleted = False).count()
+        dict[page] = answers_count
+
+    ctx = {
+        'query': query, 
+        'questions': page_obj, 
+        'question_answer_count':dict,
+        'sort_by':sort_by,
+    }
+    return render(request, 'qna/search_result.html', context=ctx)
+
+
 
 def question_create(request):
     if request.method == 'POST':
         form = QuestionForm(request.POST, request.FILES)
         
-        if form.is_valid():
-            question = form.save(commit=False)  # 넘겨진 데이터 form에 바로 저장 X
-            if request.POST.get('s_or_e_tag', '') == '':
-                error = '기본 카테고리를 선택해주세요!'
-                ctx = {'form': form, 's_or_e_error': error, 'question':question}
-                return render(request, 'qna/question_form.html', context=ctx)
-            question.s_or_e_tag = request.POST.get('s_or_e_tag')  # 카테고리 (스크래치, 엔트리, 기타) 중 1 선택
-            question.user = request.user
-            question.save() 
-        # 상세 태그 (기능) 선택
+        error_messages = QnaErrorMessages()
+
+        error_messages.validation_check(request, ['create'])
+        if not error_messages.has_error():
+            question = Question.objects.create(
+                title=request.POST.get('title'),
+                content=request.POST.get('content'),
+                # image=request.FILES.get('image'),
+                # #attached_file=form.data['attached_file'],
+                # attached_file=request.FILES.get('attached_file'),
+                s_or_e_tag=request.POST.get('s_or_e_tag'),
+                user=request.user
+            )
+            
             tags = request.POST.getlist('detail_tag')
             for tag in tags:
                 if len(QnaTag.objects.filter(tag_name=tag)) == 0:
@@ -165,70 +177,89 @@ def question_create(request):
                 newtag = get_object_or_404(QnaTag, tag_name=tag)
                 question.tags.add(newtag)
 
+            # image, file 부분
+            date_dir = datetime.today().strftime('/%Y/%m/%d/')
+            os.makedirs(MEDIA_ROOT + '/qna/uploads' + date_dir, exist_ok=True)
+
+            if request.FILES.get('image'):
+                question.image = request.FILES.get('image')
+            elif request.POST['img_recent']:
+                os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
+                shutil.copyfile('./media/temp/{}'.format(request.POST['img_recent']),
+                                './media/qna/uploads'+ date_dir +'{}'.format(request.POST['img_recent'])) ###
+                question.image =  './qna/uploads'+ date_dir + '{}'.format(request.POST['img_recent']) ###
+
+                ## temp 파일 삭제
+                if os.path.isfile('./media/temp/{}'.format(request.POST['img_recent'])):
+                    os.remove('./media/temp/{}'.format(request.POST['img_recent']))
+        
+            if request.FILES.get('attached_file'):
+                question.attached_file = request.FILES.get('attached_file')
+            elif request.POST['file_recent']:
+                os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
+                shutil.copyfile('./media/temp/{}'.format(request.POST['file_recent']),
+                                './media/qna/uploads'+ date_dir +'{}'.format(request.POST['file_recent'])) ###
+                question.attached_file = './qna/uploads'+ date_dir +'{}'.format( request.POST['file_recent']) ###
+
+                ## temp 파일 삭제
+                if os.path.isfile('./media/temp/{}'.format(request.POST['file_recent'])):
+                    os.remove('./media/temp/{}'.format(request.POST['file_recent']))
+
             question.save()
+            update_question(question, request.user)
+
+            
 
             return redirect('qna:question_detail', question.pk)
+
         else:
-            error_data = (form.errors.as_data())
-            error_dict = {}
-            for k in error_data:
-                error_dict[k] = error_data[k][0].message
-            print(error_dict)
-            return render(request, 'qna/question_form.html', context={'form': form,})
+            global basic_tags
+            tags = request.POST.getlist('detail_tag')
+
+            basic_tag_names = []
+            extra_tag_names = []
+            for tag in tags:
+                if tag in basic_tags:
+                    basic_tag_names.append(tag)
+                else:
+                    extra_tag_names.append(tag)
+
+            original_information = OriginalInformation()
+            original_information.remember(request, ['create'])
+
+            if request.FILES.get('image'):
+                os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
+                with open('./media/temp/{}'.format(request.FILES['image'].name), 'wb+') as destination:
+                    for chunk in request.FILES['image'].chunks():
+                        destination.write(chunk)
+            if request.FILES.get('attached_file'):
+                os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
+                with open('./media/temp/{}'.format(request.FILES['attached_file'].name), 'wb+' ) as destination:
+                    for chunk in request.FILES['attached_file'].chunks():
+                        destination.write(chunk)
+
+            original_information.image = request.POST['img_recent']
+            original_information.attached_file = request.POST['file_recent']
+            
+            ctx = {
+                'form': form, 
+                'error_messages': error_messages,
+                'original_information': original_information,
+                'basic_tag_names': basic_tag_names,  
+                'extra_tag_names': extra_tag_names,
+                'temp_img_location':'/media/temp/',
+                'temp_file_location':'/media/temp/',
+                }
+            return render(request, 'qna/question_form.html', context=ctx)
     else:
         form = QuestionForm()
-        ctx = {'form': form}
+        ctx = {
+            'form': form,
+            'temp_img_location':'/media/temp/',
+            'temp_file_location':'/media/temp/',
+            }
         
         return render(request, 'qna/question_form.html', context=ctx)
-        
-        
-# def question_detail(request, pk):
-#     question = get_object_or_404(Question, pk=pk)
-    
-#     try:
-#         previous_pk = Question.get_previous_by_created_at(question).pk
-#     except:
-#         # 이전글 없을 때
-#         previous_pk = -1
-#         print('not exist')
-#     try:
-#         next_pk = Question.get_next_by_created_at(question).pk
-#     except:
-#         # 이전글 없을 때
-#         next_pk = -1
-#         print('not exist')
-#     # 해당 게시글에 대한 tag, 유저, 좋아요 수 등 가져오기
-#     # 이외에 필드들은 template 에서 {{question.필드 }} 로 접근
-#     tags = question.tags.all()
-#     username = question.user.nickname
-#     total_likes = len(question.like_user.all())
-    
-#     # 해당 게시글에 대한 답변 가져오기
-#     answers = Answer.objects.filter(question_id = question.id, parent_answer__isnull=True).order_by('answer_order')   #  나중에 답변 정렬도 고려. 최신순 또는 좋아요 순
-#     answers_count = len(answers)
-    
-#     answers_reply_dict ={}
-#     for answer in answers:
-#         replies =  Answer.objects.filter(parent_answer= answer).order_by('answer_order')
-#         answers_reply_dict[answer] = replies
-
-#     # 좋아요 눌렀는지 안 눌렀는지
-#     is_liked = request.user in  question.like_user.all()
-
-#     ctx = {
-#         'question':question,
-#         'username': username,
-#         'tags' : tags,
-#         'total_likes' : total_likes,
-#         'answers' : answers,
-#         'answers_count' : answers_count,
-#         'answers_reply_dict' : answers_reply_dict,
-#         'is_liked': is_liked,
-#         'next_pk':next_pk,
-#         'previous_pk':previous_pk,
-#     }
-#     # answer 와 reply로 이루어진 dictionary를 context로 넘길 예정
-#     return render(request, template_name='qna/detail.html', context=ctx)
 
 class QuestionDetailView(HitCountDetailView):
     model = Question
@@ -253,12 +284,15 @@ class QuestionDetailView(HitCountDetailView):
         context['previous_pk'] = previous_pk
 
         tags = self.object.tags.all()
-        username = self.object.user.nickname
+        if self.object.user:
+            username = self.object.user.nickname
+        else:
+            username = '(알 수 없음)'
         total_likes = len(self.object.like_user.all())
         
         # 해당 게시글에 대한 답변 가져오기
-        answers = Answer.objects.filter(question_id = self.object.id, parent_answer__isnull=True).order_by('answer_order')   #  나중에 답변 정렬도 고려. 최신순 또는 좋아요 순
-        answers_count = len(answers)
+        answers = Answer.objects.filter(question_id = self.object.id, answer_depth=0).order_by('answer_order')   #  나중에 답변 정렬도 고려. 최신순 또는 좋아요 순
+        answers_count = answers.filter(is_deleted=False).count()
         
         answers_reply_dict ={}
         for answer in answers:
@@ -295,36 +329,143 @@ class FileDownloadView(SingleObjectMixin, View):
 
 
 
-def question_update(request,pk):
+def question_update(request, pk):
     question = get_object_or_404(Question, pk=pk)
+
+    ## file data dir
+    date_dir = datetime.today().strftime('/%Y/%m/%d/')
+
+    global basic_tags
     if request.method == "POST":
-        form = QuestionForm(request.POST, request.FILES, instance =question)
+        form = QuestionForm(request.POST, request.FILES, instance = question)
 
-        question = form.save()  
-        question.s_or_e_tag = request.POST.get('s_or_e_tag')  # 카테고리 (스크래치, 엔트리, 기타) 중 1 선택
+        error_messages = QnaErrorMessages()
 
-        # 상세 태그 (기능) 선택
-        tags = request.POST.getlist('detail_tag')
-        for tag in tags:
-            if len(QnaTag.objects.filter(tag_name=tag)) == 0:
-                QnaTag.objects.create(
-                    tag_name = tag,
-                )
+        error_messages.validation_check(request,['update'])
+        if not error_messages.has_error() and form.is_valid():
+            
+            question = form.save()
 
-            # QnaTag db에 없으면 오류 발생
-            newtag = get_object_or_404(QnaTag, tag_name=tag)
-            question.tags.add(newtag)
+            tags = request.POST.getlist('detail_tag')
+            for tag in tags:
+                if len(QnaTag.objects.filter(tag_name=tag)) == 0:
+                    QnaTag.objects.create(
+                        tag_name = tag,
+                    )
 
-        question.save()
+                # QnaTag db에 없으면 오류 발생
+                newtag = get_object_or_404(QnaTag, tag_name=tag)
+                question.tags.add(newtag)
 
-        return redirect('qna:question_detail', pk)
+            #file
+            if request.FILES.get('image'):  # form valid 시
+                question.image = request.FILES.get('image')
+                
+            elif request.POST['img_recent'] :   # 다른 필드 에러 시(기존 파일 남아있도록)
+                if os.path.isfile('./media/qna/uploads'+ date_dir +'{}'.format(request.POST['img_recent'])):
+                    question.image = './qna/uploads'+ date_dir +'{}'.format(request.POST['img_recent'])
+                else:
+                    os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
+                    shutil.copyfile('./media/temp/{}'.format(request.POST['img_recent']),
+                                './media/qna/uploads'+ date_dir +'{}'.format(request.POST['img_recent'])) ###
+                    question.image =  './qna/uploads'+ date_dir + '{}'.format(request.POST['img_recent']) ###
+                    # temp 파일 삭제
+                if os.path.isfile('./media/temp/{}'.format(request.POST['img_recent'])):
+                    os.remove('./media/temp/{}'.format(request.POST['img_recent']))
+
+            if request.FILES.get('attached_file'):  # form valid 시
+                question.attached_file = request.FILES.get('attached_file')
+                
+            elif request.POST['file_recent']:   # 다른 필드 에러 시(기존 파일 남아있도록)
+                if os.path.isfile('./media/qna/uploads'+ date_dir +'{}'.format(request.POST['file_recent'])):
+                    question.attached_file = './qna/uploads'+ date_dir +'{}'.format(request.POST['file_recent'])
+                else:
+                    os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
+                    shutil.copyfile('./media/temp/{}'.format(request.POST['file_recent']),
+                                './media/qna/uploads'+ date_dir +'{}'.format(request.POST['file_recent']))
+                    question.attached_file =  './qna/uploads'+ date_dir + '{}'.format(request.POST['file_recent'])
+                    # temp 파일 삭제
+                if os.path.isfile('./media/temp/{}'.format(request.POST['file_recent'])):
+                    os.remove('./media/temp/{}'.format(request.POST['file_recent']))
+
+            question.save()
+            update_question(question, request.user)
+            return redirect('qna:question_detail', question.pk)
+        else:
+            
+            tags = request.POST.getlist('detail_tag')
+
+            basic_tag_names = []
+            extra_tag_names = []
+            for tag in tags:
+                if tag in basic_tags:
+                    basic_tag_names.append(tag)
+                else:
+                    extra_tag_names.append(tag)
+
+            # if request.FILES.get('image'):
+            #     with open( './qna/uploads'+ date_dir +'{}'.format(request.FILES.get('image')), 'wb+') as destination:
+            #         for chunk in request.FILES['image'].chunks():
+            #             destination.write(chunk)
+            # if request.FILES.get('attached_file'):
+            #     with open('./qna/uploads'+ date_dir +'{}'.format(request.FILES.get('attached_file')), 'wb+') as destination:
+            #         for chunk in request.FILES['attached_file'].chunks():
+            #             destination.write(chunk)
+            if request.FILES.get('image'):
+                os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
+                with open('./media/temp/{}'.format(request.FILES['image'].name), 'wb+') as destination:
+                    for chunk in request.FILES['image'].chunks():
+                        destination.write(chunk)
+            if request.FILES.get('attached_file'):
+                os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
+                with open('./media/temp/{}'.format(request.FILES['attached_file'].name), 'wb+' ) as destination:
+                    for chunk in request.FILES['attached_file'].chunks():
+                        destination.write(chunk)
+
+
+            original_information = OriginalInformation()
+            original_information.remember(request, ['update'])
+
+            original_information.image = request.POST['img_recent']
+            original_information.attached_file = request.POST['file_recent']
+
+            if question.image:
+                current_image = str(question.image).split('/')[-1]
+            else:
+                current_image = ''
+            if question.attached_file:
+                current_file = str(question.attached_file).split('/')[-1]
+            else:
+                current_file = ''
+
+            
+            ctx = {
+                'form': form, 
+                'error_messages': error_messages,
+                'original_information': original_information,
+                'basic_tag_names': basic_tag_names,  
+                'extra_tag_names': extra_tag_names,
+                'current_image': current_image,
+                'temp_img_location': '/media/qna/uploads'+ date_dir,
+                'current_file': current_file,
+                'temp_img_location': '/media/qna/uploads'+ date_dir,
+                }
+            return render(request, 'qna/question_form.html', context=ctx)
 
     else:
         form = QuestionForm(instance=question)
         # TODO : 선택 태그 뭘 선택했었는 지를 ctx로 넘겨주자
         # 기본 태그와 추가 태그 다르게 넘기자
         # TODO :  기본 태그 가 바뀌게 된다면 아래 리스트 수정해야 됨.
-        basic_tags = ['동작', '형태', '소리', '이벤트', '제어',' 감지', '연산','변수', '내 블록', '기타']
+        if question.image:
+            current_image = str(question.image).split('/')[-1]
+        else:
+            current_image = ''
+        if question.attached_file:
+            current_file = str(question.attached_file).split('/')[-1]
+        else:
+            current_file = ''
+
         tags = question.tags.all()
         basic_tag_names = []
         extra_tag_names = []
@@ -333,7 +474,16 @@ def question_update(request,pk):
                 basic_tag_names.append(tag.tag_name)
             else:
                 extra_tag_names.append(tag.tag_name)
-        ctx = {'form': form, 'question':question, 'basic_tag_names': basic_tag_names,  'extra_tag_names': extra_tag_names}
+        ctx = {
+            'form': form, 
+            'question':question, 
+            'basic_tag_names': basic_tag_names,  
+            'extra_tag_names': extra_tag_names,
+            'current_image': current_image,
+            'temp_img_location': '/media/qna/uploads'+ date_dir,
+            'current_file': current_file,
+            'temp_file_location': '/media/qna/uploads'+ date_dir,
+            }
 
         return render(request, template_name="qna/question_form.html", context=ctx)        
 
@@ -344,6 +494,7 @@ def question_delete(request, pk):
     if len(question.answer_set.all()) > 0:
         ### 답변이 달려 있어서 삭제 불가능
         return redirect('qna:question_detail', pk)
+    update_question_cancel(question, request.user)
     question.delete()
     return redirect('qna:question_list')
 
@@ -358,9 +509,15 @@ def answer_ajax(request):
     user_id = req['user']
     user = get_object_or_404(User, pk=user_id)
     username = user.nickname
+    user_image_url = user.img.url if user.img else ''
     
-    #### TODO ##########
-    ## user 대표이미지 넘겨주는 건 유저 조금 구체화 된 다음에 추가
+    this_question = get_object_or_404(Question, pk=question_id)
+    # 작성자 여부
+    if this_question.user == None:
+        is_author = False
+    elif user_id == this_question.user.pk:
+        is_author = True
+    else: is_author= False
 
     ## 새 답변의 order 필드를 정해주기 위한 부분. 
     current_answers = Answer.objects.filter(question_id=question_id).order_by('answer_order')
@@ -369,14 +526,28 @@ def answer_ajax(request):
     else:
         new_order = current_answers.last().answer_order + 1
 
-    this_question = get_object_or_404(Question, pk=question_id)
-
     ## 새로운 답변
-    new_answer = Answer.objects.create(question_id=this_question, content=content, answer_order=new_order, user = user)
+    new_answer = Answer.objects.create(
+        question_id=this_question, 
+        content=content, 
+        answer_order=new_order, 
+        answer_depth = 0,
+        user = user)
     # 템플릿에서 쉽게 띄울 수 있도록 답변 게시일자 포맷팅해서 json에 전달
     created_at = new_answer.created_at.strftime('%y.%m.%d %H:%M')
 
-    return JsonResponse({'id': new_answer.id ,'content': content,'user':username, 'created_at':created_at} )
+    update_answer(this_question, new_answer, this_question.user, request.user)
+
+    response = JsonResponse({
+        'id': new_answer.id ,
+        'content': content,
+        'user':username, 
+        'created_at':created_at,
+        'user_image_url':user_image_url,
+        'is_author':is_author,
+    })
+
+    return response
 
 # 대댓글 작성
 @csrf_exempt
@@ -388,10 +559,18 @@ def reply_ajax(request):
     user_id = req['user']
     user = get_object_or_404(User, pk=user_id)
     username = user.nickname
-
     # 작성하려는 대댓글이 속한 질문 구하기
     this_answer = get_object_or_404(Answer, pk=answer_id)
     this_question = this_answer.question_id
+
+    user_image_url = user.img.url if user.img else ''
+    # 작성자 여부
+    if this_question.user == None:
+        is_author = False
+    elif user_id == this_question.user.pk:
+        is_author = True
+    else: is_author = False
+
     
     ## 새 답변의 order 필드를 정해주기 위한 부분. 
     current_answers = Answer.objects.filter(question_id=this_question.id).order_by('answer_order')
@@ -405,9 +584,13 @@ def reply_ajax(request):
         question_id=this_question, 
         content=content, 
         answer_order=new_order, 
+        answer_depth = 1,
         user = user,
         parent_answer = this_answer
     )
+
+    update_answer_reply(this_question, new_answer, request.user)
+
     # 템플릿에서 쉽게 띄울 수 있도록 답변 게시일자 포맷팅해서 json에 전달
     created_at = new_answer.created_at.strftime('%y.%m.%d %H:%M')
 
@@ -417,6 +600,8 @@ def reply_ajax(request):
         'content': content,
         'user':username, 
         'created_at':created_at,
+        'user_image_url':user_image_url,
+        'is_author':is_author,
     })
 
     return response
@@ -435,8 +620,10 @@ def question_like_ajax(request):
 
     if is_liked:
         liked_users.remove(request.user)
+        update_question_like_cancel(question, question.user, request.user)
     else:
         liked_users.add(request.user)
+        update_question_like(question, question.user, request.user)
 
     total_likes = len(liked_users.all())
     return JsonResponse({'question_id':question_id, 'total_likes':total_likes, 'is_liking': not(is_liked)})
@@ -454,8 +641,10 @@ def answer_like_ajax(request):
     
     if is_liked:
         liked_users.remove(request.user)
+        update_comment_like_cancel(answer, answer.user, request.user)
     else:
         liked_users.add(request.user)
+        update_comment_like(answer, answer.user, request.user)
 
     total_likes = len(liked_users.all())
 
@@ -468,9 +657,52 @@ def answer_delete_ajax(request):
     answer_id = req['id']
 
     answer = get_object_or_404(Answer, pk=answer_id)
-    answer.delete()
+    
+    if answer.answer_depth == 0:
+        update_answer_cancel(answer.question_id, answer, answer.question_id.user, request.user)
+    else:
+        update_answer_reply_cancel(answer.question_id, answer, request.user)
 
-    return JsonResponse({'id':answer_id})
+    # 대댓글이거나 대댓글이 없는 답변의 경우 아예 삭제
+    if answer.answer_set.count() == 0:
+        # 마지막 대댓글이었다면 부모 답변도 삭제
+        if answer.answer_depth == 1 and answer.parent_answer.answer_set.count() == 1 and answer.parent_answer.is_deleted == True:
+            answer.parent_answer.delete()
+
+        answer.delete()
+        delete_yes = True
+    # 답변인 경우 내용만 삭제된 것처럼
+    else:
+        answer.is_deleted = True
+        answer.content = '삭제된 답변입니다.'
+        answer.user = None
+        answer.save()
+        delete_yes = False
+    
+    answer_count = Answer.objects.filter(question_id=answer.question_id, is_deleted=False, answer_depth=0).count()
+
+    return JsonResponse({'id':answer_id, 'delete_yes':delete_yes, 'answer_count':answer_count})
+
+# @csrf_exempt
+# def answer_delete_ajax(request):
+#     req = json.loads(request.body)
+#     answer_id = req['id']
+
+#     answer = get_object_or_404(Answer, pk=answer_id)
+#     # 대댓글인 경우 아예 지우기
+#     if answer.answer_depth == 1:
+#         answer.delete()
+#         update_answer_reply_cancel(answer.question_id, answer, request.user)
+#     # 답변인 경우 내용만 삭제된 것처럼
+#     else:
+        
+        
+#         update_answer_cancel(answer.question_id, answer, answer.question_id.user, request.user)
+#         answer.content = '삭제된 답변입니다.'
+#         answer.user = None
+#         answer.save()
+
+#     return JsonResponse({'id':answer_id})
 
 # 답변(대댓글 포함) 수정
 # 수정버튼 눌렀을 때 해당하는 폼 띄우는 기능
