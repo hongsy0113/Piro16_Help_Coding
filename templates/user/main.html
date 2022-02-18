@@ -78,7 +78,11 @@
         <div class="landing__group__cardcontainer">
             {% for post, img_src in posts_img_dict.items %}
             <a href="{% url 'group:post_detail' post.group.pk post.pk %}" class="landing__group__card">
+                {% if img_src %}
                 <img src="{{ img_src }}" alt="">
+                {% else %}
+                <img src="/static/img/none_image_group_post.png" alt="" style="object-fit: cover;">
+                {% endif %}
                 <div class="landing__group__card__text">
                     <h6>{{ post.title }}</h6>
                     <p>{{ post.group.name }}</p>
