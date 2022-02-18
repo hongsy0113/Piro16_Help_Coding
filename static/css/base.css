@@ -223,6 +223,7 @@ section {
 }
 
 #check-all-alert-button,
+#check-all-alert-button-modal,
 #check-alert-button,
 .alert__container > button,
 .header__alert > button {
