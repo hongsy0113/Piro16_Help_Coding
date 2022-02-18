@@ -77,7 +77,6 @@
     <!-- 그룹 초대코드 입력 modal -->
     <div class="group-join__alert-box modal modal__hidden" id="join-group">
         <div class="modal__overlay"></div>  <!-- 모달 배경 -->
-        
         <div class="modal__content--join">    <!-- 모달 내용 -->
             <div class="modal__content--top">
                 <span>그룹 가입하기</span>
@@ -87,6 +86,7 @@
                     </svg>
                 </button>
             </div>
+
             <div class="group-join__box modal__content--bottom">
                 <div class="group-join__inputbox">
 
@@ -102,18 +102,22 @@
 
                     <!-- 그룹 초대코드 입력 Guide Modal-->
                     <div class="group__code--guide">
-                        <div class="group__code--guide-text">
-                            <span>초대코드는 어떻게 받나요?</span>
+                        <div class="group__code--guide-content">
+                            <div class="group__code--guide-title">
+                                <span>초대코드는 어떻게 받나요?</span>
+                            </div>
+    
+                            <div class="group__code--guide-text">
+                                <p>1️⃣ 초대하고 싶은 그룹의 <span class="group-info__btn">그룹 정보</span>로 이동</p>
+                                <p>2️⃣ <span class="group-code__btn">멤버 초대코드</span> 클릭</p>
+                                <!-- <image src="{{ code_ex }}" style=" width: 150px;"></image> -->
+                                <p>3️⃣ 코드를 공유해서 친구와 같은 그룹에서 활동해요!</p>
+                            
+                                <p class="code-caution"><span>🚨🚨 <span class="text-bold">초대코드</span>는 <span class="text-bold">일주일 이내에 입력</span>해주세요 🚨🚨</span></p>
+                            </div>
                         </div>
-
-                        <div class="">
-                            <p>1 초대하고 싶은 그룹의 <span>그룹 정보</span>로 이동!</p>
-                            <p>2 <span>멤버 초대코드</span> 클릭!</p>
-                            <image src="{{ code_ex }}" style=" width: 50px;"></image>
-                            <p>3 위의 코드를 친구와 공유해서 같은 그룹에서 활동해보아요!</p>
-                        </div>
-
-                        <div class="group__code--guide-text">
+                    </div>
+                        <!-- <div class="group__code--guide-text">
                             <div class="group__code--guide-image">
                                 <div class="group-post__top--info">
                                     <span>그룹 정보</span>
@@ -124,12 +128,10 @@
                                 </div>
                             </div>
                             <div>
-                                
                                 <span>멤버 초대코드는 여기에 있어요! 친구와 코드를 공유하고 여기에 입력해서 그룹에 가입해보아요</span>
                                 <span>🚨주의🚨 초대코드는 7일마다 바뀌어요</span>
                             </div>
-                        </div>
-                    </div>
+                        </div> -->
 
                     <!-- 에러메세지 -->
                     <span class="group-code__text group-code__error"><svg width="5" height="14" viewBox="0 0 9 26" fill="none" xmlns="http://www.w3.org/2000/svg">
