@@ -1,0 +1,4 @@
+.modal__help-btn, 
+.modal__help--close-btn {
+    all: unset;
+}

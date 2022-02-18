@@ -32,6 +32,7 @@ from .iframe import *
 from threading import Timer
 from django.core.validators import URLValidator
 from django.core.exceptions import ValidationError
+from django.contrib.auth.models import AnonymousUser
 
 
 ######## 그룹 메인 페이지 ########
@@ -40,8 +41,11 @@ from django.core.exceptions import ValidationError
 
 
 def group_home(request):
+    
     user = request.user  # 현재 접속한 사용자
 
+    if user == AnonymousUser():
+        return redirect('user:main')
     # 해당 유저의 그룹 리스트
     groups = user.group_set.all()
     group_star = Group.objects.filter(star_group__user=user)
@@ -89,6 +93,10 @@ def group_home(request):
 
 # 그룹 검색하기(공개 그룹 찾기)
 def group_search_public(request):
+    user = request.user
+    if user == AnonymousUser():
+        return redirect('user:main')
+
     if 'search' in request.GET:
         query = request.GET.get('search')
         groups = Group.objects.all().filter(Q(name__icontains=query) & Q(mode='PUBLIC'))
@@ -123,6 +131,10 @@ def group_search_public(request):
 # 그룹 생성
 def group_create(request):
     user = request.user
+    if user == AnonymousUser():
+        return redirect('user:main')
+        
+    user = request.user
 
     if request.method == 'POST':
         form = GroupForm(request.POST, request.FILES)
@@ -146,7 +158,7 @@ def group_create(request):
             if request.FILES.get('image'):  # form valid + 이미지 첨부 시
                 group.image = request.FILES.get('image')
                 #group.image = './group/group_{}/thumbnail/{}'.format(
-                 #   group.pk, request.FILES['image'].name)
+                #   group.pk, request.FILES['image'].name)
             elif request.POST['img_recent']:
                 os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
                 shutil.copyfile('./media/temp/{}'.format(request.POST['img_recent']),
@@ -193,6 +205,11 @@ def group_create(request):
 
 
 def group_update(request, pk):
+    user = request.user
+    if user == AnonymousUser():
+        return redirect('user:main')
+        
+    
     group = get_object_or_404(Group, pk=pk)
     prev_name = group.name
 
@@ -277,6 +294,9 @@ def group_update(request, pk):
 
 def group_delete(request, pk):
     user = request.user
+    if user == AnonymousUser():
+        return redirect('user:main')
+        
     group = get_object_or_404(Group, pk=pk)
 
     if user == group.maker:
@@ -294,6 +314,9 @@ def group_delete(request, pk):
 
 def group_drop(request, pk):
     user = request.user
+    if user == AnonymousUser():
+        return redirect('user:main')
+        
     group = get_object_or_404(Group, pk=pk)
     members = group.members.all()
 
@@ -325,6 +348,9 @@ def group_drop(request, pk):
 
 def group_detail(request, pk):
     user = request.user
+    if user == AnonymousUser():
+        return redirect('user:main')
+        
     group = get_object_or_404(Group, pk=pk)
 
     group_star = GroupStar.objects.filter(Q(group=group) & Q(user=user))
@@ -456,6 +482,10 @@ def get_invite_code(length=6):
 
 @csrf_exempt
 def create_code_ajax(request):
+    user = request.user
+    if user == AnonymousUser():
+        return redirect('user:main')
+        
     req = json.loads(request.body)
     group_id = req['groupId']
 
@@ -478,6 +508,9 @@ def create_code_ajax(request):
 # 초대 코드 입력하기 (나의 그룹 홈페이지)
 @csrf_exempt
 def join_code_ajax(request):
+    user = request.user
+    if user == AnonymousUser():
+        return redirect('user:main')
     req = json.loads(request.body)
 
     user = request.user
@@ -510,6 +543,10 @@ def join_code_ajax(request):
 
 # 그룹 모아보기 게시판(그룹 찾기)
 def group_list(request):
+    user = request.user
+    if user == AnonymousUser():
+        return redirect('user:main')
+
     group = Group.objects.filter(mode='PUBLIC')
     # group = Group.objects.all()
     groups = group.order_by('name')
@@ -542,6 +579,8 @@ def group_list(request):
 
 def public_group_join(request, pk):
     user = request.user
+    if user == AnonymousUser():
+        return redirect('user:main')
     group = get_object_or_404(Group, pk=pk)
     members = group.members.all()
 
@@ -559,6 +598,9 @@ def public_group_join(request, pk):
 
 def group_wait_cancel(request, pk):
     user = request.user
+    if user == AnonymousUser():
+        return redirect('user:main')
+
     group = get_object_or_404(Group, pk=pk)
     members = group.members.all()
     waits = group.waits.all()
@@ -574,6 +616,10 @@ def group_wait_cancel(request, pk):
 
 @csrf_exempt
 def group_join_accept(request):
+    user = request.user
+    if user == AnonymousUser():
+        return redirect('user:main')
+
     req = json.loads(request.body)
     group_id = req['groupId']
     wait_user_id = req['userId']
@@ -595,6 +641,10 @@ def group_join_accept(request):
 
 @csrf_exempt
 def group_join_reject(request):
+    user = request.user
+    if user == AnonymousUser():
+        return redirect('user:main')
+
     req = json.loads(request.body)
     group_id = req['groupId']
     wait_user_id = req['userId']
@@ -617,6 +667,10 @@ def group_join_reject(request):
 # 그룹 가입 대기자 명단
 @csrf_exempt
 def wait_list_ajax(request):
+    user = request.user
+    if user == AnonymousUser():
+        return redirect('user:main')
+
     req = json.loads(request.body)
     group_id = req['id']
     group = get_object_or_404(Group, pk=group_id)
@@ -713,6 +767,10 @@ class OriginalInformation():
 
 
 def post_list(request, pk):
+    user = request.user
+    if user == AnonymousUser():
+        return redirect('user:main')
+
     posts = GroupPost.objects.filter(group__pk=pk).order_by('-created_at')
     group = Group.objects.get(pk=pk)
     page = request.GET.get('page', '1')    # 페이지
@@ -769,6 +827,10 @@ def post_list(request, pk):
 
 
 def search_result(request, pk):
+    user = request.user
+    if user == AnonymousUser():
+        return redirect('user:main')
+
     if 'search' in request.GET:
         group = Group.objects.get(pk=pk)
         query = request.GET.get('search')
@@ -820,6 +882,10 @@ def search_result(request, pk):
 
 
 def post_create(request, pk):
+    user = request.user
+    if user == AnonymousUser():
+        return redirect('user:main')
+
     group = get_object_or_404(Group, pk=pk)
 
     if request.method == 'POST':
@@ -911,6 +977,10 @@ def post_create(request, pk):
 
 
 def post_update(request, pk, post_pk):
+    user = request.user
+    if user == AnonymousUser():
+        return redirect('user:main')
+
     post = get_object_or_404(GroupPost, pk=post_pk)
     group = get_object_or_404(Group, pk=pk)
 
@@ -1101,6 +1171,14 @@ class GroupPostDetailView(HitCountDetailView):
         context['answers_reply_dict'] = answers_reply_dict
         context['is_member'] = is_member
         return context
+    
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        if user == AnonymousUser():
+            return redirect('user:main')
+        self.object = self.get_object()
+        context = self.get_context_data(object=self.object)
+        return self.render_to_response(context)
 
 
 class FileDownloadView(SingleObjectMixin, View):
@@ -1121,6 +1199,10 @@ class FileDownloadView(SingleObjectMixin, View):
 
 
 def post_delete(request, pk, post_pk):
+    user = request.user
+    if user == AnonymousUser():
+        return redirect('user:main')
+    
     post = get_object_or_404(GroupPost, pk=post_pk)
     post.delete()
     return redirect('group:post_list', pk)
@@ -1128,6 +1210,10 @@ def post_delete(request, pk, post_pk):
 
 @csrf_exempt
 def answer_ajax(request):
+    user = request.user
+    if user == AnonymousUser():
+        return redirect('user:main')
+
     req = json.loads(request.body)
     post_id = req['postId']
     content = req['content']
@@ -1178,6 +1264,10 @@ def answer_ajax(request):
 
 @csrf_exempt
 def reply_ajax(request):
+    user = request.user
+    if user == AnonymousUser():
+        return redirect('user:main')
+
     req = json.loads(request.body)
 
     answer_id = req['answerId']
@@ -1238,6 +1328,10 @@ def reply_ajax(request):
 # 게시글(질문) 좋아요 기능
 @csrf_exempt
 def post_like_ajax(request):
+    user = request.user
+    if user == AnonymousUser():
+        return redirect('user:main')
+
     req = json.loads(request.body)
     # user id 는 요청 안 보내도 됐을 수도
     post_id = req['postId']
@@ -1260,6 +1354,10 @@ def post_like_ajax(request):
 
 @csrf_exempt
 def answer_like_ajax(request):
+    user = request.user
+    if user == AnonymousUser():
+        return redirect('user:main')
+
     req = json.loads(request.body)
     answer_id = req['id']
 
@@ -1281,6 +1379,10 @@ def answer_like_ajax(request):
 # 답변(대댓글 포함) 삭제
 @csrf_exempt
 def answer_delete_ajax(request):
+    user = request.user
+    if user == AnonymousUser():
+        return redirect('user:main')
+
     req = json.loads(request.body)
     answer_id = req['id']
 
@@ -1313,6 +1415,10 @@ def answer_delete_ajax(request):
 
 @csrf_exempt
 def answer_edit_ajax(request):
+    user = request.user
+    if user == AnonymousUser():
+        return redirect('user:main')
+
     req = json.loads(request.body)
     answer_id = req['id']
 
@@ -1328,6 +1434,10 @@ def answer_edit_ajax(request):
 
 @csrf_exempt
 def answer_edit_submit_ajax(request):
+    user = request.user
+    if user == AnonymousUser():
+        return redirect('user:main')
+
     req = json.loads(request.body)
     answer_id = req['id']
     new_content = req['content']
@@ -1345,6 +1455,10 @@ def answer_edit_submit_ajax(request):
 # star 클릭 시
 @csrf_exempt
 def group_star_ajax(request):
+    user = request.user
+    if user == AnonymousUser():
+        return redirect('user:main')
+
     req = json.loads(request.body)
     group_id = req['id']
 
@@ -1368,6 +1482,10 @@ def group_star_ajax(request):
 # 공개 그룹 좋아요 수
 @csrf_exempt
 def interest_ajax(request):
+    user = request.user
+    if user == AnonymousUser():
+        return redirect('user:main')
+
     req = json.loads(request.body)
     group_id = req['groupId']
     group = get_object_or_404(Group, pk=group_id)
