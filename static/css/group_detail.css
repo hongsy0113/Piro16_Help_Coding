@@ -229,12 +229,13 @@ button {
     flex-direction: column;
     align-items: center;
     padding-top: 20px;
+    position: relative;
 }
 
 .maker-icon {
     position: absolute;
-    left: 354px;
-    top: 865px;
+    left: 133px;
+    top: 18px;
     font-size: 25px;
 }
 
