@@ -181,10 +181,10 @@ def update_answer_reply_cancel(question, reply, replied_user):
 
 def update_group_create(group, created_user):
     if group.mode == 'PUBLIC':
-        Alert.objects.create(user=created_user, content="[{}] 그룹이 만들어졌어요. 가입 신청이 오면 대기자 명단 창에서 수락 또는 거절해주세요!".format(
+        Alert.objects.create(user=created_user, content="[{}] 그룹을 만들었어요. 가입 신청이 오면 대기자 명단 창에서 수락 또는 거절해주세요!".format(
             text_shorten(group.name)), alert_type="group_create", related_id=group.id, time=datetime.now())
     else:
-        Alert.objects.create(user=created_user, content="[{}] 그룹이 만들어졌어요. 초대 코드를 통해 친구를 초대해보세요!".format(
+        Alert.objects.create(user=created_user, content="[{}] 그룹을 만들었어요. 초대 코드를 통해 친구를 초대해보세요!".format(
             text_shorten(group.name)), alert_type="group_create", related_id=group.id, time=datetime.now())
     update_reward(created_user, 'total_group_created', len(
         Group.objects.filter(maker=created_user)))
@@ -251,7 +251,7 @@ def update_drop_group(group, dropped_user):
 
 def update_delete_group(group):
     for member in group.members.all():
-        Alert.objects.create(user=member, content="[{}] 그룹이 삭제되었어요.".format(
+        Alert.objects.create(user=member, content="[{}] 그룹을 삭제했어요.".format(
             text_shorten(group.name)), alert_type="group_delete", related_id=group.id, time=datetime.now())
 
 
