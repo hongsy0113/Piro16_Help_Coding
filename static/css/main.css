@@ -180,8 +180,9 @@ section {
 }
 
 .landing__reward__imgcontainer img {
-    height: 160px;
-    width: 160px;
+    height: 140px;
+    width: 140px;
+    padding: 20px;
     border-radius: 50%;
     overflow: hidden;
     background-color: white;
