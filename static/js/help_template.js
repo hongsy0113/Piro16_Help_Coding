@@ -14,6 +14,7 @@ function closeCaution(){
 const detailGuideBtn = document.querySelector('.detail-guide__btn');
 const detailGuideModal = document.querySelector('.detail-guide__container');
 const closeGuideBtn = document.querySelector('.detail-guide__close--btn');
+
 const modalOverlay = document.querySelector('.modal__overlay');
 
 detailGuideBtn.addEventListener('click', showGuide);
@@ -26,6 +27,7 @@ function showGuide() {
 
 function closeGuide() {
     detailGuideModal.style.display = 'none';
+
 }
 
 // 링크 설명 모달
@@ -51,3 +53,4 @@ function showGuideScratch() {
 
 linkGuideScratchBtn.addEventListener('click', showGuideScratch);
 linkGuideEntryBtn.addEventListener('click', showGuideEntry);
+

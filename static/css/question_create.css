@@ -1,3 +1,7 @@
+button {
+    all: unset;
+}
+
 .select__category input,
 .select__group-mode input {
     display: none;
@@ -77,4 +81,14 @@
     max-height: 600px;
     border-radius: 10px;
     margin-top: 10px;
+}
+
+.tag-text {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.detail-guide__btn svg {
+    width: 25px;
 }

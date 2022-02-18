@@ -129,8 +129,20 @@ a {
 }
 
 /* 그룹 검색 결과 */
-.search-result__top {
+.search--result__query {
     padding-top: 15px;
+}
+
+.search-result__top {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+}
+
+.search-result__top button {
+    all: unset;
+    color: #4e4e4e;
+    padding: 1px 2px;
 }
 
 .search-result__top--query {

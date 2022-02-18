@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/singup_success.css' %}">
+{% endblock %}
+
+{% block title %} 도와줘, 코딩 | 회원 탈퇴 {% endblock %}
+
+{% block content %}
+
+<div class="email__box">
+    <span class="email-text">{{ email }}</span>
+</div>
+
+<div class="signup__success">
+    <p class="signup__success--message">
+    <span>정말로 회원 탈퇴를 하실 건가요?</span>
+    <span>'탈퇴하기' 버튼을 누르면 가입한 이메일로 확인 이메일이 발송되며</span>
+    <span>월요일 자정 전까지 해당 메일을 열어 링크를 클릭하면 탈퇴 취소를 할 수 있어요.</span>
+    </p>
+    <div>
+      <a class="return-main__btn" href="{% url 'user:mypage' %}">취소하기</a>
+      <a class="drop__btn" href="{% url 'user:drop_success' %}">탈퇴하기</a>
+    </div>
+</div>
+
+{% endblock content %}

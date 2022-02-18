@@ -1,0 +1,9 @@
+{% autoescape off %}
+
+〔도와줘, 코딩〕 사이트를 이용해주셔서 감사합니다.
+
+월요일 자정에 회원탈퇴 처리가 되며, 그 이전까지 아래 링크를 누르면 회원탈퇴를 취소하고 사이트를 다시 이용하실 수 있습니다.
+
+▶ 회원탈퇴 취소 링크 : http://{{ domain }}{% url 'user:activate' uid64=uid token=token %}
+
+{% endautoescape %}
