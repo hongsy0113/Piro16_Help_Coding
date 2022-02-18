@@ -67,7 +67,7 @@ html, body, section {
 }
 
 .group-create__img {
-    margin-bottom: 30px;
+    margin-bottom: 35px;
 }
 
 .text-container {
@@ -150,19 +150,39 @@ html, body, section {
 }
 
 /* 그룹 공개 여부 선택 */
+.text-container__group-mode {
+    padding-bottom: 5px;
+}
+
 .group-create__mode-select {
     display: flex;
     flex-direction: row;
+    align-items: center;
+    gap: 30px;
+}
+
+.mode-btn__box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+}
+
+.mode-btn__box span {
+    font-family: Roboto;
+    font-size: 17px;
+    color: #000000;
 }
 
 .mode-select__tag {
     display: none;
 }
 
-.group-create__mode-select label {
+.mode-btn__box label {
     width: 210px;
     height: 60px;
     border: solid 1px #ccc;
+    border-radius: 30px;
     text-align: center;
 
     transition: 0.25s;
@@ -177,8 +197,13 @@ html, body, section {
     line-height: 150%;
 }
 
-.group-create__mode-select > input:checked + label {
-    background: #ffffff;
+.mode-btn__box > input:checked + label {
+    background: #ff8a8a;
+    color: #ffffff;
+}
+
+.mode-public__label {
+    margin-left: 10px;
 }
 
 .group-create__btn {

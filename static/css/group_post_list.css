@@ -334,7 +334,7 @@ button {
 .group_post__search-container {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 15px;
     height: 60px;
     box-sizing: border-box;
     margin-bottom: 40px;
@@ -379,7 +379,7 @@ button {
 }
 
 .group_post__ask-btn {
-    width: 155px;
+    width: 160px;
     height: 60px;
     color: white;
     background-color: #37C6E6;
