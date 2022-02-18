@@ -115,7 +115,7 @@
                             <div> <!-- 이름, 글쓴이, 날짜 -->
                                 <div class="answer__user__name answer__user__name--{{ answer.id }}">
                                     {% if answer.user %}
-                                    <h2><a href="{% url 'user:public_userpage' question.user.pk %}" style="text-decoration: none; color:#212529;">{{ answer.user }}</a></h2>
+                                    <h2><a href="{% url 'user:public_userpage' answer.user.pk %}" style="text-decoration: none; color:#212529;">{{ answer.user }}</a></h2>
                                     {% if answer.user.id == question.user.id %}
                                     <span class="answer__writer-mark">글쓴이</span>
                                     {% endif %}
