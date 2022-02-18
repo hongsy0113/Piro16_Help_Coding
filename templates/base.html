@@ -52,7 +52,7 @@
                 <div class="header__alert-dot {% if user.has_new_alert %}alert__dot-unread{% else %}alert__dot-read{% endif %}"></div> <!-- 알림 있으면 파란 점 -->
                 {% if user.has_new_alert %}
                 <div class="header__alert-dropdown"> <!-- 알림 호버 창 때문에 만든 것 (찬영) -->
-                    <div>새로운 알림이 {{ user.has_new_alert }}개 있어요.</div>
+                    <div id="alert-count-modal">새로운 알림이 {{ user.has_new_alert }}개 있어요.</div>
                     <div class="header__alerts">
                         {% for alert in user.get_new_alert %}
                         <a href="{{ alert.related_url }}" onclick="viewAlert({{ alert.id }})" id="alert-{{ alert.id }}" class="header__alert">
@@ -60,18 +60,19 @@
                                 <div class="alert__dot alert__dot-unread"></div>
                                 <span>{{ alert.content }}</span>
                             </div>
-                            <button onclick="checkAlert({{ alert.id }})">확인</button> <!-- 이거 Ajax는 css 되고서 구현해야 할 듯 -->
+                            <!-- check-alert-button 원래 위치 -->
                         </a>
+                        <button id="check-alert-button-{{ alert.id }}" onclick="checkAlert({{ alert.id }})">확인</button>
                         {% endfor %}
                     </div>
                     <div>
                         <a href="{% url 'user:mypage_alert' %}">전체 알림 보기</a>
-                        <button id="check-all-alert-button" onclick="checkAllAlert()">전체 확인</button>
+                        {% if user.has_new_alert %}<button id="check-all-alert-button" onclick="checkAllAlert()">전체 확인</button>{% endif %}
                     </div>
                     <!-- <div style="justify-content: center;">
                         <p>새로운 알림이 없어요.</p>
                     </div> -->
-                </div> <!-- 여기까지 -->
+                </div>
                 {% endif %}
                 </div>
                 <a class="header__searchbtn" href="#"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -137,6 +138,8 @@
                     const {alert_id, new_alert_num} = JSON.parse(requestCheckAlert.response);
                     const newAlertMessage = document.querySelector(`#alert-${alert_id}`);
                     newAlertMessage.remove();
+                    const checkAlertButton = document.querySelector(`#check-alert-button-${alert_id}`);
+                    checkAlertButton.remove();
                 }
             };
 
@@ -167,10 +170,16 @@
                         try {
                             const newAlertMessage = document.querySelector(`#alert-${all_alert_id[index]}`);
                             newAlertMessage.remove();
+                            const checkAlertButton = document.querySelector(`#check-alert-button-${all_alert_id[index]}`);
+                            checkAlertButton.remove();
                         } catch (e) {
                             // Do nothing
                         }
                     }
+                    const alertNumDisplay = document.querySelector(`#alert-count-modal`);
+                    alertNumDisplay.innerHTML = `새로운 알림이 없어요.`;
+                    const checkAllAlertButton = document.querySelector(`#check-all-alert-button`);
+                    checkAllAlertButton.remove();
                 }
             };
 

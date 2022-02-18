@@ -16,7 +16,7 @@
       {% if user.has_new_alert %}
       <h3 id="alert-count">{{ user.has_new_alert }}</h3>
     </div>
-    <button id="check-all-alert-button" onclick="checkAllAlert()">모두 읽음</button>
+    <button id="check-all-alert-button" onclick="checkAllAlert()">모두 확인</button>
     {% else %}
     <h3 id="alert-count" class="alert__count__none"> </h3>
     </div>
@@ -36,7 +36,7 @@
         <div class="alert__content"><p>{{ alert.content }}</p><p>{{ alert.time | date:'y.m.d a h:i' }}</p></div>
       </div>
       {% if not alert.checked %}
-      <button onclick="checkAlert({{ alert.id }})">읽음</button>
+      <button onclick="checkAlert({{ alert.id }})">확인</button>
       {% endif %}
     </a>
     
