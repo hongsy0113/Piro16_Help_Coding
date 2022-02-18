@@ -384,6 +384,41 @@ def my_page_revise(request):
                'current_image': user.img.url.split('/')[-1], 'temp_img_location': '/media/user_{}/thumbnail/'.format(user.email)}
         return render(request, template_name='user/mypage_revise.html', context=ctx)
 
+# Drop
+
+
+def drop(request):
+    user = request.user
+    if user == AnonymousUser():
+        return redirect('user:login')
+    ctx = {'user': user, 'email': user.email}
+    return render(request, template_name='user/drop.html', context=ctx)
+
+# Drop Success
+
+
+def drop_success(request):
+    user = request.user
+    if user == AnonymousUser():
+        return redirect('user:login')
+    user.is_active = False
+    user.save()
+    current_site = get_current_site(request)
+    message = render_to_string('user/user_drop_email.html',
+                               {
+                                   'user': user,
+                                   'domain': current_site.domain,
+                                   'uid': urlsafe_base64_encode(force_bytes(user.pk)).encode().decode(),
+                                   'token': user_activation_token.make_token(user),
+                               }
+                               )
+    mail_subject = '[도와줘, 코딩] 회원탈퇴 확인 메일입니다.'
+    email = EmailMessage(mail_subject, message, to=[user.email])
+    # email.send()
+    ctx = {'user': user, 'email': user.email}
+    return render(request, template_name='user/drop_success.html', context=ctx)
+
+
 # List View (Question, Answer, Reward, Point)
 
 

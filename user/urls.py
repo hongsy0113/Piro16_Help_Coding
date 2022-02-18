@@ -30,4 +30,6 @@ urlpatterns = [
          views.public_userpage, name='public_userpage'),
     path('group_wait_profile/', view=views.group_wait_profile,
          name='group_wait_profile'),
+    path('drop/', views.drop, name="drop"),
+    path('drop_success/', views.drop_success, name="drop_success"),
 ]

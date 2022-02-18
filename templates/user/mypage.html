@@ -32,7 +32,8 @@
     </div>
     <div class="mypage__profile__btn">
       <button class="btn btn-secondary"><a class="text-white" href="{% url 'user:mypage_revise' %}" style="text-decoration: none">개인정보 수정</a></button>
-      <button class="btn btn-secondary"><a class="text-white" href="{% url 'user:mypage_point' %}" style="text-decoration: none">나의 포인트 현황</a></button>
+      <button class="btn btn-secondary"><a class="text-white" href="{% url 'user:mypage_point' %}" style="text-decoration: none">포인트 기록</a></button>
+      <button class="btn btn-danger"><a class="text-white" href="{% url 'user:drop' %}" style="text-decoration: none">회원 탈퇴하기</a></button>
     </div>
     {% if messages %}{% for message in messages %}<p class="mypage__message">{{ message.message }}</p>{% endfor %}{% endif %}
   </div>
