@@ -17,7 +17,7 @@
 <div class="group-list__top">
     <div class="group-list__top--left">
         <span class="top-left__title">그룹 찾기</span>
-        <span class="top-left__intro">{{ user }}님이 함께할 그룹을 찾아보세요!</span>
+        <span class="top-left__intro">{% if user %}{{ user }}{% endif %}님이 함께할 그룹을 찾아보세요!</span>
     </div>
     <a class="group__make-btn" href="{% url 'group:group_create' %}">그룹 만들기</a>
 </div>

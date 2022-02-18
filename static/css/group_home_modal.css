@@ -217,6 +217,55 @@ button {
     align-items: center;
 }
 
-.group-code__text {
+.group-code__text, .group__code--guide {
     display: none;
+}
+
+
+/* 박예준이 추가한 부분 */
+.top-right__button {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px 10px;
+    background: #37C6E6;
+    border: 2px solid #37C6E6;
+    box-sizing: border-box;
+    border-radius: 26px;
+    cursor: pointer;
+
+    width: fit-content;
+    color: #FFFFFF;
+    font-size: 18px;
+}
+
+.group-post__top--info {
+    width: 119px;
+    padding: 10px 24px 12px;
+    background: #FFFFFF;
+    border: 2px solid #37C6E5;
+    box-sizing: border-box;
+    border-radius: 26px;
+    text-decoration: none;
+    color: #37C6E5;
+    font-family: Noto Sans CJK KR;
+    font-weight: bold;
+    font-size: 18px;
+    line-height: 100%;
+
+    width: fit-content;
+}
+
+.group__code--guide-image {
+    display: flex;
+    align-items: center;
+}
+
+.group__code--guide-right {
+    color: #37C6E5;
+    font-size: 18px;
+}
+
+.group__code--guide-hover {
+    cursor: pointer;
+    transition: all 0.4s ease-in-out;
 }

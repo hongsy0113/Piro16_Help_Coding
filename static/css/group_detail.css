@@ -231,6 +231,13 @@ button {
     padding-top: 20px;
 }
 
+.maker-icon {
+    position: absolute;
+    left: 354px;
+    top: 865px;
+    font-size: 25px;
+}
+
 .member-list__maker, .member-list__member {
     display: flex;
     justify-content: flex-start;
@@ -262,8 +269,7 @@ button {
 }
 
 .member-list__maker--name {
-    width: 100px;
-    overflow: auto;
+    max-width: 200px;
 }
 
 .text__name a {
@@ -272,7 +278,7 @@ button {
 }
 
 .member-list__one--intro {
-    width: 100%;
+    max-width: 550px;
     height: 36px;
     overflow-y: auto;
 }

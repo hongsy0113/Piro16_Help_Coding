@@ -65,6 +65,20 @@
         </div>
     </div>
 
+    <!-- 게시글이 없을 때 -->
+    {% if not posts_value_dict %}
+    <div class="no-post__box">
+        <div class="no-post__text">
+            <h2>아직 게시글이 👌개예요</h2>
+            <h2>여러분이 첫 글의 주인공이 되어보세요!</h2>
+        </div>
+
+        <div class='no-post__btnbox'>
+            <a class="group_post__ask-btn" href="{% url 'group:post_create' group.pk %}">내 작품 공유</a>
+        </div>
+    </div>
+    {% endif %}
+
     <div class="group-post__list">  <!-- 게시글 목록 시작 -->
 
         <div class="gridbox">  
@@ -122,6 +136,7 @@
     </div>
 
 
+    {% if posts_value_dict %}
     <div class="group_post__search-container">  <!-- 게시글 검색 -->
         <form class="group_post__search-box" action="{% url 'group:search_result' group.pk %}" method="get">
             {% csrf_token %}
@@ -134,6 +149,8 @@
         </form>
         <a class="group_post__ask-btn" href="{% url 'group:post_create' group.pk %}">내 작품 공유</a>
     </div>
+    {% endif %}
+
 </div>
 
 <!-- 페이지네이션 -->

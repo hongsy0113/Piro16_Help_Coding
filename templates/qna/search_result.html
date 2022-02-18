@@ -29,32 +29,32 @@
                 </button>
         </form>
     </div>
-</div>
 
-<div class="qna-sort-filter__box">
-    <!-- 최신순 조회수순 좋아요순 -->
-    <div class="list-sort">
-        <span class="list-sort__btn">
-            {% if sort_by != 'recent' %}
-            <a href="{% url 'qna:search_result' %}?{% param_replace sort='recent' page=1 search=query %}">최신순</a>
-            {% else %}
-            <span>최신순</span>
-            {% endif %}
-        </span>
-        <span class="list-sort__btn">
-            {% if sort_by != 'view' %}
-            <a href="{% url 'qna:search_result' %}?{% param_replace sort='view' page=1 search=query %}">조회수순</a>
-            {% else %}
-            <span>조회수순</span>
-            {% endif %}
-        </span>
-        <span class="list-sort__btn">
-            {% if sort_by != 'liked' %}
-            <a href="{% url 'qna:search_result' %}?{% param_replace sort='liked' page=1 search=query %}">좋아요순</a>
-            {% else %}
-            <span>좋아요순</span>
-            {% endif %}
-        </span>
+    <div class="qna-sort-filter__box">
+        <!-- 최신순 조회수순 좋아요순 -->
+        <div class="list-sort">
+            <span class="list-sort__btn">
+                {% if sort_by != 'recent' %}
+                <a href="{% url 'qna:search_result' %}?{% param_replace sort='recent' page=1 search=query %}">최신순</a>
+                {% else %}
+                <span>최신순</span>
+                {% endif %}
+            </span>
+            <span class="list-sort__btn">
+                {% if sort_by != 'view' %}
+                <a href="{% url 'qna:search_result' %}?{% param_replace sort='view' page=1 search=query %}">조회수순</a>
+                {% else %}
+                <span>조회수순</span>
+                {% endif %}
+            </span>
+            <span class="list-sort__btn">
+                {% if sort_by != 'liked' %}
+                <a href="{% url 'qna:search_result' %}?{% param_replace sort='liked' page=1 search=query %}">좋아요순</a>
+                {% else %}
+                <span>좋아요순</span>
+                {% endif %}
+            </span>
+        </div>
     </div>
 </div>
 

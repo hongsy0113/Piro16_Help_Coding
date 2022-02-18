@@ -80,7 +80,8 @@ def group_home(request):
         'groups': page_obj,
         'groups_star_dict': groups_star_dict,
         'sort_by': sort_by,
-        'ani_image': static('image/helphelp.png')
+        'ani_image': static('image/helphelp.png'),
+        'code_ex': static('image/code_ex.jpg')
     }
 
     return render(request, template_name='group/group_home.html', context=ctx)
@@ -439,15 +440,15 @@ class OriginalGroupInfo():
 
 ######## 초대 코드 ########
 # 7일의 코드 유효 기간
-def group_code_save(pk):
-    group = get_object_or_404(Group, pk=pk)
-    group.code = get_invite_code()
-    group.save()
-
-    time = Timer(7 * 24 * 60 * 60, group_code_save, [group.pk])
-    time.start()
-
-    return group.code
+#def group_code_save(pk):
+#    group = get_object_or_404(Group, pk=pk)
+#    group.code = get_invite_code()
+#    group.save()
+#
+#    time = Timer(7 * 24 * 60 * 60, group_code_save, [group.pk])
+#    time.start()
+#
+#    return group.code
 
 # 초대 코드 발급
 
@@ -470,12 +471,12 @@ def create_code_ajax(request):
         code = group.code
     else:
         # time = Timer(7 * 24 * 60 * 60, group_code_save, [group_id])
-        code = group_code_save(group_id)
+        code = get_invite_code()
         # code = group.code
 
-        if time.finished:
-            group.code = ''
-    print(code)
+        #if time.finished:
+        #    group.code = ''
+    #print(code)
     group.save()
 
     return JsonResponse({'name': group.name, 'code': code})

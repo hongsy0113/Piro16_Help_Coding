@@ -92,7 +92,7 @@
 
         <div class="info-content__member">
             <p class="text-box__top">그룹 인원</p>
-            <p class="text-box__bottom">{{ group.members |  length }}명</p>
+            <p class="text-box__bottom">{{ members|length }}명</p>
         </div>
 
         <div class="info-content__intro">
@@ -172,8 +172,8 @@
     <div class="container-member__list">
         <!-- 그룹 maker 먼저 -->
         <div class="member-list__maker">
-            <div class="member-list__maker--left">
-                
+            <span class="maker-icon">👑</span>
+            <div class="member-list__maker--left">   
                 <div class="member-list__img">
                     {% if maker.img %}
                     <img src="{{ maker.img.url }}" height="50" width="50" style="border-radius: 50px;"/>
@@ -183,7 +183,7 @@
                 </div>
 
                 <div class="member-list__maker--text member-list__maker--name">
-                    <span class="text__name"><a href="{% url 'user:public_userpage' maker.pk %}">{{ maker }}👑</a></span>
+                    <span class="text__name"><a href="{% url 'user:public_userpage' maker.pk %}">{{ maker }}</a></span>
                 </div>
             </div>
 
