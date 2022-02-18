@@ -21,7 +21,7 @@
         {% if user.is_authenticated %}
         <a class="qna__ask-btn" href="{% url 'qna:question_create' %}">질문 작성</a>
         {% else %}
-        <span class="qna__ask-btn" onclick="alert('로그인 후 이용해주세요.')">질문 작성</span>
+        <span class="qna__ask-btn" onclick="alert('로그인 후 이용해주세요. 😄')">질문 작성</span>
         {% endif %}
     </div>
 

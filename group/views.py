@@ -158,7 +158,7 @@ def group_create(request):
             if request.FILES.get('image'):  # form valid + 이미지 첨부 시
                 group.image = request.FILES.get('image')
                 #group.image = './group/group_{}/thumbnail/{}'.format(
-                 #   group.pk, request.FILES['image'].name)
+                #   group.pk, request.FILES['image'].name)
             elif request.POST['img_recent']:
                 os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
                 shutil.copyfile('./media/temp/{}'.format(request.POST['img_recent']),
@@ -1485,7 +1485,7 @@ def interest_ajax(request):
     user = request.user
     if user == AnonymousUser():
         return redirect('user:main')
-        
+
     req = json.loads(request.body)
     group_id = req['groupId']
     group = get_object_or_404(Group, pk=group_id)
