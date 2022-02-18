@@ -33,7 +33,7 @@
     flex-direction: column;
     gap: 10px;
 }
-form label, .signup_success__text {
+form label{
     font-weight: bold;
     font-size: 24px;
     line-height: 150%;
@@ -231,7 +231,7 @@ form input::placeholder, form textarea::placeholder {
 .signup_success__text {
     font-size: 24px;
     line-height: 200%;
-    color: black;
+    color: #4f4f4f;
     text-align: center;
 }
 
@@ -249,10 +249,17 @@ form input::placeholder, form textarea::placeholder {
     font-size: 24px;
     font-weight: bold;
     transition: 0.5s;
+    margin: 0 auto;
+    margin-top: 60px;
 }
 
 .signup_success__btn:hover{
     color: white;
     font-size: 26px;
     background-color: #37aee5;
+}
+
+.signup_success__btn a{
+    color: white;
+    text-decoration: none;
 }
