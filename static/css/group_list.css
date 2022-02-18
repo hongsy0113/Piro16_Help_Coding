@@ -145,6 +145,7 @@ a {
     border: 1px solid #BDBDBD;
     box-sizing: border-box;
     border-radius: 15px 15px 15px 15px;  
+    /* filter: drop-shadow(0px 4px 3px rgba(0, 0, 0, 0.2)); */
 }
 
 .img__group {

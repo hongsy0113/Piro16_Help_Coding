@@ -18,9 +18,8 @@
     </form>
 </div>
 <script>
-    const loginContainer = document.querySelector('.login__innercontainer');
-    const emailLabel = loginContainer.children[1].firstElementChild;
-    const pwLabel = loginContainer.children[2].firstElementChild;
+    const emailLabel = document.querySelector('label[for="id_email"]');
+    const pwLabel = document.querySelector('label[for="id_password"]');
     emailLabel.textContent = '이메일';
     pwLabel.textContent = '비밀번호';
 </script>
