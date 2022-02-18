@@ -24,7 +24,7 @@
         <!-- js 에서 question info를 split 하는데, 한 줄에 안 쓰면 공백이 들어가므로 한 줄로 써야 함 -->
         <p class = "question__info ">{{ question.created_at|date:'y.m.d'}} · 조회 {% get_hit_count for question %} · 좋아요 {{ total_likes }} · <a href="{% if question.user %}{% url 'user:public_userpage' question.user.pk %}{% endif %}" style="text-decoration: none; color:#212529;">{{ username }}</a></p>
         <p>
-            {% if question.user.id == user.id %}
+            {% if question.user.id == user.id and user.is_authenticated %}
             <a href="{% url 'qna:question_update' question.pk %}" class="question__edit-btn">수정</a>
             {% if answers_count > 0 %}
             <a class="question__delete-btn" onclick="alert('답변이 달려 있어서 삭제할 수 없습니다.')">삭제</a>      
@@ -115,7 +115,7 @@
                             <div> <!-- 이름, 글쓴이, 날짜 -->
                                 <div class="answer__user__name answer__user__name--{{ answer.id }}">
                                     {% if answer.user %}
-                                    <h2><a href="{% url 'user:public_userpage' question.user.pk %}" style="text-decoration: none; color:#212529;">{{ answer.user }}</a></h2>
+                                    <h2><a href="{% url 'user:public_userpage' answer.user.pk %}" style="text-decoration: none; color:#212529;">{{ answer.user }}</a></h2>
                                     {% if answer.user.id == question.user.id %}
                                     <span class="answer__writer-mark">글쓴이</span>
                                     {% endif %}

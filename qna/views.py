@@ -19,6 +19,7 @@ from config.settings import MEDIA_ROOT
 import mimetypes
 from user.update import *
 from .forms import FileFieldForm
+from django.contrib.auth.models import AnonymousUser
 
 basic_tags = ['동작', '형태', '소리', '이벤트', '제어',' 감지', '연산', '변수', '내 블록', '기타']
 
@@ -149,6 +150,10 @@ def search_result(request):
 
 
 def question_create(request):
+    user = request.user
+    if user == AnonymousUser():
+        return redirect('user:main')
+
     if request.method == 'POST':
         form = QuestionForm(request.POST, request.FILES)
         
@@ -330,6 +335,10 @@ class FileDownloadView(SingleObjectMixin, View):
 
 
 def question_update(request, pk):
+    user = request.user
+    if user == AnonymousUser():
+        return redirect('user:main')
+
     question = get_object_or_404(Question, pk=pk)
 
     ## file data dir
@@ -488,6 +497,10 @@ def question_update(request, pk):
         return render(request, template_name="qna/question_form.html", context=ctx)        
 
 def question_delete(request, pk):
+    user = request.user
+    if user == AnonymousUser():
+        return redirect('user:main')
+
     question = get_object_or_404(Question, pk=pk)
 
     # TODO : 게시글에 댓글이 있는지 확인
@@ -503,6 +516,10 @@ def question_delete(request, pk):
 # 답변 작성 
 @csrf_exempt
 def answer_ajax(request):
+    user = request.user
+    if user == AnonymousUser():
+        return redirect('user:main')
+
     req = json.loads(request.body)
     question_id = req['questionId']
     content = req['content']
@@ -552,6 +569,10 @@ def answer_ajax(request):
 # 대댓글 작성
 @csrf_exempt
 def reply_ajax(request):
+    user = request.user
+    if user == AnonymousUser():
+        return redirect('user:main')
+
     req = json.loads(request.body)
 
     answer_id = req['answerId']
@@ -609,6 +630,10 @@ def reply_ajax(request):
 # 게시글(질문) 좋아요 기능
 @csrf_exempt
 def question_like_ajax(request):
+    user = request.user
+    if user == AnonymousUser():
+        return redirect('user:main')
+
     req = json.loads(request.body)
     # user id 는 요청 안 보내도 됐을 수도
     question_id = req['questionId']
@@ -631,6 +656,10 @@ def question_like_ajax(request):
 # 답변 (대댓글 포함) 좋아요 기능
 @csrf_exempt
 def answer_like_ajax(request):
+    user = request.user
+    if user == AnonymousUser():
+        return redirect('user:main')
+
     req = json.loads(request.body)
     answer_id = req['id']
 
@@ -653,6 +682,10 @@ def answer_like_ajax(request):
 # 답변(대댓글 포함) 삭제
 @csrf_exempt
 def answer_delete_ajax(request):
+    user = request.user
+    if user == AnonymousUser():
+        return redirect('user:main')
+
     req = json.loads(request.body)
     answer_id = req['id']
 
@@ -708,6 +741,10 @@ def answer_delete_ajax(request):
 # 수정버튼 눌렀을 때 해당하는 폼 띄우는 기능
 @csrf_exempt
 def answer_edit_ajax(request):
+    user = request.user
+    if user == AnonymousUser():
+        return redirect('user:main')
+
     req = json.loads(request.body)
     answer_id = req['id']
 
@@ -722,6 +759,10 @@ def answer_edit_ajax(request):
 # 수정할 내용 입력 후 버튼 눌렀을 때 수정 내용 적용하는 기능
 @csrf_exempt
 def answer_edit_submit_ajax(request):
+    user = request.user
+    if user == AnonymousUser():
+        return redirect('user:main')
+        
     req = json.loads(request.body)
     answer_id = req['id']
     new_content = req['content']
