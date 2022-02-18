@@ -242,15 +242,15 @@ def sign_up(request):
             mail_subject = '[도와줘, 코딩] 회원가입 인증 메일입니다.'
             email = EmailMessage(mail_subject, message, to=[user.email])
             # email.send()
-            # Timer(24 * 60 * 60, unauthenticated_user_delete,
-            #      [request.POST['email']]).start()
             ######## 업적 초기화를 위한 임시적인 부분 ########
             if request.POST['email'] == 'reward@reward.com':
                 initializeReward()
             ################################################
             ######## 타이머 실행을 위한 임시적인 부분 ########
             if request.POST['email'] == 'timer@timer.com':
-                Timer(initial_period(datetime.now()), periodic_tasks).start()
+                PERIODIC_TASKS_TIMER.timer = Timer(initial_period(datetime.now()),
+                                                   periodic_tasks)
+                PERIODIC_TASKS_TIMER.timer.start()
             ################################################
             return render(request, 'user/signup_success.html', {'email': user.email})
 
