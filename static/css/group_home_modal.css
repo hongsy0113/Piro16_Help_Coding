@@ -169,7 +169,7 @@ a {
 .modal__content--join {
     position: relative;
     top: 0px;
-    width: 40%;
+    width: 600px;
     max-height: 800px;
     background-color: #FAFAFA;
     border: 2px solid #BDBDBD;
