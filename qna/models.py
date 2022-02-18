@@ -11,10 +11,10 @@ class Question(models.Model, HitCountMixin):
     content = models.TextField(verbose_name='내용')
 
     # 코드 캡쳐, 실행창 캡쳐와 같은 이미지 업로드
-    image = models.ImageField(upload_to='qna/image', null=True, blank=True)
+    image = models.ImageField(upload_to='qna/uploads/%Y/%m/%d/', null=True, blank=True)
 
     # .ent, .sb3 파일 등 소스코드 파일 업로드
-    attached_file = models.FileField(verbose_name='첨부파일', upload_to='qna/file', null=True, blank=True)
+    attached_file = models.FileField(verbose_name='첨부파일', upload_to='qna/uploads/%Y/%m/%d/', null=True, blank=True)
     hit = models.IntegerField(verbose_name='조회수', default=0)
     created_at = models.DateTimeField(verbose_name='게시일자', auto_now_add=True)
     updated_at = models.DateTimeField(verbose_name='수정일자', auto_now=True)
@@ -37,7 +37,7 @@ class Question(models.Model, HitCountMixin):
         return self.answer_set.count() > 0
 
     def get_filename(self):
-        return os.path.basename(self.attached_file.name)
+        return os.path.basename(str(self.attached_file))
 
     hit_count_generic = GenericRelation(
         HitCount, object_id_field='object_pk',
@@ -106,11 +106,4 @@ class QnaTag(models.Model):
 
 class QuestionFiles(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='question_files')
-    attached_file = models.FileField(verbose_name='첨부파일', upload_to='qna/file')
-
-def group_thumbnail_path(instance, filename):
-    # file will be uploaded to MEDIA_ROOT/group_<group.name>/<filename>
-    return 'test_{0}/{1}'.format(instance.pk, filename)
-class PkTest(models.Model):
-    auto_increment_id = models.AutoField(primary_key=True)
     attached_file = models.FileField(verbose_name='첨부파일', upload_to='qna/file')

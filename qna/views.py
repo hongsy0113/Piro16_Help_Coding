@@ -1,4 +1,5 @@
 #-*-coding:utf-8-*-
+from datetime import date
 from wsgiref.simple_server import sys_version
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import *
@@ -183,25 +184,26 @@ def question_create(request):
                 question.tags.add(newtag)
 
             # image, file 부분
-            os.makedirs(MEDIA_ROOT + '/qna/image/', exist_ok=True)
-            os.makedirs(MEDIA_ROOT + '/qna/file/', exist_ok=True)
+            date_dir = datetime.today().strftime('/%Y/%m/%d/')
+            os.makedirs(MEDIA_ROOT + '/qna/uploads' + date_dir, exist_ok=True)
+            #os.makedirs(MEDIA_ROOT + '/qna/file'+ data_dir, exist_ok=True)
+
 
             if request.FILES.get('image'):
                 question.image = request.FILES.get('image')
             elif request.POST['img_recent']:
                 os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
                 shutil.copyfile('./media/temp/{}'.format(request.POST['img_recent']),
-                                './media/qna/image/{}'.format(request.POST['img_recent'])) ###
-                question.image =  './qna/image/{}'.format(request.POST['img_recent']) ###
+                                './media/qna/uploads'+ date_dir +'{}'.format(request.POST['img_recent'])) ###
+                question.image =  './qna/uploads'+ date_dir + '{}'.format(request.POST['img_recent']) ###
 
             if request.FILES.get('attached_file'):
                 question.attached_file = request.FILES.get('attached_file')
             elif request.POST['file_recent']:
                 os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
                 shutil.copyfile('./media/temp/{}'.format(request.POST['file_recent']),
-                                './media/qna/file/{}'.format(request.POST['file_recent'])) ###
-                question.attached_file =  './qna/file/{}'.format( request.POST['file_recent']) ###
-
+                                './media/qna/uploads'+ date_dir +'{}'.format(request.POST['file_recent'])) ###
+                question.attached_file = './qna/uploads'+ date_dir +'{}'.format( request.POST['file_recent']) ###
 
             question.save()
             update_question(question, request.user)
@@ -319,13 +321,18 @@ class FileDownloadView(SingleObjectMixin, View):
         fs = FileSystemStorage(file_path)
         response = FileResponse(fs.open(file_path, 'rb'), content_type=file_type)
         response['Content-Disposition'] = f'attachment; filename={object.get_filename()}'
+        #response['Content-Disposition'] = 'attachment; filename*=UTF-8\'\'%s' % object.get_filename()
         
         return response
 
 
 
-def question_update(request,pk):
+def question_update(request, pk):
     question = get_object_or_404(Question, pk=pk)
+
+    ## file data dir
+    date_dir = datetime.today().strftime('/%Y/%m/%d/')
+
     global basic_tags
     if request.method == "POST":
         form = QuestionForm(request.POST, request.FILES, instance = question)
@@ -353,12 +360,12 @@ def question_update(request,pk):
                 question.image = request.FILES.get('image')
                 
             elif request.POST['img_recent'] :   # 다른 필드 에러 시(기존 파일 남아있도록)
-                question.image = './qna/image/{}'.format(request.POST['img_recent'])
+                question.image = './qna/uploads'+ date_dir +'{}'.format(request.POST['img_recent'])
             if request.FILES.get('attached_file'):  # form valid 시
                 question.attached_file = request.FILES.get('attached_file')
                 
             elif request.POST['file_recent']:   # 다른 필드 에러 시(기존 파일 남아있도록)
-                question.attached_file = './qna/file/{}'.format(request.POST['file_recent'])
+                question.attached_file = './qna/uploads'+ date_dir +'{}'.format(request.POST['file_recent'])
 
             question.save()
             update_question(question, request.user)
@@ -376,11 +383,11 @@ def question_update(request,pk):
                     extra_tag_names.append(tag)
 
             if request.FILES.get('image'):
-                with open('/qna/image/{}'.format(request.FILES.get('image')), 'wb+') as destination:
+                with open('/qna/uploads/%Y/%m/%d/{}'.format(request.FILES.get('image')), 'wb+') as destination:
                     for chunk in request.FILES['image'].chunks():
                         destination.write(chunk)
             if request.FILES.get('attached_file'):
-                with open('/qna/file/{}'.format(request.FILES.get('attached_file')), 'wb+') as destination:
+                with open('/qna/uploads/%Y/%m/%d/{}'.format(request.FILES.get('attached_file')), 'wb+') as destination:
                     for chunk in request.FILES['attached_file'].chunks():
                         destination.write(chunk)
 
@@ -393,15 +400,15 @@ def question_update(request,pk):
             original_information.attached_file = request.POST['file_recent']
 
             if question.image:
-                current_image = question.image.url.split('/')[-1]
+                current_image = str(question.image).split('/')[-1]
             else:
                 current_image = ''
             if question.attached_file:
-                current_file = question.attached_file.url.split('/')[-1]
+                current_file = str(question.attached_file).split('/')[-1]
             else:
                 current_file = ''
 
-
+            
             ctx = {
                 'form': form, 
                 'error_messages': error_messages,
@@ -409,9 +416,9 @@ def question_update(request,pk):
                 'basic_tag_names': basic_tag_names,  
                 'extra_tag_names': extra_tag_names,
                 'current_image': current_image,
-                'temp_img_location': '/media/qna/image/',
+                'temp_img_location': '/media/qna/uploads/'+ date_dir,
                 'current_file': current_file,
-                'temp_file_location': '/media/qna/file/',
+                'temp_img_location': '/media/qna/uploads/'+ date_dir,
                 }
             return render(request, 'qna/question_form.html', context=ctx)
 
@@ -420,13 +427,12 @@ def question_update(request,pk):
         # TODO : 선택 태그 뭘 선택했었는 지를 ctx로 넘겨주자
         # 기본 태그와 추가 태그 다르게 넘기자
         # TODO :  기본 태그 가 바뀌게 된다면 아래 리스트 수정해야 됨.
-        
         if question.image:
-            current_image = question.image.url.split('/')[-1]
+            current_image = str(question.image).split('/')[-1]
         else:
             current_image = ''
         if question.attached_file:
-            current_file = question.attached_file.url.split('/')[-1]
+            current_file = str(question.attached_file).split('/')[-1]
         else:
             current_file = ''
 
@@ -444,9 +450,9 @@ def question_update(request,pk):
             'basic_tag_names': basic_tag_names,  
             'extra_tag_names': extra_tag_names,
             'current_image': current_image,
-            'temp_img_location': '/media/qna/image/',
+            'temp_img_location': '/media/qna/uploads/'+ date_dir,
             'current_file': current_file,
-            'temp_file_location': '/media/qna/file/',
+            'temp_file_location': '/media/qna/uploads/'+ date_dir,
             }
 
         return render(request, template_name="qna/question_form.html", context=ctx)        
