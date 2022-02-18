@@ -301,20 +301,20 @@ def unauthenticated_user_delete(email):
 
 
 def my_page(request):
-    schedule, created = IntervalSchedule.objects.get_or_create(
-        every=10, period=IntervalSchedule.SECONDS,)
-    # 'test_task'가 등록되어 있으면,
-    if PeriodicTask.objects.filter(name='test_task').exists():
-        p_test = PeriodicTask.objects.get(name='test_task')
-        p_test.enabled = True  # 실행시킨다.
-        p_test.interval = schedule
-        p_test.save()
-    else:  # 'test_task'가 등록되어 있지 않으면, 새로 생성한다
-        PeriodicTask.objects.create(
-            interval=schedule,  # 앞서 정의한 schedule
-            name='test_task',
-            task='bracken.tasks.test_task',
-        )
+    # schedule, created = IntervalSchedule.objects.get_or_create(
+    #     every=10, period=IntervalSchedule.SECONDS,)
+    # # 'test_task'가 등록되어 있으면,
+    # if PeriodicTask.objects.filter(name='test_task').exists():
+    #     p_test = PeriodicTask.objects.get(name='test_task')
+    #     p_test.enabled = True  # 실행시킨다.
+    #     p_test.interval = schedule
+    #     p_test.save()
+    # else:  # 'test_task'가 등록되어 있지 않으면, 새로 생성한다
+    #     PeriodicTask.objects.create(
+    #         interval=schedule,  # 앞서 정의한 schedule
+    #         name='test_task',
+    #         task='bracken.tasks.test_task',
+    #     )
     user = request.user
     if user == AnonymousUser():
         return redirect('user:login')
