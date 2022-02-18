@@ -16,7 +16,7 @@
       {% if user.has_new_alert %}
       <h3 id="alert-count">{{ user.has_new_alert }}</h3>
     </div>
-    <button id="check-all-alert-button" onclick="checkAllAlert()">모두 확인</button>
+    <button id="check-all-alert-button" onclick="checkAllAlert(); checkAllAlertModal();">전체 확인</button>
     {% else %}
     <h3 id="alert-count" class="alert__count__none"> </h3>
     </div>
@@ -24,21 +24,22 @@
   </div>
   {% for alert in alerts %}
   <div class="alert__outer-container">
-    <a href="{{ alert.related_url }}" onclick="viewAlert({{ alert.id }})" class="alert__container{% if not alert.checked %} alert__container-unread{% endif %}">
+    <a id="alert-{{ alert.id }}-hover" href="{{ alert.related_url }}" onclick="viewAlert({{ alert.id }})" class="alert__container{% if not alert.checked %} alert__container-unread{% endif %}">
       <div class="alert-left">
         {% if not alert.checked %}
-        <div id="alert-{{ alert.id }}">
-          <div class="alert__dot alert__dot-unread"></div>
+        <div>
+          <div id="alert-{{ alert.id }}-dot" class="alert__dot alert__dot-unread"></div>
         </div>
         {% else %}
-        <div class="alert__dot alert__dot-read"></div>
-        {% endif %} <!-- 새 알림만 강조하고 싶으면 밑에 처럼 인라인 스타일 하나씩 넣어줘도 될 듯...? 임시로 넣어봤어! 근데 Ajax로 스타일 빼는 것도 구현해야 할 듯... (나중에) -->
-        <div class="alert__content"><p>{{ alert.content }}</p><p>{{ alert.time | date:'y.m.d a h:i' }}</p></div>
+        <div id="alert-{{ alert.id }}-dot" class="alert__dot alert__dot-read"></div>
+        {% endif %}
+        <div id="alert-{{ alert.id }}" class="alert__content"><p>{{ alert.content }}</p><p>{{ alert.time_past }}</p></div>
       </div>
-      {% if not alert.checked %}
-      <button onclick="checkAlert({{ alert.id }})">확인</button>
-      {% endif %}
+      <!-- 원래 위치 -->
     </a>
+    {% if not alert.checked %}
+    <button id="check-alert-{{ alert.id }}-button" onclick="checkAlert({{ alert.id }}); checkAlertModal({{ alert.id }}); loadNewAlert();">확인</button>
+    {% endif %}
     
   </div>
     {% endfor %}
@@ -72,15 +73,20 @@
       const checkHandleResponse = () => {
           if (requestCheckAlert.status < 400) {
               const {alert_id, new_alert_num} = JSON.parse(requestCheckAlert.response);
-              const newAlertMessage = document.querySelector(`#alert-${alert_id}`);
-              newAlertMessage.remove();
+              const newAlertMessage = document.querySelector(`#alert-${alert_id}`).firstChild;
+              newAlertMessage.style.color = '#828282';
+              const newAlertHover = document.querySelector(`#alert-${alert_id}-hover`);
+              newAlertHover.setAttribute("onMouseover", `document.querySelector('#alert-${alert_id}').firstChild.style.color='#0a58ca'`);
+              newAlertHover.setAttribute("onMouseout", `document.querySelector('#alert-${alert_id}').firstChild.style.color='#828282'`);
+              const checkAlertButton = document.querySelector(`#check-alert-${alert_id}-button`);
+              checkAlertButton.remove();
+              const alertDot = document.querySelector(`#alert-${alert_id}-dot`);
+              alertDot.className = 'alert__dot alert__dot-read';
               const alertNumDisplay = document.querySelector(`#alert-count`);
               if (new_alert_num != 0) {
-                  alertNumDisplay.innerHTML = `새로운 알림이 ${new_alert_num}개 있어요.`;
+                  alertNumDisplay.innerHTML = new_alert_num;
               } else {
-                  alertNumDisplay.innerHTML = `새로운 알림이 없어요.`;
-                  const checkAllAlertButton = document.querySelector(`#check-all-alert-button`);
-                  checkAllAlertButton.remove();
+                  alertNumDisplay.className = 'alert__count__none';
               }
           }
       };
@@ -109,11 +115,22 @@
           if (requestCheckAllAlert.status < 400) {
               const {all_alert_id} = JSON.parse(requestCheckAllAlert.response);
               for (let index = 0; index < all_alert_id.length; index++) {
-                  const newAlertMessage = document.querySelector(`#alert-${all_alert_id[index]}`);
-                  newAlertMessage.remove();
+                  try {
+                    const newAlertMessage = document.querySelector(`#alert-${all_alert_id[index]}`).firstChild;
+                    newAlertMessage.style.color = '#828282';
+                    const newAlertHover = document.querySelector(`#alert-${all_alert_id[index]}-hover`);
+                    newAlertHover.setAttribute("onMouseover", `document.querySelector('#alert-${all_alert_id[index]}').firstChild.style.color='#0a58ca'`);
+                    newAlertHover.setAttribute("onMouseout", `document.querySelector('#alert-${all_alert_id[index]}').firstChild.style.color='#828282'`);
+                    const checkAlertButton = document.querySelector(`#check-alert-${all_alert_id[index]}-button`);
+                    checkAlertButton.remove();
+                    const alertDot = document.querySelector(`#alert-${all_alert_id[index]}-dot`);
+                    alertDot.className = 'alert__dot alert__dot-read';
+                  } catch (e) {
+
+                  }
               }
               const alertNumDisplay = document.querySelector(`#alert-count`);
-              alertNumDisplay.innerHTML = `새로운 알림이 없어요.`;
+              alertNumDisplay.className = 'alert__count__none';
               const checkAllAlertButton = document.querySelector(`#check-all-alert-button`);
               checkAllAlertButton.remove();
           }
