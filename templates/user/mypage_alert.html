@@ -24,8 +24,8 @@
   </div>
   {% for alert in alerts %}
   <div class="alert__outer-container">
-    <a id="alert-{{ alert.id }}-hover" href="{{ alert.related_url }}" onclick="viewAlert({{ alert.id }})" class="alert__container{% if not alert.checked %} alert__container-unread{% endif %}">
-      <div class="alert-left">
+    <div id="alert-{{ alert.id }}-hover" class="alert__container{% if not alert.checked %} alert__container-unread{% endif %}">
+        <a href="{{ alert.related_url }}" onclick="viewAlert({{ alert.id }})"  class="alert-left">
         {% if not alert.checked %}
         <div>
           <div id="alert-{{ alert.id }}-dot" class="alert__dot alert__dot-unread"></div>
@@ -34,12 +34,12 @@
         <div id="alert-{{ alert.id }}-dot" class="alert__dot alert__dot-read"></div>
         {% endif %}
         <div id="alert-{{ alert.id }}" class="alert__content"><p>{{ alert.content }}</p><p>{{ alert.time_past }}</p></div>
-      </div>
+      </a>
       <!-- 원래 위치 -->
-    </a>
-    {% if not alert.checked %}
-    <button id="check-alert-{{ alert.id }}-button" onclick="checkAlert({{ alert.id }}); checkAlertModal({{ alert.id }}); loadNewAlert();">확인</button>
-    {% endif %}
+      {% if not alert.checked %}
+      <button id="check-alert-{{ alert.id }}-button" onclick="checkAlert({{ alert.id }}); checkAlertModal({{ alert.id }}); loadNewAlert();">확인</button>
+      {% endif %}
+    </div>
     
   </div>
     {% endfor %}
@@ -76,7 +76,6 @@
               const newAlertMessage = document.querySelector(`#alert-${alert_id}`).firstChild;
               newAlertMessage.style.color = '#828282';
               const newAlertHover = document.querySelector(`#alert-${alert_id}-hover`);
-              newAlertHover.setAttribute("onMouseover", `document.querySelector('#alert-${alert_id}').firstChild.style.color='#0a58ca'`);
               newAlertHover.setAttribute("onMouseout", `document.querySelector('#alert-${alert_id}').firstChild.style.color='#828282'`);
               const checkAlertButton = document.querySelector(`#check-alert-${alert_id}-button`);
               checkAlertButton.remove();

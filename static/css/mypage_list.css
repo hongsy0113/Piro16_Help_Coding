@@ -33,7 +33,7 @@
     display: none;
 }
 
-#check-all-alert-button, .alert__container > button {
+#check-all-alert-button, #check-all-alert-button-modal, .alert__container button {
     height: 29px;
     border-radius: 15px;
     border: 1px solid #37c6e5;
@@ -61,6 +61,11 @@
     text-decoration: none ;
     box-sizing: border-box;
     transition: 0.2s;
+}
+
+.alert__container a {
+    color: #828282;
+    text-decoration: none;
 }
 
 .alert__container:last-of-type, .point__container:last-of-type {

@@ -236,6 +236,10 @@ section {
   background-color: white;
 }
 
+.check-alert-button {
+  z-index: 22;
+}
+
 .header__alert-dropdown > div {
   width: 100%;
 }
@@ -283,10 +287,19 @@ section {
   border-bottom: none;
 }
 
-.header__alert > div {
+.header__alert > a {
   display: flex;
   align-items: center;
   gap: 20px;
+}
+
+.header__alert span {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  width: 350px;
 }
 /* 안 읽으면 파란 점으로 표시, 읽으면  투명 */
 .alert__dot {
@@ -337,4 +350,13 @@ section {
   flex-direction: row;
   justify-content: center;
   align-items: center;
+}
+
+
+/* 버튼 기본 형태 */
+
+button {
+  border: 1px solid #37c6e5;
+  color: #37c6e5;
+  background-color: white;
 }
