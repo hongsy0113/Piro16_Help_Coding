@@ -11,6 +11,7 @@ from django.http import JsonResponse, FileResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator 
 from django.db.models import Count
+from django.contrib import messages
 from django.views.generic import ListView, View
 from hitcount.views import HitCountDetailView
 from django.views.generic.detail import SingleObjectMixin
@@ -113,6 +114,8 @@ def question_list(request):
     return render(request, 'qna/question_list.html', context=ctx)
 
 def search_result(request):
+    if not request.GET.get('search') or request.GET.get('search').isspace():
+        return redirect('qna:question_list')
     if 'search' in request.GET:
         query = request.GET.get('search')
         questions = Question.objects.all().filter(
