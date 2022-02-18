@@ -72,7 +72,7 @@
 .content__bottom--text span {
     font-family: Noto Sans CJK KR;
     font-weight: bold;
-    font-size: 24px;
+    font-size: 23px;
     line-height: 105%;
     text-align: center;
     color: #4e4e4e;
@@ -97,7 +97,7 @@
 }
 
 /* 모달 닫기 버튼 */
-.tag-guide__close--btn {
+.tag-guide__close svg {
     position: absolute;
     right: 40px;
     top: 42px;

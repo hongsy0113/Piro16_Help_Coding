@@ -18,20 +18,22 @@
     font-weight: bold;
     padding: 0;
     margin: 0;
+
 }
 
 #alert-count {
-    height: 29px;
-    border-radius: 15px;
-    background-color: #37c6e5;
-    color: white;
-    font-size: 22px;
-    padding: 4px 15px 5px;
+  height: 29px;
+  border-radius: 15px;
+  background-color: #37c6e5;
+  color: white;
+  font-size: 22px;
+  padding: 4px 15px 5px;
 }
 
 .alert__count__none {
-    display: none;
+  display: none;
 }
+
 
 #check-all-alert-button, #check-all-alert-button-modal, .alert__container button {
     height: 29px;
@@ -43,25 +45,28 @@
     padding: 4px 15px 5px;
     line-height: 100%;
     background-color: white;
+
 }
 
 .alert__title #check-all-alert-button {
-    margin-right: 20px;
+  margin-right: 20px;
 }
 
-.alert__container, .point__container {
-    width: 100%;
-    height: 80px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 20px;
-    color: #828282;
-    border-bottom: 1px solid #e5e5e5;
-    text-decoration: none ;
-    box-sizing: border-box;
-    transition: 0.2s;
+.alert__container,
+.point__container {
+  width: 100%;
+  height: 80px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  color: #828282;
+  border-bottom: 1px solid #e5e5e5;
+  text-decoration: none;
+  box-sizing: border-box;
+  transition: 0.2s;
 }
+
 
 .alert__container a {
     color: #828282;
@@ -70,17 +75,18 @@
 
 .alert__container:last-of-type, .point__container:last-of-type {
     border-color: #bdbdbd;
+
 }
 
-
-.alert-left, .point-left {
-    display: flex;
-    gap: 30px;
-    align-items: center;
+.alert-left,
+.point-left {
+  display: flex;
+  gap: 30px;
+  align-items: center;
 }
 
-.alert__outer-container :hover{
-    background-color: #f7f7f7;
+.alert__outer-container :hover {
+  background-color: #f7f7f7;
 }
 
 /* 안 읽으면 파란 점으로 표시, 읽으면  투명
@@ -99,121 +105,119 @@
 } */
 
 .alert__content {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 }
 
 .alert__content p:first-of-type {
-    font-size: 20px;
-    font-weight: bold;
-    margin: 0;
-    margin-right: 20px;
+  font-size: 20px;
+  font-weight: bold;
+  margin: 0;
+  margin-right: 20px;
 }
 
 .alert__content p:last-of-type {
-    font-size: 16px;
-    margin: 0;
+  font-size: 16px;
+  margin: 0;
 }
 
 .alert__container-unread p:first-of-type {
-    color: black;
+  color: black;
 }
 
 .alert__container > button {
-    justify-self: flex-end;
-    background-color: white;
-    z-index: 11;
+  justify-self: flex-end;
+  background-color: white;
+  z-index: 11;
 }
 
 /* 포인트 기록 */
 .point-left p {
-    font-size: 20px;
-    margin: 0;
-    color: black;
+  font-size: 20px;
+  margin: 0;
+  color: black;
 }
 
 .point-left p:first-of-type {
-    font-weight: bold;
-    color: #37c6e5;
-    width: 45px;
+  font-weight: bold;
+  color: #37c6e5;
+  width: 45px;
 }
-
-
 
 /* 페이지네이션 */
 
 .pagination-box {
-    display: flex;
-    justify-content: center;
-    padding-top: 20px;
-    padding-bottom: 30px;
+  display: flex;
+  justify-content: center;
+  padding-top: 20px;
+  padding-bottom: 30px;
 }
 
 .pagination {
-    display: flex;
-    list-style: none;
+  display: flex;
+  list-style: none;
 }
 
 /* 현재 페이지가 아닐 경우 */
 .page-link {
-    border: 1px solid #37C6E6;
-    box-sizing: border-box;
-    text-decoration: none;
-    font-family: Noto Sans CJK KR;
-    font-weight: bold;
-    font-size: 18px;
-    line-height: 150%;
-    text-align: center;
-    color: #37C6E5;
-    padding: 6px 14px;
-    background-color: #ffffff;
-    border-radius: 100%;
-    margin-right: 10px;
-    box-sizing: border-box;
+  border: 1px solid #37c6e6;
+  box-sizing: border-box;
+  text-decoration: none;
+  font-family: Noto Sans CJK KR;
+  font-weight: bold;
+  font-size: 18px;
+  line-height: 150%;
+  text-align: center;
+  color: #37c6e5;
+  padding: 6px 14px;
+  background-color: #ffffff;
+  border-radius: 100%;
+  margin-right: 10px;
+  box-sizing: border-box;
 }
 
 /* 현재 페이지 표시 */
 .page-link:hover {
-    text-decoration: none;
-    font-family: Noto Sans CJK KR;
-    font-weight: bold;
-    font-size: 18px;
-    line-height: 150%;
-    text-align: center;
-    color: #FFFFFF;
-    padding: 6px 14px;
-    background-color: #37C6E5;
-    border-radius: 100%;
-    margin-right: 10px;
-    box-sizing: border-box;
+  text-decoration: none;
+  font-family: Noto Sans CJK KR;
+  font-weight: bold;
+  font-size: 18px;
+  line-height: 150%;
+  text-align: center;
+  color: #ffffff;
+  padding: 6px 14px;
+  background-color: #37c6e5;
+  border-radius: 100%;
+  margin-right: 10px;
+  box-sizing: border-box;
 }
 
 .page-item-active {
-    text-decoration: none;
-    font-family: Noto Sans CJK KR;
-    font-weight: bold;
-    font-size: 18px;
-    line-height: 150%;
-    text-align: center;
-    color: #FFFFFF;
-    padding: 6px 14px;
-    background-color: #37C6E5;
-    border-radius: 100%;
-    margin-right: 10px;
-    box-sizing: border-box;
+  text-decoration: none;
+  font-family: Noto Sans CJK KR;
+  font-weight: bold;
+  font-size: 18px;
+  line-height: 150%;
+  text-align: center;
+  color: #ffffff;
+  padding: 6px 14px;
+  background-color: #37c6e5;
+  border-radius: 100%;
+  margin-right: 10px;
+  box-sizing: border-box;
 }
 
 .page-item {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .all__page-sign {
-    background-color: none;
-    margin-right: 20px;
+  background-color: none;
+  margin-right: 20px;
 }
 
 .sign-next {
-    margin-left: 10px;
+  margin-left: 10px;
 }

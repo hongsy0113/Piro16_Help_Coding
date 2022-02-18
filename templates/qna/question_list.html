@@ -8,6 +8,10 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}">
 {% endblock %}
 
+{% block js %}
+<script type="text/javascript" src="/static/js/qna_list.js" defer></script>
+{% endblock %}
+
 {% block title %} 도와줘, 코딩 | 묻고 답하기 {% endblock %}
 
 
@@ -28,8 +32,8 @@
     <div class="qna__search-container">
         <form class="qna__search-box" action="{% url 'qna:search_result' %}" method="get">
             {% csrf_token %}
-            <input type="search" placeholder="궁금한 내용을 검색해보세요!" name="search" />
-            <button type="submit">
+            <input type="search" placeholder="궁금한 내용을 검색해보세요!" name="search" class="qna__search__input" />
+            <button type="submit" class="qna__search__submit">
                 <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M25.1504 22.115L20.2822 17.2468C20.0625 17.0271 19.7646 16.905 19.4521 16.905H18.6562C20.0039 15.1814 20.8047 13.0134 20.8047 10.655C20.8047 5.04468 16.2588 0.498779 10.6484 0.498779C5.03809 0.498779 0.492188 5.04468 0.492188 10.655C0.492188 16.2654 5.03809 20.8113 10.6484 20.8113C13.0068 20.8113 15.1748 20.0105 16.8984 18.6628V19.4587C16.8984 19.7712 17.0205 20.0691 17.2402 20.2888L22.1084 25.157C22.5674 25.616 23.3096 25.616 23.7637 25.157L25.1455 23.7751C25.6045 23.3162 25.6045 22.574 25.1504 22.115ZM10.6484 16.905C7.19629 16.905 4.39844 14.1121 4.39844 10.655C4.39844 7.20288 7.19141 4.40503 10.6484 4.40503C14.1006 4.40503 16.8984 7.198 16.8984 10.655C16.8984 14.1072 14.1055 16.905 10.6484 16.905Z" fill="#4E4E4E"/>
                 </svg>
@@ -158,17 +162,49 @@
         </li>
         {% endif %}
 
+        {% if questions.number|add:'-2' > 1 %}
+        <li class="all__page-item">
+            <a class="all__page-link" href="?{% param_replace page=questions.number|add:'-5' %}">
+                ...
+            </a>
+        </li>
+        {% endif %}
+
         {% for page_number in questions.paginator.page_range %}
             {% if page_number == questions.number %}
             <li class="all__page-item">
                 <a class="all__page-item-active" href="?{% param_replace page=page_number %}">{{ page_number }}</a>
             </li>
             {% else %}
-            <li class="all__page-item">
-                <a class="all__page-link" href="?{% param_replace page=page_number %}">{{ page_number }}</a>
-            </li>
+                {% if questions.number < 4 %}
+                    {% if page_number < 6 %}
+                        <li class="all__page-item">
+                            <a class="all__page-link" href="?{% param_replace page=page_number %}">{{ page_number }}</a>
+                        </li>
+                    {% endif %}
+                {% elif questions.number > questions.paginator.num_pages|add:'-2' %}
+                    {% if page_number > questions.paginator.num_pages|add:'-5' %}
+                        <li class="all__page-item">
+                            <a class="all__page-link" href="?{% param_replace page=page_number %}">{{ page_number }}</a>
+                        </li>
+                    {% endif %}
+                {% else %}
+                    {% if page_number > questions.number|add:'-3' and page_number < questions.number|add:'3' %}
+                        <li class="all__page-item">
+                            <a class="all__page-link" href="?{% param_replace page=page_number %}">{{ page_number }}</a>
+                        </li>
+                    {% endif %}
+                {% endif %}
             {% endif %}
         {% endfor %}
+
+        {% if questions.paginator.num_pages > questions.number|add:'2' %}
+        <li class="all__page-item">
+            <a class="all__page-link" href="?{% param_replace page=questions.number|add:'5' %}">
+                ...
+            </a>
+        </li>
+        {% endif %}
 
         {% if questions.has_next %}
         <li class="all__page-item">

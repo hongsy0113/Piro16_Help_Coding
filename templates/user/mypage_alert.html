@@ -22,6 +22,8 @@
     </div>
     {% endif %}
   </div>
+  <div class="data-description">질문에 답변이 달리거나, 배지를 획득하거나, 그룹에 가입되면 알림이 와요! 1~2주 정도 지난 오래된 알림은 자동으로 삭제돼요.</div>
+  {% if alerts %}
   {% for alert in alerts %}
   <div class="alert__outer-container">
     <div id="alert-{{ alert.id }}-hover" class="alert__container{% if not alert.checked %} alert__container-unread{% endif %}">
@@ -42,7 +44,11 @@
     </div>
     
   </div>
-    {% endfor %}
+  {% endfor %}
+  {% else %}
+  <div class="data-none">최근 알림이 없어요.</div>
+  {% endif %}
+  
     <script>
         const requestViewAlert = new XMLHttpRequest();
   
@@ -125,7 +131,8 @@
                     const alertDot = document.querySelector(`#alert-${all_alert_id[index]}-dot`);
                     alertDot.className = 'alert__dot alert__dot-read';
                   } catch (e) {
-
+                    console.log(e);
+                    console.log(all_alert_id[index]);
                   }
               }
               const alertNumDisplay = document.querySelector(`#alert-count`);

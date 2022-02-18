@@ -8,6 +8,10 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}">
 {% endblock %}
 
+{% block js %}
+<script type="text/javascript" src="/static/js/group_post_list.js" defer></script>
+{% endblock %}
+
 {% block title %} 도와줘, 코딩 | {{ group.name }} | 커뮤니티 {% endblock %}
 
 {% block content %}
@@ -82,56 +86,59 @@
 
     <div class="group-post__list">  <!-- 게시글 목록 시작 -->
 
-        <div class="gridbox">  
-            {% for post, value in posts_value_dict.items %}
-            <div class="gridbox__item-post">    <!-- 그룹 게시글 하나 시작 -->
-                <div class="img__post">
-                    {% if post.image %}
-                    <img src="{{ post.image.url }}" height="200" width="200" class="img__post-img" />
-                    {% elif value.1 %}
-                    <!-- 스크래치, 엔트리 iframe이 들어가있다면 해당하는 썸네일이 목록에서 보이도록 -->
-                    <img alt="" src="{{ value.1 | safe}}" height="200" width="200" class="img__post-img">
-                    {% else %}
-                    <img src="/static/img/none_image_group_post.png" height="200" width="200" class="img__post-img" />
-                    {% endif %}
-                </div>
+        <div class="gridbox">
+            {% for post, value in posts_value_dict.items %}    
+                <div class="gridbox__item-post">    <!-- 그룹 게시글 하나 시작 -->
+                    <a href="{% url 'group:post_detail' group.pk post.pk %}">    
+                        <div class="img__post">
+                            {% if post.image %}
+                            <img src="{{ post.image.url }}" height="200" width="200" class="img__post-img" />
+                            {% elif value.1 %}
+                            <!-- 스크래치, 엔트리 iframe이 들어가있다면 해당하는 썸네일이 목록에서 보이도록 -->
+                            <img alt="" src="{{ value.1 | safe}}" height="200" width="200" class="img__post-img">
+                            {% else %}
+                            <img src="/static/image/none_image_group_post.png" height="200" width="200" class="img__post-img" />
+                            {% endif %}
+                        </div>
 
-                <div class="group_post-tag">   <!-- 게시글 태그 수정 여기서 해주세요 -->
-                    {% if post.category == 'S' %}
-                    <span class="post-tag post-tag__S">자랑</span>
-                    {% elif post.category == 'Q' %}
-                    <span class="post-tag post-tag__Q">질문</span>
-                    {% else %}
-                    <span class="post-tag post-tag__E">기타</span>
-                    {% endif %}
-                </div>
+                        <div class="group_post-tag">   <!-- 게시글 태그 수정 여기서 해주세요 -->
+                            {% if post.category == 'S' %}
+                            <span class="post-tag post-tag__S">자랑</span>
+                            {% elif post.category == 'Q' %}
+                            <span class="post-tag post-tag__Q">질문</span>
+                            {% else %}
+                            <span class="post-tag post-tag__E">기타</span>
+                            {% endif %}
+                        </div>
 
-                <div class="comment__post">   <!-- 댓글 개수 -->
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-                    <path d="M13.1592 0.505859H1.90918C0.875 0.505859 0.0341797 1.34668 0.0341797 2.38086V10.8184C0.0341797 11.8525 0.875 12.6934 1.90918 12.6934H4.72168V15.1543C4.72168 15.4414 5.0498 15.6084 5.28125 15.4385L8.94043 12.6934H13.1592C14.1934 12.6934 15.0342 11.8525 15.0342 10.8184V2.38086C15.0342 1.34668 14.1934 0.505859 13.1592 0.505859Z" fill="white"/>
-                    </svg>
-                    <span>{{ value.0 }}</span>    <!-- 댓글 개수 수정 여기서 해주세요 -->
-                </div>
+                        <div class="comment__post">   <!-- 댓글 개수 -->
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <path d="M13.1592 0.505859H1.90918C0.875 0.505859 0.0341797 1.34668 0.0341797 2.38086V10.8184C0.0341797 11.8525 0.875 12.6934 1.90918 12.6934H4.72168V15.1543C4.72168 15.4414 5.0498 15.6084 5.28125 15.4385L8.94043 12.6934H13.1592C14.1934 12.6934 15.0342 11.8525 15.0342 10.8184V2.38086C15.0342 1.34668 14.1934 0.505859 13.1592 0.505859Z" fill="white"/>
+                            </svg>
+                            <span>{{ value.0 }}</span>    <!-- 댓글 개수 수정 여기서 해주세요 -->
+                        </div>
+                    </a>
 
-                <div class="content__post">
-                    <!-- 그룹 이름 -->
-                    <div class="content__post-titlebox">
-                        <!-- 그룹 게시글 디테일 페이지로 이동 (후에 수정 필요) -->
-                        <a href="{% url 'group:post_detail' group.pk post.pk %}" class="content__post-title">
-                            <span class="post-title">{{ post.title }}</span>
-                        </a>
-                    </div>
-                    <!-- 작품 소개글 -->
-                    <div class="content__post-intro">
-                        <span class="post-intro">{{ post.content }}</span>
-                    </div>
-                    <!-- 글 정보 -->
-                    <div class="content__post-info">
-                        <span class="post-info">{{ post.created_at | date:'y.m.d' }} · {% if post.user %}<a href="{% url 'user:public_userpage' post.user.pk %}" style="text-decoration: none; color:#828282;">{{ post.user }}</a>{% else %}(알 수 없음){% endif %} · 조회  {% get_hit_count for post %} · 좋아요 {{ post.like_user.all | length }}</span>
-                        <!-- <div class="info-like post-info"> · 좋아요 {{ post.like_user.all | length }}</div>  -->
-                    </div>
-                </div>
-            </div>
+                    <a href="{% url 'group:post_detail' group.pk post.pk %}"> 
+                        <div class="content__post">
+                            <!-- 그룹 이름 -->
+                            <div class="content__post-titlebox">
+                                <!-- 그룹 게시글 디테일 페이지로 이동 (후에 수정 필요) -->
+                                <span class="post-title content__post-title">{{ post.title }}</span>
+                            </div>
+                            <!-- 작품 소개글 -->
+                            <div class="content__post-intro">
+                                <span class="post-intro">{{ post.content }}</span>
+                            </div>
+                            <!-- 글 정보 -->
+                            <div class="content__post-info">
+                                <span class="post-info">{{ post.created_at | date:'y.m.d' }} · {% if post.user %} {{ post.user }} {% else %}(알 수 없음){% endif %} · 조회  {% get_hit_count for post %} · 좋아요 {{ post.like_user.all | length }}</span>
+                                <!-- <div class="info-like post-info"> · 좋아요 {{ post.like_user.all | length }}</div>  -->
+                            </div>
+                        </div>
+                    </a>  
+                </div>   
+
             {% endfor %}
         </div>
     </div>
@@ -142,8 +149,8 @@
         <a class="group_post__ask-btn" href="{% url 'group:post_create' group.pk %}">작품 공유하기</a>
         <form class="group_post__search-box" action="{% url 'group:search_result' group.pk %}" method="get">
             {% csrf_token %}
-            <input type="search" placeholder="작품을 검색해보세요!" name="search" />
-            <button type="submit">
+            <input type="search" placeholder="작품을 검색해보세요!" name="search" class="group_post__search__input"/>
+            <button type="submit" class="group_post__search__submit">
                 <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M25.1504 22.115L20.2822 17.2468C20.0625 17.0271 19.7646 16.905 19.4521 16.905H18.6562C20.0039 15.1814 20.8047 13.0134 20.8047 10.655C20.8047 5.04468 16.2588 0.498779 10.6484 0.498779C5.03809 0.498779 0.492188 5.04468 0.492188 10.655C0.492188 16.2654 5.03809 20.8113 10.6484 20.8113C13.0068 20.8113 15.1748 20.0105 16.8984 18.6628V19.4587C16.8984 19.7712 17.0205 20.0691 17.2402 20.2888L22.1084 25.157C22.5674 25.616 23.3096 25.616 23.7637 25.157L25.1455 23.7751C25.6045 23.3162 25.6045 22.574 25.1504 22.115ZM10.6484 16.905C7.19629 16.905 4.39844 14.1121 4.39844 10.655C4.39844 7.20288 7.19141 4.40503 10.6484 4.40503C14.1006 4.40503 16.8984 7.198 16.8984 10.655C16.8984 14.1072 14.1055 16.905 10.6484 16.905Z" fill="#4E4E4E"/>
                 </svg>
@@ -176,6 +183,14 @@
             </a>
         </li>
         {% endif %}
+        
+        {% if posts.number|add:'-2' > 1 %}
+        <li class="all__page-item">
+            <a class="all__page-link" href="?{% param_replace page=posts.number|add:'-5' %}">
+                ...
+            </a>
+        </li>
+        {% endif %}
 
         {% for page_number in posts.paginator.page_range %}
             {% if page_number == posts.number %}
@@ -183,11 +198,35 @@
                 <a class="all__page-item-active" href="?{% param_replace page=page_number %}">{{ page_number }}</a>
             </li>
             {% else %}
-            <li class="all__page-item">
-                <a class="all__page-link" href="?{% param_replace page=page_number %}">{{ page_number }}</a>
-            </li>
+                {% if posts.number < 4 %}
+                    {% if page_number < 6 %}
+                        <li class="all__page-item">
+                            <a class="all__page-link" href="?{% param_replace page=page_number %}">{{ page_number }}</a>
+                        </li>
+                    {% endif %}
+                {% elif posts.number > posts.paginator.num_pages|add:'-2' %}
+                    {% if page_number > posts.paginator.num_pages|add:'-5' %}
+                        <li class="all__page-item">
+                            <a class="all__page-link" href="?{% param_replace page=page_number %}">{{ page_number }}</a>
+                        </li>
+                    {% endif %}
+                {% else %}
+                    {% if page_number > posts.number|add:'-3' and page_number < posts.number|add:'3' %}
+                        <li class="all__page-item">
+                            <a class="all__page-link" href="?{% param_replace page=page_number %}">{{ page_number }}</a>
+                        </li>
+                    {% endif %}
+                {% endif %}
             {% endif %}
         {% endfor %}
+
+        {% if posts.paginator.num_pages > posts.number|add:'2' %}
+        <li class="all__page-item">
+            <a class="all__page-link" href="?{% param_replace page=posts.number|add:'5' %}">
+                ...
+            </a>
+        </li>
+        {% endif %}
 
         {% if posts.has_next %}
         <li class="all__page-item">
