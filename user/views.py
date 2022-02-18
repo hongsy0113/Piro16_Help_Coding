@@ -301,20 +301,6 @@ def unauthenticated_user_delete(email):
 
 
 def my_page(request):
-    schedule, created = IntervalSchedule.objects.get_or_create(
-        every=10, period=IntervalSchedule.SECONDS,)
-    # 'test_task'가 등록되어 있으면,
-    if PeriodicTask.objects.filter(name='test_task').exists():
-        p_test = PeriodicTask.objects.get(name='test_task')
-        p_test.enabled = True  # 실행시킨다.
-        p_test.interval = schedule
-        p_test.save()
-    else:  # 'test_task'가 등록되어 있지 않으면, 새로 생성한다
-        PeriodicTask.objects.create(
-            interval=schedule,  # 앞서 정의한 schedule
-            name='test_task',
-            task='bracken.tasks.test_task',
-        )
     user = request.user
     if user == AnonymousUser():
         return redirect('user:login')
@@ -510,7 +496,20 @@ def check_all_alert_ajax(request):
             all_alert_id.append(alert.id)
             alert.checked = True
             alert.save()
+    all_alert_id.reverse()
     return JsonResponse({'all_alert_id': all_alert_id})
+
+
+# Load New Alert (Ajax)
+@csrf_exempt
+def load_new_alert_ajax(request):
+    try:
+        new_alert = Alert.objects.filter(
+            user=request.user, checked=False).order_by('-time')[2]
+    except:
+        return None
+    return JsonResponse({'new_alert_id': new_alert.id, 'new_alert_content': new_alert.content,
+                         'new_alert_related_url': new_alert.related_url()})
 
 
 # Set Representative Reward (Ajax)
@@ -528,6 +527,7 @@ def representative_reward_ajax(request):
     user.representative_reward = reward
     user.save()
     return JsonResponse({'previous_id': previous_id, 'reward_id': reward_id})
+
 
 # Get Reward Date (Ajax)
 

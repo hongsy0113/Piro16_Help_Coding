@@ -50,27 +50,27 @@
                 </a>
                 <div class="header__alert-dot {% if user.has_new_alert %}alert__dot-unread{% else %}alert__dot-read{% endif %}"></div> <!-- 알림 있으면 파란 점 -->
                 {% if user.has_new_alert %}
-                <div class="header__alert-dropdown"> <!-- 알림 호버 창 때문에 만든 것 (찬영) -->
-                    <div>새로운 알림이 {{ user.has_new_alert }}개 있어요.</div>
+                <div class="header__alert-dropdown">
+                    <div id="alert-count-modal">새로운 알림이 {{ user.has_new_alert }}개 있어요.</div>
                     <div class="header__alerts">
                         {% for alert in user.get_new_alert %}
-                        <a href="{{ alert.related_url }}" onclick="viewAlert({{ alert.id }})" id="alert-{{ alert.id }}" class="header__alert">
+                        <a href="{{ alert.related_url }}" onclick="viewAlertModal({{ alert.id }})" id="alert-{{ alert.id }}-modal" class="header__alert">
                             <div>
                                 <div class="alert__dot alert__dot-unread"></div>
                                 <span>{{ alert.content }}</span>
                             </div>
-                            <button onclick="checkAlert({{ alert.id }})">확인</button> <!-- 이거 Ajax는 css 되고서 구현해야 할 듯 -->
                         </a>
+                        <button id="check-alert-{{ alert.id }}-button-modal" onclick="checkAlertModal({{ alert.id }}); loadNewAlert(); checkAlert({{ alert.id }});">확인</button> <!-- 이거 Ajax는 css 되고서 구현해야 할 듯 -->
                         {% endfor %}
                     </div>
                     <div>
                         <a href="{% url 'user:mypage_alert' %}">전체 알림 보기</a>
-                        <button id="check-all-alert-button" onclick="checkAllAlert()">전체 확인</button>
+                        <button id="check-all-alert-button-modal" onclick="checkAllAlertModal(); checkAllAlert()">전체 확인</button>
                     </div>
                     <!-- <div style="justify-content: center;">
                         <p>새로운 알림이 없어요.</p>
                     </div> -->
-                </div> <!-- 여기까지 -->
+                </div>
                 {% endif %}
                 </div>
                 <a class="header__searchbtn" href="#"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -105,77 +105,143 @@
             </div>
         </div>
         <script>
-            const requestViewAlert = new XMLHttpRequest();
+            const requestViewAlertModal = new XMLHttpRequest();
       
-            const viewAlert = (id) => {
+            const viewAlertModal = (id) => {
                 const url = "/mypage/alert/check_ajax/";
-                requestViewAlert.open("POST", url, true);
-                requestViewAlert.setRequestHeader(
+                requestViewAlertModal.open("POST", url, true);
+                requestViewAlertModal.setRequestHeader(
                     "Content-Type",
                     "application/x-www-form-urlencoded"
                 );
-                requestViewAlert.send(JSON.stringify({id: id}));
+                requestViewAlertModal.send(JSON.stringify({id: id}));
             };
         </script>
 
         <script>
-            const requestCheckAlert = new XMLHttpRequest();
+            const requestCheckAlertModal = new XMLHttpRequest();
 
-            const checkAlert = (id) => {
+            const checkAlertModal = (id) => {
                 const url = "/mypage/alert/check_ajax/";
-                requestCheckAlert.open("POST", url, true);
-                requestCheckAlert.setRequestHeader(
+                requestCheckAlertModal.open("POST", url, true);
+                requestCheckAlertModal.setRequestHeader(
                     "Content-Type",
                     "application/x-www-form-urlencoded"
                 );
-                requestCheckAlert.send(JSON.stringify({id: id}));
+                requestCheckAlertModal.send(JSON.stringify({id: id}));
             };
 
-            const checkHandleResponse = () => {
-                if (requestCheckAlert.status < 400) {
-                    const {alert_id, new_alert_num} = JSON.parse(requestCheckAlert.response);
-                    const newAlertMessage = document.querySelector(`#alert-${alert_id}`);
+            const checkModalHandleResponse = () => {
+                if (requestCheckAlertModal.status < 400) {
+                    const {alert_id, new_alert_num} = JSON.parse(requestCheckAlertModal.response);
+                    const newAlertMessage = document.querySelector(`#alert-${alert_id}-modal`);
                     newAlertMessage.remove();
+                    const checkAlertButton = document.querySelector(`#check-alert-${alert_id}-button-modal`);
+                    checkAlertButton.remove();
+                    const alertNumDisplay = document.querySelector(`#alert-count-modal`);
+                    if (new_alert_num != 0) {
+                        alertNumDisplay.innerHTML = `새로운 알림이 ${new_alert_num}개 있어요.`;
+                    } else {
+                        alertNumDisplay.innerHTML = `새로운 알림이 없어요.`;
+                        const checkAllAlertButton = document.querySelector(`#check-all-alert-button-modal`);
+                        checkAllAlertButton.remove();
+                    }
                 }
             };
 
-            requestCheckAlert.onreadystatechange = () => {
-                if (requestCheckAlert.readyState === XMLHttpRequest.DONE) {
-                    checkHandleResponse();
+            requestCheckAlertModal.onreadystatechange = () => {
+                if (requestCheckAlertModal.readyState === XMLHttpRequest.DONE) {
+                    checkModalHandleResponse();
                 }
             };
         </script>
         
         <script>
-            const requestCheckAllAlert = new XMLHttpRequest();
+            const requestCheckAllAlertModal = new XMLHttpRequest();
 
-            const checkAllAlert = () => {
+            const checkAllAlertModal = () => {
                 const url = "/mypage/alert/check_all_ajax/";
-                requestCheckAllAlert.open("POST", url, true);
-                requestCheckAllAlert.setRequestHeader(
+                requestCheckAllAlertModal.open("POST", url, true);
+                requestCheckAllAlertModal.setRequestHeader(
                     "Content-Type",
                     "application/x-www-form-urlencoded"
                 );
-                requestCheckAllAlert.send(JSON.stringify());
+                requestCheckAllAlertModal.send(JSON.stringify());
             };
 
-            const checkAllHandleResponse = () => {
-                if (requestCheckAllAlert.status < 400) {
-                    const {all_alert_id} = JSON.parse(requestCheckAllAlert.response);
+            const checkAllModalHandleResponse = () => {
+                if (requestCheckAllAlertModal.status < 400) {
+                    const {all_alert_id} = JSON.parse(requestCheckAllAlertModal.response);
                     for (let index = 0; index < all_alert_id.length; index++) {
                         try {
-                            const newAlertMessage = document.querySelector(`#alert-${all_alert_id[index]}`);
+                            const newAlertMessage = document.querySelector(`#alert-${all_alert_id[index]}-modal`);
                             newAlertMessage.remove();
+                            const checkAlertButton = document.querySelector(`#check-alert-${all_alert_id[index]}-button-modal`);
+                            checkAlertButton.remove();
                         } catch (e) {
                             // Do nothing
                         }
                     }
+                    const alertNumDisplay = document.querySelector(`#alert-count-modal`);
+                    alertNumDisplay.innerHTML = `새로운 알림이 없어요.`;
+                    const checkAllAlertButton = document.querySelector(`#check-all-alert-button-modal`);
+                    checkAllAlertButton.remove();
                 }
             };
 
-            requestCheckAllAlert.onreadystatechange = () => {
-                if (requestCheckAllAlert.readyState === XMLHttpRequest.DONE) {
-                    checkAllHandleResponse();
+            requestCheckAllAlertModal.onreadystatechange = () => {
+                if (requestCheckAllAlertModal.readyState === XMLHttpRequest.DONE) {
+                    checkAllModalHandleResponse();
+                }
+            };
+        </script>
+
+        <script>
+            const requestLoadNewAlert = new XMLHttpRequest();
+
+            const loadNewAlert = () => {
+                const url = "/mypage/alert/load_new_ajax/";
+                requestLoadNewAlert.open("POST", url, true);
+                requestLoadNewAlert.setRequestHeader(
+                    "Content-Type",
+                    "application/x-www-form-urlencoded"
+                );
+                requestLoadNewAlert.send(JSON.stringify());
+            };
+
+            const loadNewAlertHandleResponse = () => {
+                if (requestLoadNewAlert.status < 400) {
+                    try {
+                        const {new_alert_id, new_alert_content, new_alert_related_url} = JSON.parse(requestLoadNewAlert.response);
+                        const originalAlert = document.querySelector('.header__alerts');
+                        const newAlertA = document.createElement('a');
+                        newAlertA.href = new_alert_related_url;
+                        newAlertA.setAttribute('onclick', `viewAlertModal(${new_alert_id})`);
+                        newAlertA.id = `alert-${new_alert_id}-modal`;
+                        newAlertA.className = 'header__alert';
+                        const newAlertDiv1 = document.createElement('div');
+                        const newAlertDiv2 = document.createElement('div');
+                        newAlertDiv2.className = 'alert__dot alert__dot-unread';
+                        const newAlertSpan = document.createElement('span');
+                        newAlertSpan.innerHTML = new_alert_content;
+                        const newAlertButton = document.createElement('button');
+                        newAlertButton.id = `check-alert-${new_alert_id}-button-modal`;
+                        newAlertButton.setAttribute('onclick', `checkAlertModal(${new_alert_id}); loadNewAlert(); checkAlert(${new_alert_id});`);
+                        newAlertButton.innerHTML = '확인';
+                        originalAlert.appendChild(newAlertA);
+                        newAlertA.appendChild(newAlertDiv1);
+                        newAlertDiv1.appendChild(newAlertDiv2);
+                        newAlertDiv1.appendChild(newAlertSpan);
+                        originalAlert.appendChild(newAlertButton);
+                    } catch (e) {
+
+                    }
+                }
+            };
+
+            requestLoadNewAlert.onreadystatechange = () => {
+                if (requestLoadNewAlert.readyState === XMLHttpRequest.DONE) {
+                    loadNewAlertHandleResponse();
                 }
             };
         </script>
