@@ -29,10 +29,6 @@
         <div class="main__qna__title">
             <p class="main__title">묻고 답하기</p>
         </div>
-        <!-- 왼쪽 화살표 -->
-        <svg id="qna__arrow-left" width="17" height="30" viewBox="0 0 17 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M15.8042 28.1117L2.69251 15L15.8042 1.88832" stroke="#C4C4C4" stroke-width="3"/>
-        </svg>
         <div class="main__qna__slidecontainer">
             <div class="main__qna__slideinner">
                 <div class="main__qna__box">
@@ -61,10 +57,18 @@
                 </div>
             </div>
         </div>
-        <!-- 오른쪽 화살표 -->
-        <svg id="qna__arrow-right" width="17" height="30" viewBox="0 0 17 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M1.65576 1.88831L14.7675 15L1.65576 28.1117" stroke="#C4C4C4" stroke-width="3"/>
-        </svg>            
+        <div class="main__arrow-container-outer" style="position: absolute; width: 100vw;">
+            <div class="main__arrow-container">
+                <!-- 왼쪽 화살표 -->
+                <svg id="qna__arrow-left" width="17" height="30" viewBox="0 0 17 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15.8042 28.1117L2.69251 15L15.8042 1.88832" stroke="#C4C4C4" stroke-width="3"/>
+                </svg>
+                <!-- 오른쪽 화살표 -->
+                <svg id="qna__arrow-right" width="17" height="30" viewBox="0 0 17 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M1.65576 1.88831L14.7675 15L1.65576 28.1117" stroke="#C4C4C4" stroke-width="3"/>
+                </svg>            
+            </div>
+        </div>
     </div>
 </div>
 
@@ -205,8 +209,6 @@
     let width = window.innerWidth;
     console.log('innerwidth: ',window.innerWidth);
     console.log(num);
-    // qnaBox.style.marginLeft = `${num}px`;
-    // element.style.gap = `${num*2}px`;
 
     function slideNext() {
         if (current >= count - 1) {

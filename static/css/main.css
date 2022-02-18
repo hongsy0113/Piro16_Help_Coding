@@ -332,16 +332,23 @@ p.main__title, .main__qna__box p {
     transition: 0.5s;
 }
 
+.main__arrow-container {
+    position: relative;
+    width: 1080px;
+    margin: 0 auto;
+    margin-top: -246px;
+}
+
 #qna__arrow-left{
     position:absolute;
-    left: 100px;
+    left: -100px;
     top: 260px;
     z-index: 11;
 }
 
 #qna__arrow-right{
     position:absolute;
-    right: 100px;
+    right: -100px;
     top: 260px;
     z-index: 11;
 }
