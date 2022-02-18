@@ -28,8 +28,8 @@
 }
 .mypage__representative_reward {
     position: absolute;
-    top: 156px;
-    right: -25px;
+    top: 6px;
+    left: -25px;
 }
 
 .mypage__profile__text {
@@ -58,6 +58,7 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
+    flex-grow: 6;
 }
 
 .mypage__profile__text-content > div {
@@ -71,6 +72,12 @@
 
 .mypage__profile__text-content p {
     margin: 0;
+}
+
+.mypage__profile__btn {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
 }
 
 .mypage__options {
@@ -87,7 +94,7 @@
     font-weight: bold;
     cursor: pointer;
     margin: 0;
-    padding-bottom: 5px;
+    padding-bottom: 12px;
     margin-bottom: -2px;
     border-bottom: none;
 }
@@ -102,7 +109,7 @@
 .mypage__reward__container> div {
     padding: 45px 30px;
     display: flex;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     gap: 35px;
 }
 
@@ -170,7 +177,7 @@
 }
 
 .mypage__question-left {
-    width: 870px;
+    width: 840px;
 }
 .mypage__question-left :first-child{
     font-size: 18px;
@@ -190,6 +197,10 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.mypage__question__content {
+    word-break: break-word;
 }
 
 .mypage__question-right {
@@ -249,6 +260,12 @@
 .mypage__message {
     color: #37C6E5;
     font-size: 18px !important;
+}
+
+.mypage__bottom-btn {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
 }
 
 /* 질문, 답변 기록 */

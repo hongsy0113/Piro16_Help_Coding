@@ -3,12 +3,15 @@
 {% load static %}
 {% block css %}
 <link rel="stylesheet" href="{% static 'css/mypage.css' %}">
+<link rel="stylesheet" href="{% static 'css/mypage_list.css' %}">
 {% endblock css %}
 
 {% block content %}
 <div>
-  <h3>○ 나의 업적들 ( {{ user.email }} )</h3>
-  <button class="btn btn-secondary"><a class="text-white" href="{% url 'user:mypage' %}" style="text-decoration: none">마이페이지로 돌아가기</a></button>
+  <div class="reward__title">
+    <h3>나의 업적</h3>
+    <button><a href="{% url 'user:mypage' %}" style="text-decoration: none; color: #37c6e5;">마이페이지로 돌아가기</a></button>
+  </div>
   <div class="mypage__reward__container">
     <div>
       {% for reward in rewards %}

@@ -1,4 +1,4 @@
-.alert__title, .point__title {
+.alert__title, .point__title, .reward__title {
     width: 100%;
     display: flex;
     justify-content: space-between;
@@ -6,13 +6,13 @@
     border-bottom: 1px solid #bdbdbd;
 }
 
-.alert__title >div, .point__title >div {
+.alert__title >div, .point__title >div , .reward__title>div{
     display: flex;
     gap: 10px;
     align-items: center;
 }
 
-.alert__title, .point__title h3 {
+.alert__title, .point__title h3, .reward__title h3 {
     font-size: 24px;
     line-height: 100%;
     font-weight: bold;
