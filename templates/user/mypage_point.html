@@ -17,7 +17,7 @@
   {% for point in points %}
   <div class="point__container">
     <div class="point-left">
-      <p>+ {{ point.point }}</p>
+      <p>{% if point.point > 0 %}+{% endif %}{{ point.point }}</p>
       <p>{{ point.get_type_display }}</p>
     </div>
     <div class="point-right">

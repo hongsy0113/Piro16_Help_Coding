@@ -308,7 +308,7 @@ def my_page(request):
     questions = Question.objects.filter(user=user).order_by('-updated_at')[:5]
     answers = Answer.objects.filter(user=user).order_by('-updated_at')[:5]
     ctx = {'user': user, 'rewards': rewards,
-           'questions': questions, 'answers': answers}
+           'questions': questions, 'answers': answers, 'periodic_tasks_timer': PERIODIC_TASKS_TIMER}
     return render(request, template_name='user/mypage.html', context=ctx)
 
 # My Page Revise
@@ -383,6 +383,41 @@ def my_page_revise(request):
         ctx = {'user': user, 'form': form, 'base_images': BASE_IMAGES, 'job_choice': JOB_CHOICE,
                'current_image': user.img.url.split('/')[-1], 'temp_img_location': '/media/user_{}/thumbnail/'.format(user.email)}
         return render(request, template_name='user/mypage_revise.html', context=ctx)
+
+# Drop
+
+
+def drop(request):
+    user = request.user
+    if user == AnonymousUser():
+        return redirect('user:login')
+    ctx = {'user': user, 'email': user.email}
+    return render(request, template_name='user/drop.html', context=ctx)
+
+# Drop Success
+
+
+def drop_success(request):
+    user = request.user
+    if user == AnonymousUser():
+        return redirect('user:login')
+    user.is_active = False
+    user.save()
+    current_site = get_current_site(request)
+    message = render_to_string('user/user_drop_email.html',
+                               {
+                                   'user': user,
+                                   'domain': current_site.domain,
+                                   'uid': urlsafe_base64_encode(force_bytes(user.pk)).encode().decode(),
+                                   'token': user_activation_token.make_token(user),
+                               }
+                               )
+    mail_subject = '[도와줘, 코딩] 회원탈퇴 확인 메일입니다.'
+    email = EmailMessage(mail_subject, message, to=[user.email])
+    # email.send()
+    ctx = {'user': user, 'email': user.email}
+    return render(request, template_name='user/drop_success.html', context=ctx)
+
 
 # List View (Question, Answer, Reward, Point)
 
@@ -474,8 +509,29 @@ class AlertView(MypageView):
         alerts = Alert.objects.filter(user=self.request.user).order_by('-time')
         return alerts
 
+# (Superuser) Periodic Tasks
+
+
+def periodic_tasks(request):
+    if request.user.is_superuser:
+        PERIODIC_TASKS_TIMER.timer = Timer(
+            initial_period(datetime.now()), periodic_tasks)
+        PERIODIC_TASKS_TIMER.timer.start()
+        messages.success(request, "DB 관리가 성공적으로 진행되고 있습니다.")
+        return redirect('user:mypage')
+
+# (Superuser) Initialize Rewards
+
+
+def initialize_rewards(request):
+    if request.user.is_superuser:
+        initializeReward()
+        messages.success(request, "업적 업데이트가 성공적으로 이루어졌습니다.")
+        return redirect('user:mypage')
 
 # Check Alert (Ajax)
+
+
 @csrf_exempt
 def check_alert_ajax(request):
     req = json.loads(request.body)
