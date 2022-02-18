@@ -250,7 +250,7 @@ a {
 /* 초대코드 도움말 모달 */
 .group__code--guide {
     display: none;
-    background-color: #BDBDBD;
+    background-color: #dddddd;
     border: 1px solid #4e4e4e;
     border-radius: 20px;
     width: 450px;
