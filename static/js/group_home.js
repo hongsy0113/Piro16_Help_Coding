@@ -96,14 +96,27 @@ const groupCodeHandleResponse = (message) => {
     groupCodeAlert.style.display = 'flex';
 }
 
+// const groupCodeGuideAlert = document.querySelector('.group__code--guide');
+// const groupCodeGuideHover = document.querySelector('.group__code--guide-hover');
 
-const groupCodeGuideAlert = document.querySelector('.group__code--guide');
+// groupCodeGuideHover.addEventListener('click', function(){
+//     groupCodeGuideAlert.style.display = 'flex';
+// })
+
+// groupCodeGuideHover.addEventListener('mouseout', (event) => {
+//     groupCodeGuideAlert.style.display = 'none';
+// })
+
 const groupCodeGuideHover = document.querySelector('.group__code--guide-hover');
+groupCodeGuideHover.addEventListener('click', groupCodeGuideClick);
 
-groupCodeGuideHover.addEventListener('cilck', function(){
-    groupCodeGuideAlert.style.display = 'flex';
-})
-
-groupCodeGuideHover.addEventListener('click', (event) => {
-    groupCodeGuideAlert.style.display = 'none';
-})
+function groupCodeGuideClick() {
+    const groupCodeGuideAlert = document.querySelector('.group__code--guide');
+    const displayGuide = document.querySelector('.group__code--guide').style.display;
+    
+    if (displayGuide == 'none') {
+        groupCodeGuideAlert.style.display = 'block';
+    } else {
+        groupCodeGuideAlert.style.display = 'none';
+    }
+}
