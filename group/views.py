@@ -97,7 +97,10 @@ def group_search_public(request):
     if user == AnonymousUser():
         return redirect('user:main')
     groups = Group.objects.all()
-    
+
+    if not request.GET.get('search') or request.GET.get('search').isspace():
+        return redirect('group:group_list')
+        
     if 'search' in request.GET:
         query = request.GET.get('search')
         groups = groups.filter(Q(name__icontains=query) & Q(mode='PUBLIC'))
@@ -831,7 +834,8 @@ def search_result(request, pk):
     user = request.user
     if user == AnonymousUser():
         return redirect('user:main')
-
+    if not request.GET.get('search') or request.GET.get('search').isspace():
+        return redirect('group:post_list', pk)
     if 'search' in request.GET:
         group = Group.objects.get(pk=pk)
         query = request.GET.get('search')
