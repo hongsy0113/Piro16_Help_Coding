@@ -175,6 +175,14 @@
             </a>
         </li>
         {% endif %}
+        
+        {% if posts.number|add:'-2' > 1 %}
+        <li class="all__page-item">
+            <a class="all__page-link" href="?{% param_replace page=posts.number|add:'-5' %}">
+                ...
+            </a>
+        </li>
+        {% endif %}
 
         {% for page_number in posts.paginator.page_range %}
             {% if page_number == posts.number %}
@@ -182,11 +190,35 @@
                 <a class="all__page-item-active" href="?{% param_replace page=page_number %}">{{ page_number }}</a>
             </li>
             {% else %}
-            <li class="all__page-item">
-                <a class="all__page-link" href="?{% param_replace page=page_number %}">{{ page_number }}</a>
-            </li>
+                {% if posts.number < 4 %}
+                    {% if page_number < 6 %}
+                        <li class="all__page-item">
+                            <a class="all__page-link" href="?{% param_replace page=page_number %}">{{ page_number }}</a>
+                        </li>
+                    {% endif %}
+                {% elif posts.number > posts.paginator.num_pages|add:'-2' %}
+                    {% if page_number > posts.paginator.num_pages|add:'-5' %}
+                        <li class="all__page-item">
+                            <a class="all__page-link" href="?{% param_replace page=page_number %}">{{ page_number }}</a>
+                        </li>
+                    {% endif %}
+                {% else %}
+                    {% if page_number > posts.number|add:'-3' and page_number < posts.number|add:'3' %}
+                        <li class="all__page-item">
+                            <a class="all__page-link" href="?{% param_replace page=page_number %}">{{ page_number }}</a>
+                        </li>
+                    {% endif %}
+                {% endif %}
             {% endif %}
         {% endfor %}
+
+        {% if posts.paginator.num_pages > posts.number|add:'2' %}
+        <li class="all__page-item">
+            <a class="all__page-link" href="?{% param_replace page=posts.number|add:'5' %}">
+                ...
+            </a>
+        </li>
+        {% endif %}
 
         {% if posts.has_next %}
         <li class="all__page-item">

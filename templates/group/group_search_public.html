@@ -137,7 +137,7 @@
     <ul class="all__pagination">
         {% if groups.has_previous %}
         <li class="all__page-item">
-            <a class="all__page-sign" href="?{% param_replace page=groups.previous_page_number %}">
+            <a class="all__page-sign" href="?{% param_replace page=groups.previous_page_number search=query %}">
                 <!-- 이전페이지 -->
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="24" viewBox="0 0 14 24" fill="none">
                 <path d="M12.7688 22.5918L2.02827 11.8513L12.7688 1.11076" stroke="#C4C4C4" stroke-width="2"/>
@@ -154,22 +154,56 @@
             </a>
         </li>
         {% endif %}
+        
+        
+        {% if groups.number|add:'-2' > 1 %}
+        <li class="all__page-item">
+            <a class="all__page-link" href="?{% param_replace page=groups.number|add:'-5' search=query %}">
+                ...
+            </a>
+        </li>
+        {% endif %}
 
         {% for page_number in groups.paginator.page_range %}
             {% if page_number == groups.number %}
             <li class="all__page-item">
-                <a class="all__page-item-active" href="?{% param_replace page=page_number %}">{{ page_number }}</a>
+                <a class="all__page-item-active" href="?{% param_replace page=page_number search=query  %}">{{ page_number }}</a>
             </li>
             {% else %}
-            <li class="all__page-item">
-                <a class="all__page-link" href="?{% param_replace page=page_number %}">{{ page_number }}</a>
-            </li>
+                {% if groups.number < 4 %}
+                    {% if page_number < 6 %}
+                        <li class="all__page-item">
+                            <a class="all__page-link" href="?{% param_replace page=page_number search=query  %}">{{ page_number }}</a>
+                        </li>
+                    {% endif %}
+                {% elif groups.number > groups.paginator.num_pages|add:'-2' %}
+                    {% if page_number > groups.paginator.num_pages|add:'-5' %}
+                        <li class="all__page-item">
+                            <a class="all__page-link" href="?{% param_replace page=page_number search=query  %}">{{ page_number }}</a>
+                        </li>
+                    {% endif %}
+                {% else %}
+                    {% if page_number > groups.number|add:'-3' and page_number < groups.number|add:'3' %}
+                        <li class="all__page-item">
+                            <a class="all__page-link" href="?{% param_replace page=page_number search=query  %}">{{ page_number }}</a>
+                        </li>
+                    {% endif %}
+                {% endif %}
             {% endif %}
         {% endfor %}
 
+        {% if groups.paginator.num_pages > groups.number|add:'2' %}
+        <li class="all__page-item">
+            <a class="all__page-link" href="?{% param_replace page=groups.number|add:'5' search=query  %}">
+                ...
+            </a>
+        </li>
+        {% endif %}
+        
+
         {% if groups.has_next %}
         <li class="all__page-item">
-            <a class="all__page-sign sign-next" href="?{% param_replace page=groups.next_page_number %}">
+            <a class="all__page-sign sign-next" href="?{% param_replace page=groups.next_page_number search=query  %}">
                 <!-- 다음페이지 -->
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="24" viewBox="0 0 14 24" fill="none">
                 <path d="M1.23096 1.11035L11.9715 11.8509L1.23096 22.5914" stroke="#C4C4C4" stroke-width="2"/>
