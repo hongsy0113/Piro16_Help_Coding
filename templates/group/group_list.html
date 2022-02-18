@@ -132,17 +132,49 @@
         </li>
         {% endif %}
 
+        {% if groups.number|add:'-2' > 1 %}
+        <li class="all__page-item">
+            <a class="all__page-link" href="?{% param_replace page=groups.number|add:'-5' %}">
+                ...
+            </a>
+        </li>
+        {% endif %}
+
         {% for page_number in groups.paginator.page_range %}
             {% if page_number == groups.number %}
             <li class="all__page-item">
-                <a class="all__page-item-active" href="?page={{ page_number }}&sort={{ sort_by }}">{{ page_number }}</a>
+                <a class="all__page-item-active" href="?{% param_replace page=page_number %}">{{ page_number }}</a>
             </li>
             {% else %}
-            <li class="all__page-item">
-                <a class="all__page-link" href="?page={{ page_number }}&sort={{ sort_by }}">{{ page_number }}</a>
-            </li>
+                {% if groups.number < 4 %}
+                    {% if page_number < 6 %}
+                        <li class="all__page-item">
+                            <a class="all__page-link" href="?{% param_replace page=page_number %}">{{ page_number }}</a>
+                        </li>
+                    {% endif %}
+                {% elif groups.number > groups.paginator.num_pages|add:'-2' %}
+                    {% if page_number > groups.paginator.num_pages|add:'-5' %}
+                        <li class="all__page-item">
+                            <a class="all__page-link" href="?{% param_replace page=page_number %}">{{ page_number }}</a>
+                        </li>
+                    {% endif %}
+                {% else %}
+                    {% if page_number > groups.number|add:'-3' and page_number < groups.number|add:'3' %}
+                        <li class="all__page-item">
+                            <a class="all__page-link" href="?{% param_replace page=page_number %}">{{ page_number }}</a>
+                        </li>
+                    {% endif %}
+                {% endif %}
             {% endif %}
         {% endfor %}
+
+        {% if groups.paginator.num_pages > groups.number|add:'2' %}
+        <li class="all__page-item">
+            <a class="all__page-link" href="?{% param_replace page=groups.number|add:'5' %}">
+                ...
+            </a>
+        </li>
+        {% endif %}
 
         {% if groups.has_next %}
         <li class="all__page-item">

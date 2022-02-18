@@ -96,10 +96,11 @@ def group_search_public(request):
     user = request.user
     if user == AnonymousUser():
         return redirect('user:main')
-
+    groups = Group.objects.all()
+    
     if 'search' in request.GET:
         query = request.GET.get('search')
-        groups = Group.objects.all().filter(Q(name__icontains=query) & Q(mode='PUBLIC'))
+        groups = groups.filter(Q(name__icontains=query) & Q(mode='PUBLIC'))
 
     sort_by = request.GET.get('sort', 'interest')
     if sort_by == 'name':
@@ -113,7 +114,7 @@ def group_search_public(request):
 
     # 페이징 처리
     page = request.GET.get('page', '1')
-    paginator = Paginator(groups, 6)    # 페이지당 6개씩 보여주기
+    paginator = Paginator(groups, 1)    # 페이지당 6개씩 보여주기
     page_obj = paginator.get_page(page)
 
     ctx = {
