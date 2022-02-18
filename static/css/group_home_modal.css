@@ -2,6 +2,10 @@ button {
     all: unset;
 }
 
+a {
+    margin: 0;
+}
+
 /* 모달 */
 .modal {  
     position: fixed;
@@ -29,7 +33,7 @@ button {
 .modal__content {
     position: relative;
     top: 0px;
-    width: 40%;
+    width: 600px;
     height: 500px;
     background-color: #FAFAFA;
     border: 2px solid #BDBDBD;
@@ -62,7 +66,7 @@ button {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 70px 0px 70px 0px;
+    padding: 35px 0px 35px 0px;
 }
 
 .modal__close {
@@ -89,27 +93,41 @@ button {
     gap: 30px;
     justify-content: center;
     align-items: center;
-    padding: 35px 0px 85px 0px;
+    padding: 40px 0px 77px 0px;
     width: 100%;
     border-bottom: 2px solid #BDBDBD;
     margin-bottom: 28px;
 }
 
+.group__join--box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+}
+
+.group__join--box span {
+    font-family: Roboto;
+    font-size: 16px;
+    color: #000000;
+}
+
 .public-group__join-btn a {
+    width: 220px;
+    margin-left: 8px;
+    padding: 21px 43px 22px;
     background: #37C6E6;
     border: 2px solid #37C6E6;
     box-sizing: border-box;
     border-radius: 41px;
-
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-family: Noto Sans CJK KR;
     font-weight: bold;
     font-size: 26px;
     line-height: 105%;
-    display: flex;
-    align-items: center;
-    text-align: center;
     color: #FFFFFF;
-    padding: 21px 43px 22px;
     text-decoration: none;
 }
 
@@ -119,18 +137,18 @@ button {
 }
 
 .private-group__join-btn {
+    width: 220px;
     background: #FF8989;
     border: 2px solid #FF8989;
     box-sizing: border-box;
     border-radius: 41px;
-
     font-family: Noto Sans CJK KR;
     font-weight: bold;
     font-size: 26px;
     line-height: 105%;
     display: flex;
     align-items: center;
-    text-align: center;
+    justify-content: center;
     color: #FFFFFF;
     padding: 21px 43px 22px;
     text-decoration: none;
@@ -152,7 +170,7 @@ button {
     position: relative;
     top: 0px;
     width: 40%;
-    max-height: 500px;
+    max-height: 800px;
     background-color: #FAFAFA;
     border: 2px solid #BDBDBD;
     box-sizing: border-box;
@@ -165,6 +183,13 @@ button {
     display: flex;
     flex-direction: column;
     /* gap: 60px; */
+}
+
+.group-join__inputbox--input {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
 }
 
 .group-code__input {
@@ -184,6 +209,11 @@ button {
     font-size: 24px;
     line-height: 100%;
     color: #828282;
+}
+
+/* 초대코드 input 옆 도움말 버튼 */
+.group__code--guide-hover svg {
+    width: 35px;
 }
 
 .group-code__submit {

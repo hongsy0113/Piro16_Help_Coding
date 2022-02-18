@@ -19,7 +19,7 @@
 .signup__page1, .signup__page2, .login__innercontainer, .revise__container {
     display: flex;
     flex-direction: column;
-    gap: 30px;
+    gap: 45px;
     align-items: flex-start;
     margin-bottom: 30px;
 }
@@ -33,16 +33,30 @@
     flex-direction: column;
     gap: 10px;
 }
-form label, #password_change {
+form label{
     font-weight: bold;
     font-size: 24px;
     line-height: 150%;
     color: #4f4f4f;
+    padding-bottom: 16px;
 }
 
-#password_change {
+.password_change {
     cursor: pointer;
-    text-decoration: underline;
+    padding: 8px 13px;
+    border: 1px solid #bdbdbd;
+    border-radius: 5px;
+    width: 540px;
+    font-weight: bold;
+    font-size: 24px;
+    line-height: 150%;
+    color: white;
+    background-color: #4f4f4f;
+}
+
+.password_change:hover {
+    color: #4f4f4f;
+    background-color: rgb(230, 230, 230);
 }
 
 form input, form textarea {
@@ -56,7 +70,7 @@ form input, form textarea {
 }
 
 form textarea {
-    padding: 10px 15px;
+    padding: 15px 15px;
 }
 form input::placeholder, form textarea::placeholder {
     color: #828282;
@@ -82,6 +96,64 @@ form input::placeholder, form textarea::placeholder {
     gap: 15px;
 }
 
+.userform__image__inputcontainer {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.user-base__image {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 10px;
+}
+
+.user-select__image {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.user-select__image--top {
+    display: flex;
+    gap: 15px;
+}
+
+.user-select__image p {
+    font-size: 16px;
+    line-height: 150%;
+    color: #4f4f4f;
+    padding: 9px 12px;
+    border: 1px solid #828282;
+    border-radius: 5px;
+    width: 500px;
+    height: 42px;
+    overflow: hidden;
+}
+
+.user-select__image label, .user-not-change__image label {
+    font-size: 18px;
+    line-height: 150%;
+    color: #4f4f4f;
+    cursor: pointer;
+}
+
+.img_display {
+    border-radius: 50px;
+}
+
+.not-change-img__display {
+    margin: 0px 10px;
+}
+
+.input_img_upload {
+    overflow: hidden;
+}
+
+.userform__image__text, .userform__job__text {
+    margin-bottom: 10px;
+}
+
 .userform__image__inputcontainer input, .userform__job__inputcontainer input {
     width: 20px;
     height: 20px;
@@ -90,7 +162,7 @@ form input::placeholder, form textarea::placeholder {
 .userform__job__inputcontainer p {
     font-size: 22px;
     color: #4f4f4f;
-    width: 80px;
+    width: 88px;
     line-height: 100%;
     margin-bottom: 8px;
 }
@@ -151,4 +223,43 @@ form input::placeholder, form textarea::placeholder {
     display: flex;
     gap: 15px;
     align-items: center;
+}
+
+
+/* 회원가입 성공시 */
+
+.signup_success__text {
+    font-size: 24px;
+    line-height: 200%;
+    color: #4f4f4f;
+    text-align: center;
+}
+
+.signup_success__btn {
+    background: #37C6E5;
+    color: white;
+    width: 235px;
+    height: 66px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 33px;
+    gap: 15px;
+    text-decoration: none;
+    font-size: 24px;
+    font-weight: bold;
+    transition: 0.5s;
+    margin: 0 auto;
+    margin-top: 60px;
+}
+
+.signup_success__btn:hover{
+    color: white;
+    font-size: 26px;
+    background-color: #37aee5;
+}
+
+.signup_success__btn a{
+    color: white;
+    text-decoration: none;
 }
