@@ -844,27 +844,26 @@ def post_create(request, pk):
                 user=request.user,
                 group=group
             )
+
+            date_dir = datetime.today().strftime('/%Y/%m/%d/')
             os.makedirs(
-                MEDIA_ROOT + '/group_{}/image/'.format(group.pk), exist_ok=True)
-            os.makedirs(
-                MEDIA_ROOT + '/group_{}/file/'.format(group.pk), exist_ok=True)
+                (MEDIA_ROOT + '/group_{}/post/uploads' + date_dir).format(group.pk), exist_ok=True)
 
             if request.FILES.get('image'):
                 post.image = request.FILES.get('image')
             elif request.POST['img_recent']:
                 os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
                 shutil.copyfile('./media/temp/{}'.format(request.POST['img_recent']),
-                                './media/group_{}/image/{}'.format(group.pk, request.POST['img_recent']))
-                post.image = './group_{}/image/{}'.format(
-                    group.pk, request.POST['img_recent'])
+                                ('./media/group_{}/post/uploads' + date_dir + '{}').format(group.pk, request.POST['img_recent']))
+                post.image =('./group_{}/post/uploads' + date_dir + '{}').format(group.pk, request.POST['img_recent'])
 
             if request.FILES.get('attached_file'):
                 post.attached_file = request.FILES.get('attached_file')
             elif request.POST['file_recent']:
                 os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
                 shutil.copyfile('./media/temp/{}'.format(request.POST['file_recent']),
-                                './media/group_{}/file/{}'.format(group.pk, request.POST['file_recent']))
-                post.attached_file = './group_{}/file/{}'.format(
+                                ('./media/group_{}/post/uploads' + date_dir + '{}').format(group.pk, request.POST['file_recent']))
+                post.attached_file =('./group_{}/post/uploads' + date_dir + '{}').format(
                     group.pk, request.POST['file_recent'])
 
             post.save()
@@ -914,6 +913,10 @@ def post_create(request, pk):
 def post_update(request, pk, post_pk):
     post = get_object_or_404(GroupPost, pk=post_pk)
     group = get_object_or_404(Group, pk=pk)
+
+    ## file data dir
+    date_dir = datetime.today().strftime('/%Y/%m/%d/')
+
     if request.method == "POST":
         form = PostForm(request.POST, request.FILES, instance=post)
 
@@ -924,13 +927,13 @@ def post_update(request, pk, post_pk):
                 post.image = request.FILES.get('image')
 
             elif request.POST['img_recent'] : # 다른 필드 에러 시(기존 파일 남아있도록)
-                post.image = './group_{}/image/{}'.format(
+                post.image = ('./group_{}/post/uploads' + date_dir + '{}').format(
                     group.pk, request.POST['img_recent'])
             if request.FILES.get('attached_file'):  # form valid 시
                 post.attached_file = request.FILES.get('attached_file')
 
             elif request.POST['file_recent']:   # 다른 필드 에러 시(기존 파일 남아있도록)
-                post.attached_file = './group_{}/file/{}'.format(
+                post.attached_file = ('./group_{}/post/uploads' + date_dir + '{}').format(
                     group.pk, request.POST['file_recent'])
 
             post = form.save()
@@ -938,11 +941,11 @@ def post_update(request, pk, post_pk):
             return redirect('group:post_detail', pk, post.pk)
         else:
             if request.FILES.get('image'):
-                with open('/group_{}/image/{}'.format(group.pk, request.FILES.get('image')), 'wb+') as destination:
+                with open(('./group_{}/post/uploads' + date_dir + '{}').format(group.pk, request.FILES.get('image')), 'wb+') as destination:
                     for chunk in request.FILES['image'].chunks():
                         destination.write(chunk)
             if request.FILES.get('attached_file'):
-                with open('/group_{}/file/{}'.format(group.pk, request.FILES.get('attached_file')), 'wb+') as destination:
+                with open(('./group_{}/post/uploads' + date_dir + '{}').format(group.pk, request.FILES.get('attached_file')), 'wb+') as destination:
                     for chunk in request.FILES['attached_file'].chunks():
                         destination.write(chunk)
 
@@ -953,11 +956,11 @@ def post_update(request, pk, post_pk):
             original_information.attached_file = request.POST['file_recent']
 
             if post.image:
-                current_image = post.image.url.split('/')[-1]
+                current_image = str(post.image).split('/')[-1]
             else:
                 current_image = ''
             if post.attached_file:
-                current_file = post.attached_file.url.split('/')[-1]
+                current_file = str(post.attached_file).split('/')[-1]
             else:
                 current_file = ''
 
@@ -967,20 +970,20 @@ def post_update(request, pk, post_pk):
                 'original_information': original_information,
                 'group': group,
                 'current_image': current_image,
-                'temp_img_location': '/media/group_{}/image/'.format(group.pk),
+                'temp_img_location': '/media/group_{}/post/uploads'.format(group.pk) + date_dir,
                 'current_file': current_file,
-                'temp_file_location': '/media/group_{}/file/'.format(group.pk),
+                'temp_file_location': '/media/group_{}/post/uploads'.format(group.pk) + date_dir,
             }
             return render(request, 'group/group_post_form.html', context=ctx)
     else:
         form = PostForm(instance=post)
 
         if post.image:
-            current_image = post.image.url.split('/')[-1]
+            current_image = str(post.image).split('/')[-1]
         else:
             current_image = ''
         if post.attached_file:
-            current_file = post.attached_file.url.split('/')[-1]
+            current_file = str(post.attached_file).split('/')[-1]
         else:
             current_file = ''
 
@@ -989,9 +992,9 @@ def post_update(request, pk, post_pk):
             'post': post,
             'group': group,
             'current_image': current_image,
-            'temp_img_location': '/media/group_{}/image/'.format(group.pk),
+            'temp_img_location': '/media/group_{}/post/uploads'.format(group.pk) + date_dir,
             'current_file': current_file,
-            'temp_file_location': '/media/group_{}/file/'.format(group.pk),
+            'temp_file_location': '/media/group_{}/post/uploads'.format(group.pk) + date_dir,
         }
 
         return render(request, template_name="group/group_post_form.html", context=ctx)
@@ -1033,7 +1036,6 @@ class GroupPostDetailView(HitCountDetailView):
         if post.user in post.group.members.all():
             is_member = True
         else: is_member = False
-
         total_likes = len(post.like_user.all())
         is_liked = self.request.user in post.like_user.all()
 

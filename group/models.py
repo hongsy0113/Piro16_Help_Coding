@@ -4,7 +4,7 @@ from user.models import User
 from django.contrib.contenttypes.fields import GenericRelation
 from hitcount.models import HitCountMixin, HitCount
 import os
-
+from datetime import datetime
 #######################################
 # 파일 저장 경로 지정하기 위한 함수들
 # group 대표 이미지
@@ -14,19 +14,12 @@ def group_thumbnail_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/group_<group.name>/<filename>
     return 'group_{0}/thumbnail/{1}'.format(instance.pk, filename)
 
-# group 게시판 이미지
-
-
-def group_post_img_path(instance, filename):
+# 그룹 게시글 첨부 파일
+def group_post_uploads_path(instance, filename):
+    date_dir = datetime.today().strftime('/%Y/%m/%d/')
     # file will be uploaded to MEDIA_ROOT/group_<group.name>/post/image/<filename>
-    return 'group_{0}/post/image/{1}'.format(instance.group.pk, filename)
+    return ('group_{0}/post/uploads' + date_dir + '{1}').format(instance.group.pk, filename)
 
-# group 게시판 첨부코드
-
-
-def group_post_code_path(instance, filename):
-    # file will be uploaded to MEDIA_ROOT/group_<group.name>/post/file/<filename>
-    return 'group_{0}/post/file/{1}'.format(instance.group.pk, filename)
 
 # group 존재 여부 확인
 
@@ -85,10 +78,10 @@ class GroupPost(models.Model, HitCountMixin):
     content = models.TextField(verbose_name='내용')
     # 코드 캡쳐, 실행창 캡쳐와 같은 이미지 업로드
     image = models.ImageField(
-        upload_to=group_post_img_path, null=True, blank=True)
+        upload_to=group_post_uploads_path, null=True, blank=True)
     # .ent, .sb3 파일 등 소스코드 파일 업로드
     attached_file = models.FileField(
-        verbose_name='첨부파일', upload_to=group_post_code_path, null=True, blank=True)
+        verbose_name='첨부파일', upload_to=group_post_uploads_path, null=True, blank=True)
 
     tags = models.ManyToManyField('GroupTag', blank=True)
 

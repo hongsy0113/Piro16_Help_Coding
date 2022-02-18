@@ -146,10 +146,6 @@ def search_result(request):
     }
     return render(request, 'qna/search_result.html', context=ctx)
 
-import urllib
-import os
-from django.http import HttpResponse, Http404
-import mimetypes
 
 
 def question_create(request):
@@ -161,9 +157,7 @@ def question_create(request):
         error_messages.validation_check(request, ['create'])
         if not error_messages.has_error():
             question = Question.objects.create(
-                #title=form.data['title'],
                 title=request.POST.get('title'),
-                #content=form.data['content'],
                 content=request.POST.get('content'),
                 # image=request.FILES.get('image'),
                 # #attached_file=form.data['attached_file'],
@@ -383,11 +377,11 @@ def question_update(request, pk):
                     extra_tag_names.append(tag)
 
             if request.FILES.get('image'):
-                with open('/qna/uploads/%Y/%m/%d/{}'.format(request.FILES.get('image')), 'wb+') as destination:
+                with open( './qna/uploads'+ date_dir +'{}'.format(request.FILES.get('image')), 'wb+') as destination:
                     for chunk in request.FILES['image'].chunks():
                         destination.write(chunk)
             if request.FILES.get('attached_file'):
-                with open('/qna/uploads/%Y/%m/%d/{}'.format(request.FILES.get('attached_file')), 'wb+') as destination:
+                with open('./qna/uploads'+ date_dir +'{}'.format(request.FILES.get('attached_file')), 'wb+') as destination:
                     for chunk in request.FILES['attached_file'].chunks():
                         destination.write(chunk)
 
@@ -416,9 +410,9 @@ def question_update(request, pk):
                 'basic_tag_names': basic_tag_names,  
                 'extra_tag_names': extra_tag_names,
                 'current_image': current_image,
-                'temp_img_location': '/media/qna/uploads/'+ date_dir,
+                'temp_img_location': '/media/qna/uploads'+ date_dir,
                 'current_file': current_file,
-                'temp_img_location': '/media/qna/uploads/'+ date_dir,
+                'temp_img_location': '/media/qna/uploads'+ date_dir,
                 }
             return render(request, 'qna/question_form.html', context=ctx)
 
@@ -450,9 +444,9 @@ def question_update(request, pk):
             'basic_tag_names': basic_tag_names,  
             'extra_tag_names': extra_tag_names,
             'current_image': current_image,
-            'temp_img_location': '/media/qna/uploads/'+ date_dir,
+            'temp_img_location': '/media/qna/uploads'+ date_dir,
             'current_file': current_file,
-            'temp_file_location': '/media/qna/uploads/'+ date_dir,
+            'temp_file_location': '/media/qna/uploads'+ date_dir,
             }
 
         return render(request, template_name="qna/question_form.html", context=ctx)        
