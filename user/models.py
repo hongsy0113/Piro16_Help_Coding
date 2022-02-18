@@ -7,14 +7,14 @@ from datetime import datetime
 
 def user_thumbnail_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/user_<email>/<filename>
-    return 'user_{0}/thumbnail/{1}'.format(instance.email, filename)
+    return 'user/user_{0}/thumbnail/{1}'.format(instance.email, filename)
 
 # reward 대표 이미지
 
 
-def reward_thumbnail_path(instance, filename):
-    # file will be uploaded to MEDIA_ROOT/user_<email>/<filename>
-    return 'reward_{0}/thumbnail/{1}'.format(instance.name, filename)
+#def reward_thumbnail_path(instance, filename):
+#    # file will be uploaded to MEDIA_ROOT/user_<email>/<filename>
+#    return 'reward_{0}/thumbnail/{1}'.format(instance.name, filename)
 
 
 # 시간

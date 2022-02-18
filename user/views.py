@@ -199,7 +199,7 @@ def sign_up(request):
         )
         if not sign_up_error.has_error():  # 오류가 없는 경우 유저 생성
             os.makedirs(
-                MEDIA_ROOT + '/user_{}/thumbnail/'.format(request.POST['email']), exist_ok=True)
+                MEDIA_ROOT + '/user/user_{}/thumbnail/'.format(request.POST['email']), exist_ok=True)
             user = User.objects.create_user(
                 username=request.POST['email'],
                 email=request.POST['email'],
@@ -219,13 +219,13 @@ def sign_up(request):
                     user.img = request.FILES.get('img')
                 else:
                     shutil.copyfile('./media/temp/{}'.format(request.POST['img_recent']),
-                                    './media/user_{}/thumbnail/{}'.format(user.email, request.POST['img_recent']))
-                    user.img = '/user_{}/thumbnail/{}'.format(
+                                    './media/user/user_{}/thumbnail/{}'.format(user.email, request.POST['img_recent']))
+                    user.img = '/user/user_{}/thumbnail/{}'.format(
                         user.email, request.POST['img_recent'])
             else:
                 shutil.copyfile('./static/img/user_thumbnail/{}'.format(request.POST.get('img_setting')),
-                                './media/user_{}/thumbnail/{}'.format(user.email, request.POST.get('img_setting')))
-                user.img = '/user_{}/thumbnail/{}'.format(
+                                './media/user/user_{}/thumbnail/{}'.format(user.email, request.POST.get('img_setting')))
+                user.img = '/user/user_{}/thumbnail/{}'.format(
                     user.email, request.POST.get('img_setting'))
             user.is_active = True  # 이메일 인증 기능 구현 시에는 False로 바꿀 것
             user.save()
@@ -353,12 +353,12 @@ def my_page_revise(request):
                     if request.FILES.get('img'):
                         user.img = request.FILES.get('img')
                     else:
-                        user.img = '/user_{}/thumbnail/{}'.format(
+                        user.img = '/user/user_{}/thumbnail/{}'.format(
                             user.email, request.POST['img_recent'])
                 else:
                     shutil.copyfile('./static/img/user_thumbnail/{}'.format(request.POST.get('img_setting')),
-                                    './media/user_{}/thumbnail/{}'.format(user.email, request.POST.get('img_setting')))
-                    user.img = '/user_{}/thumbnail/{}'.format(
+                                    './media/user/user_{}/thumbnail/{}'.format(user.email, request.POST.get('img_setting')))
+                    user.img = '/user/user_{}/thumbnail/{}'.format(
                         user.email, request.POST.get('img_setting'))
             user.nickname = request.POST['nickname']
             user.birth = birth
@@ -371,17 +371,17 @@ def my_page_revise(request):
         original_information = OriginalInformation()
         original_information.remember(request, command)
         if request.FILES.get('img'):
-            with open('./media/user_{}/thumbnail/{}'.format(user.email, request.FILES.get('img')), 'wb+') as destination:
+            with open('./media/user/user_{}/thumbnail/{}'.format(user.email, request.FILES.get('img')), 'wb+') as destination:
                 for chunk in request.FILES['img'].chunks():
                     destination.write(chunk)
         original_information.img = request.POST['img_recent']
         ctx = {'user': user, 'form': form, 'revise_error': revise_error, 'base_images': BASE_IMAGES, 'job_choice': JOB_CHOICE,
-               'current_image': user.img.url.split('/')[-1], 'original_information': original_information, 'temp_img_location': '/media/user_{}/thumbnail/'.format(user.email)}
+               'current_image': user.img.url.split('/')[-1], 'original_information': original_information, 'temp_img_location': '/media/user/user_{}/thumbnail/'.format(user.email)}
         return render(request, template_name='user/mypage_revise.html', context=ctx)
     else:
         form = MypageReviseForm(instance=user)
         ctx = {'user': user, 'form': form, 'base_images': BASE_IMAGES, 'job_choice': JOB_CHOICE,
-               'current_image': user.img.url.split('/')[-1], 'temp_img_location': '/media/user_{}/thumbnail/'.format(user.email)}
+               'current_image': user.img.url.split('/')[-1], 'temp_img_location': '/media/user/user_{}/thumbnail/'.format(user.email)}
         return render(request, template_name='user/mypage_revise.html', context=ctx)
 
 # Drop
