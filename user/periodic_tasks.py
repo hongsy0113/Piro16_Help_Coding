@@ -1,3 +1,4 @@
+from re import X
 from threading import Timer
 from group.views import get_invite_code
 from .models import User, GetPoint, Alert
@@ -8,13 +9,16 @@ from datetime import datetime
 class PeriodicTasksTimer():
     timer = None
 
+    def in_process(self):
+        if self.timer == None:
+            return "타이머 상태 : None"
+        elif self.timer.is_alive():
+            return "타이머 상태 : Alive"
+        else:
+            return "타이머 상태 : Not Alive"
+
 
 PERIODIC_TASKS_TIMER = PeriodicTasksTimer()
-
-# if PERIODIC_TASKS_TIMER.timer == None:
-#        print(None)
-#    else:
-#        print(PERIODIC_TASKS_TIMER.timer.is_alive())
 
 
 def initial_period(time):

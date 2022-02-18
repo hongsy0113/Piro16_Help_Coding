@@ -34,6 +34,12 @@
       <button class="btn btn-secondary"><a class="text-white" href="{% url 'user:mypage_revise' %}" style="text-decoration: none">개인정보 수정</a></button>
       <button class="btn btn-secondary"><a class="text-white" href="{% url 'user:mypage_point' %}" style="text-decoration: none">포인트 기록</a></button>
       <button class="btn btn-danger"><a class="text-white" href="{% url 'user:drop' %}" style="text-decoration: none">회원 탈퇴하기</a></button>
+      {% if user.is_superuser %}
+      <!-- 이거는 admin 유저만 보이는 거라 디자인 크게 신경 안 써도 될 듯 -->
+      <button class="btn btn-primary"><a class="text-white" href="{% url 'user:initialize_rewards' %}" style="text-decoration: none">업적 업데이트하기</a></button>
+      <button class="btn btn-primary"><a class="text-white" href="{% url 'user:periodic_tasks' %}" style="text-decoration: none">DB 작업 시작하기</a></button>
+      <p>{{ periodic_tasks_timer.in_process }}</p>
+      {% endif %}
     </div>
     {% if messages %}{% for message in messages %}<p class="mypage__message">{{ message.message }}</p>{% endfor %}{% endif %}
   </div>
