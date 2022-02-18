@@ -29,10 +29,6 @@
         <div class="main__qna__title">
             <p class="main__title">묻고 답하기</p>
         </div>
-        <!-- 왼쪽 화살표 -->
-        <svg id="qna__arrow-left" width="17" height="30" viewBox="0 0 17 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M15.8042 28.1117L2.69251 15L15.8042 1.88832" stroke="#C4C4C4" stroke-width="3"/>
-        </svg>
         <div class="main__qna__slidecontainer">
             <div class="main__qna__slideinner">
                 <div class="main__qna__box">
@@ -61,10 +57,18 @@
                 </div>
             </div>
         </div>
-        <!-- 오른쪽 화살표 -->
-        <svg id="qna__arrow-right" width="17" height="30" viewBox="0 0 17 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M1.65576 1.88831L14.7675 15L1.65576 28.1117" stroke="#C4C4C4" stroke-width="3"/>
-        </svg>            
+        <div class="main__arrow-container-outer" style="position: absolute; width: 100vw;">
+            <div class="main__arrow-container">
+                <!-- 왼쪽 화살표 -->
+                <svg id="qna__arrow-left" width="17" height="30" viewBox="0 0 17 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15.8042 28.1117L2.69251 15L15.8042 1.88832" stroke="#C4C4C4" stroke-width="3"/>
+                </svg>
+                <!-- 오른쪽 화살표 -->
+                <svg id="qna__arrow-right" width="17" height="30" viewBox="0 0 17 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M1.65576 1.88831L14.7675 15L1.65576 28.1117" stroke="#C4C4C4" stroke-width="3"/>
+                </svg>            
+            </div>
+        </div>
     </div>
 </div>
 
@@ -147,10 +151,10 @@
         <h3>공부를 하면<br>업적이 쌓여요!</h3>
         <div class="landing__reward__imgcontainer">
             <!-- 리워드 이미지 넣기 -->
-            <img src="#" alt="">
-            <img src="#" alt="">
-            <img src="#" alt="">
-            <img src="#" alt="">
+            <img src="{% static 'img/reward/question/question20.png' %}" alt="">
+            <img src="{% static 'img/reward/answer/answer5.png' %}" alt="">
+            <img src="{% static 'img/reward/heart/heart100.png' %}" alt="">
+            <img src="{% static 'img/reward/question/question50.png' %}" alt="">
         </div>
     </div>
 </div>
@@ -202,11 +206,9 @@
     const rightbtn = document.getElementById('qna__arrow-right');
     const count = 3;
     let num = (window.innerWidth - 1080) / 2;
-    const width = 1080 + num*2;
+    let width = window.innerWidth;
     console.log('innerwidth: ',window.innerWidth);
     console.log(num);
-    qnaBox.style.marginLeft = `${num}px`;
-    element.style.gap = `${num*2}px`;
 
     function slideNext() {
         if (current >= count - 1) {
@@ -223,8 +225,17 @@
             current--;
         }
         element.style.transform =`translate(-${width * current}px)`;
+        console.log('slidePrev')
     }
 
+
+    function resetWidth() {
+        width = window.innerWidth;
+        console.log('innerwidth: ',window.innerWidth);
+        element.style.transform =`translate(-${width * current}px)`;
+    }
+
+    window.addEventListener('resize', resetWidth);
     leftbtn.addEventListener('click', slidePrev);
     rightbtn.addEventListener('click', slideNext);
 </script>

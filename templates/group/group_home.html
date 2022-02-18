@@ -57,15 +57,14 @@
             </div>
             <div class="modal__content--bottom which-join-modal__bottom">
                 <div class="which-join__box which-join__box--top">
-                    <div class="d-flex flex-column">
+                    <div class="group__join--box">
                         <button class="public-group__join-btn"><a href="{% url 'group:group_list' %}">공개그룹</a></button>
-                        <span>다양한 사람들과 함께하고 싶다면!</span>
+                        <span>다양한 사람들과 함께하고 싶어요</span>
                     </div>
-                    <div>
+                    <div class="group__join--box">
                         <button class="private-group__join-btn" onclick="showPrivateGroup()">비공개그룹</button>
-                        <span>친한 친구들과 함께하고 싶다면!</span>
-                    </div>
-                    
+                        <span>내 친구들과 함께하고 싶어요</span>
+                    </div>           
                 </div>
                 <div class="which-join__box which-join__box--bottom">
                     <button class="join__code--close modal__close" onclick="closeGroupJoin()">닫기</button>
@@ -78,7 +77,6 @@
     <!-- 그룹 초대코드 입력 modal -->
     <div class="group-join__alert-box modal modal__hidden" id="join-group">
         <div class="modal__overlay"></div>  <!-- 모달 배경 -->
-        
         <div class="modal__content--join">    <!-- 모달 내용 -->
             <div class="modal__content--top">
                 <span>그룹 가입하기</span>
@@ -88,14 +86,52 @@
                     </svg>
                 </button>
             </div>
+
             <div class="group-join__box modal__content--bottom">
                 <div class="group-join__inputbox">
 
                     <!-- 초대 코드 입력 input -->
                     <div class="group-join__inputbox--input">
                         <input type="text" name="group_code" placeholder="초대코드를 입력하세요!" class="group-code__input">
-                        <input class="group__code--guide-hover" type="button" value="도움말"></input>
+                        <span class="group__code--guide-hover"> <!-- 초대코드 도움말 favicon -->
+                            <svg xmlns="http://www.w3.org/2000/svg" width="57" height="56" viewBox="0 0 57 56" fill="none">
+                            <path d="M15.8843 18.6931L15.8844 18.6931L19.8719 21.6636C20.6838 22.2684 21.8409 22.1272 22.4757 21.336C23.506 20.0521 24.3298 19.0978 25.2608 18.4542C26.1685 17.8268 27.2003 17.4814 28.671 17.4814C29.7514 17.4814 30.9706 17.8263 31.9082 18.4247C32.8508 19.0264 33.4226 19.8217 33.4226 20.7025C33.4226 21.3745 33.1536 21.8884 32.5856 22.4063C31.9924 22.9471 31.1132 23.4557 29.9426 24.1005C29.8651 24.1432 29.7865 24.1864 29.707 24.23C27.0627 25.6819 23.4032 27.6911 23.4032 32.5161V32.9677C23.4032 34.0004 24.2529 34.8226 25.2823 34.8226H31.7177C32.7471 34.8226 33.5968 34.0004 33.5968 32.9677V32.8172C33.5968 32.2942 33.9778 31.8149 34.8687 31.2181C35.2985 30.9302 35.8044 30.642 36.3681 30.3224L36.4132 30.2968C36.9589 29.9874 37.5514 29.6515 38.1452 29.2733C39.3658 28.496 40.6228 27.5214 41.5729 26.1585C42.529 24.7871 43.1565 23.048 43.1565 20.7742C43.1565 17.3136 41.3292 14.3026 38.7048 12.1722C36.0822 10.0432 32.6242 8.75806 29.2648 8.75806C26.0614 8.75806 23.4099 9.42187 21.1503 10.6942C18.8929 11.9652 17.0571 13.8262 15.4578 16.1751L15.8555 16.446L15.4578 16.1751C14.8998 16.9947 15.0884 18.1001 15.8843 18.6931ZM56.5 28C56.5 43.1829 43.9713 55.5 28.5 55.5C13.0287 55.5 0.5 43.1829 0.5 28C0.5 12.826 13.0288 0.5 28.5 0.5C43.9712 0.5 56.5 12.826 56.5 28ZM28.5 36.7581C25.3173 36.7581 22.7137 39.3034 22.7137 42.4516C22.7137 45.5997 25.3173 48.1452 28.5 48.1452C31.6827 48.1452 34.2863 45.5997 34.2863 42.4516C34.2863 39.3034 31.6827 36.7581 28.5 36.7581Z" fill="#4e4e4e" stroke="#4e4e4e"/>
+                            </svg>
+                        </span>
                     </div>
+
+                    <!-- 그룹 초대코드 입력 Guide Modal-->
+                    <div class="group__code--guide">
+                        <div class="group__code--guide-content">
+                            <div class="group__code--guide-title">
+                                <span>초대코드는 어떻게 받나요?</span>
+                            </div>
+    
+                            <div class="group__code--guide-text">
+                                <p>1️⃣ 초대하고 싶은 그룹의 <span class="group-info__btn">그룹 정보</span>로 이동</p>
+                                <p>2️⃣ <span class="group-code__btn">멤버 초대코드</span> 클릭</p>
+                                <!-- <image src="{{ code_ex }}" style=" width: 150px;"></image> -->
+                                <p>3️⃣ 코드를 공유해서 친구와 같은 그룹에서 활동해요!</p>
+                            
+                                <p class="code-caution"><span>🚨🚨 <span class="text-bold">초대코드</span>는 <span class="text-bold">일주일 이내에 입력</span>해주세요 🚨🚨</span></p>
+                            </div>
+                        </div>
+                    </div>
+                        <!-- <div class="group__code--guide-text">
+                            <div class="group__code--guide-image">
+                                <div class="group-post__top--info">
+                                    <span>그룹 정보</span>
+                                </div> 
+                                <div class="group__code--guide-right">➪</div>
+                                <div class="group__code--btn top-right__button">
+                                    <span>멤버 초대코드</span>
+                                </div>
+                            </div>
+                            <div>
+                                <span>멤버 초대코드는 여기에 있어요! 친구와 코드를 공유하고 여기에 입력해서 그룹에 가입해보아요</span>
+                                <span>🚨주의🚨 초대코드는 7일마다 바뀌어요</span>
+                            </div>
+                        </div> -->
 
                     <!-- 에러메세지 -->
                     <span class="group-code__text group-code__error"><svg width="5" height="14" viewBox="0 0 9 26" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -111,26 +147,6 @@
 
         </div>
     </div>   
-    
-    <!-- 그룹 초대코드 입력 Guide Modal-->
-    <div class="group__code--guide">
-        <div class="group__code--guide-text">
-            <div class="group__code--guide-image">
-                <div class="group-post__top--info">
-                    <span>그룹 정보</span>
-                </div> 
-                <div class="group__code--guide-right">➪</div>
-                <div class="group__code--btn top-right__button">
-                    <span>멤버 초대코드</span>
-                </div>
-            </div>
-            <div>
-                <image src="{{ code_ex }}" style=" width: 350px;"></image>
-                <span>멤버 초대코드는 여기에 있어요! 친구와 코드를 공유하고 여기에 입력해서 그룹에 가입해보아요</span>
-                <span>🚨주의🚨 초대코드는 7일마다 바뀌어요</span>
-            </div>
-        </div>
-    </div>
 
     <!-- 그룹 정렬 (sort) -->
     {% if groups %}

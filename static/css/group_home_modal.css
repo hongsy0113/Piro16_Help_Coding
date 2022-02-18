@@ -2,6 +2,10 @@ button {
     all: unset;
 }
 
+a {
+    margin: 0;
+}
+
 /* 모달 */
 .modal {  
     position: fixed;
@@ -29,7 +33,7 @@ button {
 .modal__content {
     position: relative;
     top: 0px;
-    width: 40%;
+    width: 600px;
     height: 500px;
     background-color: #FAFAFA;
     border: 2px solid #BDBDBD;
@@ -62,7 +66,7 @@ button {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 70px 0px 70px 0px;
+    padding: 35px 0px 35px 0px;
 }
 
 .modal__close {
@@ -89,27 +93,41 @@ button {
     gap: 30px;
     justify-content: center;
     align-items: center;
-    padding: 35px 0px 85px 0px;
+    padding: 40px 0px 77px 0px;
     width: 100%;
     border-bottom: 2px solid #BDBDBD;
     margin-bottom: 28px;
 }
 
+.group__join--box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+}
+
+.group__join--box span {
+    font-family: Roboto;
+    font-size: 16px;
+    color: #000000;
+}
+
 .public-group__join-btn a {
+    width: 220px;
+    margin-left: 8px;
+    padding: 21px 43px 22px;
     background: #37C6E6;
     border: 2px solid #37C6E6;
     box-sizing: border-box;
     border-radius: 41px;
-
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-family: Noto Sans CJK KR;
     font-weight: bold;
     font-size: 26px;
     line-height: 105%;
-    display: flex;
-    align-items: center;
-    text-align: center;
     color: #FFFFFF;
-    padding: 21px 43px 22px;
     text-decoration: none;
 }
 
@@ -119,18 +137,18 @@ button {
 }
 
 .private-group__join-btn {
+    width: 220px;
     background: #FF8989;
     border: 2px solid #FF8989;
     box-sizing: border-box;
     border-radius: 41px;
-
     font-family: Noto Sans CJK KR;
     font-weight: bold;
     font-size: 26px;
     line-height: 105%;
     display: flex;
     align-items: center;
-    text-align: center;
+    justify-content: center;
     color: #FFFFFF;
     padding: 21px 43px 22px;
     text-decoration: none;
@@ -152,7 +170,7 @@ button {
     position: relative;
     top: 0px;
     width: 40%;
-    max-height: 500px;
+    max-height: 800px;
     background-color: #FAFAFA;
     border: 2px solid #BDBDBD;
     box-sizing: border-box;
@@ -165,6 +183,13 @@ button {
     display: flex;
     flex-direction: column;
     /* gap: 60px; */
+}
+
+.group-join__inputbox--input {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
 }
 
 .group-code__input {
@@ -217,30 +242,59 @@ button {
     align-items: center;
 }
 
-.group-code__text, .group__code--guide {
+/* 초대코드 input 옆 도움말 버튼 */
+.group__code--guide-hover svg {
+    width: 35px;
+}
+
+/* 초대코드 도움말 모달 */
+.group__code--guide {
     display: none;
+    background-color: #BDBDBD;
+    border: 1px solid #4e4e4e;
+    border-radius: 20px;
+    width: 450px;
+    height: 255px;
+    margin-top: 20px;
+    padding: 15px 0px;
+    border-radius: 20px;
 }
 
-
-/* 박예준이 추가한 부분 */
-.top-right__button {
+.group__code--guide-title {
     display: flex;
+    justify-content: center;
     align-items: center;
-    padding: 12px 20px 10px;
-    background: #37C6E6;
-    border: 2px solid #37C6E6;
-    box-sizing: border-box;
-    border-radius: 26px;
-    cursor: pointer;
-
-    width: fit-content;
-    color: #FFFFFF;
-    font-size: 18px;
+    padding: 2px 0px 14px 0px;
+    /* font-family: Noto Sans CJK KR; */
+    font-size: 21px;
+    font-weight: bold;
+    line-height: 100%;
+    color: #000000;
+    border-bottom: 1px solid #4e4e4e;
 }
 
-.group-post__top--info {
-    width: 119px;
-    padding: 10px 24px 12px;
+.group__code--guide-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 17px 21px 0px 21px;
+    gap: 15px;
+
+    font-size: 17px;
+    line-height: 100%;
+    color: #000000;
+    font-weight: bold;
+}
+
+.group__code--guide-text p {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.group-info__btn {
+    padding: 5px 13px 7px;
     background: #FFFFFF;
     border: 2px solid #37C6E5;
     box-sizing: border-box;
@@ -249,20 +303,41 @@ button {
     color: #37C6E5;
     font-family: Noto Sans CJK KR;
     font-weight: bold;
-    font-size: 18px;
+    font-size: 16px;
     line-height: 100%;
-
     width: fit-content;
+    margin-left: 6px;
+}
+
+.group-code__btn {
+    display: flex;
+    align-items: center;
+    padding: 7px 11px 6px;
+    background: #37C6E6;
+    border: 1px solid #37C6E6;
+    box-sizing: border-box;
+    border-radius: 26px;
+    width: fit-content;
+    color: #FFFFFF;
+    font-size: 16px;
+    margin: 0px 6px 0px 6px;
+}
+
+.code-caution {
+    text-align: center;
+    padding: 15px 0px;
+    margin-bottom: 10px;
+    color: rgb(77, 77, 77);
+}
+
+.text-bold {
+    color: black;
+    font-weight: bold;
 }
 
 .group__code--guide-image {
     display: flex;
     align-items: center;
-}
-
-.group__code--guide-right {
-    color: #37C6E5;
-    font-size: 18px;
 }
 
 .group__code--guide-hover {
