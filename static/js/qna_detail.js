@@ -101,7 +101,7 @@ const answerHandleResponse = (id, content, user, created_at, img_url, is_author)
     })
     const answerDeleteButton = document.querySelector(`.answer__delete-btn--${id}`);
     answerDeleteButton.addEventListener('click',function(){
-        if (confirm("정말 삭제하시겠습니까?")){
+        if (confirm('정말 삭제하시겠어요? 😢')){
             onClickAnswerDelete(id);
         }
         else {
@@ -264,7 +264,7 @@ relpyHandleResponse = (replyId, answerId ,content, user, created_at, img_url, is
     })
     const answerDeleteButton = document.querySelector(`.answer__delete-btn--${replyId}`);
     answerDeleteButton.addEventListener('click',function(){
-        if (confirm("정말 삭제하시겠습니까?")){
+        if (confirm('정말 삭제하시겠어요? 😢')){
             onClickAnswerDelete(replyId);
         }
         else {
@@ -383,7 +383,7 @@ answerDeleteButtons.forEach(function(btn) {
     btn.addEventListener('click',function(){
         const btnElementId = btn.getAttribute('id').split('-');
         const answerId = btnElementId[btnElementId.length-1];
-        if (confirm("정말 삭제하시겠습니까?")){
+        if (confirm('정말 삭제하시겠어요? 😢')){
             onClickAnswerDelete(answerId);
         }
         else {
@@ -418,7 +418,7 @@ answerDeleteHandleResponse = (answerId, deleteYes, count) => {
         answeredUser.innerHTML = '<h2>(알 수 없음)</h2>';
         
         const answerContent = document.querySelector(`.answer__content--${answerId}`);
-        answerContent.innerHTML =  '삭제된 답변입니다.';
+        answerContent.innerHTML =  '삭제된 답변이에요. 😢';
 
         const answerEditButton = document.querySelector(`.answer__edit-btn--${answerId}`);
         answerEditButton.remove();
@@ -495,27 +495,27 @@ answerEditSubmitHandleResponse = (answerId, content) => {
 if (user_id == null){
     const questionLikeButton = document.querySelector('.question__like-btn');
     questionLikeButton.addEventListener('click',function(){
-        alert('로그인 후 이용해주세요.')
+        alert('로그인 후 이용해주세요. 😄')
     })
 
 
     const answerLikeButtons = document.querySelectorAll('.answer__like-btn');
     answerLikeButtons.forEach(function(btn) {
         btn.addEventListener('click',function(){
-            alert('로그인 후 이용해주세요.')
+            alert('로그인 후 이용해주세요. 😄')
         })
     })
 
     const answerReplyButtons = document.querySelectorAll('.answer__reply-btn');
     answerReplyButtons.forEach(function(btn) {
         btn.addEventListener('click',function(){
-            alert('로그인 후 이용해주세요.')
+            alert('로그인 후 이용해주세요. 😄')
         })
     })
 
     const answerContainer = document.querySelector('.answer__input__container');
     answerContainer.addEventListener('click',function(){
-        alert('로그인 후 이용해주세요.')
+        alert('로그인 후 이용해주세요. 😄')
         document.querySelector('.answer__input').blur();
     })
 } 
@@ -524,7 +524,7 @@ if (user_id == null){
 const questionDeleteBtn = document.querySelector('.question__delete-btn--actual');
 if (questionDeleteBtn){
     questionDeleteBtn.addEventListener('click',function(){
-        if (confirm("정말 삭제하시겠습니까?")){
+        if (confirm('정말 삭제하시겠어요? 😢')){
             document.location.href = `/qna/${question_id}/delete`;//onClickQuestionDelete(question_id);
         }
         else {
