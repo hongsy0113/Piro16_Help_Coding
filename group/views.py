@@ -138,7 +138,7 @@ def group_create(request):
         if not error.has_error_group() and form.is_valid():
             group = form.save()
             os.makedirs(
-                MEDIA_ROOT + '/group_{}/thumbnail/'.format(group.pk), exist_ok=True)
+                MEDIA_ROOT + '/group/group_{}/thumbnail/'.format(group.pk), exist_ok=True)
             group.mode = mode
             group.maker = user    # 방장 = 접속한 유저
             group.members.add(user)  # 방장도 그룹의 멤버로 추가
@@ -148,9 +148,12 @@ def group_create(request):
             elif request.POST['img_recent']:
                 os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
                 shutil.copyfile('./media/temp/{}'.format(request.POST['img_recent']),
-                                './media/group_{}/thumbnail/{}'.format(group.pk, request.POST['img_recent']))
-                group.image = './group_{}/thumbnail/{}'.format(
+                                './media/group/group_{}/thumbnail/{}'.format(group.pk, request.POST['img_recent']))
+                group.image = './group/group_{}/thumbnail/{}'.format(
                     group.pk, request.POST['img_recent'])
+                # temp 파일 삭제
+                if os.path.isfile('./media/temp/{}'.format(request.POST['img_recent'])):
+                    os.remove('./media/temp/{}'.format(request.POST['img_recent']))
             group.save()
             update_group_create(group, user)
 
@@ -199,18 +202,6 @@ def group_update(request, pk):
 
         group.intro = request.POST.get('intro')
         intro = group.intro
-        #os.makedirs(MEDIA_ROOT + '/group_{}/thumbnail/'.format(group.pk), exist_ok=True)
-        # shutil.copyfile('./media/temp/{}'.format(request.POST['img_recent']),
-        # './media/group_{}/thumbnail/{}'.format(group.pk, request.POST['img_recent']))
-
-        # # 기존 이미지는 유지
-        # if group.image:
-        #     image = request.POST.get('image')
-
-        # if request.FILES.get('image'):
-        #     image = request.FILES.get('image')
-        #     group.image = image
-        #     group.save()
 
         mode = request.POST.get('group-mode__tag')
         group.mode = mode
@@ -227,7 +218,7 @@ def group_update(request, pk):
                 group.image = request.FILES.get('image')
 
             else:   # 다른 필드 에러 시(기존 파일 남아있도록)
-                group.image = './group_{}/thumbnail/{}'.format(
+                group.image = './group/group_{}/thumbnail/{}'.format(
                     group.pk, request.POST['img_recent'])
                 # original_info.image = request.POST['img_recent']
 
@@ -237,15 +228,15 @@ def group_update(request, pk):
 
         # 에러 메세지가 존재할 때
         if request.FILES.get('image'):
-            #os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
-            with open('/group_{}/thumbnail/{}'.format(group.pk, request.FILES.get('image')), 'wb+') as destination:
-                for chunk in request.FILES['image'].chunks():
-                    destination.write(chunk)
+            os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
+            with open('./media/temp/{}'.format(request.FILES['image'].name), 'wb+') as destination:
+                    for chunk in request.FILES['image'].chunks():
+                        destination.write(chunk)
 
         original_info.image = request.POST['img_recent']
 
         if group.image:
-            current_image = group.image.url.split('/')[-1]
+            current_image = str(group.image).split('/')[-1]
         else:
             current_image = ''
 
@@ -253,7 +244,7 @@ def group_update(request, pk):
             'error': error,
             'origin': original_info,
             'current_image': current_image,
-            'temp_img_location': '/media/group_{}/thumbnail/'.format(group.pk)
+            'temp_img_location': '/media/group/group_{}/thumbnail/'.format(group.pk)
         }
 
         return render(request, template_name='group/group_form.html', context=ctx)
@@ -266,7 +257,7 @@ def group_update(request, pk):
         # except:
         #     pass
         if group.image:
-            current_image = group.image.url.split('/')[-1]
+            current_image = str(group.image).split('/')[-1]
         else:
             current_image = ''
 
@@ -274,7 +265,7 @@ def group_update(request, pk):
             'group': group,
             'form': form,
             'current_image': current_image,
-            'temp_img_location': '/media/group_{}/thumbnail/'.format(group.pk)
+            'temp_img_location': '/media/group/group_{}/thumbnail/'.format(group.pk)
         }
 
         return render(request, template_name='group/group_form.html', context=ctx)
@@ -844,28 +835,34 @@ def post_create(request, pk):
                 user=request.user,
                 group=group
             )
+
+            date_dir = datetime.today().strftime('/%Y/%m/%d/')
             os.makedirs(
-                MEDIA_ROOT + '/group_{}/image/'.format(group.pk), exist_ok=True)
-            os.makedirs(
-                MEDIA_ROOT + '/group_{}/file/'.format(group.pk), exist_ok=True)
+                (MEDIA_ROOT + '/group_{}/post/uploads' + date_dir).format(group.pk), exist_ok=True)
 
             if request.FILES.get('image'):
                 post.image = request.FILES.get('image')
             elif request.POST['img_recent']:
                 os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
                 shutil.copyfile('./media/temp/{}'.format(request.POST['img_recent']),
-                                './media/group_{}/image/{}'.format(group.pk, request.POST['img_recent']))
-                post.image = './group_{}/image/{}'.format(
-                    group.pk, request.POST['img_recent'])
+                                ('./media/group_{}/post/uploads' + date_dir + '{}').format(group.pk, request.POST['img_recent']))
+                post.image =('./group_{}/post/uploads' + date_dir + '{}').format(group.pk, request.POST['img_recent'])
+                ## temp 파일 삭제
+                if os.path.isfile('./media/temp/{}'.format(request.POST['img_recent'])):
+                    os.remove('./media/temp/{}'.format(request.POST['img_recent']))
 
             if request.FILES.get('attached_file'):
                 post.attached_file = request.FILES.get('attached_file')
             elif request.POST['file_recent']:
                 os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
                 shutil.copyfile('./media/temp/{}'.format(request.POST['file_recent']),
-                                './media/group_{}/file/{}'.format(group.pk, request.POST['file_recent']))
-                post.attached_file = './group_{}/file/{}'.format(
+                                ('./media/group_{}/post/uploads' + date_dir + '{}').format(group.pk, request.POST['file_recent']))
+                post.attached_file =('./group_{}/post/uploads' + date_dir + '{}').format(
                     group.pk, request.POST['file_recent'])
+                ## temp 파일 삭제
+                if os.path.isfile('./media/temp/{}'.format(request.POST['file_recent'])):
+                    os.remove('./media/temp/{}'.format(request.POST['file_recent']))
+
 
             post.save()
             update_group_post(post, request.user)
@@ -914,6 +911,10 @@ def post_create(request, pk):
 def post_update(request, pk, post_pk):
     post = get_object_or_404(GroupPost, pk=post_pk)
     group = get_object_or_404(Group, pk=pk)
+
+    ## file data dir
+    date_dir = datetime.today().strftime('/%Y/%m/%d/')
+
     if request.method == "POST":
         form = PostForm(request.POST, request.FILES, instance=post)
 
@@ -924,27 +925,62 @@ def post_update(request, pk, post_pk):
                 post.image = request.FILES.get('image')
 
             elif request.POST['img_recent'] : # 다른 필드 에러 시(기존 파일 남아있도록)
-                post.image = './group_{}/image/{}'.format(
+                if os.path.isfile(('./media/group_{}/post/uploads' + date_dir + '{}').format(
+                    group.pk, request.POST['img_recent'])):
+                    post.image = ('./group_{}/post/uploads' + date_dir + '{}').format(
                     group.pk, request.POST['img_recent'])
+                else:
+                    os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
+                    shutil.copyfile('./media/temp/{}'.format(request.POST['img_recent']),
+                                    ('./media/group_{}/post/uploads' + date_dir + '{}').format(group.pk, request.POST['img_recent']))
+                    post.image = ('./group_{}/post/uploads' + date_dir + '{}').format(
+                        group.pk, request.POST['img_recent'])
+                #temp 파일 삭제
+                if os.path.isfile('./media/temp/{}'.format(request.POST['img_recent'])):
+                    os.remove('./media/temp/{}'.format(request.POST['img_recent']))
+                
             if request.FILES.get('attached_file'):  # form valid 시
                 post.attached_file = request.FILES.get('attached_file')
 
             elif request.POST['file_recent']:   # 다른 필드 에러 시(기존 파일 남아있도록)
-                post.attached_file = './group_{}/file/{}'.format(
+                if os.path.isfile(('./media/group_{}/post/uploads' + date_dir + '{}').format(
+                    group.pk, request.POST['file_recent'])):
+                    post.attached_file = ('./group_{}/post/uploads' + date_dir + '{}').format(
                     group.pk, request.POST['file_recent'])
+                else:
+                    os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
+                    shutil.copyfile('./media/temp/{}'.format(request.POST['file_recent']),
+                                    ('./media/group_{}/post/uploads' + date_dir + '{}').format(group.pk, request.POST['file_recent']))
+                    post.attached_file = ('./group_{}/post/uploads' + date_dir + '{}').format(
+                        group.pk, request.POST['file_recent'])
+                
+                #temp 파일 삭제
+                if os.path.isfile('./media/temp/{}'.format(request.POST['file_recent'])):
+                    os.remove('./media/temp/{}'.format(request.POST['file_recent']))
 
             post = form.save()
 
             return redirect('group:post_detail', pk, post.pk)
         else:
             if request.FILES.get('image'):
-                with open('/group_{}/image/{}'.format(group.pk, request.FILES.get('image')), 'wb+') as destination:
+                os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
+                with open('./media/temp/{}'.format(request.FILES['image'].name), 'wb+') as destination:
                     for chunk in request.FILES['image'].chunks():
                         destination.write(chunk)
             if request.FILES.get('attached_file'):
-                with open('/group_{}/file/{}'.format(group.pk, request.FILES.get('attached_file')), 'wb+') as destination:
+                os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
+                with open('./media/temp/{}'.format(request.FILES['attached_file'].name), 'wb+') as destination:
                     for chunk in request.FILES['attached_file'].chunks():
                         destination.write(chunk)
+
+            # if request.FILES.get('image'):
+            #     with open(('./group_{}/post/uploads' + date_dir + '{}').format(group.pk, request.FILES.get('image')), 'wb+') as destination:
+            #         for chunk in request.FILES['image'].chunks():
+            #             destination.write(chunk)
+            # if request.FILES.get('attached_file'):
+            #     with open(('./group_{}/post/uploads' + date_dir + '{}').format(group.pk, request.FILES.get('attached_file')), 'wb+') as destination:
+            #         for chunk in request.FILES['attached_file'].chunks():
+            #             destination.write(chunk)
 
             original_information = OriginalInformation()
             original_information.remember(request, ['update'])
@@ -953,11 +989,11 @@ def post_update(request, pk, post_pk):
             original_information.attached_file = request.POST['file_recent']
 
             if post.image:
-                current_image = post.image.url.split('/')[-1]
+                current_image = str(post.image).split('/')[-1]
             else:
                 current_image = ''
             if post.attached_file:
-                current_file = post.attached_file.url.split('/')[-1]
+                current_file = str(post.attached_file).split('/')[-1]
             else:
                 current_file = ''
 
@@ -967,20 +1003,20 @@ def post_update(request, pk, post_pk):
                 'original_information': original_information,
                 'group': group,
                 'current_image': current_image,
-                'temp_img_location': '/media/group_{}/image/'.format(group.pk),
+                'temp_img_location': '/media/group_{}/post/uploads'.format(group.pk) + date_dir,
                 'current_file': current_file,
-                'temp_file_location': '/media/group_{}/file/'.format(group.pk),
+                'temp_file_location': '/media/group_{}/post/uploads'.format(group.pk) + date_dir,
             }
             return render(request, 'group/group_post_form.html', context=ctx)
     else:
         form = PostForm(instance=post)
 
         if post.image:
-            current_image = post.image.url.split('/')[-1]
+            current_image = str(post.image).split('/')[-1]
         else:
             current_image = ''
         if post.attached_file:
-            current_file = post.attached_file.url.split('/')[-1]
+            current_file = str(post.attached_file).split('/')[-1]
         else:
             current_file = ''
 
@@ -989,9 +1025,9 @@ def post_update(request, pk, post_pk):
             'post': post,
             'group': group,
             'current_image': current_image,
-            'temp_img_location': '/media/group_{}/image/'.format(group.pk),
+            'temp_img_location': '/media/group_{}/post/uploads'.format(group.pk) + date_dir,
             'current_file': current_file,
-            'temp_file_location': '/media/group_{}/file/'.format(group.pk),
+            'temp_file_location': '/media/group_{}/post/uploads'.format(group.pk) + date_dir,
         }
 
         return render(request, template_name="group/group_post_form.html", context=ctx)
@@ -1033,7 +1069,6 @@ class GroupPostDetailView(HitCountDetailView):
         if post.user in post.group.members.all():
             is_member = True
         else: is_member = False
-
         total_likes = len(post.like_user.all())
         is_liked = self.request.user in post.like_user.all()
 
