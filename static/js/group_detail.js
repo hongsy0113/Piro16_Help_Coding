@@ -282,7 +282,7 @@ const groupWaitHandleResponse = (groupName, waitsName, waitsImg, waitsId) => {
 const groupDeleteBtn = document.querySelector('.btn__delete');
 if(groupDeleteBtn){
     groupDeleteBtn.addEventListener('click', function(){
-        if(confirm('정말 삭제하시겠습니까?')){
+        if(confirm('정말 삭제하시겠어요? 😢')){
             window.location.href = `http://127.0.0.1:8000/group/${group_id}/group_delete`;
         }
         else{
@@ -295,7 +295,7 @@ if(groupDeleteBtn){
 const groupOutBtn = document.querySelector('.btn-out');
 if(groupOutBtn){
     groupOutBtn.addEventListener('click', function(){
-        if(confirm('정말 탈퇴하시겠습니까?')){
+        if(confirm('정말 그룹을 나가시겠어요? 🥺')){
             window.location.href = `http://127.0.0.1:8000/group/${group_id}/group_drop`;
         }
         else{
@@ -308,7 +308,7 @@ if(groupOutBtn){
 const groupJoinBtn = document.querySelector('.btn-signup');
 if(groupJoinBtn){
     groupJoinBtn.addEventListener('click', function(){
-        if(confirm('가입하시겠습니까?')){
+        if(confirm('그룹에 가입하시겠어요? 😆')){
             window.location.href = `http://127.0.0.1:8000/group/${group_id}/public_group_join`;
         }
         else{
@@ -321,7 +321,7 @@ if(groupJoinBtn){
 const groupJoinCancelBtn = document.querySelector('.btn-join-out');
 if(groupJoinCancelBtn){
     groupJoinCancelBtn.addEventListener('click', function(){
-        if(confirm('가입을 취소하시겠습니끼?')){
+        if(confirm('가입을 취소하시겠어요? 😮')){
             window.location.href = `http://127.0.0.1:8000/group/${group_id}/group_wait_cancel`;
         }
         else{
