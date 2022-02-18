@@ -10,6 +10,7 @@
 
 {% block js %}
     <script src="{% static 'js/group_home.js' %}" defer></script>
+    <script src="{% static 'js/search_result.js' %}" defer></script>
 {% endblock %}
 
 {% block title %} 도와줘, 코딩 | 그룹 찾기 | 검색 결과 {% endblock %}
@@ -72,7 +73,7 @@
             <span class="search-result__top--query">{{ query }}</span>
             <span class="search-result__top--text">에 대한 검색 결과</span>
         </div>
-        <a href="{% url 'group:group_list' %}">이전으로</a>
+        <button onclick="goBackPage()">이전으로</button>
     </div>
 
     <div class="search-result__gridbox">    <!-- 검색 결과 grid-box 시작-->
