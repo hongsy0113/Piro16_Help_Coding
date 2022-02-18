@@ -202,11 +202,11 @@
     const rightbtn = document.getElementById('qna__arrow-right');
     const count = 3;
     let num = (window.innerWidth - 1080) / 2;
-    const width = 1080 + num*2;
+    let width = window.innerWidth;
     console.log('innerwidth: ',window.innerWidth);
     console.log(num);
-    qnaBox.style.marginLeft = `${num}px`;
-    element.style.gap = `${num*2}px`;
+    // qnaBox.style.marginLeft = `${num}px`;
+    // element.style.gap = `${num*2}px`;
 
     function slideNext() {
         if (current >= count - 1) {
@@ -223,8 +223,17 @@
             current--;
         }
         element.style.transform =`translate(-${width * current}px)`;
+        console.log('slidePrev')
     }
 
+
+    function resetWidth() {
+        width = window.innerWidth;
+        console.log('innerwidth: ',window.innerWidth);
+        element.style.transform =`translate(-${width * current}px)`;
+    }
+
+    window.addEventListener('resize', resetWidth);
     leftbtn.addEventListener('click', slidePrev);
     rightbtn.addEventListener('click', slideNext);
 </script>

@@ -336,21 +336,22 @@ p.main__title, .main__qna__box p {
     position:absolute;
     left: 100px;
     top: 260px;
-    z-index: 1;
+    z-index: 11;
 }
 
 #qna__arrow-right{
     position:absolute;
     right: 100px;
     top: 260px;
-    z-index: 1;
+    z-index: 11;
 }
 
 .main__qna__box {
     display: flex;
     flex-direction: column;
     gap: 25px;
-    /* margin: 0 400px 0 100px; */
+    padding: 0 auto;
+    width: 100vw;
 }
 
 .main__qna__question {
@@ -363,6 +364,7 @@ p.main__title, .main__qna__box p {
     align-items: center;
     justify-content: flex-start;
     padding: 45px 40px;
+    margin: 0 auto;
 }
 
 .main__qna__answer {
@@ -375,6 +377,7 @@ p.main__title, .main__qna__box p {
     align-items: center;
     justify-content: flex-start;
     padding: 45px 40px;
+    margin: 0 auto;
 }
 
 .main__qna__box:nth-of-type(2) {
