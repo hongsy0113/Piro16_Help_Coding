@@ -19,6 +19,12 @@
     margin: 0;
 }
 
+.searchresult__title a {
+    padding: 0px 12px;
+    color: #4e4e4e;
+    text-decoration: none;
+}
+
 /* search-box */
 .qna__search-container {
     display: flex;

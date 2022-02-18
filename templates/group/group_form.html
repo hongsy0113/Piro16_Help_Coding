@@ -17,6 +17,7 @@
 
 {% block content %}
 
+
 <form method="POST" class="post-form" enctype="multipart/form-data">
     {% csrf_token %}
     <div class="group-create__container">   <!-- 그룹 생성 컨테이너 시작 -->
@@ -121,6 +122,5 @@
         <input type="radio" name="group-mode__tag" value="PRIVATE" id="private" class="tag" {% if group.mode == 'PRIVATE' %} checked {% endif %}>
         <label for="private">비공개</label>
     </div> -->
-
 
 {% endblock %}

@@ -12,6 +12,7 @@
 {% block title %} 도와줘, 코딩 | {{ group.name }} | 검색 결과 {% endblock %}
 
 {% block content %}
+
 <div class="group-post__top">   <!-- 게시판 상단 -->
     <div class="group-post__top-left">
         <a href="{% url 'group:post_list' group.pk %}" class="group-post__top--title">{{ group.name }}</a>
@@ -125,6 +126,7 @@
     </form>
     <a class="group_post__ask-btn" href="{% url 'group:post_create' group.pk %}">내 작품 공유</a>
 </div>
+
 
 <!-- 페이지네이션 -->
 <div class="pagination-box">
