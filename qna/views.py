@@ -180,8 +180,6 @@ def question_create(request):
             # image, file 부분
             date_dir = datetime.today().strftime('/%Y/%m/%d/')
             os.makedirs(MEDIA_ROOT + '/qna/uploads' + date_dir, exist_ok=True)
-            #os.makedirs(MEDIA_ROOT + '/qna/file'+ data_dir, exist_ok=True)
-
 
             if request.FILES.get('image'):
                 question.image = request.FILES.get('image')
@@ -191,6 +189,10 @@ def question_create(request):
                                 './media/qna/uploads'+ date_dir +'{}'.format(request.POST['img_recent'])) ###
                 question.image =  './qna/uploads'+ date_dir + '{}'.format(request.POST['img_recent']) ###
 
+                ## temp 파일 삭제
+                if os.path.isfile('./media/temp/{}'.format(request.POST['img_recent'])):
+                    os.remove('./media/temp/{}'.format(request.POST['img_recent']))
+        
             if request.FILES.get('attached_file'):
                 question.attached_file = request.FILES.get('attached_file')
             elif request.POST['file_recent']:
@@ -199,8 +201,15 @@ def question_create(request):
                                 './media/qna/uploads'+ date_dir +'{}'.format(request.POST['file_recent'])) ###
                 question.attached_file = './qna/uploads'+ date_dir +'{}'.format( request.POST['file_recent']) ###
 
+                ## temp 파일 삭제
+                if os.path.isfile('./media/temp/{}'.format(request.POST['file_recent'])):
+                    os.remove('./media/temp/{}'.format(request.POST['file_recent']))
+
             question.save()
             update_question(question, request.user)
+
+            
+
             return redirect('qna:question_detail', question.pk)
 
         else:
@@ -315,7 +324,6 @@ class FileDownloadView(SingleObjectMixin, View):
         fs = FileSystemStorage(file_path)
         response = FileResponse(fs.open(file_path, 'rb'), content_type=file_type)
         response['Content-Disposition'] = f'attachment; filename={object.get_filename()}'
-        #response['Content-Disposition'] = 'attachment; filename*=UTF-8\'\'%s' % object.get_filename()
         
         return response
 
@@ -354,12 +362,31 @@ def question_update(request, pk):
                 question.image = request.FILES.get('image')
                 
             elif request.POST['img_recent'] :   # 다른 필드 에러 시(기존 파일 남아있도록)
-                question.image = './qna/uploads'+ date_dir +'{}'.format(request.POST['img_recent'])
+                if os.path.isfile('./media/qna/uploads'+ date_dir +'{}'.format(request.POST['img_recent'])):
+                    question.image = './qna/uploads'+ date_dir +'{}'.format(request.POST['img_recent'])
+                else:
+                    os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
+                    shutil.copyfile('./media/temp/{}'.format(request.POST['img_recent']),
+                                './media/qna/uploads'+ date_dir +'{}'.format(request.POST['img_recent'])) ###
+                    question.image =  './qna/uploads'+ date_dir + '{}'.format(request.POST['img_recent']) ###
+                    # temp 파일 삭제
+                if os.path.isfile('./media/temp/{}'.format(request.POST['img_recent'])):
+                    os.remove('./media/temp/{}'.format(request.POST['img_recent']))
+
             if request.FILES.get('attached_file'):  # form valid 시
                 question.attached_file = request.FILES.get('attached_file')
                 
             elif request.POST['file_recent']:   # 다른 필드 에러 시(기존 파일 남아있도록)
-                question.attached_file = './qna/uploads'+ date_dir +'{}'.format(request.POST['file_recent'])
+                if os.path.isfile('./media/qna/uploads'+ date_dir +'{}'.format(request.POST['file_recent'])):
+                    question.attached_file = './qna/uploads'+ date_dir +'{}'.format(request.POST['file_recent'])
+                else:
+                    os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
+                    shutil.copyfile('./media/temp/{}'.format(request.POST['file_recent']),
+                                './media/qna/uploads'+ date_dir +'{}'.format(request.POST['file_recent']))
+                    question.attached_file =  './qna/uploads'+ date_dir + '{}'.format(request.POST['file_recent'])
+                    # temp 파일 삭제
+                if os.path.isfile('./media/temp/{}'.format(request.POST['file_recent'])):
+                    os.remove('./media/temp/{}'.format(request.POST['file_recent']))
 
             question.save()
             update_question(question, request.user)
@@ -376,15 +403,24 @@ def question_update(request, pk):
                 else:
                     extra_tag_names.append(tag)
 
+            # if request.FILES.get('image'):
+            #     with open( './qna/uploads'+ date_dir +'{}'.format(request.FILES.get('image')), 'wb+') as destination:
+            #         for chunk in request.FILES['image'].chunks():
+            #             destination.write(chunk)
+            # if request.FILES.get('attached_file'):
+            #     with open('./qna/uploads'+ date_dir +'{}'.format(request.FILES.get('attached_file')), 'wb+') as destination:
+            #         for chunk in request.FILES['attached_file'].chunks():
+            #             destination.write(chunk)
             if request.FILES.get('image'):
-                with open( './qna/uploads'+ date_dir +'{}'.format(request.FILES.get('image')), 'wb+') as destination:
+                os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
+                with open('./media/temp/{}'.format(request.FILES['image'].name), 'wb+') as destination:
                     for chunk in request.FILES['image'].chunks():
                         destination.write(chunk)
             if request.FILES.get('attached_file'):
-                with open('./qna/uploads'+ date_dir +'{}'.format(request.FILES.get('attached_file')), 'wb+') as destination:
+                os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
+                with open('./media/temp/{}'.format(request.FILES['attached_file'].name), 'wb+' ) as destination:
                     for chunk in request.FILES['attached_file'].chunks():
                         destination.write(chunk)
-
 
 
             original_information = OriginalInformation()

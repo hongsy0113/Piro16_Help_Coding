@@ -856,6 +856,8 @@ def post_create(request, pk):
                 shutil.copyfile('./media/temp/{}'.format(request.POST['img_recent']),
                                 ('./media/group_{}/post/uploads' + date_dir + '{}').format(group.pk, request.POST['img_recent']))
                 post.image =('./group_{}/post/uploads' + date_dir + '{}').format(group.pk, request.POST['img_recent'])
+                ## temp 파일 삭제
+                os.remove('./media/temp/{}'.format(request.POST['img_recent']))
 
             if request.FILES.get('attached_file'):
                 post.attached_file = request.FILES.get('attached_file')
@@ -865,6 +867,8 @@ def post_create(request, pk):
                                 ('./media/group_{}/post/uploads' + date_dir + '{}').format(group.pk, request.POST['file_recent']))
                 post.attached_file =('./group_{}/post/uploads' + date_dir + '{}').format(
                     group.pk, request.POST['file_recent'])
+                ## temp 파일 삭제
+                os.remove('./media/temp/{}'.format(request.POST['file_recent']))
 
             post.save()
             update_group_post(post, request.user)
