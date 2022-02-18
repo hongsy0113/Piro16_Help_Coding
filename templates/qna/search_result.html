@@ -8,13 +8,17 @@
 <link rel="stylesheet" href="{% static 'css/qna_search_result.css' %}">
 {% endblock css %}
 
+{% block js %}
+<script type="text/javascript" src="/static/js/search_result.js" defer></script>
+{% endblock %}
+
 {% block title %} 도와줘, 코딩 | 묻고 답하기 | 검색 결과 {% endblock %}
     
 {% block content %}
 <div>
     <div class="searchresult__title">
         <h3>"{{ query }}"</h3>
-        <a href="javascript:history.back();">이전으로</a>
+        <button onclick="goBackPage()">이전으로</button>
     </div>
 
 </div>
