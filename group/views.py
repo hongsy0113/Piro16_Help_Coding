@@ -80,7 +80,7 @@ def group_home(request):
         'groups': page_obj,
         'groups_star_dict': groups_star_dict,
         'sort_by': sort_by,
-        'ani_image': static('image/helphelp.png'),
+        'ani_image': static('img/group_default.png'),
         'code_ex': static('image/code_ex.jpg')
     }
 
@@ -111,7 +111,7 @@ def group_search_public(request):
     ctx = {
         'groups': page_obj,
         'query': query,
-        'ani_image': static('image/helphelp.png'),
+        'ani_image': static('img/group_default.png'),
         'sort_by': sort_by,
     }
 
@@ -363,8 +363,8 @@ def group_detail(request, pk):
         'is_liked': is_liked,
         'user': user,
         'is_star': is_star,
-        'ani_image': static('image/helphelp.png'),
-        'profile_img': static('image/none_image_user.jpeg'),
+        'ani_image': static('img/group_default.png'),
+        'profile_img': static('img/user_thumbnail/profile1.png'),
     }
 
     return render(request, template_name='group/group_detail.html', context=ctx)
@@ -539,7 +539,7 @@ def group_list(request):
     ctx = {
         'groups': page_obj,
         'sort_by': sort_by,
-        'ani_image': static('image/helphelp.png')
+        'ani_image': static('img/group_default.png')
     }
 
     return render(request, template_name='group/group_list.html', context=ctx)
