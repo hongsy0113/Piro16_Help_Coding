@@ -230,7 +230,7 @@ const groupWaitHandleResponse = (groupName, waitsName, waitsImg, waitsId) => {
 
         memberWaitAcceptBtn.style.display = 'none';
         memberWaitRejectBtn.style.display = 'none';
-        memberWaitAlertText.innerHTML = `<span class="alert__text">가입을 수락했습니다.</span>`
+        memberWaitAlertText.innerHTML = `<span class="alert__text">가입을 수락했어요🙆‍♂️</span>`
     }
 
 
@@ -252,7 +252,7 @@ const groupWaitHandleResponse = (groupName, waitsName, waitsImg, waitsId) => {
         memberWaitAcceptBtn.style.display = 'none';
         memberWaitRejectBtn.style.display = 'none';
 
-        memberWaitAlertText.innerHTML = `<span class="alert__text">가입을 거절했습니다.</span>`
+        memberWaitAlertText.innerHTML = `<span class="alert__text">가입을 거절했어요🙅‍♂️</span>`
     }
 
     const waitMemberProfile = document.querySelectorAll('.wait-member__name');
