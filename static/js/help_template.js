@@ -1,10 +1,10 @@
 const showCautionHover = document.querySelector('.modal__help-btn');
 const cautionAlert = document.querySelector('.help__container');
 
-showCautionHover.addEventListener('mouseover', (event) => {
+function showCaution(){
     cautionAlert.style.display = 'flex';
-})
+}
 
-showCautionHover.addEventListener('mouseout', (event) => {
+function closeCaution(){
     cautionAlert.style.display = 'none';
-})
+}
