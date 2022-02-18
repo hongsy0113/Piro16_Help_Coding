@@ -33,7 +33,7 @@
         {% else %}
         <div id="alert-{{ alert.id }}-dot" class="alert__dot alert__dot-read"></div>
         {% endif %}
-        <div id="alert-{{ alert.id }}" class="alert__content"><p>{{ alert.content }}</p><p>{{ alert.time | date:'y.m.d a h:i' }}</p></div>
+        <div id="alert-{{ alert.id }}" class="alert__content"><p>{{ alert.content }}</p><p>{{ alert.time_past }}</p></div>
       </div>
       <!-- 원래 위치 -->
     </a>

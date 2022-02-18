@@ -289,13 +289,13 @@ def activate(request, uid64, token):
 # Remove Unauthenticated User
 
 
-def unauthenticated_user_delete(email):
-    try:
-        user = User.objects.get(email=email)
-        if not user.is_active:
-            user.delete()
-    except:
-        pass
+# def unauthenticated_user_delete(email):
+#    try:
+#        user = User.objects.get(email=email)
+#        if not user.is_active:
+#            user.delete()
+#    except:
+#        pass
 
 # My Page
 

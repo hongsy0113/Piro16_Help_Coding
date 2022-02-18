@@ -17,6 +17,21 @@ def reward_thumbnail_path(instance, filename):
     return 'reward_{0}/thumbnail/{1}'.format(instance.name, filename)
 
 
+# 시간
+def time_convert(datetimefield):
+    data = datetime(datetimefield.year, datetimefield.month, datetimefield.day,
+                    datetimefield.hour, datetimefield.minute, datetimefield.second)
+    second = int((datetime.now() - data).total_seconds())
+    if second > 60 * 60 * 24:
+        return str(second // (60 * 60 * 24)) + "일 전"
+    elif second > 60 * 60:
+        return str(second // (60 * 60)) + "시간 전"
+    elif second > 60:
+        return str(second // 60) + "분 전"
+    else:
+        return str(second) + "초 전"
+
+
 class Reward(models.Model):
     name = models.CharField(max_length=20)
     info = models.TextField()
@@ -112,14 +127,18 @@ class GetPoint(models.Model):
     point = models.IntegerField(null=True, blank=True)
     get_date = models.DateTimeField()
 
+    def time_past(self):
+        return time_convert(self.get_date)
+
 
 # 업적 만들기 (현재는 예시임 테스트용)
 
 
 def initializeReward():
     for REWARD in REWARD_ALL:
-        if not Reward.objects.filter(name = REWARD[0]):
-            Reward.objects.create(name = REWARD[0], info = REWARD[1], type = REWARD[2], criteria = REWARD[3], img = REWARD[4])
+        if not Reward.objects.filter(name=REWARD[0]):
+            Reward.objects.create(
+                name=REWARD[0], info=REWARD[1], type=REWARD[2], criteria=REWARD[3], img=REWARD[4])
 
 
 class GetReward(models.Model):
@@ -155,3 +174,6 @@ class Alert(models.Model):
             #    return '#'
         else:
             return '#'
+
+    def time_past(self):
+        return time_convert(self.time)
