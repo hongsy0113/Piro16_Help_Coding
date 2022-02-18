@@ -3,7 +3,7 @@ from django.db import models
 from user.models import User
 from django.contrib.contenttypes.fields import GenericRelation
 from hitcount.models import HitCountMixin, HitCount
-import os
+import os, shutil
 from datetime import datetime
 #######################################
 # 파일 저장 경로 지정하기 위한 함수들
@@ -18,7 +18,7 @@ def group_thumbnail_path(instance, filename):
 def group_post_uploads_path(instance, filename):
     date_dir = datetime.today().strftime('/%Y/%m/%d/')
     # file will be uploaded to MEDIA_ROOT/group_<group.name>/post/image/<filename>
-    return ('group_{0}/post/uploads' + date_dir + '{1}').format(instance.group.pk, filename)
+    return ('group/group_{0}/post/uploads' + date_dir + '{1}').format(instance.group.pk, filename)
 
 
 # group 존재 여부 확인
@@ -55,6 +55,12 @@ class Group(models.Model):
     def __str__(self):
         return self.name
 
+    # 그룹 삭제 시 media파일 동시 삭제 
+    def delete(self, *args, **kwargs):
+        
+        group_dir = './media/group/group_{0}/'.format(self.pk)
+        super(Group, self).delete(*args, **kwargs)
+        shutil.rmtree(group_dir)
 # 그룹 찜 기능
 
 
