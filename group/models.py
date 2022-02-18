@@ -12,7 +12,7 @@ from datetime import datetime
 
 def group_thumbnail_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/group_<group.name>/<filename>
-    return 'group_{0}/thumbnail/{1}'.format(instance.pk, filename)
+    return 'group/group_{0}/thumbnail/{1}'.format(instance.pk, filename)
 
 # 그룹 게시글 첨부 파일
 def group_post_uploads_path(instance, filename):

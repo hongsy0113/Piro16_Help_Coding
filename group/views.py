@@ -138,7 +138,7 @@ def group_create(request):
         if not error.has_error_group() and form.is_valid():
             group = form.save()
             os.makedirs(
-                MEDIA_ROOT + '/group_{}/thumbnail/'.format(group.pk), exist_ok=True)
+                MEDIA_ROOT + '/group/group_{}/thumbnail/'.format(group.pk), exist_ok=True)
             group.mode = mode
             group.maker = user    # 방장 = 접속한 유저
             group.members.add(user)  # 방장도 그룹의 멤버로 추가
@@ -148,9 +148,12 @@ def group_create(request):
             elif request.POST['img_recent']:
                 os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
                 shutil.copyfile('./media/temp/{}'.format(request.POST['img_recent']),
-                                './media/group_{}/thumbnail/{}'.format(group.pk, request.POST['img_recent']))
-                group.image = './group_{}/thumbnail/{}'.format(
+                                './media/group/group_{}/thumbnail/{}'.format(group.pk, request.POST['img_recent']))
+                group.image = './group/group_{}/thumbnail/{}'.format(
                     group.pk, request.POST['img_recent'])
+                # temp 파일 삭제
+                if os.path.isfile('./media/temp/{}'.format(request.POST['img_recent'])):
+                    os.remove('./media/temp/{}'.format(request.POST['img_recent']))
             group.save()
             update_group_create(group, user)
 
@@ -199,18 +202,6 @@ def group_update(request, pk):
 
         group.intro = request.POST.get('intro')
         intro = group.intro
-        #os.makedirs(MEDIA_ROOT + '/group_{}/thumbnail/'.format(group.pk), exist_ok=True)
-        # shutil.copyfile('./media/temp/{}'.format(request.POST['img_recent']),
-        # './media/group_{}/thumbnail/{}'.format(group.pk, request.POST['img_recent']))
-
-        # # 기존 이미지는 유지
-        # if group.image:
-        #     image = request.POST.get('image')
-
-        # if request.FILES.get('image'):
-        #     image = request.FILES.get('image')
-        #     group.image = image
-        #     group.save()
 
         mode = request.POST.get('group-mode__tag')
         group.mode = mode
@@ -227,7 +218,7 @@ def group_update(request, pk):
                 group.image = request.FILES.get('image')
 
             else:   # 다른 필드 에러 시(기존 파일 남아있도록)
-                group.image = './group_{}/thumbnail/{}'.format(
+                group.image = './group/group_{}/thumbnail/{}'.format(
                     group.pk, request.POST['img_recent'])
                 # original_info.image = request.POST['img_recent']
 
@@ -237,15 +228,15 @@ def group_update(request, pk):
 
         # 에러 메세지가 존재할 때
         if request.FILES.get('image'):
-            #os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
-            with open('/group_{}/thumbnail/{}'.format(group.pk, request.FILES.get('image')), 'wb+') as destination:
-                for chunk in request.FILES['image'].chunks():
-                    destination.write(chunk)
+            os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
+            with open('./media/temp/{}'.format(request.FILES['image'].name), 'wb+') as destination:
+                    for chunk in request.FILES['image'].chunks():
+                        destination.write(chunk)
 
         original_info.image = request.POST['img_recent']
 
         if group.image:
-            current_image = group.image.url.split('/')[-1]
+            current_image = str(group.image).split('/')[-1]
         else:
             current_image = ''
 
@@ -253,7 +244,7 @@ def group_update(request, pk):
             'error': error,
             'origin': original_info,
             'current_image': current_image,
-            'temp_img_location': '/media/group_{}/thumbnail/'.format(group.pk)
+            'temp_img_location': '/media/group/group_{}/thumbnail/'.format(group.pk)
         }
 
         return render(request, template_name='group/group_form.html', context=ctx)
@@ -266,7 +257,7 @@ def group_update(request, pk):
         # except:
         #     pass
         if group.image:
-            current_image = group.image.url.split('/')[-1]
+            current_image = str(group.image).split('/')[-1]
         else:
             current_image = ''
 
@@ -274,7 +265,7 @@ def group_update(request, pk):
             'group': group,
             'form': form,
             'current_image': current_image,
-            'temp_img_location': '/media/group_{}/thumbnail/'.format(group.pk)
+            'temp_img_location': '/media/group/group_{}/thumbnail/'.format(group.pk)
         }
 
         return render(request, template_name='group/group_form.html', context=ctx)
