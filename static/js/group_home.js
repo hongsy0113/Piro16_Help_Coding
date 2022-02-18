@@ -100,10 +100,10 @@ const groupCodeHandleResponse = (message) => {
 const groupCodeGuideAlert = document.querySelector('.group__code--guide');
 const groupCodeGuideHover = document.querySelector('.group__code--guide-hover');
 
-groupCodeGuideHover.addEventListener('mouseover', function(){
+groupCodeGuideHover.addEventListener('cilck', function(){
     groupCodeGuideAlert.style.display = 'flex';
 })
 
-groupCodeGuideHover.addEventListener('mouseout', (event) => {
+groupCodeGuideHover.addEventListener('click', (event) => {
     groupCodeGuideAlert.style.display = 'none';
 })
