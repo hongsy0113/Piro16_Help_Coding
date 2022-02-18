@@ -1,5 +1,8 @@
 {% extends 'user/main.html' %}
 {% load static %}
+
+{% load my_tags %}
+
 {% block css %}
 <link rel="stylesheet" href="{% static 'css/mypage_list.css' %}">
 {% endblock css %}
@@ -50,12 +53,52 @@
         </a>
       </li>
       {% endif %}
+
+      {% if page_obj.number|add:'-2' > 1 %}
+        <li class="page-item">
+            <a class="page-link" href="?{% param_replace page=page_obj.number|add:'-5' %}">
+                ...
+            </a>
+        </li>
+      {% endif %}
       
-      {% for page in page_range %}
-      <li class="page-item">
-        <a class="page-link {% if page == page_obj.number %} page-item-active {% endif %}" href="?page={{ page }}">{{ page }}</a>
-      </li>
+      {% for page_number in page_range %}
+        {% if page_number == page_obj.number %}
+          <li class="page-item">
+            <a class="page-link page-item-active" href="?{% param_replace page=page_number %}">
+              {{ page_number }}
+            </a>
+          </li>
+        {% else %}
+          {% if page_obj.number < 4 %}
+            {% if page_number < 6 %}
+              <li class="page-item">
+                <a class="page-link" href="?{% param_replace page=page_number %}">{{ page_number }}</a>
+              </li>
+            {% endif %}
+          {% elif page_obj.number > page_obj.paginator.num_pages|add:'-2' %}
+            {% if page_number > page_obj.paginator.num_pages|add:'-5' %}
+              <li class="page-item">
+                <a class="page-link" href="?{% param_replace page=page_number %}">{{ page_number }}</a>
+              </li>
+            {% endif %}
+          {% else %}
+            {% if page_number > page_obj.number|add:'-3' and page_number < page_obj.number|add:'3' %}
+              <li class="page-item">
+                <a class="page-link" href="?{% param_replace page=page_number %}">{{ page_number }}</a>
+              </li>
+            {% endif %}
+          {% endif %}
+        {% endif %}
       {% endfor %}
+
+      {% if page_obj.paginator.num_pages > page_obj.number|add:'2' %}
+        <li class="page-item">
+            <a class="page-link" href="?{% param_replace page=page_obj.number|add:'5' %}">
+                ...
+            </a>
+        </li>
+      {% endif %}
       
       {% if page_obj.has_next %}
       <li class="page-item">

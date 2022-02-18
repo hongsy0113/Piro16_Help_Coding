@@ -338,3 +338,90 @@ section {
   justify-content: center;
   align-items: center;
 }
+
+/* footer */
+footer {
+    background-color: #e9e9e9;
+}
+
+.footer__container {
+    width: 1080px;
+    height: 170px;   
+    margin: 0 auto;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.footer__text {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.footer-left {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+}
+
+.footer__logo img {
+    width: 180px;
+    height: 60px;
+}
+
+.footer__text--intro-box {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.intro-box__top {
+    width: 70px;
+    color: black;
+    font-family: Noto Sans CJK KR;
+    font-size: 17px;
+    line-height: 150%;
+}
+
+.intro-box__bottom {
+    font-family: Noto Sans CJK KR;
+    font-size: 16px;
+    line-height: 150%;
+    color: #4e4e4e;
+}
+
+.intro-box__member span {
+    padding-right: 5px;
+}
+
+.intro-box__member {
+    display: flex;
+    align-items: center;
+}
+
+.intro-box__bar {
+    color: #afafaf;
+    font-weight: bold;
+}
+
+.footer__contact-box {
+    display: flex;
+    flex-direction: column;
+}
+
+.intro-box__icon {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.footer__contact-box svg {
+    width: 60px;
+    height: 60px;
+}
+
+
+
+
