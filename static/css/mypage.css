@@ -23,6 +23,14 @@
     object-fit: contain;
     
 }
+.mypage__profile_reward {
+    position: relative;
+}
+.mypage__representative_reward {
+    position: absolute;
+    top: 156px;
+    right: -25px;
+}
 
 .mypage__profile__text {
     width: 630px;
@@ -109,7 +117,7 @@
     width: 175px;
     height: 175px;
     border-radius: 16px;
-    background-color: #c4c4c4;
+    background-color: white;
     margin-bottom: 10px;
     overflow: hidden;
 }
