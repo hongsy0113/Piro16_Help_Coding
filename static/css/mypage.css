@@ -82,7 +82,7 @@
 
 .mypage__bottom-btn > button, .mypage__profile__btn > button {
     border: 1px solid #37C6E5;
-    padding: 1px 6px;
+    padding: 1px 6px !important;
 }
 
 .mypage__options {
@@ -100,12 +100,12 @@
     cursor: pointer;
     margin: 0;
     padding-bottom: 12px;
-    margin-bottom: -2px;
+    margin-bottom: -2.5px;
     border-bottom: none;
 }
 .mypage__options > h3:first-of-type {
     color: #4F4f4f;
-    border-bottom: 3px solid #4f4f4f;
+    border-bottom: 4px solid #37C6E5;
 }
 
 .mypage__options > h3:hover, .mypage__options > h3:active {

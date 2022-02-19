@@ -235,13 +235,19 @@
 
     function resetWidth() {
         width = window.innerWidth;
-        console.log('innerwidth: ',window.innerWidth);
+        // console.log('innerwidth: ',window.innerWidth);
+        if (element) {
         element.style.transform =`translate(-${width * current}px)`;
+        }
     }
 
     window.addEventListener('resize', resetWidth);
-    leftbtn.addEventListener('click', slidePrev);
-    rightbtn.addEventListener('click', slideNext);
+    if (leftbtn) {
+        leftbtn.addEventListener('click', slidePrev);
+    }
+    if (rightbtn) {
+        rightbtn.addEventListener('click', slideNext);
+    }
 </script>
 
 {% endblock content %}
