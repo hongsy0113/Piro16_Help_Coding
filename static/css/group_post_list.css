@@ -3,7 +3,7 @@ img {
 }
 
 button {
-    all: unsert;
+    all: unset;
 }
 
 a {
@@ -68,6 +68,7 @@ a {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    position: relative;
 }
 
 /* 게시물 정렬 (sort) */
@@ -184,6 +185,12 @@ a {
 .post__filterbox--reset:hover {
     background-color: black;
     color: #fff;
+}
+
+.detail-guide__btn {
+    position: absolute;
+    top: -7px;
+    right: -42px;
 }
 
 /* 게시글 목록 */
