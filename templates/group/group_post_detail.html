@@ -32,6 +32,7 @@
 {{ request.user.id|json_script:"user_id" }}
 {{ post.id|json_script:"post_id" }}
 {{ group.id | json_script:"group_id" }}
+{{ is_member | json_script:"is_member"}}
 
 
 <p style="color: #828282; margin-bottom: 3px;">{{ post.group }}게시판</p>
@@ -39,7 +40,7 @@
 <main>
     <h1>{{ post.title }}</h1>
     <div style="display: flex; justify-content: space-between;">
-        <p class="post__info">{{ post.created_at|date:'y.m.d'}} · 조회 {% get_hit_count for post %} · 좋아요 {{ total_likes }} · {% if is_member %}<a href="{% url 'user:public_userpage' post.user.pk %}" style="text-decoration: none; color:#212529;">{{ username }}</a>{% else %}그룹을 나간 유저예요{% endif %}</p>
+        <p class="post__info">{{ post.created_at|date:'y.m.d'}} · 조회 {% get_hit_count for post %} · 좋아요 {{ total_likes }} · {% if is_writer_member %}<a href="{% url 'user:public_userpage' post.user.pk %}" style="text-decoration: none; color:#212529;">{{ username }}</a>{% else %}그룹을 나간 유저예요{% endif %}</p>
         <div>
             {% if post.user.id == user.id %}
             <a href="{% url 'group:post_update' group.pk post.pk %}" class="post__edit-btn">수정</a>

@@ -152,3 +152,10 @@
     font-size: 30px !important;
     font-weight: bold;
 }
+
+/* 레벨, 포인트 관련 도움말 */
+.content__bottom--text {
+    font-size: 18px;
+    width: 100%;
+    padding: 30px;
+}

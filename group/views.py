@@ -240,7 +240,7 @@ def group_update(request, pk):
             if request.FILES.get('image'):  # form valid 시
                 group.image = request.FILES.get('image')
 
-            else:   # 다른 필드 에러 시(기존 파일 남아있도록)
+            elif request.POST['img_recent']:   # 다른 필드 에러 시(기존 파일 남아있도록)
                 group.image = './group/group_{}/thumbnail/{}'.format(
                     group.pk, request.POST['img_recent'])
                 # original_info.image = request.POST['img_recent']
@@ -779,6 +779,9 @@ def post_list(request, pk):
     group = Group.objects.get(pk=pk)
     page = request.GET.get('page', '1')    # 페이지
 
+    ## ismember
+    is_member = user in group.members.all()
+
     # 게시글 필터
     filter_by_list = request.GET.getlist('filter_by')
     if filter_by_list:
@@ -824,6 +827,7 @@ def post_list(request, pk):
         'group': group,
         'sort_by': sort_by,
         'filter_by': filter_by_list,
+        'is_member': is_member,
     }
     return render(request, 'group/group_post_list.html', context=ctx)
 
@@ -872,6 +876,9 @@ def search_result(request, pk):
         else:
             posts_value_dict[page] = (answers_count, None)
 
+    ## ismember
+    is_member = user in group.members.all()
+
     ctx = {
         'query': query,
         'posts': page_obj,
@@ -879,6 +886,7 @@ def search_result(request, pk):
         'group_pk': pk,
         'group': group,
         'sort_by': sort_by,
+        'is_member': is_member,
     }
 
     return render(request, 'group/search_result.html', context=ctx)
@@ -1118,6 +1126,9 @@ class GroupPostDetailView(HitCountDetailView):
 
     def get_context_data(self, **kargs):
         context = super().get_context_data(**kargs)
+
+        user = self.request.user
+
         # self.object로 GroupPost 객체에 접근할 수 있음
         try:
             previous_pk = GroupPost.get_previous_by_created_at(
@@ -1141,13 +1152,17 @@ class GroupPostDetailView(HitCountDetailView):
         else:
             username = '(알 수 없음)'
 
-        ## 그룹 탈퇴한 유저인지 여부
-
+        ## 작성자가 그룹 탈퇴한 유저인지 여부
         if post.user in post.group.members.all():
+            is_writer_member = True
+        else: is_writer_member = False
+        ## 공개그룹의 경우, 지금 보고 있는 사람이 멤버인지
+        if user in post.group.members.all():
             is_member = True
         else: is_member = False
+
         total_likes = len(post.like_user.all())
-        is_liked = self.request.user in post.like_user.all()
+        is_liked = user in post.like_user.all()
 
         # 해당 게시글에 대한 답변 가져오기
         answers = GroupAnswer.objects.filter(post_id=post.id, parent_answer__isnull=True).order_by(
@@ -1174,6 +1189,7 @@ class GroupPostDetailView(HitCountDetailView):
         # context['answers']= answers
         context['answers_count'] = answers_count
         context['answers_reply_dict'] = answers_reply_dict
+        context['is_writer_member'] = is_writer_member
         context['is_member'] = is_member
         return context
     
