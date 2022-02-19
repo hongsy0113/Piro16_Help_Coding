@@ -54,12 +54,14 @@
     <div class="question__detail__content">
         <p>{{ question.content }}</p>
         
-        {% if question.image %}<img src="{{ question.image.url }}" height="100">{% endif %}
+        {% if question.image %}<img src="{{ question.image.url }}">{% endif %}
         
         {% if question.attached_file %}
-        <div>
-            <label>첨부 파일</label>
-            <div>{{ question.get_filename }}</div>
+        <div class="detail__content--attached_file">
+            <div class="attached_file--left">
+                <label>첨부파일</label>
+                <div>{{ question.get_filename }}</div>
+            </div>
             <form action="{% url 'qna:download' question.id %}">
                 <button type="submit">
                     다운로드
