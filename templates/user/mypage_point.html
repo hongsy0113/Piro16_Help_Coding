@@ -54,7 +54,7 @@
       </li>
       {% endif %}
 
-      {% if page_obj.number|add:'-2' > 1 %}
+      {% if page_obj.number|add:'-2' > 1 and page_obj.paginator.num_pages > 5 %}
         <li class="page-item">
             <a class="page-link" href="?{% param_replace page=page_obj.number|add:'-5' %}">
                 ...
@@ -92,7 +92,7 @@
         {% endif %}
       {% endfor %}
 
-      {% if page_obj.paginator.num_pages > page_obj.number|add:'2' %}
+      {% if page_obj.paginator.num_pages > page_obj.number|add:'2' and page_obj.paginator.num_pages > 5  %}
         <li class="page-item">
             <a class="page-link" href="?{% param_replace page=page_obj.number|add:'5' %}">
                 ...

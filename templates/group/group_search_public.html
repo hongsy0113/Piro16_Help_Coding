@@ -162,7 +162,7 @@
         {% endif %}
         
         
-        {% if groups.number|add:'-2' > 1 %}
+        {% if groups.number|add:'-2' > 1 and groups.paginator.num_pages > 5 %}
         <li class="all__page-item">
             <a class="all__page-link" href="?{% param_replace page=groups.number|add:'-5' search=query %}">
                 ...
@@ -198,7 +198,7 @@
             {% endif %}
         {% endfor %}
 
-        {% if groups.paginator.num_pages > groups.number|add:'2' %}
+        {% if groups.paginator.num_pages > groups.number|add:'2' and groups.paginator.num_pages > 5 %}
         <li class="all__page-item">
             <a class="all__page-link" href="?{% param_replace page=groups.number|add:'5' search=query  %}">
                 ...
