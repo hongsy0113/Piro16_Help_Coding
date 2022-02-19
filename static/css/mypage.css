@@ -80,6 +80,11 @@
     justify-content: flex-end;
 }
 
+.mypage__bottom-btn > button, .mypage__profile__btn > button {
+    border: 1px solid #37C6E5;
+    padding: 1px 6px;
+}
+
 .mypage__options {
     display: flex;
     gap: 20px;
