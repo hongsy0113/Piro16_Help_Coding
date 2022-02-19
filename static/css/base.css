@@ -313,7 +313,7 @@ section {
   display: -webkit-box;
   -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
-  width: 350px;
+  width: 330px;
 }
 /* 안 읽으면 파란 점으로 표시, 읽으면  투명 */
 .alert__dot {
