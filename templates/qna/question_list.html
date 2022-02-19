@@ -168,8 +168,8 @@
             </a>
         </li>
         {% endif %}
-
-        {% if questions.number|add:'-2' > 1 %}
+        <!---->
+        {% if questions.number|add:'-2' > 1 and  questions.paginator.num_pages > 5 %}
         <li class="all__page-item">
             <a class="all__page-link" href="?{% param_replace page=questions.number|add:'-5' %}">
                 ...
@@ -204,8 +204,8 @@
                 {% endif %}
             {% endif %}
         {% endfor %}
-
-        {% if questions.paginator.num_pages > questions.number|add:'2' %}
+        <!---->
+        {% if questions.paginator.num_pages > questions.number|add:'2' and questions.paginator.num_pages > 5 %}
         <li class="all__page-item">
             <a class="all__page-link" href="?{% param_replace page=questions.number|add:'5' %}">
                 ...
