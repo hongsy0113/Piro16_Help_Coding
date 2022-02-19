@@ -116,15 +116,16 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    font-family: Noto Sans CJK KR;
-    font-size: 19px;
-    font-weight: 500;
-    margin: 20px 0;
+    font-family: "Noto Sans KR", sans-serif;
+    font-size: 18px;
+    font-weight: bold;
+    color: #4E4E4E;
+    margin: 6px 0 20px 0;
 }
 
 .caution__ul-icon p {
     font-size: 13px;
-    margin: 0px 29px 18px;
+    margin: 4px 53px 29px;
 }
 
 .caution__li img {

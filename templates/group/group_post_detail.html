@@ -64,14 +64,16 @@
     {{ iframe | safe }}
     
     
-    <h3>{{ post.content }}</h3>
+    <p>{{ post.content }}</p>
     
-    {% if post.image %}<img src="{{ post.image.url }}" height="100">{% endif %}
+    {% if post.image %}<img src="{{ post.image.url }}">{% endif %}
     
     {% if post.attached_file %}
-    <div>
-        <label>첨부 파일</label>
-        <div>{{ post.get_filename }}</div>
+    <div class="detail__content--attached_file">
+        <div class="attached_file--left">
+            <label>첨부파일</label>
+            <div>{{ post.get_filename }}</div>
+        </div>
         <form action="{% url 'group:download' post.id %}">
             <button type="submit">
                 다운로드
@@ -80,9 +82,9 @@
     </div>
     {% endif %}
     <div>
-        <div>
+        <div class="detail__content--attached_link">
             {% if post.attached_link %}
-            <label>첨부 링크</label>
+            <label>첨부링크</label>
             <a href="{{ post.attached_link }}">{{ post.attached_link }}</a>
             {% endif %}
         </div>
