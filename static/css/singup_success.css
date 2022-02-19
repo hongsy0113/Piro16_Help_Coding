@@ -1,0 +1,84 @@
+button {
+  all: unset;
+}
+
+.email__box {
+  display: flex;
+  justify-content: center;
+  padding-top: 20px;
+}
+
+.email-text {
+  font-family: Noto Sans CJK KR;
+  font-weight: bold;
+  font-size: 27px;
+  line-height: 105%;
+  color: #000000;
+}
+
+.signup__success {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 60px;
+  height: 290px;
+}
+
+.signup__success--message {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 13px;
+}
+
+.signup__success--message span {
+  font-family: Noto Sans CJK KR;
+  font-size: 24px;
+  line-height: 105%;
+  color: #4e4e4e;
+}
+
+.return-main__btn {
+  padding: 12px 24px 14px;
+  background: #37c6e6;
+  border: 2px solid #37c6e6;
+  box-sizing: border-box;
+  border-radius: 26px;
+
+  font-family: Noto Sans CJK KR;
+  font-weight: bold;
+  font-size: 22px;
+  line-height: 105%;
+  color: #ffffff;
+  text-decoration: none;
+  margin-right: 20px;
+}
+
+.return-main__btn:hover {
+  color: #37c6e6;
+  background: #ffffff;
+  transition: 0.3s;
+}
+
+.drop__btn {
+  padding: 12px 24px 14px;
+  background: #e63754;
+  border: 2px solid #e63754;
+  box-sizing: border-box;
+  border-radius: 26px;
+
+  font-family: Noto Sans CJK KR;
+  font-weight: bold;
+  font-size: 22px;
+  line-height: 105%;
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.drop__btn:hover {
+  color: #e63754;
+  background: #ffffff;
+  transition: 0.3s;
+}

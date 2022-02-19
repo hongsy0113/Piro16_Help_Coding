@@ -1,53 +1,204 @@
 {% extends 'base.html' %}
+  
+{% load static %}
+{% block css %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/group_home_modal.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'css/help_template.css' %}" />
+<link rel="stylesheet" href="{% static 'css/mypage.css' %}">
+{% endblock css %}
+
+{% block js %}
+    <script src="{% static 'js/help_template.js' %}" defer></script>
+{% endblock %}
+
+{% block title %} 도와줘, 코딩 | 마이 페이지 {% endblock %}
 
 {% block content %}
-<div>
-  <h3>○ 나의 프로필 ( {{ user.email }} )</h3>
-  {% if user.img %}<img src="{{ user.img.url }}" height="100">{% else %}<p>사진 없음</p>{% endif %}
-  <p>- 닉네임 : {{ user.nickname }}</p>
-  <p>- 소개 : {{ user.introduction }}</p>
-  <p>- 생년월일 : {{ user.birth }}</p>
-  <p>- 직업 : {{ user.job }}</p>
-  <p>- 좋아요 수 : {{ user.total_like }}</p>
-  <button class="btn btn-secondary"><a class="text-white" href="{% url 'user:mypage_revise' %}" style="text-decoration: none">개인정보 수정</a></button>
-  {% if messages %}{% for message in messages %}<p class="text-danger">{{ message.message }}</p>{% endfor %}{% endif %}
+<div class="mypage__profile__container">
+  <div class="mypage__profile_reward">
+    <div class="mypage__profile__img">
+      {% if user.img %}<img src="{{ user.img.url }}" height="100">{% else %}<p>사진 없음</p>{% endif %}
+    </div>
+    <div class="mypage__representative_reward">{% if user.representative_reward %}<img src="{{ user.representative_reward.img }}" height="70"></img>{% else %}<p></p>{% endif %}</div>
+  </div>
+  <div class="mypage__profile__text">
+    <p>{{ user.nickname }}</p>
+    <div>
+      <div class="mypage__profile__text-content">
+        <div><p>이메일</p><p>{{ user.email }}</p></div>
+        <div><p>생년월일</p><p>{{ user.birth }}</p></div>
+        <div><p>직업</p><p>{{ user.get_job_display }}</p></div>
+      </div>
+      <div class="mypage__profile__text-content">
+        <div><p>레벨</p><p>{{ user.get_level }}</p></div>
+        <div><p>좋아요 수</p><p>{{ user.total_like }}</p></div>
+        <div><p>포인트</p><p>{{ user.points }}</p>
+          <!-- 모달 버튼 -->
+          <button class="detail-guide__btn" type="button">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 57 56" fill="none" style="margin-top: -5px;">
+              <path d="M15.8843 18.6931L15.8844 18.6931L19.8719 21.6636C20.6838 22.2684 21.8409 22.1272 22.4757 21.336C23.506 20.0521 24.3298 19.0978 25.2608 18.4542C26.1685 17.8268 27.2003 17.4814 28.671 17.4814C29.7514 17.4814 30.9706 17.8263 31.9082 18.4247C32.8508 19.0264 33.4226 19.8217 33.4226 20.7025C33.4226 21.3745 33.1536 21.8884 32.5856 22.4063C31.9924 22.9471 31.1132 23.4557 29.9426 24.1005C29.8651 24.1432 29.7865 24.1864 29.707 24.23C27.0627 25.6819 23.4032 27.6911 23.4032 32.5161V32.9677C23.4032 34.0004 24.2529 34.8226 25.2823 34.8226H31.7177C32.7471 34.8226 33.5968 34.0004 33.5968 32.9677V32.8172C33.5968 32.2942 33.9778 31.8149 34.8687 31.2181C35.2985 30.9302 35.8044 30.642 36.3681 30.3224L36.4132 30.2968C36.9589 29.9874 37.5514 29.6515 38.1452 29.2733C39.3658 28.496 40.6228 27.5214 41.5729 26.1585C42.529 24.7871 43.1565 23.048 43.1565 20.7742C43.1565 17.3136 41.3292 14.3026 38.7048 12.1722C36.0822 10.0432 32.6242 8.75806 29.2648 8.75806C26.0614 8.75806 23.4099 9.42187 21.1503 10.6942C18.8929 11.9652 17.0571 13.8262 15.4578 16.1751L15.8555 16.446L15.4578 16.1751C14.8998 16.9947 15.0884 18.1001 15.8843 18.6931ZM56.5 28C56.5 43.1829 43.9713 55.5 28.5 55.5C13.0287 55.5 0.5 43.1829 0.5 28C0.5 12.826 13.0288 0.5 28.5 0.5C43.9712 0.5 56.5 12.826 56.5 28ZM28.5 36.7581C25.3173 36.7581 22.7137 39.3034 22.7137 42.4516C22.7137 45.5997 25.3173 48.1452 28.5 48.1452C31.6827 48.1452 34.2863 45.5997 34.2863 42.4516C34.2863 39.3034 31.6827 36.7581 28.5 36.7581Z" fill="#4e4e4e" stroke="#4e4e4e"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="mypage__profile__text-content">
+      <div><p>소개</p><p>{{ user.introduction }}</p></div>
+    </div>
+    <div class="mypage__profile__btn">
+    <button class=""><a href="{% url 'user:mypage_revise' %}" style="text-decoration: none; color: #37c6e5;">개인정보 수정</a></button>
+      <button class=""><a href="{% url 'user:mypage_point' %}" style="text-decoration: none; color: #37c6e5;">포인트 기록</a></button>
+      <button style="border-color: #bdbdbd;"><a href="{% url 'user:drop' %}" style="text-decoration: none; color: #bdbdbd;">회원 탈퇴하기</a></button>
+      {% if user.is_superuser %}
+      <!-- 이거는 admin 유저만 보이는 거라 디자인 크게 신경 안 써도 될 듯 -->
+      <button class="btn btn-primary"><a class="text-white" href="{% url 'user:initialize_rewards' %}" style="text-decoration: none">업적 업데이트하기</a></button>
+      <button class="btn btn-primary"><a class="text-white" href="{% url 'user:periodic_tasks' %}" style="text-decoration: none">DB 작업 시작하기</a></button>
+      <p>{{ periodic_tasks_timer.in_process }}</p>
+      {% endif %}
+    </div>
+    {% if messages %}{% for message in messages %}<p class="mypage__message">{{ message.message }}</p>{% endfor %}{% endif %}
+  </div>
 </div>
-<hr>
-<div>
-  <h3>○ 나의 업적</h3>
+  <div class="mypage__options">
+    <h3 class="mypage__options__reward">나의 업적</h3>
+    <h3 class="mypage__options__question">최근 질문</h3>
+    <h3 class="mypage__options__answer">최근 답변</h3>
+  </div>
+
+
+<div class="mypage__reward__container">
   {% if rewards %}
-  {% for reward in rewards %}
-  <p>- [업적] {{ reward.reward_id.name }} (달성일 : {{ reward.get_date }})</p>
-  {% endfor %}
-  <button class="btn btn-secondary"><a class="text-white" href="" style="text-decoration: none">전체 업적 보기</a></button>
+  <div>
+    {% for reward in rewards %}
+    <div class="mypage__reward">
+      <div class="mypage__reward__img__container">
+        <img src="{{ reward.reward.img }}" alt="rewardimg">
+      </div>
+      <p class="mypage__reward__name">{{ reward.reward.name }}</p> 
+      <p class="mypage__reward__content">{{ reward.reward.info }}</p> 
+      <p class="mypage__reward__date">{{ reward.get_date | date:'y.m.d' }}</p>
+    </div>
+    {% endfor %}
+  </div>
   {% else %}
-  <p>- 아직 달성한 업적이 없습니다.</p>
+  <p class="mypage__nothing-yet">아직 달성한 업적이 없어요🥺</p>
   {% endif %}
+  <div class="mypage__bottom-btn">
+    <button><a href="{% url 'user:mypage_reward' %}" style="text-decoration: none; color: #37c6e5;">전체 업적 보기</a></button>
+  </div>
 </div>
-<hr>
-<div>
-  <h3>○ 최근 질문</h3>
+
+<div class="mypage__question__container">
+  
   {% if questions %}
   {% for question in questions %}
-  <p><a class="text-black" href="{% url 'qna:question_detail' question.pk %}" style="text-decoration: none">- Q> {{ question.title }}</a></p>
+  <a href="{% url 'qna:question_detail' question.pk %}" class="mypage__question">
+    <div class="mypage__question-left">
+      <p class="mypage__question__title">{{ question.title }}</p>
+      <p class="mypage__question__content">{{ question.content }}</p>
+    </div>
+    <div class="mypage__question-right">
+      <div>답변</div>
+      <div>
+        {{ question.answer_set.all | length }}
+      </div>
+    </div>
+  </a>
   {% endfor %}
-  <button class="btn btn-secondary"><a class="text-white" href="{% url 'user:mypage_question' %}" style="text-decoration: none">전체 질문 보기</a></button>
+  <div class="mypage__bottom-btn">
+  <button class="mypage__bottom-btn"><a href="{% url 'user:mypage_question' %}" style="text-decoration: none; color: #37c6e5;">전체 질문 보기</a></button>
   {% else %}
-  <p>- 질문 기록이 없습니다.</p>
+  <p class="mypage__nothing-yet">질문 기록이 없어요🥺</p>
+  <div class="mypage__bottom-btn">
   {% endif %}
-  <button class="btn btn-secondary"><a class="text-white" href="{% url 'qna:question_list' %}" style="text-decoration: none">질문하러 가기</a></button>
+  <button class="mypage__bottom-btn"><a href="{% url 'qna:question_list' %}" style="text-decoration: none; color: #37c6e5;">질문하러 가기</a></button>
+  </div>
 </div>
-<hr>
-<div>
-  <h3>○ 최근 답변</h3>
+
+<div class="mypage__answer__container">
   {% if answers %}
   {% for answer in answers %}
-  <p><a class="text-black" href="{% url 'qna:question_detail' answer.question_id.pk %}" style="text-decoration: none">- A> {{ answer.content }}</a></p>
+  <a class="mypage__answer" href="{% url 'qna:question_detail' answer.question_id.pk %}" style="text-decoration: none">
+    <p class="mypage__answer__title">{{ answer.content }}</p>
+    <p class="mypage__answer__question">Q. {{ answer.question_id.title }}</p>
+  </a>
   {% endfor %}
-  <button class="btn btn-secondary"><a class="text-white" href="{% url 'user:mypage_answer' %}" style="text-decoration: none">전체 답변 보기</a></button>
+  <div class="mypage__bottom-btn">
+  <button><a href="{% url 'user:mypage_answer' %}" style="text-decoration: none; color: #37c6e5;"">전체 답변 보기</a></button>
   {% else %}
-  <p>- 답변 기록이 없습니다.</p>
+  <p class="mypage__nothing-yet">답변 기록이 없어요🥺</p>
+  <div class="mypage__bottom-btn">
   {% endif %}
-  <button class="btn btn-secondary"><a class="text-white" href="{% url 'qna:question_list' %}" style="text-decoration: none">답변하러 가기</a></button>
+    <button><a href="{% url 'qna:question_list' %}" style="text-decoration: none; color: #37c6e5;"">답변하러 가기</a></button>
+  </div>
+
 </div>
+
+<!-- 모달 내용 -->
+<div class="detail-guide__container modal modal__hidden">
+  <div class="modal__overlay"></div>  <!-- 모달 배경 -->
+  <div class="modal__content link-help__container">    <!-- 모달 내용 -->
+      <div class="modal__content--top link-help__top">
+          <span style="font-size: 24px;">레벨과 포인트는 무엇인가요?</span>
+          <button class="detail-guide__close--btn tag-guide__close tag-guide__close--btn" type="button" style="position: absolute; right: 40px; top: 12px;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="25" viewBox="0 0 37 36" fill="none">
+              <path d="M1.77148 1.57764L35.0672 34.582M1.77148 34.582L35.0672 1.57764" stroke="#4E4E4E" stroke-width="3"/>
+              </svg>
+          </button>
+      </div>
+      <div class="modal__content--bottom link-help__content">
+          <div class="content__bottom--text">
+              {% for description in user.mypage_description %}
+              <p>{{ description }}</p>
+              {% endfor %}
+          </div>
+      </div>
+  </div>
+</div>
+
+<script>
+  const rewardbtn = document.querySelector('.mypage__options__reward');
+  const questionbtn = document.querySelector('.mypage__options__question');
+  const answerbtn = document.querySelector('.mypage__options__answer');
+
+  const rewardcontainer = document.querySelector('.mypage__reward__container');
+  const questioncontainer = document.querySelector('.mypage__question__container');
+  const answercontainer = document.querySelector('.mypage__answer__container');
+
+  rewardbtn.addEventListener('click', () => {
+    rewardcontainer.style.display = 'block';
+    questioncontainer.style.display = 'none';
+    answercontainer.style.display = 'none';
+    rewardbtn.style.color = 'black';
+    questionbtn.style.color = '#828282';
+    answerbtn.style.color = '#828282';
+    rewardbtn.style.borderBottom = '4px solid #37c6e6';
+    questionbtn.style.borderBottom = 'none';
+    answerbtn.style.borderBottom = 'none';
+  });
+  
+  questionbtn.addEventListener('click', () => {
+    rewardcontainer.style.display = 'none';
+    questioncontainer.style.display = 'block';
+    answercontainer.style.display = 'none';
+    rewardbtn.style.color = '#828282';
+    questionbtn.style.color = 'black';
+    answerbtn.style.color = '#828282';
+    questionbtn.style.borderBottom = '4px solid #37c6e6';
+    rewardbtn.style.borderBottom = 'none';
+    answerbtn.style.borderBottom = 'none';
+  });
+
+  answerbtn.addEventListener('click', () => {
+    rewardcontainer.style.display = 'none';
+    questioncontainer.style.display = 'none';
+    answercontainer.style.display = 'block';
+    rewardbtn.style.color = '#828282';
+    questionbtn.style.color = '#828282';
+    answerbtn.style.color = 'black';
+    answerbtn.style.borderBottom = '4px solid #37c6e6';
+    rewardbtn.style.borderBottom = 'none';
+    questionbtn.style.borderBottom = 'none';
+  });
+</script>
 {% endblock content %}

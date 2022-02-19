@@ -10,10 +10,12 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
-import os, json
+import os
+import json
 import secrets
 from pathlib import Path
-import os, json
+import os
+import json
 import secrets
 from django.core.exceptions import ImproperlyConfigured
 
@@ -31,6 +33,7 @@ secret_file = os.path.join(BASE_DIR, 'secrets.json')
 with open(secret_file) as f:
     secrets = json.loads(f.read())
 
+
 def get_secret(setting, secrets=secrets):
     try:
         print("check: ", secrets[setting])
@@ -38,6 +41,7 @@ def get_secret(setting, secrets=secrets):
     except KeyError:
         error_msg = "Set the {} environment variagle".format(setting)
         raise ImproperlyConfigured(error_msg)
+
 
 SECRET_KEY = get_secret("SECRET_KEY")
 
@@ -60,6 +64,8 @@ INSTALLED_APPS = [
     'user',
     'qna',
     'six',
+    'hitcount',
+    'django_cleanup.apps.CleanupConfig',
 ]
 
 MIDDLEWARE = [
@@ -86,6 +92,9 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
+            'libraries':{
+                'my_tags': 'qna.templatetags.my_tags',
+            }
         },
     },
 ]
@@ -157,9 +166,9 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = '587'
 
 EMAIL_HOST_USER = get_secret("EMAIL_HOST_USER")
-#EMAIL_HOST_USER = '' #이메일 입력
+# EMAIL_HOST_USER = '' #이메일 입력
 EMAIL_HOST_PASSWORD = get_secret("EMAIL_HOST_PASSWORD")
-#EMAIL_HOST_PASSWORD = '' #비밀번호 입력
+# EMAIL_HOST_PASSWORD = '' #비밀번호 입력
 
 EMAIL_USE_TLS = True
 

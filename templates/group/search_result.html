@@ -1,28 +1,234 @@
 {% extends 'base.html' %}
+{% load static %}
+{% load hitcount_tags %}
+{% load my_tags %}
+
+{% block js %}
+<script type="text/javascript" src="/static/js/group_post_list.js" defer></script>
+{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/base.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/group_post_search_result.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/pagination.css' %}" />
+{% endblock %}
+
+{% block title %} 도와줘, 코딩 | {{ group.name }} | 검색 결과 {% endblock %}
 
 {% block content %}
-<div class="search-box">
-    <form action="{% url 'group:search_result' %}" method="get">
-        {% csrf_token %}
-        <input type="search" placeholder="검색" name="search" />
-        <button type="submit">검색</button>
-    </form>
+
+<div class="group-post__top">   <!-- 게시판 상단 -->
+    <div class="group-post__top-left">
+        <a href="{% url 'group:post_list' group.pk %}" class="group-post__top--title">{{ group.name }}</a>
+        <div class="group-post__top--intro">{{ group.intro }}</div>
+    </div>
+    <div class="group-post__top--info">
+        <a href="{% url 'group:group_detail' group.pk %}">그룹 정보</a>
+    </div>
 </div>
 
-<h2>검색결과</h2>
-<h3>검색어: <b>"{{ query }}"</b></h3>
+<div class="qna-sort-filter__box">
+    <!-- 최신순 조회수순 좋아요순 -->
+    <div class="list-sort">
+        <span class="list-sort__btn">
+            {% if sort_by != 'recent' %}
+            <a href="{% url 'group:search_result' group.pk %}?{% param_replace sort='recent' page=1 search=query %}">최신순</a>
+            {% else %}
+            <span>최신순</span>
+            {% endif %}
+        </span>
+        <span class="list-sort__btn">
+            {% if sort_by != 'view' %}
+            <a href="{% url 'group:search_result' group.pk %}?{% param_replace sort='view' page=1 search=query %}">조회수순</a>
+            {% else %}
+            <span>조회수순</span>
+            {% endif %}
+        </span>
+        <span class="list-sort__btn">
+            {% if sort_by != 'liked' %}
+            <a href="{% url 'group:search_result' group.pk %}?{% param_replace sort='liked' page=1 search=query %}">좋아요순</a>
+            {% else %}
+            <span>좋아요순</span>
+            {% endif %}
+        </span>
+    </div>
+</div>
 
-{% for post in posts %}
-    <div>
-        <div>
-        <h4><a href="">{{ post.title }} </a></h4>
-        <p>{{ post.content }}</p>
-        <p>{{ post.user }}</p>
+<div class="group-post__list">  <!-- 게시글 목록 시작 -->
+    <div class="search-result__top">
+        <div class="search--result__query">
+            <span class="search-result__top--query">{{ query }}</span>
+            <span class="search-result__top--text">에 대한 검색 결과</span>
         </div>
-    </div>    
+    </div>
 
-    {% empty %}
-        <h4> 결과 없음</h4>
-{% endfor %}
+    <div class="gridbox"> 
+        {% for post, value in posts_value_dict.items %}
+        <div class="gridbox__item-post">    <!-- 그룹 게시글 하나 시작 -->
+            <a href="{% url 'group:post_detail' group.pk post.pk %}"> 
+                <div class="img__post">
+                    {% if post.image %}
+                    <img src="{{ post.image.url }}" height="200" width="200" class="img__post-img" />
+                    {% elif value.1 %}
+                    <!-- 스크래치, 엔트리 iframe이 들어가있다면 해당하는 썸네일이 목록에서 보이도록 -->
+                    <img alt="" src="{{ value.1 | safe }}" height="200" width="200" class="img__post-img">
+                    {% else %}
+                    <img src="/static/img/none_image_group_post.png" height="200" width="200" class="img__post-img" />
+                    {% endif %}
+                </div>
+
+                <div class="group_post-tag">   <!-- 게시글 태그 수정 여기서 해주세요 -->
+                    {% if post.category == 'S' %}
+                    <span class="post-tag">자랑</span>
+                    {% elif post.category == 'Q' %}
+                    <span class="post-tag">질문</span>
+                    {% else %}
+                    <span class="post-tag">기타</span>
+                    {% endif %}
+                </div>
+
+                <div class="comment__post">   <!-- 댓글 개수 -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M13.1592 0.505859H1.90918C0.875 0.505859 0.0341797 1.34668 0.0341797 2.38086V10.8184C0.0341797 11.8525 0.875 12.6934 1.90918 12.6934H4.72168V15.1543C4.72168 15.4414 5.0498 15.6084 5.28125 15.4385L8.94043 12.6934H13.1592C14.1934 12.6934 15.0342 11.8525 15.0342 10.8184V2.38086C15.0342 1.34668 14.1934 0.505859 13.1592 0.505859Z" fill="white"/>
+                    </svg>
+                    <span>{{ value.0 }}</span>    <!-- 댓글 개수 수정 여기서 해주세요 -->
+                </div>
+
+                <div class="content__post">
+                    <!-- 그룹 이름 -->
+                    <div class="content__post-titlebox">
+                        <!-- 그룹 게시글 디테일 페이지로 이동 (후에 수정 필요) -->
+                        <span class="post-title content__post-title">{{ post.title }}</span>
+                    </div>
+                    <!-- 작품 소개글 -->
+                    <div class="content__post-intro">
+                        <span class="post-intro">{{ post.content }}</span>
+                    </div>
+                    <!-- 글 정보 -->
+                    <div class="content__post-info">
+                        <span class="post-info">{{ post.created_at | date:'y.m.d' }} · {{ post.user }} · 조회  {% get_hit_count for post %} · 좋아요 {{ post.like_user.all | length }}</span>
+                    </div>
+                </div>
+            </a>
+        </div>  <!-- 그룹 게시글 하나 끝 -->
+        <!-- 검색 결과가 없으면 -->
+        {% empty %}
+        <div></div>
+        <div class="search-result__notresult">
+            <span class="notresult-query">{{ query }}<br/>
+            <span class="notresult-text">글을 찾을 수 없어요🥺</span><br/>
+            <span class="notresult-text">다른 글을 찾아보세요!</span><br/>
+        </div>
+        <div></div>        
+    </div>
+    {% endfor %}
+</div>  <!-- 게시글 목록 끝 -->
+
+<div class="group_post__search-container">  <!-- 게시글 검색 -->
+    {% if is_member %}
+    <a class="group_post__ask-btn" href="{% url 'group:post_create' group.pk %}">내 작품 공유</a>
+    {% else %}
+    <span class="group_post__ask-btn" onclick="alert('그룹에 가입 후 이용해주세요. 😄')">내 작품 공유</span>
+    {% endif %}
+    <form class="group_post__search-box" action="{% url 'group:search_result' group.pk %}" method="get">
+        {% csrf_token %}
+        <input type="search" placeholder="작품을 검색해보세요!" name="search" class="group_post__search__input"/>
+        <button type="submit" class="group_post__search__submit">
+            <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M25.1504 22.115L20.2822 17.2468C20.0625 17.0271 19.7646 16.905 19.4521 16.905H18.6562C20.0039 15.1814 20.8047 13.0134 20.8047 10.655C20.8047 5.04468 16.2588 0.498779 10.6484 0.498779C5.03809 0.498779 0.492188 5.04468 0.492188 10.655C0.492188 16.2654 5.03809 20.8113 10.6484 20.8113C13.0068 20.8113 15.1748 20.0105 16.8984 18.6628V19.4587C16.8984 19.7712 17.0205 20.0691 17.2402 20.2888L22.1084 25.157C22.5674 25.616 23.3096 25.616 23.7637 25.157L25.1455 23.7751C25.6045 23.3162 25.6045 22.574 25.1504 22.115ZM10.6484 16.905C7.19629 16.905 4.39844 14.1121 4.39844 10.655C4.39844 7.20288 7.19141 4.40503 10.6484 4.40503C14.1006 4.40503 16.8984 7.198 16.8984 10.655C16.8984 14.1072 14.1055 16.905 10.6484 16.905Z" fill="#4E4E4E"/>
+            </svg>
+            </button>
+    </form> 
+</div>
+
+
+<!-- 페이지네이션 -->
+<div class="pagination-box">
+    <ul class="all__pagination">
+        {% if posts.has_previous %}
+        <li class="all__page-item">
+            <a class="all__page-sign" href="?{% param_replace page=posts.previous_page_number search=query %}">
+                <!-- 이전페이지 -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="24" viewBox="0 0 14 24" fill="none">
+                <path d="M12.7688 22.5918L2.02827 11.8513L12.7688 1.11076" stroke="#C4C4C4" stroke-width="2"/>
+                </svg>
+            </a>
+        </li>
+        {% else %}
+        <li class="all__page-item">
+            <a class="all__page-sign" href="#">
+                <!-- 이전페이지 -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="24" viewBox="0 0 14 24" fill="none">
+                <path d="M12.7688 22.5918L2.02827 11.8513L12.7688 1.11076" stroke="#C4C4C4" stroke-width="2"/>
+                </svg>
+            </a>
+        </li>
+        {% endif %}
+
+        {% if posts.number|add:'-2' > 1 and posts.paginator.num_pages > 5 %}
+        <li class="all__page-item">
+            <a class="all__page-link" href="?{% param_replace page=posts.number|add:'-5' search=query %}">
+                ...
+            </a>
+        </li>
+        {% endif %}
+
+        {% for page_number in posts.paginator.page_range %}
+            {% if page_number == posts.number %}
+            <li class="all__page-item">
+                <a class="all__page-item-active" href="?{% param_replace page=page_number search=query %}">{{ page_number }}</a>
+            </li>
+            {% else %}
+                {% if posts.number < 4 %}
+                    {% if page_number < 6 %}
+                        <li class="all__page-item">
+                            <a class="all__page-link" href="?{% param_replace page=page_number search=query %}">{{ page_number }}</a>
+                        </li>
+                    {% endif %}
+                {% elif posts.number > posts.paginator.num_pages|add:'-2' %}
+                    {% if page_number > posts.paginator.num_pages|add:'-5' %}
+                        <li class="all__page-item">
+                            <a class="all__page-link" href="?{% param_replace page=page_number search=query %}">{{ page_number }}</a>
+                        </li>
+                    {% endif %}
+                {% else %}
+                    {% if page_number > posts.number|add:'-3' and page_number < posts.number|add:'3' %}
+                        <li class="all__page-item">
+                            <a class="all__page-link" href="?{% param_replace page=page_number search=query %}">{{ page_number }}</a>
+                        </li>
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+
+        {% if posts.paginator.num_pages > posts.number|add:'2' and posts.paginator.num_pages > 5 %}
+        <li class="all__page-item">
+            <a class="all__page-link" href="?{% param_replace page=posts.number|add:'5' search=query %}">
+                ...
+            </a>
+        </li>
+        {% endif %}
+
+        {% if posts.has_next %}
+        <li class="all__page-item">
+            <a class="all__page-sign sign-next" href="?{% param_replace page=posts.next_page_number search=query %}">
+                <!-- 다음페이지 -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="24" viewBox="0 0 14 24" fill="none">
+                <path d="M1.23096 1.11035L11.9715 11.8509L1.23096 22.5914" stroke="#C4C4C4" stroke-width="2"/>
+                </svg>
+            </a>
+        </li>
+        {% else %}
+        <li class="all__page-item">
+            <a class="all__page-sign sign-next" href="#">
+                <!-- 다음페이지 -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="24" viewBox="0 0 14 24" fill="none">
+                <path d="M1.23096 1.11035L11.9715 11.8509L1.23096 22.5914" stroke="#C4C4C4" stroke-width="2"/>
+                </svg>
+            </a>
+        </li>
+        {% endif %}
+    </ul>
+</div>
 
 {% endblock %}

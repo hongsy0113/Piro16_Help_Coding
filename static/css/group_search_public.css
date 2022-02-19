@@ -1,0 +1,350 @@
+img {
+    object-fit: cover;
+}
+
+a {
+    text-decoration: none;
+}
+
+/* 그룹 찾기 상단 */
+.group-search__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.group-list__top--left {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 15px;
+}
+
+.top-left__title {
+    font-size: 36px;
+    line-height: 150%;
+    font-weight: bold;
+}
+
+.top-left__intro {
+    display: flex;
+    font-size: 18px;
+    line-height: 150%;
+    color: #4E4E4E;
+    align-items: flex-end;
+}
+
+/* 그룹 찾기 search-box */
+.group__search-container {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    height: 60px;
+    box-sizing: border-box;
+    margin-bottom: 40px;
+}
+
+.group__-search-container::after{
+    content: '';
+    display: block;
+    width: 100%;
+    height: 1px;
+    background-color: #828282;
+}
+
+.group__search-box {
+    width: 100%;
+    height: 100%;
+    display: flex;
+}
+
+.group__search-box input {
+    width: 100%;
+    height: 100%;
+    border: 2px solid #828282;
+    border-radius: 30px;
+    padding-left: 24px;
+    padding-right: 73px;
+    font-size: 18px;
+    line-height: 150%;
+    color: black;
+}
+
+.group__search-box input ::placeholder{
+    font-size: 18px;
+    line-height: 150%;
+    color: #828282;
+}
+
+.group__search-box button {
+    background: none;
+    border: none;
+    margin-left: -55px;
+}
+
+/* 게시물 정렬 (sort) */
+.list-sort {
+    display: flex;
+    align-items: center;
+}
+
+.list-sort__btn a {
+    font-family: Noto Sans CJK KR;
+    font-size: 16px;
+    line-height: 150%;
+    display: flex;
+    color: #5e5e5e;
+    margin-right: 10px;
+    text-decoration: none;
+}
+
+.list-sort__btn a:hover {
+    color: black;
+}
+
+.list-sort__btn span {
+    font-family: Noto Sans CJK KR;
+    font-weight: bold;
+    font-size: 18px;
+    line-height: 150%;
+    display: flex;
+    color: #000000;
+    margin-right: 10px;
+}
+
+.group__make-btn {
+    width: 155px;
+    height: 60px;
+    color: white;
+    background-color: #37C6E6;
+    border-radius: 30px;
+    font-weight: bold;
+    font-size: 18px;
+    line-height: 105%;
+    text-decoration: none;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+}
+
+/* 그룹 검색 결과 */
+.search--result__query {
+    padding-top: 15px;
+}
+
+.search-result__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.search-result__top button {
+    all: unset;
+    color: #4e4e4e;
+    padding: 1px 2px;
+    cursor: pointer;
+}
+
+.search-result__top button:hover {
+    color: #BDBDBD;
+}
+
+.search-result__top--query {
+    color: black;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.search-result__top--text {
+    color: #4E4E4E;
+    font-size: 23px;
+}
+
+.search-result__gridbox {
+    margin-top: 24px;
+    margin-bottom: 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+.gridbox__item-group {
+    width: 340px;
+    height: 350px;
+    margin-bottom: 30px;
+    position: relative; 
+
+    border: 1px solid #BDBDBD;
+    box-sizing: border-box;
+    border-radius: 15px 15px 15px 15px;  
+}
+
+.img__group {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.img__group-img {
+    width: 100%;
+    border-radius: 15px 15px 0px 0px; 
+}
+
+.like__group {
+    position: absolute;
+    top: 164px;
+    left: 8px;
+    background-color: #FF8989;
+    padding: 1px 10px 4px;
+    box-sizing: border-box;
+    border-radius: 13px;
+}
+
+.like__group span {
+    font-family: Noto Sans CJK KR;
+    font-size: 14px;
+    line-height: 150%;
+    color: #FFFFFF;
+}
+
+.like__group--heart {
+    color: #FFFFFF;
+    font-size: 14px;
+}
+
+.content__group {
+    width: 100%;
+    height: 135px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 20px 30px 15px;
+}
+
+.content__group-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding-bottom: 15px;
+}
+
+.content__group-top-left {
+    display: flex;
+    align-items: center;
+    width: 215px;
+}
+
+.content__group-namebox {
+    display: flex;
+    align-items: center;
+}
+
+/* 그룹 이름 두 줄 이상 넘어가지 않도록 설정 */
+.content__group-namebox span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-wrap: break-word;
+    display : -webkit-box;
+    -webkit-line-clamp: 1;  /* 줄 개수 설정 */
+    -webkit-box-orient: vertical;
+}
+
+.content__group-name {
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 25px;
+    line-height: 105%;
+    margin-right: 3px;
+    color: #000000;
+}
+
+.content__group-member span {
+    color: #4E4E4E;
+    font-family: Noto Sans CJK KR;
+    font-size: 16px;
+}
+
+.content__group-mode i {
+    color: #828282;
+    font-size: 25px;
+}
+
+.content__group-member { 
+    background: #E5E5E5;
+    border-radius: 8px;
+    padding: 5px 15px;
+    text-align: center;
+}
+
+.content__group-bottom {
+    width: 100%;
+    font-family: Noto Sans CJK KR;
+    font-weight: bold;
+    font-size: 18px;
+    line-height: 130%;
+    color: #4E4E4E;
+}
+
+.group-intro {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-wrap: break-word;
+    display : -webkit-box;
+    -webkit-line-clamp: 2;  /* 줄 개수 설정 */
+    -webkit-box-orient: vertical;
+}
+
+.group-search-public__bottom--box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.group-search__bottom {
+    display: flex;
+    justify-content: center;
+}
+
+.group-search__bottom a {
+    width: 155px;
+    height: 60px;
+    color: #828282;
+    border: 2px solid #828282;
+    border-radius: 30px;
+    font-weight: bold;
+    font-size: 18px;
+    line-height: 105%;
+    text-decoration: none;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+}
+
+.group-search__bottom a:hover {
+    color: white;
+    background-color: #828282;
+    transition: 0.2s;
+}
+
+/* 검색 결과가 없으면 */
+.search-result__notresult {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    padding: 30px;
+}
+
+.notresult-query {
+    font-weight: bold;
+    font-size: 27px;
+    margin-bottom: 5px;
+}
+
+.notresult-text {
+    font-size: 22px;
+    font-weight: normal;
+    color: #4E4E4E;
+}

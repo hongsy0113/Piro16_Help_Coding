@@ -2,46 +2,102 @@
 {% load static %}
 
 {% block css %}
-    <link rel="stylesheet" href="{% static 'css/group.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/base.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/group_create.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/help_template.css' %}" />
 {% endblock %}
-{% block title %} Group Form {% endblock %}
+
+{% block js %}
+    <script src="{% static 'js/group_create.js' %}" defer></script>
+    <script type="text/javascript" src="/static/js/help_template.js" defer></script>
+    <!-- <script src="{% static 'js/user_profile_img.js' %}" defer></script> -->
+{% endblock %}
+
+{% block title %} 그룹 만들기 {% endblock %}
 
 {% block content %}
 
-    <form method="POST" class="post-form" enctype="multipart/form-data">
-        {% csrf_token %}
-        <div class="select__group-mode">
-            <p>그룹 공개 여부 선택</p>
-            <input type="radio" name="group-mode__tag" value="PUBLIC" id="public" class="tag" {% if group.mode == 'PUBLIC' %} checked {% endif %}>
-            <label for="public">공개</label>
-            <input type="radio" name="group-mode__tag" value="PRIVATE" id="private" class="tag" {% if group.mode == 'PRIVATE' %} checked {% endif %}>
-            <label for="private">비공개</label>
+
+<form method="POST" class="post-form" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="group-create__container">   <!-- 그룹 생성 컨테이너 시작 -->
+
+        <!-- 그룹 생성 컨테이너 탑 -->
+        <div class="group-create__top">
+            <div class="group-crate__top-left">
+                <span>그룹 만들기</span>
+            </div>
         </div>
-        <div class="group__create--info">
-            <p>
-                <label>그룹명: </label>
-                <input class="form-input" name="name" type="text" maxlength="30" value="{% if group.name %} {{ group.name }} {% endif %}">
-                {% if error %}
-                <p style="color:red;">{{ error }}</p>
+
+        <!-- 그룹 생성 form -->
+        <div class="group-create-form">
+            <div class="group-create__input">
+                <!-- 그룹 이름 에러 메시지 -->
+                {% if error.name %}
+                <span class="input-error">
+                    <svg width="5" height="14" viewBox="0 0 9 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M8.3125 21.5825C8.3125 23.7364 6.56016 25.4888 4.40625 25.4888C2.25234 25.4888 0.5 23.7364 0.5 21.5825C0.5 19.4286 2.25234 17.6763 4.40625 17.6763C6.56016 17.6763 8.3125 19.4286 8.3125 21.5825ZM0.952148 1.71919L1.61621 15.0004C1.64741 15.6241 2.16216 16.1138 2.78662 16.1138H6.02588C6.65034 16.1138 7.16509 15.6241 7.19629 15.0004L7.86035 1.71919C7.8938 1.0498 7.36016 0.48877 6.68994 0.48877H2.12256C1.45234 0.48877 0.918701 1.0498 0.952148 1.71919Z" fill="#EB6464"></path>
+                    </svg>
+                    {{ error.name }}
+                </span>
                 {% endif %}
-            </p>
-            <p>
-                <label for="image">대표이미지 </label>
-                <p>{{ form.image }}</p>
-                <!-- <input class="form-input" name="image" type="file" maxlength="255" value="{% if group.image %} {{ group.image.url }} {% endif %}"> -->
-            </p>
-            <p>
-                <label>그룹 소개 </label>
-                <textarea class="form-input" cols="63" rows="10" name="intro">{% if group.intro %} {{ group.intro }} {% endif %}</textarea>
-            </p>
+                <input class="input-name" placeholder="그룹 이름을 30자 이내로 입력하세요." name="name" type="text" maxlength="30" value="{% if group.name %}{{ group.name }}{% elif origin.name %}{{ origin.name }}{% endif %}">         
+            </div>
+
+            <div class="group-create__input">
+                <textarea class="input-intro" placeholder="그룹에 대한 설명을 입력하세요." cols="63" rows="10" name="intro">{% if group.intro %}{{ group.intro }}{% elif origin.intro %}{{ origin.intro }}{% endif %}</textarea>
+            </div>
+
+            <div class="group-create__img">
+                <div class="text-container">
+                <label for="image">대표이미지</label>
+                </div>
+
+                <div class="group-form__box">
+                    <p id="img_upload_name" class="group-form__input--image">
+                        <span class="input-img__text">그룹을 대표할 사진을 추가하세요</span>
+                    </p>
+                    <label for="img_upload" class="group-form__label--image">사진 올리기</label> 
+                    <input id="img_upload" type="file" name="image" class="form__input--file" onchange="imageChange(event);" />
+                    <input name="img_recent" id="img_recent" value="{% if current_image %}{{ current_image }}{% else %}{{ origin.image }}{% endif %}" hidden />
+                    <input id="temp_img_location" value="{{ temp_img_location }}" hidden />
+                </div>
+                <img id="img_display" class="img_display" src="" >
+            </div>
+
+            <div class="group-crate__mode select__group-mode">
+                <div class="text-container text-container__group-mode">
+                    <span>어떤 그룹을 만들까요?</span>
+                </div>
+                <!-- 그룹 공개 여부 에러 메시지 -->
+                {% if error.mode %}
+                <span class="input-error">
+                    <svg width="5" height="14" viewBox="0 0 9 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M8.3125 21.5825C8.3125 23.7364 6.56016 25.4888 4.40625 25.4888C2.25234 25.4888 0.5 23.7364 0.5 21.5825C0.5 19.4286 2.25234 17.6763 4.40625 17.6763C6.56016 17.6763 8.3125 19.4286 8.3125 21.5825ZM0.952148 1.71919L1.61621 15.0004C1.64741 15.6241 2.16216 16.1138 2.78662 16.1138H6.02588C6.65034 16.1138 7.16509 15.6241 7.19629 15.0004L7.86035 1.71919C7.8938 1.0498 7.36016 0.48877 6.68994 0.48877H2.12256C1.45234 0.48877 0.918701 1.0498 0.952148 1.71919Z" fill="#EB6464"></path>
+                    </svg>
+                    {{ error.mode }}
+                </span>
+                {% endif %}
+                <div class="group-create__mode-select">
+                    <div class="mode-btn__box">
+                        <input type="radio" name="group-mode__tag" value="PUBLIC" id="public" class="mode-select__tag" {% if group.mode == 'PUBLIC' or origin.mode == 'PUBLIC' %} checked {% endif %}>
+                        <label for="public" class="mode-public__label">공개</label>
+                        <span>다양한 사람들과 함께하고 싶어요</span>
+                    </div>
+                    <div class="mode-btn__box">
+                        <input type="radio" name="group-mode__tag" value="PRIVATE" id="private" class="mode-select__tag" {% if group.mode == 'PRIVATE' or origin.mode == 'PRIVATE' %} checked {% endif %}>
+                        <label for="private">비공개</label>
+                        <span>내 친구들과 함께하고 싶어요</span>
+                    </div>
+                </div>
+            </div>
         </div>
-        
-        <!-- <table>
-            {{ form.as_table }}
-        </table> -->
-        <button type="submit" class="save btn">생성</button>
-        <!-- <a href="{% url 'group:group_home' %}">취소</a> -->
-    </form>
-    <div>도움말</div>
+
+        <div class="group-create__btn">
+            <button type="submit" class="btn-save btn-effect">만들기</button>
+            <a href="{% url 'group:group_home' %}" class="btn-return btn-effect">취소</a>
+        </div>
+    </div>   <!-- 그룹 생성 컨테이너 끝 -->
+</form>
 
 {% endblock %}

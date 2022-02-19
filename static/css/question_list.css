@@ -1,7 +1,19 @@
-.qna__top{
+button {
+    all: unset;
+}
+
+.qna__top {
     display: flex;
-    gap: 15px;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 30px;
+}
+
+.qna__top--left {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 15px;
 }
 
 .qna__top-title {
@@ -15,14 +27,17 @@
     font-size: 18px;
     line-height: 150%;
     color: #4E4E4E;
-    padding-bottom: 10px;
+    /* padding-bottom: 10px; */
     align-items: flex-end;
 }
 
+/* search-box */
+.qna__top-search-container {
+    position: relative;
+}
+
 .qna__search-container {
-    display: flex;
     align-items: center;
-    gap: 20px;
     height: 60px;
     box-sizing: border-box;
     margin-bottom: 40px;
@@ -43,7 +58,7 @@
 }
 
 .qna__search-box input {
-    width: 926px;
+    width: 100%;
     height: 100%;
     border: 2px solid #828282;
     border-radius: 30px;
@@ -81,6 +96,141 @@
     display: flex;
 }
 
+/* 게시물 정렬 & 필터 box */
+.qna-sort-filter__box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* 게시물 정렬 (sort) */
+.list-sort {
+    display: flex;
+    align-items: center;
+    padding-bottom: 6px;
+}
+
+.list-sort__btn a {
+    font-family: Noto Sans CJK KR;
+    font-size: 16px;
+    line-height: 150%;
+    display: flex;
+    color: #5e5e5e;
+    margin-right: 10px;
+    text-decoration: none;
+}
+
+.list-sort__btn a:hover {
+    color: black;
+}
+
+.list-sort__btn span {
+    font-family: Noto Sans CJK KR;
+    font-weight: bold;
+    font-size: 18px;
+    line-height: 150%;
+    display: flex;
+    color: #000000;
+    margin-right: 10px;
+}
+
+/* 게시글 필터 */
+.qna-filter__box {
+    display: flex;
+    align-items: center;
+    padding-bottom: 6px;
+    gap: 2px;
+}
+
+.qna__filterbox--form {
+    display: flex;
+    align-items: center;
+}
+
+.qna-filter__box .tag {
+    display: none;
+}
+
+.qna__filterbox--form label {
+    display: inline-block;
+    border-radius: 20px;
+    text-align: center;
+    text-decoration: none;
+    border: solid 1px #ccc;
+    transition: 0.25s;
+    padding: 6px 18px;
+    cursor: pointer;
+    font-size: 14px;
+    margin: 3px;
+    font-family: Noto Sans CJK KR;
+    font-size: 15px;
+}
+
+.qna__filterbox--form > input:checked + label {
+    background: #4cc4d4;
+    color: #fff;
+}
+
+.filter-detail__box {
+    display: flex;
+    align-items: center;
+}
+
+.filter_by-scratch:checked + label {
+    background: #C3FFBE;
+    color: #2F7041;
+}
+
+.filter_by-entry:checked + label {
+    background: #FFC7C7;
+    color: #7D4242;
+}
+
+.filter_by-etc:checked + label {
+    background-color: #bebebe;
+    color: #464646;
+}
+
+.qna-filter__box--btn {
+    border: 1px solid #5e5e5e;
+    border-radius: 10px;
+    padding: 5px 10px;
+    margin-left: 10px;
+    background-color: #5e5e5e;
+
+    font-family: Noto Sans CJK KR;
+    font-size: 15px;
+    color: #ffffff;
+}
+
+.qna-filter__box--btn:hover {
+    background-color: black;
+}
+
+.qna__filterbox--reset {
+    border: 1px solid #5e5e5e;
+    border-radius: 10px;
+    padding: 5px 10px;
+    margin-left: 2px;
+    background-color: #5e5e5e;
+
+    text-decoration: none;
+    font-family: Noto Sans CJK KR;
+    font-size: 15px;
+    color: #ffffff;
+}
+
+.qna__filterbox--reset:hover {
+    background-color: black;
+    color: #fff;
+}
+
+.detail-guide__btn {
+    position: absolute;
+    top: 182px;
+    right: -42px;
+}
+
 /* 질문 목록 */
 .question__list-container{
     width: 1080px;
@@ -93,7 +243,6 @@
     height: 210px;
     display: flex;
     gap: 10px;
-    align-items: center;
     justify-content: space-between;
     padding: 40px 50px;
     border-bottom: 1px solid #bdbdbd;
@@ -108,12 +257,24 @@
     gap: 13px;
 }
 
+.question__cont-left span {
+    word-break: break-word;
+}
+
 .list__title {
     font-weight: bold;
     font-size: 20px;
     line-height: 150%;
     text-decoration: none;
     color: black;
+}
+
+.question__content {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .question__tag-info {
@@ -149,6 +310,24 @@
     color: #2F7041;
 }
 
+.tag__etc {
+    background-color: #bebebe;
+    color: #464646;
+}
+
+.tag__detail-tag{
+    box-sizing: border-box;
+    border: 1px solid #5e5e5e;
+    border-radius: 13px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2px 10px;
+    font-weight: bold;
+    font-size: 14px;
+    line-height: 150%;
+}
+
 .question__cont-right {
     width: 90px;
     height: 90px;
@@ -166,4 +345,76 @@
     font-size: 18px;
     line-height: 150%;
     color: #4E4E4E;
+}
+
+/* 페이지네이션 */
+.pagination-box {
+    display: flex;
+    justify-content: center;
+    padding-top: 20px;
+    padding-bottom: 30px;
+    margin-top: 20px;
+}
+
+.all__pagination {
+    display: flex;
+    list-style: none;
+}
+
+/* 현재 페이지가 아닐 경우 */
+.all__page-link {
+    border: 1px solid #37C6E6;
+    box-sizing: border-box;
+    text-decoration: none;
+    font-family: Noto Sans CJK KR;
+    font-weight: bold;
+    font-size: 18px;
+    line-height: 150%;
+    text-align: center;
+    color: #37C6E5;
+    padding: 6px 14px;
+    background-color: #ffffff;
+    border-radius: 100%;
+    margin-right: 10px;
+    box-sizing: border-box;
+}
+
+/* 현재 페이지 표시 */
+.all__page-link:hover {
+    text-decoration: none;
+    font-family: Noto Sans CJK KR;
+    font-weight: bold;
+    font-size: 18px;
+    line-height: 150%;
+    text-align: center;
+    color: #FFFFFF;
+    padding: 6px 14px;
+    background-color: #37C6E5;
+    border-radius: 100%;
+    margin-right: 10px;
+    box-sizing: border-box;
+}
+
+.all__page-item-active {
+    text-decoration: none;
+    font-family: Noto Sans CJK KR;
+    font-weight: bold;
+    font-size: 18px;
+    line-height: 150%;
+    text-align: center;
+    color: #FFFFFF;
+    padding: 6px 14px;
+    background-color: #37C6E5;
+    border-radius: 100%;
+    margin-right: 10px;
+    box-sizing: border-box;
+}
+
+.all__page-sign {
+    background-color: none;
+    margin-right: 20px;
+}
+
+.sign-next {
+    margin-left: 10px;
 }

@@ -1,0 +1,163 @@
+.modal__help-btn, 
+.modal__help--close-btn,
+.detail-guide__btn,
+.detail-guide__close--btn {
+    all: unset;
+}
+
+/* .detail-guide__container {
+    height: auto;
+} */
+
+/* 링크 추가 도움말 */
+.link__modal__overlay {
+    background-color: rgba(0, 0, 0, 0.6);
+    width: 100%;
+    height: 150%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 21;
+}
+.link-help__container {
+    background-color: white;
+    width: 720px;
+    height: 720px;
+    z-index: 22;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #BDBDBD;
+}
+
+.link-help__top {
+    padding: 20px 0;
+    border-bottom: 1px solid #BDBDBD;
+}
+
+/* 엔트리, 스크래치 따로 */
+.link-help__entry-btn, .link-help__scratch-btn {
+    cursor: pointer;
+    flex-grow: 6;
+    padding: 10px 0;
+}
+
+.link-help__entry-btn {
+    border-right: 1px solid #BDBDBD;
+}
+
+.link-help__disabled-btn {
+    background-color: #e5e5e5;
+    color: #828282;
+    border-bottom: 1px solid #BDBDBD;
+}
+
+.link-help__content {
+    overflow: scroll;
+}
+
+.link-help__entry-cont, .link-help__scratch-cont {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    width: 100%;
+    height: 100%;
+    padding: 10px 30px;
+    margin: 20px 0;
+}
+
+
+
+.link-help__container strong {
+    color: #FF617C;
+}
+.link-help__entry-cont img, .link-help__scratch-cont img {
+    width: 100%;
+}
+
+.link-help__container p {
+    text-align: start;
+    margin-bottom: 10px;
+}
+
+
+/* 유의사항 modal */
+.help__container {
+    background-color: white;
+    width: 575px;
+    height: 340px;
+    z-index: 22;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #BDBDBD;
+    border-radius: 12px;
+    text-align: center;
+    position: fixed;
+
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    -o-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
+.help__container-overlay {
+    background-color: rgba(0, 0, 0, 0.6);
+    width: 100%;
+    height: 150%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 21;
+}
+
+.caution__ul-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    font-family: "Noto Sans KR", sans-serif;
+    font-size: 18px;
+    font-weight: bold;
+    color: #4E4E4E;
+    margin: 6px 0 20px 0;
+}
+
+.caution__ul-icon p {
+    font-size: 13px;
+    margin: 4px 53px 29px;
+}
+
+.caution__li img {
+    width: 30px;
+    height: 30px;
+    margin-right: 7px;
+}
+
+.caution__li {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+    margin: 15px 0px 15px 38px;
+}
+
+.caution__top {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.caution__top span {
+    margin-left: 229px;
+    font-size: 30px !important;
+    font-weight: bold;
+}
+
+/* 레벨, 포인트 관련 도움말 */
+.content__bottom--text {
+    font-size: 18px;
+    width: 100%;
+    padding: 30px;
+}

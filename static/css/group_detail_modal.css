@@ -1,0 +1,258 @@
+/* 모달 */
+.modal {  
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal__overlay {
+    background-color: rgba(0, 0, 0, 0.6);
+    width: 100%;
+    height: 100%;
+    position: absolute;
+}
+
+.modal__hidden {
+    display: none;
+}
+
+/* 모달 디자인 */
+.modal__content {
+    position: relative;
+    top: 0px;
+    width: 40%;
+    height: 500px;
+    background-color: #FAFAFA;
+    border: 2px solid #BDBDBD;
+    box-sizing: border-box;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+}
+
+.modal__content--top {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 41px 0px 33px 0px;
+    border-bottom: 2px solid #BDBDBD;
+}
+
+.modal__content--top span {
+    font-family: Noto Sans CJK KR;
+    font-weight: bold;
+    font-size: 36px;
+    line-height: 105%;
+    text-align: center;
+    color: #000000;
+}
+
+.modal__content--bottom {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 70px 0px 70px 0px;
+}
+
+.modal__close {
+    position: static;
+    background: #FFFFFF;
+    border: 2px solid #37C6E6;
+    box-sizing: border-box;
+    border-radius: 41px;
+
+    font-family: Noto Sans CJK KR;
+    font-weight: bold;
+    font-size: 24px;
+    line-height: 105%;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: #4E4E4E;
+    padding: 18px 38px 21px;
+}
+
+.modal__close:hover, .group__wait--close:hover {
+    background-color: #37C6E6;
+    color: #ffffff;
+    transition: 0.2px;
+}
+
+/* 그룹 초대 코드 모달 */
+.code_box {
+    padding-bottom: 35px;
+}
+
+.code_box h1 {
+    font-family: Noto Sans CJK KR;
+    font-weight: bold;
+    font-size: 60px;
+    line-height: 105%;
+    text-align: center;
+    color: #000000;
+    margin: 0;
+    padding-bottom: 40px;
+}
+
+.code_box h2 {
+    font-family: Noto Sans CJK KR;
+    font-weight: bold;
+    font-size: 22px;
+    line-height: 105%;
+    text-align: center;
+    color: #828282;
+    padding-bottom: 4px;
+}
+
+.code_box span {
+    font-family: Noto Sans CJK KR;
+    /* font-weight: bold; */
+    font-size: 20px;
+    line-height: 105%;
+    text-align: center;
+    color: #828282;
+}
+
+/* 그룹 대기자 명단 모달 */
+.group-wait__modal--bottom {
+    padding: 0;
+}
+
+.group__wait--member-list {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+    height: 285px;
+    overflow-y: auto;
+}
+
+.wait-member__name {
+    font-family: Noto Sans CJK KR;
+    font-weight: bold;
+    font-size: 18px;
+    line-height: 150%;
+    color: #000000;
+}
+
+.wait-member__text span {
+    font-family: Noto Sans CJK KR;
+    font-size: 17px;
+    line-height: 150%;
+    display: flex;
+    align-items: center;
+    color: #828282;
+}
+
+.group__wait--text {
+    margin-top: 23%;
+    font-family: Noto Sans CJK KR;
+    font-weight: bold;
+    font-size: 30px;
+    line-height: 150%;
+    display: flex;
+    align-items: center;
+    color: #4E4E4E;
+}
+
+.group-wait__one {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 65px;
+    width: 100%;
+    border-bottom: 2px solid #BDBDBD;
+    padding: 13px 0px;
+}
+
+.wait-member__imgnname {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 200px;
+}
+
+.wait-member__btnbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.group__wait--closebox {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    padding: 20px 0px;
+    /* border-top: 2px solid #BDBDBD; */
+}
+
+.group__wait--close {
+    position: static;
+    background: #FFFFFF;
+    border: 2px solid #37C6E6;
+    box-sizing: border-box;
+    border-radius: 41px;
+
+    font-family: Noto Sans CJK KR;
+    font-weight: bold;
+    font-size: 24px;
+    line-height: 105%;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: #4E4E4E;
+    padding: 13px 38px 17px;
+}
+
+.wait-accept__btn {
+    padding: 6px 15px 6px;
+    background: #37C6E5;
+    border: 2px solid #37C6E6;
+    box-sizing: border-box;
+    border-radius: 41px;
+
+    font-family: Noto Sans CJK KR;
+    font-weight: bold;
+    font-size: 18px;
+    line-height: 100%;
+    text-align: center;
+    color: #FFFFFF;
+}
+
+.wait-reject__btn {
+    padding: 6px 15px 6px;
+    background: #FFFFFF;
+    border: 2px solid #37C6E6;
+    box-sizing: border-box;
+    border-radius: 41px;
+
+    font-family: Noto Sans CJK KR;
+    font-weight: bold;
+    font-size: 18px;
+    line-height: 100%;
+    text-align: center;
+    color: #4E4E4E;
+}
+
+.alert__text {
+    font-family: Noto Sans CJK KR;
+    font-size: 17px;
+    line-height: 150%;
+    display: flex;
+    align-items: center;
+    color: #828282;
+}
+
+/* 그룹 삭제, 탈퇴, 가입 시 alert 임시로 만들었어요-! */
+/* .group__delete--alert, .group__drop--alert {
+    display: none;
+} */

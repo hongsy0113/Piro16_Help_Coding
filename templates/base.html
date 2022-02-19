@@ -6,15 +6,17 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}">
-    {% block css %}
-
-    {% endblock %}
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
-    <!-- fontawesome -->
+    <!-- fontawesome -->    
+    <script src="https://kit.fontawesome.com/06a654967f.js" crossorigin="anonymous"></script>
     <script src="https://use.fontawesome.com/releases/v5.2.0/js/all.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}">
+    <link rel="icon" type="image/x-icon" href="/static/img/user_thumbnail/profile1.png">
+    {% block css %}
+    {% endblock %}
     {% block js %}
     {% endblock %}
     <title>{% block title %}도와줘, 코딩{% endblock %}</title>
@@ -36,15 +38,43 @@
                     {% if user.is_authenticated %}
                     <li><a href="{% url 'qna:question_list' %}">묻고답하기</a></li>
                     <li><a href="{% url 'group:group_home' %}" style="text-decoration: none">내 그룹</a></li>
+                    <li><a href="{% url 'group:group_list' %}" style="text-decoration: none">그룹 찾기</a></li>
                     {% endif %}
                 </ul>
             </div>
             <div class="header__nav-right">
             {% if user.is_authenticated %}
-                <a class="header__alertbtn" href="#"><svg width="21" height="24" viewBox="0 0 21 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M10.6597 23.25C12.2118 23.25 13.4709 21.991 13.4709 20.4375H7.84852C7.84852 21.991 9.10755 23.25 10.6597 23.25ZM20.1251 16.6709C19.2761 15.7586 17.6874 14.3862 17.6874 9.89062C17.6874 6.47607 15.2933 3.74268 12.0651 3.07207V2.15625C12.0651 1.37974 11.4358 0.75 10.6597 0.75C9.88362 0.75 9.25433 1.37974 9.25433 2.15625V3.07207C6.0261 3.74268 3.63196 6.47607 3.63196 9.89062C3.63196 14.3862 2.04334 15.7586 1.19432 16.6709C0.930646 16.9544 0.813751 17.2932 0.815948 17.625C0.820782 18.3457 1.38636 19.0312 2.22659 19.0312H19.0928C19.933 19.0312 20.4991 18.3457 20.5034 17.625C20.5056 17.2932 20.3887 16.954 20.1251 16.6709V16.6709Z" fill="#4E4E4E"/>
+                <div class="header__alertcontainer">
+                    <a class="header__alertbtn" href="{% url 'user:mypage_alert' %}"><svg width="21" height="24" viewBox="0 0 21 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M10.6597 23.25C12.2118 23.25 13.4709 21.991 13.4709 20.4375H7.84852C7.84852 21.991 9.10755 23.25 10.6597 23.25ZM20.1251 16.6709C19.2761 15.7586 17.6874 14.3862 17.6874 9.89062C17.6874 6.47607 15.2933 3.74268 12.0651 3.07207V2.15625C12.0651 1.37974 11.4358 0.75 10.6597 0.75C9.88362 0.75 9.25433 1.37974 9.25433 2.15625V3.07207C6.0261 3.74268 3.63196 6.47607 3.63196 9.89062C3.63196 14.3862 2.04334 15.7586 1.19432 16.6709C0.930646 16.9544 0.813751 17.2932 0.815948 17.625C0.820782 18.3457 1.38636 19.0312 2.22659 19.0312H19.0928C19.933 19.0312 20.4991 18.3457 20.5034 17.625C20.5056 17.2932 20.3887 16.954 20.1251 16.6709V16.6709Z" fill="#4E4E4E"/>
                     </svg>                    
-                    </a>
+                </a>
+                <div class="header__alert-dot {% if user.has_new_alert %}alert__dot-unread{% else %}alert__dot-read{% endif %}"></div> <!-- 알림 있으면 파란 점 -->
+                {% if user.has_new_alert %}
+                <div class="header__alert-dropdown">
+                    <div id="alert-count-modal">새로운 알림이 {{ user.has_new_alert }}개 있어요.</div>
+                    <div class="header__alerts">
+                        {% for alert in user.get_new_alert %}
+                        <div id="alert-{{ alert.id }}-modal" class="header__alert">
+                        <a href="{{ alert.related_url }}" onclick="viewAlertModal({{ alert.id }})" >
+                                <div class="alert__dot alert__dot-unread"></div>
+                                <span>{{ alert.content }}</span>
+                                <!-- check-alert-button 원래 위치 -->
+                            </a>
+                            <button class="check-alert-button" id="check-alert-{{ alert.id }}-button-modal" onclick="checkAlertModal({{ alert.id }}); loadNewAlert(); checkAlert({{ alert.id }});">확인</button> <!-- 이거 Ajax는 css 되고서 구현해야 할 듯 -->
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div>
+                        <a href="{% url 'user:mypage_alert' %}">전체 알림 보기</a>
+                        {% if user.has_new_alert %}<button id="check-all-alert-button-modal" onclick="checkAllAlertModal(); checkAllAlert()">전체 확인</button>{% endif %}
+                    </div>
+                    <!-- <div style="justify-content: center;">
+                        <p>새로운 알림이 없어요.</p>
+                    </div> -->
+                </div>
+                {% endif %}
+                </div>
                 <a class="header__searchbtn" href="#"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M19.2349 17.109L15.4381 13.3122C15.2668 13.1408 15.0345 13.0456 14.7907 13.0456H14.17C15.2211 11.7013 15.8456 10.0105 15.8456 8.1711C15.8456 3.79545 12.3002 0.25 7.92452 0.25C3.54887 0.25 0.00341797 3.79545 0.00341797 8.1711C0.00341797 12.5467 3.54887 16.0922 7.92452 16.0922C9.76389 16.0922 11.4547 15.4677 12.799 14.4166V15.0373C12.799 15.2811 12.8942 15.5134 13.0656 15.6847L16.8624 19.4815C17.2204 19.8395 17.7992 19.8395 18.1534 19.4815L19.2311 18.4038C19.5891 18.0458 19.5891 17.467 19.2349 17.109ZM7.92452 13.0456C5.23211 13.0456 3.05 10.8673 3.05 8.1711C3.05 5.47869 5.2283 3.29658 7.92452 3.29658C10.6169 3.29658 12.799 5.47488 12.799 8.1711C12.799 10.8635 10.6207 13.0456 7.92452 13.0456Z" fill="#4E4E4E"/>
                     </svg>                    
@@ -57,7 +87,7 @@
                     <div class="header__mypage-dropdown">
                         <a href="{% url 'user:mypage' %}" class="mypage-dropdown__userprofile">
                             <div class="mypage-dropdown__userprofile-img">
-                                {% if user.img %}<img src="{{ user.img.url }}" style='height: 100%; width: auto; object-fit: contain'>{% else %}<p class="header__mypagebtn-noimage"></p>{% endif %}
+                                {% if user.img %}<img src="{{ user.img.url }}" style='height: 100%; width: auto; object-fit: cover'>{% else %}<p class="header__mypagebtn-noimage"></p>{% endif %}
                             </div>
                             <div class="mypage-dropdown__userprofile-name">
                                 <p>{{user.nickname}}</p>
@@ -76,15 +106,207 @@
             {% endif %}
             </div>
         </div>
+        <script>
+            const requestViewAlertModal = new XMLHttpRequest();
+    
+            const viewAlertModal = (id) => {
+                const url = "/mypage/alert/check_ajax/";
+                requestViewAlertModal.open("POST", url, true);
+                requestViewAlertModal.setRequestHeader(
+                    "Content-Type",
+                    "application/x-www-form-urlencoded"
+                );
+                requestViewAlertModal.send(JSON.stringify({id: id}));
+            };
+        </script>
+
+        <script>
+            const requestCheckAlertModal = new XMLHttpRequest();
+
+            const checkAlertModal = (id) => {
+                const url = "/mypage/alert/check_ajax/";
+                requestCheckAlertModal.open("POST", url, true);
+                requestCheckAlertModal.setRequestHeader(
+                    "Content-Type",
+                    "application/x-www-form-urlencoded"
+                );
+                requestCheckAlertModal.send(JSON.stringify({id: id}));
+            };
+
+            const checkModalHandleResponse = () => {
+                if (requestCheckAlertModal.status < 400) {
+                    const {alert_id, new_alert_num} = JSON.parse(requestCheckAlertModal.response);
+                    const newAlertMessage = document.querySelector(`#alert-${alert_id}-modal`);
+                    newAlertMessage.remove();
+                    const checkAlertButton = document.querySelector(`#check-alert-${alert_id}-button-modal`);
+                    checkAlertButton.remove();
+                    const alertNumDisplay = document.querySelector(`#alert-count-modal`);
+                    if (new_alert_num != 0) {
+                        alertNumDisplay.innerHTML = `새로운 알림이 ${new_alert_num}개 있어요.`;
+                    } else {
+                        alertNumDisplay.innerHTML = `새로운 알림이 없어요.`;
+                        const checkAllAlertButton = document.querySelector(`#check-all-alert-button-modal`);
+                        checkAllAlertButton.remove();
+                    }
+                }
+            };
+
+            requestCheckAlertModal.onreadystatechange = () => {
+                if (requestCheckAlertModal.readyState === XMLHttpRequest.DONE) {
+                    checkModalHandleResponse();
+                }
+            };
+        </script>
+        
+        <script>
+            const requestCheckAllAlertModal = new XMLHttpRequest();
+
+            const checkAllAlertModal = () => {
+                const url = "/mypage/alert/check_all_ajax/";
+                requestCheckAllAlertModal.open("POST", url, true);
+                requestCheckAllAlertModal.setRequestHeader(
+                    "Content-Type",
+                    "application/x-www-form-urlencoded"
+                );
+                requestCheckAllAlertModal.send(JSON.stringify());
+            };
+
+            const checkAllModalHandleResponse = () => {
+                if (requestCheckAllAlertModal.status < 400) {
+                    const {all_alert_id} = JSON.parse(requestCheckAllAlertModal.response);
+                    for (let index = 0; index < all_alert_id.length; index++) {
+                        try {
+                            const newAlertMessage = document.querySelector(`#alert-${all_alert_id[index]}-modal`);
+                            newAlertMessage.remove();
+                            const checkAlertButton = document.querySelector(`#check-alert-${all_alert_id[index]}-button-modal`);
+                            checkAlertButton.remove();
+                        } catch (e) {
+                            // Do nothing
+                        }
+                    }
+                    const alertNumDisplay = document.querySelector(`#alert-count-modal`);
+                    alertNumDisplay.innerHTML = `새로운 알림이 없어요.`;
+                    const checkAllAlertButton = document.querySelector(`#check-all-alert-button-modal`);
+                    checkAllAlertButton.remove();
+                }
+            };
+
+            requestCheckAllAlertModal.onreadystatechange = () => {
+                if (requestCheckAllAlertModal.readyState === XMLHttpRequest.DONE) {
+                    checkAllModalHandleResponse();
+                }
+            };
+        </script>
+
+        <script>
+            const requestLoadNewAlert = new XMLHttpRequest();
+
+            const loadNewAlert = () => {
+                const url = "/mypage/alert/load_new_ajax/";
+                requestLoadNewAlert.open("POST", url, true);
+                requestLoadNewAlert.setRequestHeader(
+                    "Content-Type",
+                    "application/x-www-form-urlencoded"
+                );
+                requestLoadNewAlert.send(JSON.stringify());
+            };
+
+            const loadNewAlertHandleResponse = () => {
+                if (requestLoadNewAlert.status < 400) {
+                    try {
+                        const {new_alert_id, new_alert_content, new_alert_related_url} = JSON.parse(requestLoadNewAlert.response);
+                        const originalAlert = document.querySelector('.header__alerts');
+                        const newAlertA = document.createElement('a');
+                        newAlertA.href = new_alert_related_url;
+                        newAlertA.setAttribute('onclick', `viewAlertModal(${new_alert_id})`);
+                        newAlertA.id = `alert-${new_alert_id}-modal`;
+                        newAlertA.className = 'header__alert';
+                        const newAlertDiv1 = document.createElement('div');
+                        const newAlertDiv2 = document.createElement('div');
+                        newAlertDiv2.className = 'alert__dot alert__dot-unread';
+                        const newAlertSpan = document.createElement('span');
+                        newAlertSpan.innerHTML = new_alert_content;
+                        const newAlertButton = document.createElement('button');
+                        newAlertButton.id = `check-alert-${new_alert_id}-button-modal`;
+                        newAlertButton.setAttribute('onclick', `checkAlertModal(${new_alert_id}); loadNewAlert(); checkAlert(${new_alert_id});`);
+                        newAlertButton.innerHTML = '확인';
+                        originalAlert.appendChild(newAlertA);
+                        newAlertA.appendChild(newAlertDiv1);
+                        newAlertDiv1.appendChild(newAlertDiv2);
+                        newAlertDiv1.appendChild(newAlertSpan);
+                        originalAlert.appendChild(newAlertButton);
+                    } catch (e) {
+
+                    }
+                }
+            };
+
+            requestLoadNewAlert.onreadystatechange = () => {
+                if (requestLoadNewAlert.readyState === XMLHttpRequest.DONE) {
+                    loadNewAlertHandleResponse();
+                }
+            };
+        </script>
     </header>
     <section>
         {% block content %}
         {% endblock %}
     </section>
+    <footer>
+        <div class="footer__container">
+            <div class="footer-left">
+                <div class="footer__logo">
+                    <img src="/static/image/footer_logo.png">
+                </div>
+
+                <div class="footer__text">
+                    <div class="footer__text--intro-box">
+                        <span class="intro-box__top">Company</span>
+                        <span class="intro-box__bottom">말랑한 사람들이 모여 말랑한 서비스를 만듭니다</span>
+                    </div>
+
+                    <div class="footer__text--intro-box">
+                        <span class="intro-box__top">Member</span>                    
+                        <div class="intro-box__member">
+                            <span class="intro-box__bottom">홍성윤</span>
+                            <span class="intro-box__bar">|</span>
+                            <span class="intro-box__bottom">길은지</span>
+                            <span class="intro-box__bar">|</span> 
+                            <span class="intro-box__bottom">박찬영</span> 
+                            <span class="intro-box__bar">|</span>
+                            <span class="intro-box__bottom">권  윤</span> 
+                            <span class="intro-box__bar">|</span>
+                            <span class="intro-box__bottom">박예준</span> 
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-right">
+                <div class="footer__contact-box">
+                    <!-- <span class="intro-box__top">Contact</span> -->
+
+                    <div class="intro-box__icon">
+                        <!-- 인스타그램 -->
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Pro 6.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. -->
+                        <path d="M224,202.66A53.34,53.34,0,1,0,277.36,256,53.38,53.38,0,0,0,224,202.66Zm124.71-41a54,54,0,0,0-30.41-30.41c-21-8.29-71-6.43-94.3-6.43s-73.25-1.93-94.31,6.43a54,54,0,0,0-30.41,30.41c-8.28,21-6.43,71.05-6.43,94.33S91,329.26,99.32,350.33a54,54,0,0,0,30.41,30.41c21,8.29,71,6.43,94.31,6.43s73.24,1.93,94.3-6.43a54,54,0,0,0,30.41-30.41c8.35-21,6.43-71.05,6.43-94.33S357.1,182.74,348.75,161.67ZM224,338a82,82,0,1,1,82-82A81.9,81.9,0,0,1,224,338Zm85.38-148.3a19.14,19.14,0,1,1,19.13-19.14A19.1,19.1,0,0,1,309.42,189.74ZM400,32H48A48,48,0,0,0,0,80V432a48,48,0,0,0,48,48H400a48,48,0,0,0,48-48V80A48,48,0,0,0,400,32ZM382.88,322c-1.29,25.63-7.14,48.34-25.85,67s-41.4,24.63-67,25.85c-26.41,1.49-105.59,1.49-132,0-25.63-1.29-48.26-7.15-67-25.85s-24.63-41.42-25.85-67c-1.49-26.42-1.49-105.61,0-132,1.29-25.63,7.07-48.34,25.85-67s41.47-24.56,67-25.78c26.41-1.49,105.59-1.49,132,0,25.63,1.29,48.33,7.15,67,25.85s24.63,41.42,25.85,67.05C384.37,216.44,384.37,295.56,382.88,322Z"/></svg>
+                    
+                        <!-- 메일 -->
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Pro 6.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. -->
+                        <path d="M384 32H64C28.63 32 0 60.63 0 96v320c0 35.38 28.62 64 64 64h320c35.38 0 64-28.62 64-64V96C448 60.63 419.4 32 384 32zM384 336c0 17.67-14.33 32-32 32H96c-17.67 0-32-14.33-32-32V225.9l138.5 69.27C209.3 298.5 216.6 300.2 224 300.2s14.75-1.688 21.47-5.047L384 225.9V336zM384 190.1l-152.8 76.42c-4.5 2.25-9.812 2.25-14.31 0L64 190.1V176c0-17.67 14.33-32 32-32h256c17.67 0 32 14.33 32 32V190.1z"/></svg>
+                                    
+                        <!-- 전화 -->
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Pro 6.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. -->
+                        <path d="M0 96v320c0 35.35 28.65 64 64 64h320c35.35 0 64-28.65 64-64V96c0-35.35-28.65-64-64-64H64C28.65 32 0 60.65 0 96zM105.5 303.6l54.24-23.25c6.391-2.766 13.9-.9062 18.24 4.484l22.02 26.91c34.63-17 62.77-45.14 79.77-79.75l-26.91-22.05c-5.375-4.391-7.211-11.83-4.492-18.22l23.27-54.28c3.047-6.953 10.59-10.77 17.93-9.062l50.38 11.63c7.125 1.625 12.11 7.891 12.11 15.22c0 126.1-102.6 228.8-228.7 228.8c-7.336 0-13.6-4.984-15.24-12.11l-11.62-50.39C94.71 314.2 98.5 306.6 105.5 303.6z"/></svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
 
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
-  
+
     <!-- AXIOS 사용 위한 CDN -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </body>

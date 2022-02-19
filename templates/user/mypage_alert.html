@@ -1,0 +1,205 @@
+{% extends 'base.html' %}
+
+  
+{% load static %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/mypage_list.css' %}">
+{% endblock css %}
+{% block title %} 도와줘, 코딩 | 알림 {% endblock %}
+
+
+{% block content %}
+<div> <!-- Ajax 때문에 id는 유지해주세요! -->
+  <div class="alert__title-outer">
+    <div class="alert__title">
+      <div>
+        <h3>알림</h3>
+        {% if user.has_new_alert %}
+        <h3 id="alert-count">{{ user.has_new_alert }}</h3>
+      </div>
+      <button id="check-all-alert-button" onclick="checkAllAlert(); checkAllAlertModal();">전체 확인</button>
+    </div>
+    {% else %}
+      <h3 id="alert-count" class="alert__count__none"> </h3>
+    </div>
+    </div>
+    {% endif %}
+    <div class="data-description" style="padding-bottom: 10px;">질문에 답변이 달리거나, 배지를 획득하거나, 그룹에 가입되면 알림이 와요! 1~2주 정도 지난 오래된 알림은 자동으로 삭제돼요.</div>
+  </div>
+</div>
+  {% if alerts %}
+  {% for alert in alerts %}
+  <div class="alert__outer-container">
+    <div id="alert-{{ alert.id }}-hover" class="alert__container{% if not alert.checked %} alert__container-unread{% endif %}">
+        <a href="{{ alert.related_url }}" onclick="viewAlert({{ alert.id }})"  class="alert-left">
+        {% if not alert.checked %}
+        <div>
+          <div id="alert-{{ alert.id }}-dot" class="alert__dot alert__dot-unread"></div>
+        </div>
+        {% else %}
+        <div id="alert-{{ alert.id }}-dot" class="alert__dot alert__dot-read"></div>
+        {% endif %}
+        <div id="alert-{{ alert.id }}" class="alert__content"><p>{{ alert.content }}</p><p>{{ alert.time_past }}</p></div>
+      </a>
+      <!-- 원래 위치 -->
+      {% if not alert.checked %}
+      <button id="check-alert-{{ alert.id }}-button" onclick="checkAlert({{ alert.id }}); checkAlertModal({{ alert.id }}); loadNewAlert();">확인</button>
+      {% endif %}
+    </div>
+    
+  </div>
+  {% endfor %}
+  {% else %}
+  <div class="data-none"></div>
+  {% endif %}
+  
+    <script>
+        const requestViewAlert = new XMLHttpRequest();
+  
+        const viewAlert = (id) => {
+            const url = "/mypage/alert/check_ajax/";
+            requestViewAlert.open("POST", url, true);
+            requestViewAlert.setRequestHeader(
+                "Content-Type",
+                "application/x-www-form-urlencoded"
+            );
+            requestViewAlert.send(JSON.stringify({id: id}));
+        };
+    </script>
+
+    <script>
+      const requestCheckAlert = new XMLHttpRequest();
+
+      const checkAlert = (id) => {
+          const url = "/mypage/alert/check_ajax/";
+          requestCheckAlert.open("POST", url, true);
+          requestCheckAlert.setRequestHeader(
+              "Content-Type",
+              "application/x-www-form-urlencoded"
+          );
+          requestCheckAlert.send(JSON.stringify({id: id}));
+      };
+
+      const checkHandleResponse = () => {
+          if (requestCheckAlert.status < 400) {
+              const {alert_id, new_alert_num} = JSON.parse(requestCheckAlert.response);
+              const newAlertMessage = document.querySelector(`#alert-${alert_id}`).firstChild;
+              newAlertMessage.style.color = '#828282';
+              const newAlertHover = document.querySelector(`#alert-${alert_id}-hover`);
+              newAlertHover.setAttribute("onMouseout", `document.querySelector('#alert-${alert_id}').firstChild.style.color='#828282'`);
+              const checkAlertButton = document.querySelector(`#check-alert-${alert_id}-button`);
+              checkAlertButton.remove();
+              const alertDot = document.querySelector(`#alert-${alert_id}-dot`);
+              alertDot.className = 'alert__dot alert__dot-read';
+              const alertNumDisplay = document.querySelector(`#alert-count`);
+              if (new_alert_num != 0) {
+                  alertNumDisplay.innerHTML = new_alert_num;
+              } else {
+                  alertNumDisplay.className = 'alert__count__none';
+              }
+          }
+      };
+
+      requestCheckAlert.onreadystatechange = () => {
+          if (requestCheckAlert.readyState === XMLHttpRequest.DONE) {
+              checkHandleResponse();
+          }
+      };
+    </script>
+    
+    <script>
+      const requestCheckAllAlert = new XMLHttpRequest();
+
+      const checkAllAlert = () => {
+          const url = "/mypage/alert/check_all_ajax/";
+          requestCheckAllAlert.open("POST", url, true);
+          requestCheckAllAlert.setRequestHeader(
+              "Content-Type",
+              "application/x-www-form-urlencoded"
+          );
+          requestCheckAllAlert.send(JSON.stringify());
+      };
+
+      const checkAllHandleResponse = () => {
+          if (requestCheckAllAlert.status < 400) {
+              const {all_alert_id} = JSON.parse(requestCheckAllAlert.response);
+              for (let index = 0; index < all_alert_id.length; index++) {
+                  try {
+                    const newAlertMessage = document.querySelector(`#alert-${all_alert_id[index]}`).firstChild;
+                    newAlertMessage.style.color = '#828282';
+                    const newAlertHover = document.querySelector(`#alert-${all_alert_id[index]}-hover`);
+                    newAlertHover.setAttribute("onMouseover", `document.querySelector('#alert-${all_alert_id[index]}').firstChild.style.color='#0a58ca'`);
+                    newAlertHover.setAttribute("onMouseout", `document.querySelector('#alert-${all_alert_id[index]}').firstChild.style.color='#828282'`);
+                    const checkAlertButton = document.querySelector(`#check-alert-${all_alert_id[index]}-button`);
+                    checkAlertButton.remove();
+                    const alertDot = document.querySelector(`#alert-${all_alert_id[index]}-dot`);
+                    alertDot.className = 'alert__dot alert__dot-read';
+                  } catch (e) {
+                    console.log(e);
+                    console.log(all_alert_id[index]);
+                  }
+              }
+              const alertNumDisplay = document.querySelector(`#alert-count`);
+              alertNumDisplay.className = 'alert__count__none';
+              const checkAllAlertButton = document.querySelector(`#check-all-alert-button`);
+              checkAllAlertButton.remove();
+          }
+      };
+
+      requestCheckAllAlert.onreadystatechange = () => {
+          if (requestCheckAllAlert.readyState === XMLHttpRequest.DONE) {
+              checkAllHandleResponse();
+          }
+      };
+    </script>
+
+<!-- 페이지네이션 -->
+{% if is_paginated %}
+<div class="pagination-box">
+  <ul class="pagination">
+    {% if page_obj.has_previous %}
+    <li class="page-item">
+      <a class="all__page-sign" href="?page={{ page_obj.previous_page_number }}" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="24" viewBox="0 0 14 24" fill="none">
+          <path d="M12.7688 22.5918L2.02827 11.8513L12.7688 1.11076" stroke="#C4C4C4" stroke-width="2"/>
+        </svg>
+      </a>
+    </li>
+    {% else %}
+    <li class="page-item disabled">
+      <a class="all__page-sign" href="#" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="24" viewBox="0 0 14 24" fill="none">
+          <path d="M12.7688 22.5918L2.02827 11.8513L12.7688 1.11076" stroke="#C4C4C4" stroke-width="2"/>
+        </svg>
+      </a>
+    </li>
+    {% endif %}
+    
+    {% for page in page_range %}
+    <li class="page-item">
+      <a class="page-link {% if page == page_obj.number %} page-item-active {% endif %}" href="?page={{ page }}">{{ page }}</a>
+    </li>
+    {% endfor %}
+    
+    {% if page_obj.has_next %}
+    <li class="page-item">
+      <a class="all__page-sign sign-next" href="?page={{ page_obj.next_page_number }}">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="24" viewBox="0 0 14 24" fill="none">
+          <path d="M1.23096 1.11035L11.9715 11.8509L1.23096 22.5914" stroke="#C4C4C4" stroke-width="2"/>
+          </svg>
+      </a>
+    </li>
+    {% else %}
+    <li class="page-item disabled">
+      <a class="all__page-sign" href="#">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="24" viewBox="0 0 14 24" fill="none">
+          <path d="M1.23096 1.11035L11.9715 11.8509L1.23096 22.5914" stroke="#C4C4C4" stroke-width="2"/>
+          </svg>
+      </a>
+    </li>
+    {% endif %}
+  </ul>
+  {% endif %}
+</div>
+</div>
+{% endblock content %}

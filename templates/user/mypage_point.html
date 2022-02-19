@@ -1,0 +1,124 @@
+{% extends 'user/main.html' %}
+{% load static %}
+
+{% load my_tags %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/mypage_list.css' %}">
+{% endblock css %}
+{% block title %} 도와줘, 코딩 | 포인트 기록 {% endblock %}
+
+{% block content %}
+<div>
+  <div class="point__title">
+    <h3>포인트 기록</h3>
+    {% if points %}
+    <h3>{{user.points}}점의 포인트를 얻었어요.</h3>
+    {% endif %}
+  </div>
+  <div class="data-description">질문하고 답변을 작성하면 포인트가 쌓여요! 좋은 질문이나 답변을 작성해 좋아요를 받으면 더 많은 포인트를 받을 수 있답니다.  1~2주 정도 지난 오래된 기록은 자동으로 삭제돼요.</div>
+  {% if points %}
+  {% for point in points %}
+  <div class="point__container">
+    <div class="point-left">
+      <p>{% if point.point > 0 %}+{% endif %}{{ point.point }}</p>
+      <p>{{ point.get_type_display }}</p>
+    </div>
+    <div class="point-right">
+      <p>{{ point.time_past }}</p>
+    </div>
+  </div>
+  {% endfor %}
+  {% else %}
+  <div class="data-none">아직 획득한 포인트가 없어요.</div>
+  {% endif %}
+
+  {% if is_paginated %}
+  <div class="pagination-box">
+    <ul class="pagination">
+      {% if page_obj.has_previous %}
+      <li class="page-item">
+        <a class="all__page-sign" href="?page={{ page_obj.previous_page_number }}" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="24" viewBox="0 0 14 24" fill="none">
+            <path d="M12.7688 22.5918L2.02827 11.8513L12.7688 1.11076" stroke="#C4C4C4" stroke-width="2"/>
+          </svg>
+        </a>
+      </li>
+      {% else %}
+      <li class="page-item disabled">
+        <a class="all__page-sign" href="#" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="24" viewBox="0 0 14 24" fill="none">
+            <path d="M12.7688 22.5918L2.02827 11.8513L12.7688 1.11076" stroke="#C4C4C4" stroke-width="2"/>
+          </svg>
+        </a>
+      </li>
+      {% endif %}
+
+      {% if page_obj.number|add:'-2' > 1 and page_obj.paginator.num_pages > 5 %}
+        <li class="page-item">
+            <a class="page-link" href="?{% param_replace page=page_obj.number|add:'-5' %}">
+                ...
+            </a>
+        </li>
+      {% endif %}
+      
+      {% for page_number in page_range %}
+        {% if page_number == page_obj.number %}
+          <li class="page-item">
+            <a class="page-link page-item-active" href="?{% param_replace page=page_number %}">
+              {{ page_number }}
+            </a>
+          </li>
+        {% else %}
+          {% if page_obj.number < 4 %}
+            {% if page_number < 6 %}
+              <li class="page-item">
+                <a class="page-link" href="?{% param_replace page=page_number %}">{{ page_number }}</a>
+              </li>
+            {% endif %}
+          {% elif page_obj.number > page_obj.paginator.num_pages|add:'-2' %}
+            {% if page_number > page_obj.paginator.num_pages|add:'-5' %}
+              <li class="page-item">
+                <a class="page-link" href="?{% param_replace page=page_number %}">{{ page_number }}</a>
+              </li>
+            {% endif %}
+          {% else %}
+            {% if page_number > page_obj.number|add:'-3' and page_number < page_obj.number|add:'3' %}
+              <li class="page-item">
+                <a class="page-link" href="?{% param_replace page=page_number %}">{{ page_number }}</a>
+              </li>
+            {% endif %}
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+
+      {% if page_obj.paginator.num_pages > page_obj.number|add:'2' and page_obj.paginator.num_pages > 5  %}
+        <li class="page-item">
+            <a class="page-link" href="?{% param_replace page=page_obj.number|add:'5' %}">
+                ...
+            </a>
+        </li>
+      {% endif %}
+      
+      {% if page_obj.has_next %}
+      <li class="page-item">
+        <a class="all__page-sign sign-next" href="?page={{ page_obj.next_page_number }}">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="24" viewBox="0 0 14 24" fill="none">
+            <path d="M1.23096 1.11035L11.9715 11.8509L1.23096 22.5914" stroke="#C4C4C4" stroke-width="2"/>
+            </svg>
+        </a>
+      </li>
+      {% else %}
+      <li class="page-item disabled">
+        <a class="all__page-sign" href="#">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="24" viewBox="0 0 14 24" fill="none">
+            <path d="M1.23096 1.11035L11.9715 11.8509L1.23096 22.5914" stroke="#C4C4C4" stroke-width="2"/>
+            </svg>
+        </a>
+      </li>
+      {% endif %}
+    </ul>
+    {% endif %}
+  </div>
+</div>
+{% endblock content %}

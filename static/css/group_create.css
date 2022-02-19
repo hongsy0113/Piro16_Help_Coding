@@ -1,0 +1,264 @@
+html, body, section {
+    width: 100%;
+    background-color: #F2F2F2;
+}
+
+.group-create__container {
+    width: 1080px;
+    margin: 0 auto;
+}
+
+.group-create__top {
+    display: flex;
+    font-size: 36px;
+    line-height: 150%;
+    font-weight: bold;
+    padding-bottom: 40px;
+} 
+
+/* 에러메시지 */
+.input-error {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    width: 305px;
+    padding: 10px 20px;
+    margin: 10px 0px 6px 0px;
+
+    background-color: #FFE6E6;
+    border: 1px solid #eb6464;
+    border-radius: 5px;
+    box-sizing: border-box;
+    color: #eb6464;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.input-name {
+    width: 100%;
+    height: 60px;
+    margin-bottom: 30px;
+    padding: 17px 32px 17px 20px;
+
+    background: #FFFFFF;
+    border: 1px solid #BDBDBD;
+    box-sizing: border-box;
+    border-radius: 10px;
+}
+
+.input-intro {
+    width: 100%;
+    height: 200px;
+    margin-bottom: 30px;
+    padding: 17px 32px 17px 20px;
+
+    background: #FFFFFF;
+    border: 1px solid #BDBDBD;
+    box-sizing: border-box;
+    border-radius: 10px;
+}
+
+.group-create__input ::placeholder {
+    font-family: Noto Sans CJK KR;
+    color: #828282;
+    font-size: 18px;
+    line-height: 150%;
+}
+
+.group-create__img {
+    margin-bottom: 35px;
+}
+
+.text-container {
+    margin-bottom: 10px;
+    color: #4F4F4F;
+    font-family: Noto Sans CJK KR;
+    font-weight: bold;
+    font-size: 24px;
+    line-height: 150%;
+}
+
+/* 이미지 업로드 */
+.group-form__box {
+    display: flex;
+    align-items: center;
+}
+
+.group-form__input--image {
+    width: 50%;
+    height: 50px;
+    padding: 13px 20px;
+
+    background: #FFFFFF;
+    border: 1px solid #BDBDBD;
+    box-sizing: border-box;
+    border-radius: 5px;
+
+    font-family: Noto Sans CJK KR;
+    color: #828282;
+    font-size: 16px;
+    line-height: 150%;
+
+    overflow: hidden;
+    word-wrap: break-word;
+    word-break: break-all;
+    display : -webkit-box;
+    -webkit-line-clamp: 1;  /* 줄 개수 설정 */
+    -webkit-box-orient: vertical;
+}
+
+.img_display {
+    max-width: 400px;
+    max-height: 600px;
+    border-radius: 10px;
+    margin-top: 10px;
+}
+
+.input-img__text {
+    font-family: Noto Sans CJK KR;
+    color: #828282;
+    font-size: 16px;
+    line-height: 150%;
+}
+
+.group-form__label--image {
+    height: 50px;
+    margin-left: 10px;
+    padding: 10px 20px;
+    background-color: #999999;
+    border-radius: 5px;
+    cursor: pointer;
+    color: #ffffff;
+    font-family: Noto Sans CJK KR;
+    font-size: 20px;
+    line-height: 150%;
+}
+
+.group-form__label--image:hover {
+    background-color: #4E4E4E;
+    color: #ffffff;
+}
+
+.form__input--file {
+    position: absolute;
+    width: 0;
+    height: 0;
+    padding: 0;
+    overflow: hidden;
+    border: 0;
+}
+
+/* 그룹 공개 여부 선택 */
+.text-container__group-mode {
+    padding-bottom: 5px;
+}
+
+.group-create__mode-select {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 30px;
+}
+
+.mode-btn__box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+}
+
+.mode-btn__box span {
+    font-family: Roboto;
+    font-size: 17px;
+    color: #000000;
+}
+
+.mode-select__tag {
+    display: none;
+}
+
+.mode-btn__box label {
+    width: 210px;
+    height: 60px;
+    border: solid 1px #ccc;
+    border-radius: 30px;
+    text-align: center;
+
+    transition: 0.25s;
+    padding-top: 10px;
+    cursor: pointer;
+
+    color: #4E4E4E;
+    font-family: Noto Sans CJK KR;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 24px;
+    line-height: 150%;
+}
+
+.mode-btn__box > input:checked + label {
+    background: #ff8a8a;
+    color: #ffffff;
+}
+
+.mode-public__label {
+    margin-left: 10px;
+}
+
+.group-create__btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 40px;
+    margin-bottom: 30px;
+}
+
+.btn-save {
+    border: 0;
+    outline: 0;
+    margin-right: 15px;
+
+    width: 120px;
+    height: 55px;
+    padding: 20px;
+
+    background: #37C6E6;
+    border: 2px solid #37C6E6;
+    box-sizing: border-box;
+    border-radius: 41px;
+
+    text-decoration: none;
+    text-align: center;
+    font-family: Noto Sans CJK KR;
+    font-size: 25px;
+    line-height: 50%;
+    color: #ffffff;
+}
+
+.btn-save:hover {
+    color: black;
+}
+
+.btn-return {
+    width: 120px;
+    height: 55px;
+    padding: 20px;
+
+    background: #FFFFFF;
+    border: 2px solid #A6A6A6;
+    box-sizing: border-box;
+    border-radius: 41px;
+
+    text-decoration: none;
+    text-align: center;
+    font-family: Noto Sans CJK KR;
+    font-size: 25px;
+    line-height: 50%;
+    color: #A6A6A6;
+}
+
+.btn-return:hover {
+    color: black;
+}
+
