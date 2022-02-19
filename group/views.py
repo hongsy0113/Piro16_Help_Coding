@@ -779,6 +779,9 @@ def post_list(request, pk):
     group = Group.objects.get(pk=pk)
     page = request.GET.get('page', '1')    # 페이지
 
+    ## ismember
+    is_member = user in group.members.all()
+
     # 게시글 필터
     filter_by_list = request.GET.getlist('filter_by')
     if filter_by_list:
@@ -824,6 +827,7 @@ def post_list(request, pk):
         'group': group,
         'sort_by': sort_by,
         'filter_by': filter_by_list,
+        'is_member': is_member,
     }
     return render(request, 'group/group_post_list.html', context=ctx)
 
@@ -872,6 +876,9 @@ def search_result(request, pk):
         else:
             posts_value_dict[page] = (answers_count, None)
 
+    ## ismember
+    is_member = user in group.members.all()
+
     ctx = {
         'query': query,
         'posts': page_obj,
@@ -879,6 +886,7 @@ def search_result(request, pk):
         'group_pk': pk,
         'group': group,
         'sort_by': sort_by,
+        'is_member': is_member,
     }
 
     return render(request, 'group/search_result.html', context=ctx)
