@@ -1,6 +1,6 @@
 // 글 작성 유의사항 모달
 const showCautionHover = document.querySelector('.modal__help-btn');
-const cautionAlert = document.querySelector('.help__container');
+const cautionAlert = document.querySelector('.help_guide--container');
 
 function showCaution(){
     cautionAlert.style.display = 'flex';
