@@ -115,6 +115,7 @@ var flag = 0;    // 명단에 대한 반복문이 한 번만 실행되기 위한
 
 function closeGroupWait() {
     groupWaitAlert.style.display = 'none';
+    window.location.href = `http://127.0.0.1:8000/group/${group_id}/group_detail/`
 }
 
 if(showGroupWaitBtn) {
