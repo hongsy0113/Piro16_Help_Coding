@@ -6,7 +6,7 @@
     border-bottom: 1px solid #bdbdbd;
 }
 
-.alert__title {
+.alert__title, .reward__title {
   border-bottom: none;
 }
 
@@ -14,7 +14,7 @@
   border-bottom: 1px solid #bdbdbd;
 }
 
-.alert__title >div, .point__title >div , .reward__title>div{
+.alert__title >div, .point__title >div,.reward__title >div{
     display: flex;
     gap: 10px;
     align-items: center;
@@ -60,7 +60,11 @@
   margin-right: 20px;
 }
 
-
+.data-description {
+  font-size: 18px;
+  line-height: 100%;
+  padding-bottom: 10px;
+}
 
 .alert__container,
 .point__container {
