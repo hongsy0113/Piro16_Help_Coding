@@ -69,7 +69,7 @@
 <div class="gridbox">
     {% for group in groups %}
     <div class="gridbox__item-group">    <!-- 그룹 grid-item 시작-->
-        <a href="{% url 'group:post_list' group.pk %}">
+        <a href="{% url 'group:group_detail' group.pk %}">
             <!-- 그룹 이미지 -->
             <div class="img__group">
                 {% if group.image %}
