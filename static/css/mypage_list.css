@@ -6,6 +6,14 @@
     border-bottom: 1px solid #bdbdbd;
 }
 
+.alert__title {
+  border-bottom: none;
+}
+
+.alert__title-outer {
+  border-bottom: 1px solid #bdbdbd;
+}
+
 .alert__title >div, .point__title >div , .reward__title>div{
     display: flex;
     gap: 10px;
@@ -51,6 +59,8 @@
 .alert__title #check-all-alert-button {
   margin-right: 20px;
 }
+
+
 
 .alert__container,
 .point__container {

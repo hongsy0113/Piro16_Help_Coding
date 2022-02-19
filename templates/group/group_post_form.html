@@ -2,10 +2,10 @@
 {% load static %}
 
 {% block css %}
-    <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/group_post_create.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/group_home_modal.css' %}" />
-    <link rel="stylesheet" type="text/css" href="{% static 'css/help_template.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/group_post_create.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/group_home_modal.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'css/help_template.css' %}" />
 {% endblock %}
 
 {% block js %}
@@ -22,6 +22,59 @@
 <!-- 게시글 생성 상단 -->
     <div class="post-create__top">
         <span>만든 작품을 자랑하거나 궁금한 내용을 물어보세요!</span>
+        <button class="modal__help-btn" type="button" onclick="showCaution()">
+            <!-- <svg style="width: 30px; margin-top: -5px; margin-left:10px;" xmlns="http://www.w3.org/2000/svg" width="57" height="56" viewBox="0 0 57 56" fill="none" style="">
+            <path d="M15.8843 18.6931L15.8844 18.6931L19.8719 21.6636C20.6838 22.2684 21.8409 22.1272 22.4757 21.336C23.506 20.0521 24.3298 19.0978 25.2608 18.4542C26.1685 17.8268 27.2003 17.4814 28.671 17.4814C29.7514 17.4814 30.9706 17.8263 31.9082 18.4247C32.8508 19.0264 33.4226 19.8217 33.4226 20.7025C33.4226 21.3745 33.1536 21.8884 32.5856 22.4063C31.9924 22.9471 31.1132 23.4557 29.9426 24.1005C29.8651 24.1432 29.7865 24.1864 29.707 24.23C27.0627 25.6819 23.4032 27.6911 23.4032 32.5161V32.9677C23.4032 34.0004 24.2529 34.8226 25.2823 34.8226H31.7177C32.7471 34.8226 33.5968 34.0004 33.5968 32.9677V32.8172C33.5968 32.2942 33.9778 31.8149 34.8687 31.2181C35.2985 30.9302 35.8044 30.642 36.3681 30.3224L36.4132 30.2968C36.9589 29.9874 37.5514 29.6515 38.1452 29.2733C39.3658 28.496 40.6228 27.5214 41.5729 26.1585C42.529 24.7871 43.1565 23.048 43.1565 20.7742C43.1565 17.3136 41.3292 14.3026 38.7048 12.1722C36.0822 10.0432 32.6242 8.75806 29.2648 8.75806C26.0614 8.75806 23.4099 9.42187 21.1503 10.6942C18.8929 11.9652 17.0571 13.8262 15.4578 16.1751L15.8555 16.446L15.4578 16.1751C14.8998 16.9947 15.0884 18.1001 15.8843 18.6931ZM56.5 28C56.5 43.1829 43.9713 55.5 28.5 55.5C13.0287 55.5 0.5 43.1829 0.5 28C0.5 12.826 13.0288 0.5 28.5 0.5C43.9712 0.5 56.5 12.826 56.5 28ZM28.5 36.7581C25.3173 36.7581 22.7137 39.3034 22.7137 42.4516C22.7137 45.5997 25.3173 48.1452 28.5 48.1452C31.6827 48.1452 34.2863 45.5997 34.2863 42.4516C34.2863 39.3034 31.6827 36.7581 28.5 36.7581Z" fill="#4e4e4e" stroke="#4e4e4e"/>
+            </svg> -->
+            <i style="width: 30px; margin-top: -5px; margin-left:10px;"class="ri-notification-3-fill"></i>
+        </button>
+    </div>
+
+    
+    <!-- 유의사항 modal -->
+    <div class="help_guide--container modal" style="display: none;">
+        <div class="modal__overlay help__container-overlay"></div>
+        <div class="help-modal__name help__container modal__content">
+
+            <div class="help-modal__name">
+                <div class="modal__content--top link-help__top">
+
+                    <div class="caution__top">
+                        <span>유의사항</span>
+                    <!-- 닫기 버튼 -->
+                        <button class="modal__help--close-btn" type="button" onclick="closeCaution()">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="37" height="36" viewBox="0 0 37 36" fill="none" style="margin-right: 25px; width:20px; height:20px;">
+                            <path d="M1.77148 1.57764L35.0672 34.582M1.77148 34.582L35.0672 1.57764" stroke="#4E4E4E" stroke-width="3"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="caution__ul-icon">
+                    <p>도와줘 코딩을 이용하는 여러분!</p>
+                    <div class="caution__li">
+                        <img alt="image" src="../../static/img/user_thumbnail/profile1.png"/>
+                        <span>욕설 및 비방 글은 안 돼요!</span>
+                    </div>
+                    <div class="caution__li">
+                        <img alt="image" src="../../static/img/user_thumbnail/profile2.png"/>
+                        <span>성의 없는 도배글은 안 돼요!</span>
+                    </div>
+                    <div class="caution__li">
+                        <img alt="image" src="../../static/img/user_thumbnail/profile3.png"/>
+                        <span>다른 친구들의 개인정보를 소중히 다뤄주세요!</span>
+                    </div>
+                    <div class="caution__li">
+                        <img alt="image" src="../../static/img/user_thumbnail/profile4.png"/>
+                        <span>다른 친구들을 위해 답변이 달리면 글을 지울 수 없어요!</span>
+                    </div>
+                    
+
+                </div>
+                
+            </div>
+        </div>
+        
     </div>
 
     <!-- 게시글 생성 form -->

@@ -80,6 +80,11 @@
     justify-content: flex-end;
 }
 
+.mypage__bottom-btn > button, .mypage__profile__btn > button {
+    border: 1px solid #37C6E5;
+    padding: 1px 6px;
+}
+
 .mypage__options {
     display: flex;
     gap: 20px;
@@ -257,6 +262,15 @@
     text-overflow: ellipsis;
 }
 
+/* 업적, 질문, 답변 없을 때 메세지 */
+.mypage__nothing-yet {
+    font-size: 24px;
+    font-weight: 500;
+    text-align: center;
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+
 .mypage__message {
     color: #37C6E5;
     font-size: 18px !important;
@@ -266,6 +280,7 @@
     display: flex;
     gap: 10px;
     justify-content: center;
+    padding: 0 !important;
 }
 
 /* 질문, 답변 기록 */
