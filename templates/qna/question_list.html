@@ -89,7 +89,14 @@
     </div>
 </div>
 
-{% if not question_answer_count %}
+{% if question_answer_count|length == 0 %}
+<div class="no-post__box">
+    <div class="no-post__text">
+        <h2>글을 찾을 수 없어요🥺</h2>
+        <h2>다른 글을 찾아보세요!</h2>
+    </div>
+</div>
+{% elif not question_answer_count %}
 <div class="no-post__box">
     <div class="no-post__text">
         <h2>아직 게시글이 👌개예요</h2>
