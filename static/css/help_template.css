@@ -78,3 +78,74 @@
     text-align: start;
     margin-bottom: 10px;
 }
+
+
+/* 유의사항 modal */
+.help__container {
+    background-color: white;
+    width: 508px;
+    height: 345px;
+    z-index: 22;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #BDBDBD;
+    border-radius: 12px;
+    text-align: center;
+    position: fixed;
+
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    -o-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
+.help__container-overlay {
+    background-color: rgba(0, 0, 0, 0.6);
+    width: 100%;
+    height: 150%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 21;
+}
+
+.caution__ul-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    font-size: 26px;
+    font-weight: 500;
+    margin: 20px 0;
+}
+
+.caution__ul-icon p {
+    font-size: 13px;
+    margin: 0px 29px 5px;
+}
+
+.caution__li img {
+    width: 30px;
+    height: 30px;
+}
+
+.caution__li {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin: 6px 22px;
+}
+
+.caution__top {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.caution__top span {
+    margin-left: 197px;
+    font-size: 25px !important;
+    font-weight: bold;
+}

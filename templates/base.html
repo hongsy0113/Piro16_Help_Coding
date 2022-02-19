@@ -55,14 +55,14 @@
                     <div id="alert-count-modal">새로운 알림이 {{ user.has_new_alert }}개 있어요.</div>
                     <div class="header__alerts">
                         {% for alert in user.get_new_alert %}
-                        <a href="{{ alert.related_url }}" onclick="viewAlertModal({{ alert.id }})" id="alert-{{ alert.id }}-modal" class="header__alert">
-                            <div>
+                        <div id="alert-{{ alert.id }}-modal" class="header__alert">
+                        <a href="{{ alert.related_url }}" onclick="viewAlertModal({{ alert.id }})" >
                                 <div class="alert__dot alert__dot-unread"></div>
                                 <span>{{ alert.content }}</span>
-                            </div>
-                            <!-- check-alert-button 원래 위치 -->
-                        </a>
-                        <button id="check-alert-{{ alert.id }}-button-modal" onclick="checkAlertModal({{ alert.id }}); loadNewAlert(); checkAlert({{ alert.id }});">확인</button> <!-- 이거 Ajax는 css 되고서 구현해야 할 듯 -->
+                                <!-- check-alert-button 원래 위치 -->
+                            </a>
+                            <button class="check-alert-button" id="check-alert-{{ alert.id }}-button-modal" onclick="checkAlertModal({{ alert.id }}); loadNewAlert(); checkAlert({{ alert.id }});">확인</button> <!-- 이거 Ajax는 css 되고서 구현해야 할 듯 -->
+                        </div>
                         {% endfor %}
                     </div>
                     <div>
@@ -108,7 +108,7 @@
         </div>
         <script>
             const requestViewAlertModal = new XMLHttpRequest();
-      
+    
             const viewAlertModal = (id) => {
                 const url = "/mypage/alert/check_ajax/";
                 requestViewAlertModal.open("POST", url, true);

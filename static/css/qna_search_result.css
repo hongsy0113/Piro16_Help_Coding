@@ -24,6 +24,11 @@
     padding: 0px 12px;
     color: #4e4e4e;
     text-decoration: none;
+    cursor: pointer;
+}
+
+.searchresult__title button:hover {
+    color: #BDBDBD;
 }
 
 /* search-box */

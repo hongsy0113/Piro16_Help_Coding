@@ -22,10 +22,12 @@
     </div>
     {% endif %}
   </div>
+  <div class="data-description">질문에 답변이 달리거나, 배지를 획득하거나, 그룹에 가입되면 알림이 와요! 1~2주 정도 지난 오래된 알림은 자동으로 삭제돼요.</div>
+  {% if alerts %}
   {% for alert in alerts %}
   <div class="alert__outer-container">
-    <a id="alert-{{ alert.id }}-hover" href="{{ alert.related_url }}" onclick="viewAlert({{ alert.id }})" class="alert__container{% if not alert.checked %} alert__container-unread{% endif %}">
-      <div class="alert-left">
+    <div id="alert-{{ alert.id }}-hover" class="alert__container{% if not alert.checked %} alert__container-unread{% endif %}">
+        <a href="{{ alert.related_url }}" onclick="viewAlert({{ alert.id }})"  class="alert-left">
         {% if not alert.checked %}
         <div>
           <div id="alert-{{ alert.id }}-dot" class="alert__dot alert__dot-unread"></div>
@@ -34,15 +36,19 @@
         <div id="alert-{{ alert.id }}-dot" class="alert__dot alert__dot-read"></div>
         {% endif %}
         <div id="alert-{{ alert.id }}" class="alert__content"><p>{{ alert.content }}</p><p>{{ alert.time_past }}</p></div>
-      </div>
+      </a>
       <!-- 원래 위치 -->
-    </a>
-    {% if not alert.checked %}
-    <button id="check-alert-{{ alert.id }}-button" onclick="checkAlert({{ alert.id }}); checkAlertModal({{ alert.id }}); loadNewAlert();">확인</button>
-    {% endif %}
+      {% if not alert.checked %}
+      <button id="check-alert-{{ alert.id }}-button" onclick="checkAlert({{ alert.id }}); checkAlertModal({{ alert.id }}); loadNewAlert();">확인</button>
+      {% endif %}
+    </div>
     
   </div>
-    {% endfor %}
+  {% endfor %}
+  {% else %}
+  <div class="data-none">최근 알림이 없어요.</div>
+  {% endif %}
+  
     <script>
         const requestViewAlert = new XMLHttpRequest();
   
@@ -76,7 +82,6 @@
               const newAlertMessage = document.querySelector(`#alert-${alert_id}`).firstChild;
               newAlertMessage.style.color = '#828282';
               const newAlertHover = document.querySelector(`#alert-${alert_id}-hover`);
-              newAlertHover.setAttribute("onMouseover", `document.querySelector('#alert-${alert_id}').firstChild.style.color='#0a58ca'`);
               newAlertHover.setAttribute("onMouseout", `document.querySelector('#alert-${alert_id}').firstChild.style.color='#828282'`);
               const checkAlertButton = document.querySelector(`#check-alert-${alert_id}-button`);
               checkAlertButton.remove();
@@ -126,7 +131,8 @@
                     const alertDot = document.querySelector(`#alert-${all_alert_id[index]}-dot`);
                     alertDot.className = 'alert__dot alert__dot-read';
                   } catch (e) {
-
+                    console.log(e);
+                    console.log(all_alert_id[index]);
                   }
               }
               const alertNumDisplay = document.querySelector(`#alert-count`);

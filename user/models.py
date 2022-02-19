@@ -7,14 +7,14 @@ from datetime import datetime
 
 def user_thumbnail_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/user_<email>/<filename>
-    return 'user_{0}/thumbnail/{1}'.format(instance.email, filename)
+    return 'user/user_{0}/thumbnail/{1}'.format(instance.email, filename)
 
 # reward 대표 이미지
 
 
-def reward_thumbnail_path(instance, filename):
-    # file will be uploaded to MEDIA_ROOT/user_<email>/<filename>
-    return 'reward_{0}/thumbnail/{1}'.format(instance.name, filename)
+# def reward_thumbnail_path(instance, filename):
+#    # file will be uploaded to MEDIA_ROOT/user_<email>/<filename>
+#    return 'reward_{0}/thumbnail/{1}'.format(instance.name, filename)
 
 
 # 시간
@@ -118,6 +118,24 @@ class User(AbstractUser):
 
     def get_new_alert(self):
         return Alert.objects.filter(user=self, checked=False).order_by('-time')[:3]
+
+    def mypage_description(self):
+        my_category = ''
+        description = ['열심히 활동해서 포인트를 모으면 레벨을 높일 수 있어요!', '~~~', '💛 레벨 체계']
+        for category in JOB_CATEGORY:
+            if self.job in JOB_CATEGORY[category]:
+                my_category = category
+        description += level_description(my_category)
+        description += ['~~~', '💛 포인트 체계']
+        description += point_description(my_category)
+        description += ['~~~', '💛 나의 현황', self.nickname +
+                        " 님의 현재 레벨은 " + self.get_level() + ", 포인트는 " + str(self.points()) + "점입니다."]
+        if LEVEL_STEP.index(self.level) == len(LEVEL) - 1:
+            description += ["이미 최고 레벨에 도달했어요!"]
+        else:
+            description += ["다음 레벨까지 " + str(
+                LEVEL_UP_BOUNDARY[my_category][LEVEL_STEP.index(self.level) + 1] - self.points()) + "점이 더 필요해요!"]
+        return description
 
 
 class GetPoint(models.Model):
