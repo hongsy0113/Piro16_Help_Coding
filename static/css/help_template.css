@@ -83,8 +83,8 @@
 /* 유의사항 modal */
 .help__container {
     background-color: white;
-    width: 508px;
-    height: 345px;
+    width: 575px;
+    height: 420px;
     z-index: 22;
     display: flex;
     flex-direction: column;
@@ -116,37 +116,40 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    font-size: 26px;
+    font-family: Noto Sans CJK KR;
+    font-size: 19px;
     font-weight: 500;
     margin: 20px 0;
 }
 
 .caution__ul-icon p {
     font-size: 13px;
-    margin: 0px 29px 5px;
+    margin: 0px 29px 18px;
 }
 
 .caution__li img {
     width: 30px;
     height: 30px;
+    margin-right: 7px;
 }
 
 .caution__li {
     display: flex;
     flex-direction: row;
     align-items: center;
-    margin: 6px 22px;
+    margin: 15px 0px 15px 38px;
 }
 
 .caution__top {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    width: 100%;
 }
 
 .caution__top span {
-    margin-left: 197px;
-    font-size: 25px !important;
+    margin-left: 229px;
+    font-size: 30px !important;
     font-weight: bold;
 }
 
