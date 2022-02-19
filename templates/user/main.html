@@ -205,14 +205,14 @@
     let current = 0;
     const element = document.querySelector('.main__qna__slideinner');
     const qnaBox = document.querySelector('.main__qna__box');
-    console.log(element);
+    // console.log(element);
     const leftbtn = document.getElementById('qna__arrow-left');
     const rightbtn = document.getElementById('qna__arrow-right');
     const count = 3;
     let num = (window.innerWidth - 1080) / 2;
     let width = window.innerWidth;
-    console.log('innerwidth: ',window.innerWidth);
-    console.log(num);
+    // console.log('innerwidth: ',window.innerWidth);
+    // console.log(num);
 
     function slideNext() {
         if (current >= count - 1) {
@@ -229,7 +229,7 @@
             current--;
         }
         element.style.transform =`translate(-${width * current}px)`;
-        console.log('slidePrev')
+        // console.log('slidePrev')
     }
 
 
