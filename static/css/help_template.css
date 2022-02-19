@@ -116,7 +116,7 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    font-family: Noto Sans CJK KR;
+    font-family: "Noto Sans KR", sans-serif;
     font-size: 18px;
     font-weight: bold;
     color: #4E4E4E;
