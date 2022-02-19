@@ -13,8 +13,11 @@
 
 {% block content %}
 <div class="mypage__profile__container">
-  <div class="mypage__profile__img">
-    {% if user.img %}<img src="{{ user.img.url }}" height="100">{% else %}<p>사진 없음</p>{% endif %}
+  <div class="mypage__profile_reward">
+    <div class="mypage__profile__img">
+      {% if user.img %}<img src="{{ user.img.url }}" height="100">{% else %}<p>사진 없음</p>{% endif %}
+    </div>
+    <div class="mypage__representative_reward">{% if user.representative_reward %}<img src="{{ user.representative_reward.img }}" height="70"></img>{% else %}<p>없음</p>{% endif %}</div>
   </div>
   <div class="mypage__profile__text">
     <p>{{ user.nickname }}</p>
@@ -38,12 +41,11 @@
     </div>
     <div class="mypage__profile__text-content">
       <div><p>소개</p><p>{{ user.introduction }}</p></div>
-      <div><p>대표 배지</p>{% if user.representative_reward %}<img src="{{ user.representative_reward.img }}" height="15"></img>{% else %}<p>없음</p>{% endif %}</div>
     </div>
     <div class="mypage__profile__btn">
-      <button class="btn btn-secondary"><a class="text-white" href="{% url 'user:mypage_revise' %}" style="text-decoration: none">개인정보 수정</a></button>
-      <button class="btn btn-secondary"><a class="text-white" href="{% url 'user:mypage_point' %}" style="text-decoration: none">포인트 기록</a></button>
-      <button class="btn btn-danger"><a class="text-white" href="{% url 'user:drop' %}" style="text-decoration: none">회원 탈퇴하기</a></button>
+    <button class=""><a href="{% url 'user:mypage_revise' %}" style="text-decoration: none; color: #37c6e5;">개인정보 수정</a></button>
+      <button class=""><a href="{% url 'user:mypage_point' %}" style="text-decoration: none; color: #37c6e5;">포인트 기록</a></button>
+      <button style="border-color: #bdbdbd;"><a href="{% url 'user:drop' %}" style="text-decoration: none; color: #bdbdbd;">회원 탈퇴하기</a></button>
       {% if user.is_superuser %}
       <!-- 이거는 admin 유저만 보이는 거라 디자인 크게 신경 안 써도 될 듯 -->
       <button class="btn btn-primary"><a class="text-white" href="{% url 'user:initialize_rewards' %}" style="text-decoration: none">업적 업데이트하기</a></button>
@@ -78,7 +80,9 @@
   {% else %}
   <p>- 아직 달성한 업적이 없습니다.</p>
   {% endif %}
-  <button class="btn btn-secondary"><a class="text-white" href="{% url 'user:mypage_reward' %}" style="text-decoration: none">전체 업적 보기</a></button>
+  <div class="mypage__bottom-btn">
+    <button><a href="{% url 'user:mypage_reward' %}" style="text-decoration: none; color: #37c6e5;">전체 업적 보기</a></button>
+  </div>
 </div>
 
 <div class="mypage__question__container">
@@ -98,11 +102,14 @@
     </div>
   </a>
   {% endfor %}
-  <button class="btn btn-secondary"><a class="text-white" href="{% url 'user:mypage_question' %}" style="text-decoration: none">전체 질문 보기</a></button>
+  <div class="mypage__bottom-btn">
+  <button class="mypage__bottom-btn"><a href="{% url 'user:mypage_question' %}" style="text-decoration: none; color: #37c6e5;">전체 질문 보기</a></button>
   {% else %}
+  <div class="mypage__bottom-btn">
   <p>- 질문 기록이 없습니다.</p>
   {% endif %}
-  <button class="btn btn-secondary"><a class="text-white" href="{% url 'qna:question_list' %}" style="text-decoration: none">질문하러 가기</a></button>
+  <button class="mypage__bottom-btn"><a href="{% url 'qna:question_list' %}" style="text-decoration: none; color: #37c6e5;">질문하러 가기</a></button>
+  </div>
 </div>
 
 <div class="mypage__answer__container">
@@ -113,11 +120,15 @@
     <p class="mypage__answer__question">Q. {{ answer.question_id.title }}</p>
   </a>
   {% endfor %}
-  <button class="btn btn-secondary"><a class="text-white" href="{% url 'user:mypage_answer' %}" style="text-decoration: none">전체 답변 보기</a></button>
+  <div class="mypage__bottom-btn">
+  <button><a href="{% url 'user:mypage_answer' %}" style="text-decoration: none; color: #37c6e5;"">전체 답변 보기</a></button>
   {% else %}
+    <div class="mypage__bottom-btn">
   <p>- 답변 기록이 없습니다.</p>
   {% endif %}
-  <button class="btn btn-secondary"><a class="text-white" href="{% url 'qna:question_list' %}" style="text-decoration: none">답변하러 가기</a></button>
+    <button><a href="{% url 'qna:question_list' %}" style="text-decoration: none; color: #37c6e5;"">답변하러 가기</a></button>
+  </div>
+
 </div>
 
 <!-- 모달 내용 -->

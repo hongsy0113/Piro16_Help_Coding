@@ -5,6 +5,7 @@
 
 p {
   margin: 0;
+  word-break: break-word;
 }
 
 header {
@@ -222,6 +223,7 @@ section {
 }
 
 #check-all-alert-button,
+#check-all-alert-button-modal,
 #check-alert-button,
 .alert__container > button,
 .header__alert > button {
@@ -234,6 +236,10 @@ section {
   padding: 4px 15px 5px;
   line-height: 100%;
   background-color: white;
+}
+
+.check-alert-button {
+  z-index: 22;
 }
 
 .header__alert-dropdown > div {
@@ -283,10 +289,19 @@ section {
   border-bottom: none;
 }
 
-.header__alert > div {
+.header__alert > a {
   display: flex;
   align-items: center;
   gap: 20px;
+}
+
+.header__alert span {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  width: 350px;
 }
 /* 안 읽으면 파란 점으로 표시, 읽으면  투명 */
 .alert__dot {
@@ -337,6 +352,16 @@ section {
   flex-direction: row;
   justify-content: center;
   align-items: center;
+}
+
+
+
+/* 버튼 기본 형태 */
+
+button {
+  border: 1px solid #37c6e5;
+  color: #37c6e5;
+  background-color: white;
 }
 
 /* footer */
@@ -421,7 +446,6 @@ footer {
     width: 60px;
     height: 60px;
 }
-
 
 
 

@@ -97,7 +97,7 @@
 }
 
 /* 모달 닫기 버튼 */
-.tag-guide__close--btn {
+.tag-guide__close svg {
     position: absolute;
     right: 40px;
     top: 42px;

@@ -86,56 +86,59 @@
 
     <div class="group-post__list">  <!-- 게시글 목록 시작 -->
 
-        <div class="gridbox">  
-            {% for post, value in posts_value_dict.items %}
-            <div class="gridbox__item-post">    <!-- 그룹 게시글 하나 시작 -->
-                <div class="img__post">
-                    {% if post.image %}
-                    <img src="{{ post.image.url }}" height="200" width="200" class="img__post-img" />
-                    {% elif value.1 %}
-                    <!-- 스크래치, 엔트리 iframe이 들어가있다면 해당하는 썸네일이 목록에서 보이도록 -->
-                    <img alt="" src="{{ value.1 | safe}}" height="200" width="200" class="img__post-img">
-                    {% else %}
-                    <img src="/static/image/none_image_group_post.jpeg" height="200" width="200" class="img__post-img" />
-                    {% endif %}
-                </div>
+        <div class="gridbox">
+            {% for post, value in posts_value_dict.items %}    
+                <div class="gridbox__item-post">    <!-- 그룹 게시글 하나 시작 -->
+                    <a href="{% url 'group:post_detail' group.pk post.pk %}">    
+                        <div class="img__post">
+                            {% if post.image %}
+                            <img src="{{ post.image.url }}" height="200" width="200" class="img__post-img" />
+                            {% elif value.1 %}
+                            <!-- 스크래치, 엔트리 iframe이 들어가있다면 해당하는 썸네일이 목록에서 보이도록 -->
+                            <img alt="" src="{{ value.1 | safe}}" height="200" width="200" class="img__post-img">
+                            {% else %}
+                            <img src="/static/img/none_image_group_post.png" height="200" width="200" class="img__post-img" />
+                            {% endif %}
+                        </div>
 
-                <div class="group_post-tag">   <!-- 게시글 태그 수정 여기서 해주세요 -->
-                    {% if post.category == 'S' %}
-                    <span class="post-tag post-tag__S">자랑</span>
-                    {% elif post.category == 'Q' %}
-                    <span class="post-tag post-tag__Q">질문</span>
-                    {% else %}
-                    <span class="post-tag post-tag__E">기타</span>
-                    {% endif %}
-                </div>
+                        <div class="group_post-tag">   <!-- 게시글 태그 수정 여기서 해주세요 -->
+                            {% if post.category == 'S' %}
+                            <span class="post-tag post-tag__S">자랑</span>
+                            {% elif post.category == 'Q' %}
+                            <span class="post-tag post-tag__Q">질문</span>
+                            {% else %}
+                            <span class="post-tag post-tag__E">기타</span>
+                            {% endif %}
+                        </div>
 
-                <div class="comment__post">   <!-- 댓글 개수 -->
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-                    <path d="M13.1592 0.505859H1.90918C0.875 0.505859 0.0341797 1.34668 0.0341797 2.38086V10.8184C0.0341797 11.8525 0.875 12.6934 1.90918 12.6934H4.72168V15.1543C4.72168 15.4414 5.0498 15.6084 5.28125 15.4385L8.94043 12.6934H13.1592C14.1934 12.6934 15.0342 11.8525 15.0342 10.8184V2.38086C15.0342 1.34668 14.1934 0.505859 13.1592 0.505859Z" fill="white"/>
-                    </svg>
-                    <span>{{ value.0 }}</span>    <!-- 댓글 개수 수정 여기서 해주세요 -->
-                </div>
+                        <div class="comment__post">   <!-- 댓글 개수 -->
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <path d="M13.1592 0.505859H1.90918C0.875 0.505859 0.0341797 1.34668 0.0341797 2.38086V10.8184C0.0341797 11.8525 0.875 12.6934 1.90918 12.6934H4.72168V15.1543C4.72168 15.4414 5.0498 15.6084 5.28125 15.4385L8.94043 12.6934H13.1592C14.1934 12.6934 15.0342 11.8525 15.0342 10.8184V2.38086C15.0342 1.34668 14.1934 0.505859 13.1592 0.505859Z" fill="white"/>
+                            </svg>
+                            <span>{{ value.0 }}</span>    <!-- 댓글 개수 수정 여기서 해주세요 -->
+                        </div>
+                    </a>
 
-                <div class="content__post">
-                    <!-- 그룹 이름 -->
-                    <div class="content__post-titlebox">
-                        <!-- 그룹 게시글 디테일 페이지로 이동 (후에 수정 필요) -->
-                        <a href="{% url 'group:post_detail' group.pk post.pk %}" class="content__post-title">
-                            <span class="post-title">{{ post.title }}</span>
-                        </a>
-                    </div>
-                    <!-- 작품 소개글 -->
-                    <div class="content__post-intro">
-                        <span class="post-intro">{{ post.content }}</span>
-                    </div>
-                    <!-- 글 정보 -->
-                    <div class="content__post-info">
-                        <span class="post-info">{{ post.created_at | date:'y.m.d' }} · {% if post.user %}<a href="{% url 'user:public_userpage' post.user.pk %}" style="text-decoration: none; color:#828282;">{{ post.user }}</a>{% else %}(알 수 없음){% endif %} · 조회  {% get_hit_count for post %} · 좋아요 {{ post.like_user.all | length }}</span>
-                        <!-- <div class="info-like post-info"> · 좋아요 {{ post.like_user.all | length }}</div>  -->
-                    </div>
-                </div>
-            </div>
+                    <a href="{% url 'group:post_detail' group.pk post.pk %}"> 
+                        <div class="content__post">
+                            <!-- 그룹 이름 -->
+                            <div class="content__post-titlebox">
+                                <!-- 그룹 게시글 디테일 페이지로 이동 (후에 수정 필요) -->
+                                <span class="post-title content__post-title">{{ post.title }}</span>
+                            </div>
+                            <!-- 작품 소개글 -->
+                            <div class="content__post-intro">
+                                <span class="post-intro">{{ post.content }}</span>
+                            </div>
+                            <!-- 글 정보 -->
+                            <div class="content__post-info">
+                                <span class="post-info">{{ post.created_at | date:'y.m.d' }} · {% if post.user %} {{ post.user }} {% else %}(알 수 없음){% endif %} · 조회  {% get_hit_count for post %} · 좋아요 {{ post.like_user.all | length }}</span>
+                                <!-- <div class="info-like post-info"> · 좋아요 {{ post.like_user.all | length }}</div>  -->
+                            </div>
+                        </div>
+                    </a>  
+                </div>   
+
             {% endfor %}
         </div>
     </div>

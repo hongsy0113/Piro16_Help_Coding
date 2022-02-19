@@ -135,7 +135,7 @@ a {
 
 .search-result__top {
     display: flex;
-    align-items: flex-end;
+    align-items: center;
     justify-content: space-between;
 }
 
@@ -143,6 +143,11 @@ a {
     all: unset;
     color: #4e4e4e;
     padding: 1px 2px;
+    cursor: pointer;
+}
+
+.search-result__top button:hover {
+    color: #BDBDBD;
 }
 
 .search-result__top--query {

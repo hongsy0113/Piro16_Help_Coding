@@ -92,6 +92,39 @@ img {
     margin-right: 10px;
 }
 
+/* 그룹 검색 결과 */
+.search--result__query {
+    padding-top: 15px;
+}
+
+.search-result__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.search-result__top button {
+    all: unset;
+    color: #4e4e4e;
+    padding: 1px 2px;
+    cursor: pointer;
+}
+
+.search-result__top button:hover {
+    color: #BDBDBD;
+}
+
+.search-result__top--query {
+    color: black;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.search-result__top--text {
+    color: #4E4E4E;
+    font-size: 23px;
+}
+
 /* 게시글 목록 */
 .gridbox {
     margin-top: 24px;

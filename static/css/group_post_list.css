@@ -6,6 +6,10 @@ button {
     all: unsert;
 }
 
+a {
+    text-decoration: none;
+}
+
 /* 게시판 상단 */
 .group-post__top {
     display: flex;
