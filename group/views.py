@@ -240,7 +240,7 @@ def group_update(request, pk):
             if request.FILES.get('image'):  # form valid 시
                 group.image = request.FILES.get('image')
 
-            else:   # 다른 필드 에러 시(기존 파일 남아있도록)
+            elif request.POST['img_recent']:   # 다른 필드 에러 시(기존 파일 남아있도록)
                 group.image = './group/group_{}/thumbnail/{}'.format(
                     group.pk, request.POST['img_recent'])
                 # original_info.image = request.POST['img_recent']
