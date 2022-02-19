@@ -84,7 +84,7 @@
 .help__container {
     background-color: white;
     width: 575px;
-    height: 420px;
+    height: 340px;
     z-index: 22;
     display: flex;
     flex-direction: column;
@@ -138,6 +138,7 @@
     display: flex;
     flex-direction: row;
     align-items: center;
+    gap: 6px;
     margin: 15px 0px 15px 38px;
 }
 
