@@ -79,7 +79,11 @@
         </div>
 
         <div class='no-post__btnbox'>
+            {% if is_member %}
             <a class="group_post__ask-btn" href="{% url 'group:post_create' group.pk %}">내 작품 공유</a>
+            {% else %}
+            <span class="group_post__ask-btn" onclick="alert('그룹에 가입 후 이용해주세요. 😄')">내 작품 공유</span>
+            {% endif %}
         </div>
     </div>
     {% endif %}
@@ -146,7 +150,11 @@
 
     {% if posts_value_dict %}
     <div class="group_post__search-container">  <!-- 게시글 검색 -->
-        <a class="group_post__ask-btn" href="{% url 'group:post_create' group.pk %}">작품 공유하기</a>
+        {% if is_member %}
+        <a class="group_post__ask-btn" href="{% url 'group:post_create' group.pk %}">내 작품 공유</a>
+        {% else %}
+        <span class="group_post__ask-btn" onclick="alert('그룹에 가입 후 이용해주세요. 😄')">내 작품 공유</span>
+        {% endif %}
         <form class="group_post__search-box" action="{% url 'group:search_result' group.pk %}" method="get">
             {% csrf_token %}
             <input type="search" placeholder="작품을 검색해보세요!" name="search" class="group_post__search__input"/>
