@@ -514,7 +514,7 @@ class AlertView(MypageView):
 def periodic_tasks(request):
     if request.user.is_superuser:
         PERIODIC_TASKS_TIMER.timer = Timer(
-            initial_period(datetime.now()), periodic_tasks)
+            initial_period(datetime.now()), periodic_tasks_execute)
         PERIODIC_TASKS_TIMER.timer.start()
         messages.success(request, "DB 관리가 성공적으로 진행되고 있습니다.")
         return redirect('user:mypage')

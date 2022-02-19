@@ -32,7 +32,7 @@ from django.contrib.auth.models import AnonymousUser
 
 
 def group_home(request):
-    
+
     user = request.user  # 현재 접속한 사용자
 
     if user == AnonymousUser():
@@ -91,7 +91,7 @@ def group_search_public(request):
 
     if not request.GET.get('search') or request.GET.get('search').isspace():
         return redirect('group:group_list')
-        
+
     if 'search' in request.GET:
         query = request.GET.get('search')
         groups = groups.filter(Q(name__icontains=query) & Q(mode='PUBLIC'))
@@ -128,7 +128,7 @@ def group_create(request):
     user = request.user
     if user == AnonymousUser():
         return redirect('user:main')
-        
+
     user = request.user
 
     if request.method == 'POST':
@@ -152,7 +152,7 @@ def group_create(request):
 
             if request.FILES.get('image'):  # form valid + 이미지 첨부 시
                 group.image = request.FILES.get('image')
-                #group.image = './group/group_{}/thumbnail/{}'.format(
+                # group.image = './group/group_{}/thumbnail/{}'.format(
                 #   group.pk, request.FILES['image'].name)
             elif request.POST['img_recent']:
                 os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
@@ -162,7 +162,8 @@ def group_create(request):
                     group.pk, request.POST['img_recent'])
                 # temp 파일 삭제
                 if os.path.isfile('./media/temp/{}'.format(request.POST['img_recent'])):
-                    os.remove('./media/temp/{}'.format(request.POST['img_recent']))
+                    os.remove(
+                        './media/temp/{}'.format(request.POST['img_recent']))
             group.save()
             update_group_create(group, user)
 
@@ -203,8 +204,7 @@ def group_update(request, pk):
     user = request.user
     if user == AnonymousUser():
         return redirect('user:main')
-        
-    
+
     group = get_object_or_404(Group, pk=pk)
     prev_name = group.name
 
@@ -244,8 +244,8 @@ def group_update(request, pk):
         if request.FILES.get('image'):
             os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
             with open('./media/temp/{}'.format(request.FILES['image'].name), 'wb+') as destination:
-                    for chunk in request.FILES['image'].chunks():
-                        destination.write(chunk)
+                for chunk in request.FILES['image'].chunks():
+                    destination.write(chunk)
 
         original_info.image = request.POST['img_recent']
 
@@ -291,7 +291,7 @@ def group_delete(request, pk):
     user = request.user
     if user == AnonymousUser():
         return redirect('user:main')
-        
+
     group = get_object_or_404(Group, pk=pk)
 
     if user == group.maker:
@@ -311,7 +311,7 @@ def group_drop(request, pk):
     user = request.user
     if user == AnonymousUser():
         return redirect('user:main')
-        
+
     group = get_object_or_404(Group, pk=pk)
     members = group.members.all()
 
@@ -345,7 +345,7 @@ def group_detail(request, pk):
     user = request.user
     if user == AnonymousUser():
         return redirect('user:main')
-        
+
     group = get_object_or_404(Group, pk=pk)
 
     group_star = GroupStar.objects.filter(Q(group=group) & Q(user=user))
@@ -454,7 +454,7 @@ class OriginalGroupInfo():
 
 ######## 초대 코드 ########
 # 7일의 코드 유효 기간
-#def group_code_save(pk):
+# def group_code_save(pk):
 #    group = get_object_or_404(Group, pk=pk)
 #    group.code = get_invite_code()
 #    group.save()
@@ -480,7 +480,7 @@ def create_code_ajax(request):
     user = request.user
     if user == AnonymousUser():
         return redirect('user:main')
-        
+
     req = json.loads(request.body)
     group_id = req['groupId']
 
@@ -490,11 +490,13 @@ def create_code_ajax(request):
     else:
         # time = Timer(7 * 24 * 60 * 60, group_code_save, [group_id])
         code = get_invite_code()
+        group.code = code
+        group.save()
         # code = group.code
 
-        #if time.finished:
+        # if time.finished:
         #    group.code = ''
-    #print(code)
+    # print(code)
     group.save()
 
     return JsonResponse({'name': group.name, 'code': code})
@@ -770,7 +772,7 @@ def post_list(request, pk):
     group = Group.objects.get(pk=pk)
     page = request.GET.get('page', '1')    # 페이지
 
-    ## ismember
+    # ismember
     is_member = user in group.members.all()
 
     # 게시글 필터
@@ -867,7 +869,7 @@ def search_result(request, pk):
         else:
             posts_value_dict[page] = (answers_count, None)
 
-    ## ismember
+    # ismember
     is_member = user in group.members.all()
 
     ctx = {
@@ -918,10 +920,12 @@ def post_create(request, pk):
                 os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
                 shutil.copyfile('./media/temp/{}'.format(request.POST['img_recent']),
                                 ('./media/group/group_{}/post/uploads' + date_dir + '{}').format(group.pk, request.POST['img_recent']))
-                post.image =('./group/group_{}/post/uploads' + date_dir + '{}').format(group.pk, request.POST['img_recent'])
-                ## temp 파일 삭제
+                post.image = ('./group/group_{}/post/uploads' + date_dir +
+                              '{}').format(group.pk, request.POST['img_recent'])
+                # temp 파일 삭제
                 if os.path.isfile('./media/temp/{}'.format(request.POST['img_recent'])):
-                    os.remove('./media/temp/{}'.format(request.POST['img_recent']))
+                    os.remove(
+                        './media/temp/{}'.format(request.POST['img_recent']))
 
             if request.FILES.get('attached_file'):
                 post.attached_file = request.FILES.get('attached_file')
@@ -929,12 +933,12 @@ def post_create(request, pk):
                 os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
                 shutil.copyfile('./media/temp/{}'.format(request.POST['file_recent']),
                                 ('./media/group/group_{}/post/uploads' + date_dir + '{}').format(group.pk, request.POST['file_recent']))
-                post.attached_file =('./group/group_{}/post/uploads' + date_dir + '{}').format(
+                post.attached_file = ('./group/group_{}/post/uploads' + date_dir + '{}').format(
                     group.pk, request.POST['file_recent'])
-                ## temp 파일 삭제
+                # temp 파일 삭제
                 if os.path.isfile('./media/temp/{}'.format(request.POST['file_recent'])):
-                    os.remove('./media/temp/{}'.format(request.POST['file_recent']))
-
+                    os.remove(
+                        './media/temp/{}'.format(request.POST['file_recent']))
 
             post.save()
             update_group_post(post, request.user)
@@ -988,7 +992,7 @@ def post_update(request, pk, post_pk):
     post = get_object_or_404(GroupPost, pk=post_pk)
     group = get_object_or_404(Group, pk=pk)
 
-    ## file data dir
+    # file data dir
     date_dir = datetime.today().strftime('/%Y/%m/%d/')
 
     if request.method == "POST":
@@ -1000,39 +1004,41 @@ def post_update(request, pk, post_pk):
             if request.FILES.get('image'):  # form valid 시
                 post.image = request.FILES.get('image')
 
-            elif request.POST['img_recent'] : # 다른 필드 에러 시(기존 파일 남아있도록)
+            elif request.POST['img_recent']:  # 다른 필드 에러 시(기존 파일 남아있도록)
                 if os.path.isfile(('./media/group/group_{}/post/uploads' + date_dir + '{}').format(
-                    group.pk, request.POST['img_recent'])):
+                        group.pk, request.POST['img_recent'])):
                     post.image = ('./group/group_{}/post/uploads' + date_dir + '{}').format(
-                    group.pk, request.POST['img_recent'])
+                        group.pk, request.POST['img_recent'])
                 else:
                     os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
                     shutil.copyfile('./media/temp/{}'.format(request.POST['img_recent']),
                                     ('./media/group/group_{}/post/uploads' + date_dir + '{}').format(group.pk, request.POST['img_recent']))
                     post.image = ('./group/group_{}/post/uploads' + date_dir + '{}').format(
                         group.pk, request.POST['img_recent'])
-                #temp 파일 삭제
+                # temp 파일 삭제
                 if os.path.isfile('./media/temp/{}'.format(request.POST['img_recent'])):
-                    os.remove('./media/temp/{}'.format(request.POST['img_recent']))
-                
+                    os.remove(
+                        './media/temp/{}'.format(request.POST['img_recent']))
+
             if request.FILES.get('attached_file'):  # form valid 시
                 post.attached_file = request.FILES.get('attached_file')
 
             elif request.POST['file_recent']:   # 다른 필드 에러 시(기존 파일 남아있도록)
                 if os.path.isfile(('./media/group/group_{}/post/uploads' + date_dir + '{}').format(
-                    group.pk, request.POST['file_recent'])):
+                        group.pk, request.POST['file_recent'])):
                     post.attached_file = ('./group/group_{}/post/uploads' + date_dir + '{}').format(
-                    group.pk, request.POST['file_recent'])
+                        group.pk, request.POST['file_recent'])
                 else:
                     os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
                     shutil.copyfile('./media/temp/{}'.format(request.POST['file_recent']),
                                     ('./media/group/group_{}/post/uploads' + date_dir + '{}').format(group.pk, request.POST['file_recent']))
                     post.attached_file = ('./group/group_{}/post/uploads' + date_dir + '{}').format(
                         group.pk, request.POST['file_recent'])
-                
-                #temp 파일 삭제
+
+                # temp 파일 삭제
                 if os.path.isfile('./media/temp/{}'.format(request.POST['file_recent'])):
-                    os.remove('./media/temp/{}'.format(request.POST['file_recent']))
+                    os.remove(
+                        './media/temp/{}'.format(request.POST['file_recent']))
 
             post = form.save()
 
@@ -1143,14 +1149,16 @@ class GroupPostDetailView(HitCountDetailView):
         else:
             username = '(알 수 없음)'
 
-        ## 작성자가 그룹 탈퇴한 유저인지 여부
+        # 작성자가 그룹 탈퇴한 유저인지 여부
         if post.user in post.group.members.all():
             is_writer_member = True
-        else: is_writer_member = False
-        ## 공개그룹의 경우, 지금 보고 있는 사람이 멤버인지
+        else:
+            is_writer_member = False
+        # 공개그룹의 경우, 지금 보고 있는 사람이 멤버인지
         if user in post.group.members.all():
             is_member = True
-        else: is_member = False
+        else:
+            is_member = False
 
         total_likes = len(post.like_user.all())
         is_liked = user in post.like_user.all()
@@ -1183,7 +1191,7 @@ class GroupPostDetailView(HitCountDetailView):
         context['is_writer_member'] = is_writer_member
         context['is_member'] = is_member
         return context
-    
+
     def get(self, request, *args, **kwargs):
         user = request.user
         if user == AnonymousUser():
@@ -1214,7 +1222,7 @@ def post_delete(request, pk, post_pk):
     user = request.user
     if user == AnonymousUser():
         return redirect('user:main')
-    
+
     post = get_object_or_404(GroupPost, pk=post_pk)
     post.delete()
     return redirect('group:post_list', pk)
