@@ -1126,6 +1126,9 @@ class GroupPostDetailView(HitCountDetailView):
 
     def get_context_data(self, **kargs):
         context = super().get_context_data(**kargs)
+
+        user = self.request.user
+
         # self.object로 GroupPost 객체에 접근할 수 있음
         try:
             previous_pk = GroupPost.get_previous_by_created_at(
@@ -1149,13 +1152,17 @@ class GroupPostDetailView(HitCountDetailView):
         else:
             username = '(알 수 없음)'
 
-        ## 그룹 탈퇴한 유저인지 여부
-
+        ## 작성자가 그룹 탈퇴한 유저인지 여부
         if post.user in post.group.members.all():
+            is_writer_member = True
+        else: is_writer_member = False
+        ## 공개그룹의 경우, 지금 보고 있는 사람이 멤버인지
+        if user in post.group.members.all():
             is_member = True
         else: is_member = False
+
         total_likes = len(post.like_user.all())
-        is_liked = self.request.user in post.like_user.all()
+        is_liked = user in post.like_user.all()
 
         # 해당 게시글에 대한 답변 가져오기
         answers = GroupAnswer.objects.filter(post_id=post.id, parent_answer__isnull=True).order_by(
@@ -1182,6 +1189,7 @@ class GroupPostDetailView(HitCountDetailView):
         # context['answers']= answers
         context['answers_count'] = answers_count
         context['answers_reply_dict'] = answers_reply_dict
+        context['is_writer_member'] = is_writer_member
         context['is_member'] = is_member
         return context
     
