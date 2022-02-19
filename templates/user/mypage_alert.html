@@ -10,19 +10,21 @@
 
 {% block content %}
 <div> <!-- Ajax 때문에 id는 유지해주세요! -->
-  <div class="alert__title">
-    <div>
-      <h3>알림</h3>
-      {% if user.has_new_alert %}
-      <h3 id="alert-count">{{ user.has_new_alert }}</h3>
+  <div class="alert__title-outer">
+    <div class="alert__title">
+      <div>
+        <h3>알림</h3>
+        {% if user.has_new_alert %}
+        <h3 id="alert-count">{{ user.has_new_alert }}</h3>
+      </div>
+      <button id="check-all-alert-button" onclick="checkAllAlert(); checkAllAlertModal();">전체 확인</button>
     </div>
-    <button id="check-all-alert-button" onclick="checkAllAlert(); checkAllAlertModal();">전체 확인</button>
     {% else %}
     <h3 id="alert-count" class="alert__count__none"> </h3>
-    </div>
     {% endif %}
+    <div class="data-description" style="padding-bottom: 10px;">질문에 답변이 달리거나, 배지를 획득하거나, 그룹에 가입되면 알림이 와요! 1~2주 정도 지난 오래된 알림은 자동으로 삭제돼요.</div>
   </div>
-  <div class="data-description">질문에 답변이 달리거나, 배지를 획득하거나, 그룹에 가입되면 알림이 와요! 1~2주 정도 지난 오래된 알림은 자동으로 삭제돼요.</div>
+</div>
   {% if alerts %}
   {% for alert in alerts %}
   <div class="alert__outer-container">
