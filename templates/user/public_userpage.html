@@ -9,8 +9,11 @@
 
 {% block content %}
 <div class="mypage__profile__container">
-  <div class="mypage__profile__img">
-    {% if view_user.img %}<img src="{{ view_user.img.url }}" height="100">{% else %}<p>사진 없음</p>{% endif %}
+  <div class="mypage__profile_reward">
+    <div class="mypage__profile__img">
+      {% if view_user.img %}<img src="{{ view_user.img.url }}" height="100">{% else %}<p>사진 없음</p>{% endif %}
+    </div>
+    <div class="mypage__representative_reward">{% if user.representative_reward %}<img src="{{ user.representative_reward.img }}" height="70"></img>{% else %}<p></p>{% endif %}</div>
   </div>
   <div class="mypage__profile__text">
     <p>{{ view_user.nickname }}</p>
@@ -28,11 +31,10 @@
     </div>
     <div class="mypage__profile__text-content">
       <div><p>소개</p><p>{{ view_user.introduction }}</p></div>
-      <div><p>대표 배지</p>{% if view_user.representative_reward %}<img src="{{ view_user.representative_reward.img }}" height="15"></img>{% else %}<p>없음</p>{% endif %}</div>
     </div>
     <!-- <div class="mypage__profile__btn">
-      <button class="btn btn-secondary"><a class="text-white" href="{% url 'user:mypage_revise' %}" style="text-decoration: none">개인정보 수정</a></button>
-      <button class="btn btn-secondary"><a class="text-white" href="{% url 'user:mypage_point' %}" style="text-decoration: none">나의 포인트 현황</a></button>
+      <button><a  href="{% url 'user:mypage_revise' %}" style="text-decoration: none; color: #37c6e5;">개인정보 수정</a></button>
+      <button><a  href="{% url 'user:mypage_point' %}" style="text-decoration: none; color: #37c6e5;">나의 포인트 현황</a></button>
     </div> -->
     {% if messages %}{% for message in messages %}<p class="mypage__message">{{ message.message }}</p>{% endfor %}{% endif %}
   </div>
@@ -58,9 +60,11 @@
     </div>
     {% endfor %}
   </div>
-  <button class="btn btn-secondary"><a class="text-white" href="{% url 'user:mypage_reward' %}" style="text-decoration: none">전체 업적 보기</a></button>
+  <div class="mypage__bottom-btn">
+    <button><a  href="{% url 'user:mypage_reward' %}" style="text-decoration: none; color: #37c6e5;">전체 업적 보기</a></button>
+  </div>
   {% else %}
-  <p>- 아직 달성한 업적이 없습니다.</p>
+  <p class="mypage__nothing-yet">아직 달성한 업적이 없어요🥺</p>
   {% endif %}
 </div>
 
@@ -81,26 +85,30 @@
     </div>
   </a>
   {% endfor %}
-  <button class="btn btn-secondary"><a class="text-white" href="{% url 'user:mypage_question' %}" style="text-decoration: none">전체 질문 보기</a></button>
+  <div class="mypage__bottom-btn">
+    <button><a  href="{% url 'user:mypage_question' %}" style="text-decoration: none; color: #37c6e5;">전체 질문 보기</a></button>
+  </div>
   {% else %}
-  <p>- 질문 기록이 없습니다.</p>
+  <p class="mypage__nothing-yet">질문 기록이 없어요🥺</p>
   {% endif %}
-  <!-- <button class="btn btn-secondary"><a class="text-white" href="{% url 'qna:question_list' %}" style="text-decoration: none">질문하러 가기</a></button> -->
+  <!-- <button><a  href="{% url 'qna:question_list' %}" style="text-decoration: none; color: #37c6e5;">질문하러 가기</a></button> -->
 </div>
 
 <div class="mypage__answer__container">
   {% if answers %}
   {% for answer in answers %}
-  <a class="mypage__answer" href="{% url 'qna:question_detail' answer.question_id.pk %}" style="text-decoration: none">
+  <a class="mypage__answer" href="{% url 'qna:question_detail' answer.question_id.pk %}" style="text-decoration: none;">
     <p class="mypage__answer__title">{{ answer.content }}</p>
     <p class="mypage__answer__question">Q. {{ answer.question_id.title }}</p>
   </a>
   {% endfor %}
-  <button class="btn btn-secondary"><a class="text-white" href="{% url 'user:mypage_answer' %}" style="text-decoration: none">전체 답변 보기</a></button>
+  <div class="mypage__bottom-btn">
+    <button><a  href="{% url 'user:mypage_answer' %}" style="text-decoration: none; color: #37c6e5;">전체 답변 보기</a></button>
+  </div>
   {% else %}
-  <p>- 답변 기록이 없습니다.</p>
+  <p class="mypage__nothing-yet">답변 기록이 없어요🥺</p>
   {% endif %}
-  <!-- <button class="btn btn-secondary"><a class="text-white" href="{% url 'qna:question_list' %}" style="text-decoration: none">답변하러 가기</a></button> -->
+  <!-- <button><a  href="{% url 'qna:question_list' %}" style="text-decoration: none; color: #37c6e5;">답변하러 가기</a></button> -->
 </div>
 
 <script>
