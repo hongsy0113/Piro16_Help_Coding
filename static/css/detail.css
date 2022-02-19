@@ -14,6 +14,12 @@ main > p:first-of-type {
     color: #828282;
 }
 
+iframe {
+    width: 100%;
+    height: 700px;
+    border: none;
+}
+
 .question__detail__tagcontainer, .post__detail__tagcontainer {
     display: flex;
     gap: 10px;
