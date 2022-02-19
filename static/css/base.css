@@ -7,6 +7,18 @@ p {
   margin: 0;
 }
 
+html, body {
+    /* footer 하단 고정 */
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.wrap {
+    min-height: 100%;
+}
+
 header {
   border-bottom: 1px solid #e5e5e5;
   background-color: white;
@@ -342,6 +354,9 @@ section {
 /* footer */
 footer {
     background-color: #e9e9e9;
+    /* footer 하단 고정 */
+    bottom: 0px;
+    margin-top: auto;
 }
 
 .footer__container {
