@@ -61,8 +61,63 @@ main > p:first-of-type {
     flex-direction: column;
 }
 
+.question__detail__content img, .post__detail__content img {
+    width: 100%;
+    margin: 20px 0px;
+}
+
 .question__detail__content p, .post__detail__content p {
     word-break: break-word;
+}
+
+.detail__content--attached_file {
+    width: 100%;
+    border: 1px solid #bdbdbd;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 7px 15px;
+    gap: 10px;
+    margin: 10px 0px;
+}
+
+.attached_file--left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.attached_file--left label {
+    padding-right: 15px;
+    border-right: 1px solid #bdbdbd;
+}
+
+.detail__content--attached_link {
+    width: 100%;
+    border: 1px solid #bdbdbd;
+    display: flex;
+    align-items: center;
+    padding: 7px 15px;
+    gap: 10px;
+    margin: 10px 0px;
+}
+
+.detail__content--attached_link label {
+    width: 80px;
+    padding-right: 15px;
+    border-right: 1px solid #bdbdbd;
+}
+
+.detail__content--attached_link a {
+    width: 940px;
+    height: 36px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-wrap: break-word;
+    word-break: break-all;
+    display : -webkit-box;
+    -webkit-line-clamp: 1;  /* 줄 개수 설정 */
+    -webkit-box-orient: vertical;
 }
 
 .question__like-btn, .post__like-btn {
