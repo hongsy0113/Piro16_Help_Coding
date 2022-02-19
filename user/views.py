@@ -28,7 +28,6 @@ from config.settings import MEDIA_ROOT
 import re
 import shutil
 import os
-import time
 from threading import Timer
 from datetime import datetime
 

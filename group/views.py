@@ -1,8 +1,3 @@
-from calendar import c
-from email import message
-import re
-from tkinter import E
-from tokenize import blank_re
 import uuid
 import base64
 import codecs
@@ -10,28 +5,24 @@ import json
 import shutil
 import os
 import mimetypes
-import time
 from django.shortcuts import render, redirect, get_object_or_404
 from django.templatetags.static import static
-from django.db.models import Q, F
+from django.db.models import Q
 from django.core.paginator import Paginator
 from django.db.models import Count
 from django.http import JsonResponse, FileResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.db.models import Q
 from .models import *
 from .forms import *
 from django.core.paginator import Paginator
 from hitcount.views import HitCountDetailView
-from django.views.generic import ListView, View
+from django.views.generic import View
 from django.views.generic.detail import SingleObjectMixin
 from django.core.files.storage import FileSystemStorage
 from config.settings import MEDIA_ROOT
 from user.update import *
 from .iframe import *
-from threading import Timer
 from django.core.validators import URLValidator
-from django.core.exceptions import ValidationError
 from django.contrib.auth.models import AnonymousUser
 
 

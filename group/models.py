@@ -1,4 +1,3 @@
-from unicodedata import category
 from django.db import models
 from user.models import User
 from django.contrib.contenttypes.fields import GenericRelation

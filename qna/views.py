@@ -1,6 +1,4 @@
 #-*-coding:utf-8-*-
-from datetime import date
-from wsgiref.simple_server import sys_version
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import *
 from .forms import *
@@ -11,8 +9,7 @@ from django.http import JsonResponse, FileResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator 
 from django.db.models import Count
-from django.contrib import messages
-from django.views.generic import ListView, View
+from django.views.generic import View
 from hitcount.views import HitCountDetailView
 from django.views.generic.detail import SingleObjectMixin
 from django.core.files.storage import FileSystemStorage
