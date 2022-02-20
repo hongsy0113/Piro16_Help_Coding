@@ -16,11 +16,11 @@
     <form method="POST" enctype="multipart/form-data" action="">
         <div class="revise__container">
             {% csrf_token %}
-            <p id="password_change" class="password_change" onclick="passwordChange()">비밀번호를 변경하려면 여기를 클릭하세요</p> <!-- 버튼 같이 만들어주면 될 듯! -->
+            <p id="password_change" class="password_change" onclick="passwordChange()">비밀번호를 변경하려면 여기를 클릭하세요</p>
             <input id="password_change_recent_1" value="{{ original_information.current_password }}" hidden></input>
             <input id="password_change_recent_2" value="{{ original_information.new_password1 }}" hidden></input>
             <input id="password_change_recent_3" value="{{ original_information.new_password2 }}" hidden></input>
-            <div id="password_change_block" style="display: none;">
+            <div id="password_change_block" hidden>
                 <div style="margin-bottom: 20px;">
                     <label for="current_password">현재 비밀번호</label><br />
                     <input type="password" name="current_password" id="current_password" value="{{ original_information.current_password }}" placeholder="비밀번호를 바꾸기 위해 현재 비밀번호를 입력해주세요."/>

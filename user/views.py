@@ -347,7 +347,7 @@ def my_page_revise(request):
             updated = '프로필이 성공적으로 수정되었습니다.'
             if 'password_change' in command:
                 user.set_password(request.POST['new_password1'])
-                updated += ' (비밀번호가 성공적으로 변경되었습니다.)'
+                updated += ' (비밀번호 변경 완료)'
             if 'image_change' in command:
                 if request.POST.get('img_setting') == 'own_img':
                     if request.FILES.get('img'):
