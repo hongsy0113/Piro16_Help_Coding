@@ -81,14 +81,14 @@
         </form>
     </div>
     {% endif %}
+    {% if post.attached_link %}
     <div>
         <div class="detail__content--attached_link">
-            {% if post.attached_link %}
             <label>첨부링크</label>
             <a href="{{ post.attached_link }}">{{ post.attached_link }}</a>
-            {% endif %}
         </div>
     </div>
+    {% endif %}
     
     <hr>
     <div class="post__like-btn">

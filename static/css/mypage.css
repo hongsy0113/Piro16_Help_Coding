@@ -53,7 +53,7 @@
 
 .mypage__profile__text-content {
     font-size: 18px;
-    line-height: 100%;
+    line-height: 150%;
     color: #4e4e4e;
     display: flex;
     flex-direction: column;
@@ -228,7 +228,7 @@
 .mypage__answer {
     text-decoration: none;
     color: black;
-    height: 116px;
+    /* height: 116px; */
     display: flex;
     flex-direction: column;
     gap: 13px;
@@ -246,6 +246,7 @@
 .mypage__answer :first-child {
     font-size: 18px;
     font-weight: bold;
+    line-height: 150%;
     margin: 0;
 }
 
@@ -254,7 +255,6 @@
     line-height: 150%;
     color: #4e4e4e;
     margin: 0;
-    height: 54px;
     display: -webkit-box;
     -webkit-line-clamp: 1;
     -webkit-box-orient: vertical;

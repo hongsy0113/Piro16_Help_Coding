@@ -62,6 +62,7 @@ function closeGroupJoin() {
     closeJoinAlert.style.display = 'none';
     groupWhichJoin.style.display = 'none';
     groupCodeGuideAlert.style.display = 'none';
+    document.location.href = '/group/';
 }
 
 // groupJoinBtn.addEventListener('click', showGroupJoin);

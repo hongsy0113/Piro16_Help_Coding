@@ -29,10 +29,12 @@
     </a>
     {% endfor %}
     {% else %}
-    <p>- 질문 기록이 없습니다.</p>
+    <p>질문 기록이 없어요🥺</p>
     {% endif %}
-    <button class="btn btn-secondary"><a class="text-white" href="{% url 'user:mypage' %}" style="text-decoration: none">마이페이지로 돌아가기</a></button>
-  <button class="btn btn-secondary"><a class="text-white" href="{% url 'qna:question_list' %}" style="text-decoration: none">질문하러 가기</a></button>
+    <div class="mypage__bottom-btn">
+      <button class="bluebtn"><a href="{% url 'user:mypage' %}" style="text-decoration: none">마이페이지로 돌아가기</a></button>
+      <button class="bluebtn"><a href="{% url 'qna:question_list' %}" style="text-decoration: none">질문하러 가기</a></button>
+    </div>
   </div>
 
 <!-- 페이지네이션 -->
