@@ -218,24 +218,25 @@
                         const {new_alert_id, new_alert_content, new_alert_related_url} = JSON.parse(requestLoadNewAlert.response);
                         const originalAlert = document.querySelector('.header__alerts');
                         const newAlertA = document.createElement('a');
-                        newAlertA.href = new_alert_related_url;
+                        newAlertA.href = new_alert_related_url; //링크가 안 달림...
                         newAlertA.setAttribute('onclick', `viewAlertModal(${new_alert_id})`);
-                        newAlertA.id = `alert-${new_alert_id}-modal`;
-                        newAlertA.className = 'header__alert';
                         const newAlertDiv1 = document.createElement('div');
+                        newAlertDiv1.id = `alert-${new_alert_id}-modal`;
+                        newAlertDiv1.className = 'header__alert';
                         const newAlertDiv2 = document.createElement('div');
                         newAlertDiv2.className = 'alert__dot alert__dot-unread';
                         const newAlertSpan = document.createElement('span');
                         newAlertSpan.innerHTML = new_alert_content;
                         const newAlertButton = document.createElement('button');
                         newAlertButton.id = `check-alert-${new_alert_id}-button-modal`;
+                        newAlertButton.className = 'check-alert-button';
                         newAlertButton.setAttribute('onclick', `checkAlertModal(${new_alert_id}); loadNewAlert(); checkAlert(${new_alert_id});`);
                         newAlertButton.innerHTML = '확인';
-                        originalAlert.appendChild(newAlertA);
-                        newAlertA.appendChild(newAlertDiv1);
-                        newAlertDiv1.appendChild(newAlertDiv2);
-                        newAlertDiv1.appendChild(newAlertSpan);
-                        originalAlert.appendChild(newAlertButton);
+                        originalAlert.appendChild(newAlertDiv1);
+                        newAlertDiv1.appendChild(newAlertA);
+                        newAlertA.appendChild(newAlertDiv2);
+                        newAlertA.appendChild(newAlertSpan);
+                        newAlertDiv1.appendChild(newAlertButton);
                     } catch (e) {
 
                     }
