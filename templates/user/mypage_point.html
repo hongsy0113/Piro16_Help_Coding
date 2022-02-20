@@ -10,13 +10,15 @@
 
 {% block content %}
 <div>
-  <div class="point__title">
-    <h3>포인트 기록</h3>
-    {% if points %}
-    <h3>{{user.points}}점의 포인트를 얻었어요.</h3>
-    {% endif %}
+  <div class="alert__title-outer">
+    <div class="point__title">
+      <h3>포인트 기록</h3>
+      {% if points %}
+      <h3>{{user.points}}점의 포인트를 얻었어요.</h3>
+      {% endif %}
+    </div>
+    <div class="data-description">질문하고 답변을 작성하면 포인트가 쌓여요! 좋은 질문이나 답변을 작성해 좋아요를 받으면 더 많은 포인트를 받을 수 있답니다.  1~2주 정도 지난 오래된 기록은 자동으로 삭제돼요.</div>
   </div>
-  <div class="data-description">질문하고 답변을 작성하면 포인트가 쌓여요! 좋은 질문이나 답변을 작성해 좋아요를 받으면 더 많은 포인트를 받을 수 있답니다.  1~2주 정도 지난 오래된 기록은 자동으로 삭제돼요.</div>
   {% if points %}
   {% for point in points %}
   <div class="point__container">

@@ -369,10 +369,46 @@ section {
 
 /* 버튼 기본 형태 */
 
-button {
+button, button.bluebtn {
   border: 1px solid #37c6e5;
   color: #37c6e5;
   background-color: white;
+  transition: 0.1s;
+}
+
+button.bluebtn:hover {
+  background-color: #37c6e5;
+  color: white;
+}
+
+button.bluebtn > a {
+  color: #37c6e5;
+  text-decoration: none;
+  transition: 0.1s;
+}
+
+button.bluebtn:hover > a {
+  color: white !important;
+}
+
+button.greybtn {
+  border: 1px solid #bdbdbd !important;
+  background-color: white;
+}
+
+button.greybtn:hover {
+  background-color: #bdbdbd;
+  color: white;
+}
+
+button.greybtn > a {
+  color: #828282;
+  text-decoration: none;
+  transition: 0.1s;
+}
+
+button.greybtn:hover > a {
+  color: white;
 }
 
 /* footer */
