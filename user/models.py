@@ -52,7 +52,7 @@ class Reward(models.Model):
 
 class User(AbstractUser):
     email = models.EmailField(verbose_name='email')
-    password = models.CharField(max_length=50)
+    password = models.TextField()
     nickname = models.CharField(max_length=50)
     birth = models.DateField(null=True, blank=True)
     img = models.ImageField(
