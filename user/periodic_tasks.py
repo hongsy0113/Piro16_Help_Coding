@@ -26,12 +26,13 @@ def initial_period(time):
     return 7 * 24 * 60 * 60 - (time.weekday() * 24 * 60 * 60 + time.hour * 60 * 60 + time.minute * 60 + time.second)
 
 
-def periodic_tasks():
+def periodic_tasks_execute():
     unauthenticated_user_delete()
     group_code_change()
     old_alert_delete()
     old_point_delete()
-    PERIODIC_TASKS_TIMER.timer = Timer(7 * 24 * 60 * 60, periodic_tasks)
+    PERIODIC_TASKS_TIMER.timer = Timer(
+        7 * 24 * 60 * 60, periodic_tasks_execute)
     PERIODIC_TASKS_TIMER.timer.start()
 
 

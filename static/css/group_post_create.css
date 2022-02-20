@@ -11,12 +11,18 @@ html, body, section {
 /* 게시글 작성 상단 */
 .post-create__top {
     display: flex;
+    align-items: center;
+    justify-content: space-between;
     font-size: 36px;
     line-height: 150%;
     font-weight: bold;
     padding-bottom: 10px;
     margin-bottom: 30px;
     /* border-bottom: 1px solid #BDBDBD; */
+}
+
+.post-create__top svg {
+    width: 33px;
 }
 
 /* 게시글 작성 form */
@@ -131,25 +137,6 @@ html, body, section {
     overflow: hidden;
     border: 0;
 }
-
-/* .group-post__form-label {
-    width: 210px;
-    height: 60px;
-    background: #FFFFFF;
-    border: 1px solid #BDBDBD;
-    box-sizing: border-box;
-    border-radius: 5px;
-    padding-top: 10px;
-    cursor: pointer;
-
-    color: #4E4E4E;
-    text-align: center;
-    font-family: Noto Sans CJK KR;
-    font-style: normal;
-    font-weight: bold;
-    font-size: 24px;
-    line-height: 150%;
-} */
 
 .group-post__form-label:hover {
     background-color: #4E4E4E;
