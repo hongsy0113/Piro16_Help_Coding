@@ -147,9 +147,13 @@
           </button>
       </div>
       <div class="modal__content--bottom link-help__content">
-          <div class="content__bottom--text">
+          <div class="point-content__bottom--text">
               {% for description in user.mypage_description %}
-              <p>{{ description }}</p>
+              <div {% if description.1 %}class="point-sentence__container"{% endif %}>
+                {% for sentence in description %}
+                <p>{{ sentence }}</p>
+                {% endfor %}
+              </div>
               {% endfor %}
           </div>
       </div>
