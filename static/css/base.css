@@ -10,7 +10,6 @@ p {
 
 html, body {
     /* footer 하단 고정 */
-    height: 100%;
     display: flex;
     flex-direction: column;
     min-height: 100vh;
