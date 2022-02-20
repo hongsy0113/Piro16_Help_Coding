@@ -46,9 +46,9 @@
       <div><p>소개</p><p>{{ user.introduction }}</p></div>
     </div>
     <div class="mypage__profile__btn">
-    <button class=""><a href="{% url 'user:mypage_revise' %}" style="text-decoration: none; color: #37c6e5;">개인정보 수정</a></button>
-      <button class=""><a href="{% url 'user:mypage_point' %}" style="text-decoration: none; color: #37c6e5;">포인트 기록</a></button>
-      <button style="border-color: #bdbdbd;"><a href="{% url 'user:drop' %}" style="text-decoration: none; color: #bdbdbd;">회원 탈퇴하기</a></button>
+  <button class="bluebtn"><a href="{% url 'user:mypage_revise' %}" style="text-decoration: none;">개인정보 수정</a></button>
+      <button class="bluebtn"><a href="{% url 'user:mypage_point' %}" style="text-decoration: none;">포인트 기록</a></button>
+      <button class="greybtn""><a href="{% url 'user:drop' %}" style="text-decoration: none;">회원 탈퇴하기</a></button>
       {% if user.is_superuser %}
       <!-- 이거는 admin 유저만 보이는 거라 디자인 크게 신경 안 써도 될 듯 -->
       <button class="btn btn-primary"><a class="text-white" href="{% url 'user:initialize_rewards' %}" style="text-decoration: none">업적 업데이트하기</a></button>
@@ -84,7 +84,7 @@
   <p class="mypage__nothing-yet">아직 달성한 업적이 없어요🥺</p>
   {% endif %}
   <div class="mypage__bottom-btn">
-    <button><a href="{% url 'user:mypage_reward' %}" style="text-decoration: none; color: #37c6e5;">전체 업적 보기</a></button>
+    <button class="bluebtn"><a href="{% url 'user:mypage_reward' %}" style="text-decoration: none;">전체 업적 보기</a></button>
   </div>
 </div>
 
@@ -106,12 +106,12 @@
   </a>
   {% endfor %}
   <div class="mypage__bottom-btn">
-  <button class="mypage__bottom-btn"><a href="{% url 'user:mypage_question' %}" style="text-decoration: none; color: #37c6e5;">전체 질문 보기</a></button>
+  <button class="mypage__bottom-btn bluebtn"><a href="{% url 'user:mypage_question' %}" style="text-decoration: none;">전체 질문 보기</a></button>
   {% else %}
   <p class="mypage__nothing-yet">질문 기록이 없어요🥺</p>
   <div class="mypage__bottom-btn">
   {% endif %}
-  <button class="mypage__bottom-btn"><a href="{% url 'qna:question_list' %}" style="text-decoration: none; color: #37c6e5;">질문하러 가기</a></button>
+  <button class="mypage__bottom-btn bluebtn"><a href="{% url 'qna:question_list' %}" style="text-decoration: none;">질문하러 가기</a></button>
   </div>
 </div>
 
@@ -124,12 +124,12 @@
   </a>
   {% endfor %}
   <div class="mypage__bottom-btn">
-  <button><a href="{% url 'user:mypage_answer' %}" style="text-decoration: none; color: #37c6e5;"">전체 답변 보기</a></button>
+  <button class="bluebtn"><a href="{% url 'user:mypage_answer' %}" style="text-decoration: none;">전체 답변 보기</a></button>
   {% else %}
   <p class="mypage__nothing-yet">답변 기록이 없어요🥺</p>
   <div class="mypage__bottom-btn">
   {% endif %}
-    <button><a href="{% url 'qna:question_list' %}" style="text-decoration: none; color: #37c6e5;"">답변하러 가기</a></button>
+    <button class="bluebtn"><a href="{% url 'qna:question_list' %}" style="text-decoration: none;">답변하러 가기</a></button>
   </div>
 
 </div>
