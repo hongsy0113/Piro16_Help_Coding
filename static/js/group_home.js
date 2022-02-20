@@ -62,7 +62,7 @@ function closeGroupJoin() {
     closeJoinAlert.style.display = 'none';
     groupWhichJoin.style.display = 'none';
     groupCodeGuideAlert.style.display = 'none';
-    window.location.href = 'http://127.0.0.1:8000/group/';
+    document.location.href = '/group/';
 }
 
 // groupJoinBtn.addEventListener('click', showGroupJoin);
