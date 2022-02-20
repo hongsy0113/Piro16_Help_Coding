@@ -8,11 +8,12 @@
 
 {% block content %}
 <div>
-
-  <div class="reward__title">
-    <h3>나의 업적</h3>
-    <div class="data-description">질문하고, 답하고, 그룹에서 열심히 활동하며 배지를 모아보세요! 대표 배지 설정 버튼을 눌러 나의 대표 배지를 고를 수 있답니다.</div>
-    <button><a href="{% url 'user:mypage' %}" style="text-decoration: none; color: #37c6e5;">마이페이지로 돌아가기</a></button>
+  <div class="alert__title-outer">
+    <div class="reward__title">
+        <h3>나의 업적</h3>
+        <button><a href="{% url 'user:mypage' %}" style="text-decoration: none;">마이페이지로 돌아가기</a></button>
+      </div>
+      <div class="data-description">질문하고, 답하고, 그룹에서 열심히 활동하며 배지를 모아보세요! 대표 배지 설정 버튼을 눌러 나의 대표 배지를 고를 수 있답니다.</div>
   </div>
 
   <div class="mypage__reward__container">

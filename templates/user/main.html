@@ -14,7 +14,7 @@
         <div class="qna__search-container">
             <form class="qna__search-box" action="{% url 'qna:search_result' %}" method="get">
                 {% csrf_token %}
-                <input type="search" placeholder="엔트리는 뭔가요?" name="search" />
+                <input type="search" placeholder="함수가 뭔가요?" name="search" />
                 <button type="submit">
                     <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M25.1504 22.115L20.2822 17.2468C20.0625 17.0271 19.7646 16.905 19.4521 16.905H18.6562C20.0039 15.1814 20.8047 13.0134 20.8047 10.655C20.8047 5.04468 16.2588 0.498779 10.6484 0.498779C5.03809 0.498779 0.492188 5.04468 0.492188 10.655C0.492188 16.2654 5.03809 20.8113 10.6484 20.8113C13.0068 20.8113 15.1748 20.0105 16.8984 18.6628V19.4587C16.8984 19.7712 17.0205 20.0691 17.2402 20.2888L22.1084 25.157C22.5674 25.616 23.3096 25.616 23.7637 25.157L25.1455 23.7751C25.6045 23.3162 25.6045 22.574 25.1504 22.115ZM10.6484 16.905C7.19629 16.905 4.39844 14.1121 4.39844 10.655C4.39844 7.20288 7.19141 4.40503 10.6484 4.40503C14.1006 4.40503 16.8984 7.198 16.8984 10.655C16.8984 14.1072 14.1055 16.905 10.6484 16.905Z" fill="#4E4E4E"/>
@@ -205,14 +205,14 @@
     let current = 0;
     const element = document.querySelector('.main__qna__slideinner');
     const qnaBox = document.querySelector('.main__qna__box');
-    console.log(element);
+    // console.log(element);
     const leftbtn = document.getElementById('qna__arrow-left');
     const rightbtn = document.getElementById('qna__arrow-right');
     const count = 3;
     let num = (window.innerWidth - 1080) / 2;
     let width = window.innerWidth;
-    console.log('innerwidth: ',window.innerWidth);
-    console.log(num);
+    // console.log('innerwidth: ',window.innerWidth);
+    // console.log(num);
 
     function slideNext() {
         if (current >= count - 1) {
@@ -229,19 +229,25 @@
             current--;
         }
         element.style.transform =`translate(-${width * current}px)`;
-        console.log('slidePrev')
+        // console.log('slidePrev')
     }
 
 
     function resetWidth() {
         width = window.innerWidth;
-        console.log('innerwidth: ',window.innerWidth);
+        // console.log('innerwidth: ',window.innerWidth);
+        if (element) {
         element.style.transform =`translate(-${width * current}px)`;
+        }
     }
 
     window.addEventListener('resize', resetWidth);
-    leftbtn.addEventListener('click', slidePrev);
-    rightbtn.addEventListener('click', slideNext);
+    if (leftbtn) {
+        leftbtn.addEventListener('click', slidePrev);
+    }
+    if (rightbtn) {
+        rightbtn.addEventListener('click', slideNext);
+    }
 </script>
 
 {% endblock content %}

@@ -16,6 +16,7 @@
 {% block title %} 그룹 만들기 {% endblock %}
 
 {% block content %}
+{{ group.id|json_script:"group_id" }}
 
 
 <form method="POST" class="post-form" enctype="multipart/form-data">
@@ -94,7 +95,7 @@
         </div>
 
         <div class="group-create__btn">
-            <button type="submit" class="btn-save btn-effect">만들기</button>
+            <button type="submit" class="btn-save btn-effect">완료</button>
             <a href="{% url 'group:group_home' %}" class="btn-return btn-effect">취소</a>
         </div>
     </div>   <!-- 그룹 생성 컨테이너 끝 -->

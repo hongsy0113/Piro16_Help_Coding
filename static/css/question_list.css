@@ -32,6 +32,10 @@ button {
 }
 
 /* search-box */
+.qna__top-search-container {
+    position: relative;
+}
+
 .qna__search-container {
     align-items: center;
     height: 60px;
@@ -219,6 +223,12 @@ button {
 .qna__filterbox--reset:hover {
     background-color: black;
     color: #fff;
+}
+
+.detail-guide__btn {
+    position: absolute;
+    top: 182px;
+    right: -42px;
 }
 
 /* 질문 목록 */

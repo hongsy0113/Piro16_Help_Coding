@@ -75,10 +75,11 @@
                 </div>
                 {% endif %}
                 </div>
+                <!-- 검색 바로가기
                 <a class="header__searchbtn" href="#"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M19.2349 17.109L15.4381 13.3122C15.2668 13.1408 15.0345 13.0456 14.7907 13.0456H14.17C15.2211 11.7013 15.8456 10.0105 15.8456 8.1711C15.8456 3.79545 12.3002 0.25 7.92452 0.25C3.54887 0.25 0.00341797 3.79545 0.00341797 8.1711C0.00341797 12.5467 3.54887 16.0922 7.92452 16.0922C9.76389 16.0922 11.4547 15.4677 12.799 14.4166V15.0373C12.799 15.2811 12.8942 15.5134 13.0656 15.6847L16.8624 19.4815C17.2204 19.8395 17.7992 19.8395 18.1534 19.4815L19.2311 18.4038C19.5891 18.0458 19.5891 17.467 19.2349 17.109ZM7.92452 13.0456C5.23211 13.0456 3.05 10.8673 3.05 8.1711C3.05 5.47869 5.2283 3.29658 7.92452 3.29658C10.6169 3.29658 12.799 5.47488 12.799 8.1711C12.799 10.8635 10.6207 13.0456 7.92452 13.0456Z" fill="#4E4E4E"/>
                     </svg>                    
-                </a>
+                </a> -->
                 <div class="header__mypagecontainer">
                     <a href="{%  url 'user:mypage' %}">{{user.nickname}}</a>
                     <a class="header__mypagebtn" href="{% url 'user:mypage' %}">
@@ -217,24 +218,25 @@
                         const {new_alert_id, new_alert_content, new_alert_related_url} = JSON.parse(requestLoadNewAlert.response);
                         const originalAlert = document.querySelector('.header__alerts');
                         const newAlertA = document.createElement('a');
-                        newAlertA.href = new_alert_related_url;
+                        newAlertA.href = new_alert_related_url; //링크가 안 달림...
                         newAlertA.setAttribute('onclick', `viewAlertModal(${new_alert_id})`);
-                        newAlertA.id = `alert-${new_alert_id}-modal`;
-                        newAlertA.className = 'header__alert';
                         const newAlertDiv1 = document.createElement('div');
+                        newAlertDiv1.id = `alert-${new_alert_id}-modal`;
+                        newAlertDiv1.className = 'header__alert';
                         const newAlertDiv2 = document.createElement('div');
                         newAlertDiv2.className = 'alert__dot alert__dot-unread';
                         const newAlertSpan = document.createElement('span');
                         newAlertSpan.innerHTML = new_alert_content;
                         const newAlertButton = document.createElement('button');
                         newAlertButton.id = `check-alert-${new_alert_id}-button-modal`;
+                        newAlertButton.className = 'check-alert-button';
                         newAlertButton.setAttribute('onclick', `checkAlertModal(${new_alert_id}); loadNewAlert(); checkAlert(${new_alert_id});`);
                         newAlertButton.innerHTML = '확인';
-                        originalAlert.appendChild(newAlertA);
-                        newAlertA.appendChild(newAlertDiv1);
-                        newAlertDiv1.appendChild(newAlertDiv2);
-                        newAlertDiv1.appendChild(newAlertSpan);
-                        originalAlert.appendChild(newAlertButton);
+                        originalAlert.appendChild(newAlertDiv1);
+                        newAlertDiv1.appendChild(newAlertA);
+                        newAlertA.appendChild(newAlertDiv2);
+                        newAlertA.appendChild(newAlertSpan);
+                        newAlertDiv1.appendChild(newAlertButton);
                     } catch (e) {
 
                     }

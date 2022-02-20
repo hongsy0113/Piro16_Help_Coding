@@ -20,7 +20,9 @@
       <button id="check-all-alert-button" onclick="checkAllAlert(); checkAllAlertModal();">전체 확인</button>
     </div>
     {% else %}
-    <h3 id="alert-count" class="alert__count__none"> </h3>
+      <h3 id="alert-count" class="alert__count__none"> </h3>
+    </div>
+    </div>
     {% endif %}
     <div class="data-description" style="padding-bottom: 10px;">질문에 답변이 달리거나, 배지를 획득하거나, 그룹에 가입되면 알림이 와요! 1~2주 정도 지난 오래된 알림은 자동으로 삭제돼요.</div>
   </div>
@@ -48,7 +50,7 @@
   </div>
   {% endfor %}
   {% else %}
-  <div class="data-none">최근 알림이 없어요.</div>
+  <div class="data-none"></div>
   {% endif %}
   
     <script>
