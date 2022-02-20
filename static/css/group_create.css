@@ -87,8 +87,8 @@ html, body, section {
 
 .group-form__input--image {
     width: 50%;
-    height: 50px;
-    padding: 13px 20px;
+    height: 49px;
+    padding: 12px 20px;
 
     background: #FFFFFF;
     border: 1px solid #BDBDBD;
@@ -98,7 +98,7 @@ html, body, section {
     font-family: Noto Sans CJK KR;
     color: #828282;
     font-size: 16px;
-    line-height: 150%;
+    line-height: 170%;
 
     overflow: hidden;
     word-wrap: break-word;
@@ -123,7 +123,7 @@ html, body, section {
 }
 
 .group-form__label--image {
-    height: 50px;
+    height: 49px;
     margin-left: 10px;
     padding: 10px 20px;
     background-color: #999999;
