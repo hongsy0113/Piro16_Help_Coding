@@ -44,6 +44,12 @@ class Question(models.Model, HitCountMixin):
         related_query_name='hit_count_generic_relation'
     )
 
+    def delete(self, *args, **kwargs):
+        self.attached_file.delete()
+        self.image.delete()
+        super(Question, self).delete(*args, **kwargs)
+        
+
 class Answer(models.Model):
     #####
     ### 작성자 필드
@@ -101,9 +107,3 @@ class QnaTag(models.Model):
     def __str__(self):
         return self.tag_name
 
-##################
-## 첨부파일, 첨부이미지 
-
-class QuestionFiles(models.Model):
-    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='question_files')
-    attached_file = models.FileField(verbose_name='첨부파일', upload_to='qna/file')
