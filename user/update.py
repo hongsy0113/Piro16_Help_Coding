@@ -7,8 +7,8 @@ from datetime import datetime
 
 
 def text_shorten(text):
-    if len(text) > 12:
-        return text[:12] + "···"
+    if len(text) > 8:
+        return text[:8] + "···"
     else:
         return text
 

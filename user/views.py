@@ -563,7 +563,8 @@ def load_new_alert_ajax(request):
         new_alert = Alert.objects.filter(
             user=request.user, checked=False).order_by('-time')[2]
     except:
-        return None
+        return JsonResponse({'new_alert_id': 0, 'new_alert_content': "",
+                             'new_alert_related_url': ""})
     return JsonResponse({'new_alert_id': new_alert.id, 'new_alert_content': new_alert.content,
                          'new_alert_related_url': new_alert.related_url()})
 
