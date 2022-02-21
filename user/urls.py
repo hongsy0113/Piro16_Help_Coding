@@ -33,5 +33,6 @@ urlpatterns = [
     path('drop/', views.drop, name="drop"),
     path('drop_success/', views.drop_success, name="drop_success"),
     path('periodic_tasks/', views.periodic_tasks, name="periodic_tasks"),
+    path('periodic_tasks_immediate/', views.periodic_tasks_immediate, name="periodic_tasks_immediate"),
     path('initialize_rewards/', views.initialize_rewards, name="initialize_rewards"),
 ]
