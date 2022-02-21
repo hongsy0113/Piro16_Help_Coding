@@ -323,8 +323,7 @@ def my_page_revise(request):
         birth = birth_format(
             request.POST['birth-y'], request.POST['birth-m'], request.POST['birth-d'])
         command = ['mypage_revise']
-        print(request.POST['current_password'])
-        print(request.POST['new_password1'])
+
         if request.POST['current_password'] or request.POST['new_password1'] or request.POST['new_password2']:
             command += ['password_change']
         if request.POST.get('img_setting') != 'no_change_img':

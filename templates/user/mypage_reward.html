@@ -11,7 +11,7 @@
   <div class="alert__title-outer">
     <div class="reward__title">
         <h3>나의 업적</h3>
-        <button><a href="{% url 'user:mypage' %}" style="text-decoration: none;">마이페이지로 돌아가기</a></button>
+        <button class="bluebtn"><a href="{% url 'user:mypage' %}" style="text-decoration: none;">마이페이지로 돌아가기</a></button>
       </div>
       <div class="data-description">질문하고, 답하고, 그룹에서 열심히 활동하며 배지를 모아보세요! 대표 배지 설정 버튼을 눌러 나의 대표 배지를 고를 수 있답니다.</div>
   </div>
@@ -29,7 +29,7 @@
         <p id="reward-parameter" hidden>{{ user.id }} {{ reward.id }}</p>
         <p id="reward-{{ reward.id }}-date" class="mypage__reward__date"></p>
         <p id="reward-{{ reward.id }}-representative" {% if reward != representative_reward %}hidden{% endif %}>대표 배지로 선택됨</p>
-        <button id="reward-{{ reward.id }}-button" onclick="setRepresentativeReward({{ user.id }}, {{ reward.id }})" {% if reward == representative_reward %}hidden{% endif %}>대표 배지 설정</button>
+        <button class="bluebtn" id="reward-{{ reward.id }}-button" onclick="setRepresentativeReward({{ user.id }}, {{ reward.id }})" {% if reward == representative_reward %}hidden{% endif %}>대표 배지 설정</button>
         {% else %}
         <p>미획득</p>
         {% endif %}

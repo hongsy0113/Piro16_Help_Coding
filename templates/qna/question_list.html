@@ -25,9 +25,9 @@
             <span class="qna__top-info">코딩 중 궁금한 내용을 찾거나 질문해보세요!</span>
         </div>
         {% if user.is_authenticated %}
-        <a class="qna__ask-btn" href="{% url 'qna:question_create' %}">질문 작성</a>
+        <a class="qna__ask-btn" href="{% url 'qna:question_create' %}">질문하기</a>
         {% else %}
-        <span class="qna__ask-btn" onclick="alert('로그인 후 이용해주세요. 😄')">질문 작성</span>
+        <span class="qna__ask-btn" onclick="alert('로그인 후 이용해주세요. 😄')">질문하기</span>
         {% endif %}
     </div>
 
@@ -147,9 +147,9 @@
 
     <div class='no-post__btnbox'>
         {% if user.is_authenticated %}
-        <a class="qna__ask-btn" href="{% url 'qna:question_create' %}">질문 작성</a>
+        <a class="qna__ask-btn" href="{% url 'qna:question_create' %}">질문하기</a>
         {% else %}
-        <span class="qna__ask-btn" onclick="alert('로그인 후 이용해주세요. 😄')">질문 작성</span>
+        <span class="qna__ask-btn" onclick="alert('로그인 후 이용해주세요. 😄')">질문하기</span>
         {% endif %}
     </div>
 </div>
