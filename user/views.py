@@ -44,7 +44,7 @@ def main(request):
             user=user).order_by('-created_at')[:3]
         posts_img_dict = {}
         for post in posts:
-            if post.attached_link:
+            if get_img_src(post.attached_link):
                 posts_img_dict[post] = get_img_src(post.attached_link)
             elif post.image:
                 posts_img_dict[post] = post.image.url
@@ -226,7 +226,7 @@ def sign_up(request):
                                 './media/user/user_{}/thumbnail/{}'.format(user.email, request.POST.get('img_setting')))
                 user.img = '/user/user_{}/thumbnail/{}'.format(
                     user.email, request.POST.get('img_setting'))
-            user.is_active = True  # 이메일 인증 기능 구현 시에는 False로 바꿀 것
+            user.is_active = False  # 이메일 인증 기능 구현 시에는 False로 바꿀 것
             user.save()
             # 인증 이메일 발송
             current_site = get_current_site(request)
@@ -240,16 +240,16 @@ def sign_up(request):
                                        )
             mail_subject = '[도와줘, 코딩] 회원가입 인증 메일입니다.'
             email = EmailMessage(mail_subject, message, to=[user.email])
-            # email.send()
+            email.send()
             ######## 업적 초기화를 위한 임시적인 부분 ########
-            if request.POST['email'] == 'reward@reward.com':
-                initializeReward()
+            # if request.POST['email'] == 'reward@reward.com':
+            #    initializeReward()
             ################################################
             ######## 타이머 실행을 위한 임시적인 부분 ########
-            if request.POST['email'] == 'timer@timer.com':
-                PERIODIC_TASKS_TIMER.timer = Timer(initial_period(datetime.now()),
-                                                   periodic_tasks)
-                PERIODIC_TASKS_TIMER.timer.start()
+            # if request.POST['email'] == 'timer@timer.com':
+            #    PERIODIC_TASKS_TIMER.timer = Timer(initial_period(datetime.now()),
+            #                                       periodic_tasks)
+            #    PERIODIC_TASKS_TIMER.timer.start()
             ################################################
             return render(request, 'user/signup_success.html', {'email': user.email})
 
@@ -276,7 +276,7 @@ def sign_up(request):
 
 def activate(request, uid64, token):
     uid = force_str(urlsafe_base64_decode(uid64))
-    user = User.objects.get(pk=uid)
+    user = get_object_or_404(User, pk=uid)
     if user is not None and user_activation_token.check_token(user, token):
         user.is_active = True
         user.save()
@@ -285,18 +285,7 @@ def activate(request, uid64, token):
     else:
         return HttpResponse('비정상적인 접근입니다.')
 
-# Remove Unauthenticated User
-
-
-# def unauthenticated_user_delete(email):
-#    try:
-#        user = User.objects.get(email=email)
-#        if not user.is_active:
-#            user.delete()
-#    except:
-#        pass
-
-# My Page
+# My page
 
 
 def my_page(request):
@@ -322,8 +311,7 @@ def my_page_revise(request):
         birth = birth_format(
             request.POST['birth-y'], request.POST['birth-m'], request.POST['birth-d'])
         command = ['mypage_revise']
-        print(request.POST['current_password'])
-        print(request.POST['new_password1'])
+
         if request.POST['current_password'] or request.POST['new_password1'] or request.POST['new_password2']:
             command += ['password_change']
         if request.POST.get('img_setting') != 'no_change_img':
@@ -346,7 +334,7 @@ def my_page_revise(request):
             updated = '프로필이 성공적으로 수정되었습니다.'
             if 'password_change' in command:
                 user.set_password(request.POST['new_password1'])
-                updated += ' (비밀번호가 성공적으로 변경되었습니다.)'
+                updated += ' (비밀번호 변경 완료)'
             if 'image_change' in command:
                 if request.POST.get('img_setting') == 'own_img':
                     if request.FILES.get('img'):
@@ -413,7 +401,7 @@ def drop_success(request):
                                )
     mail_subject = '[도와줘, 코딩] 회원탈퇴 확인 메일입니다.'
     email = EmailMessage(mail_subject, message, to=[user.email])
-    # email.send()
+    email.send()
     ctx = {'user': user, 'email': user.email}
     return render(request, template_name='user/drop_success.html', context=ctx)
 
@@ -449,9 +437,16 @@ class QuestionView(MypageView):
     context_object_name = 'questions'
 
     def get_queryset(self):
+        if self.request.user == AnonymousUser():
+            return HttpResponse('비정상적인 접근입니다.')
+        try:
+            user = get_object_or_404(User, pk=self.kwargs["pk"])
+        except KeyError:
+            user = self.request.user
         questions = Question.objects.filter(
-            user=self.request.user).order_by('-updated_at')
+            user=user).order_by('-updated_at')
         return questions
+
 
 # My Page Answer List
 
@@ -462,24 +457,34 @@ class AnswerView(MypageView):
     context_object_name = 'answers'
 
     def get_queryset(self):
+        if self.request.user == AnonymousUser():
+            return HttpResponse('비정상적인 접근입니다.')
+        try:
+            user = get_object_or_404(User, pk=self.kwargs["pk"])
+        except KeyError:
+            user = self.request.user
         answers = Answer.objects.filter(
-            user=self.request.user).order_by('-updated_at')
+            user=user).order_by('-updated_at')
         return answers
 
 # My Page Reward List
 
 
-def my_page_reward(request):
+def my_page_reward(request, pk):
     user = request.user
-    user_reward = []
+    public = False
     if user == AnonymousUser():
         return redirect('user:login')
+    if request.user.pk != pk:
+        user = get_object_or_404(User, pk=pk)
+        public = True
+    user_reward = []
     rewards = Reward.objects.all()
     for get_reward in GetReward.objects.filter(user=user):
         user_reward.append(get_reward.reward.id)
     representative_reward = user.representative_reward
     ctx = {'user': user, 'rewards': rewards, 'user_reward': user_reward,
-           'representative_reward': representative_reward}
+           'representative_reward': representative_reward, 'public': public}
     return render(request, template_name='user/mypage_reward.html', context=ctx)
 
 
@@ -492,6 +497,8 @@ class PointView(MypageView):
     context_object_name = 'points'
 
     def get_queryset(self):
+        if self.request.user == AnonymousUser():
+            return HttpResponse('비정상적인 접근입니다.')
         points = GetPoint.objects.filter(
             user=self.request.user).order_by('-get_date')
         return points
@@ -505,6 +512,8 @@ class AlertView(MypageView):
     context_object_name = 'alerts'
 
     def get_queryset(self):
+        if self.request.user == AnonymousUser():
+            return HttpResponse('비정상적인 접근입니다.')
         alerts = Alert.objects.filter(user=self.request.user).order_by('-time')
         return alerts
 
@@ -513,11 +522,25 @@ class AlertView(MypageView):
 
 def periodic_tasks(request):
     if request.user.is_superuser:
-        PERIODIC_TASKS_TIMER.timer = Timer(
-            initial_period(datetime.now()), periodic_tasks_execute)
-        PERIODIC_TASKS_TIMER.timer.start()
-        messages.success(request, "DB 관리가 성공적으로 진행되고 있습니다.")
+        if PERIODIC_TASKS_TIMER.timer != None:
+            messages.success(request, "이미 DB 관리가 진행되고 있습니다.")
+        else:
+            PERIODIC_TASKS_TIMER.timer = Timer(
+                initial_period(datetime.now()), periodic_tasks_execute)
+            PERIODIC_TASKS_TIMER.timer.start()
+            messages.success(request, "DB 관리가 성공적으로 진행되고 있습니다.")
         return redirect('user:mypage')
+    return redirect('user:login')
+
+
+# (Superuser) Periodic Tasks Immediate
+
+def periodic_tasks_immediate(request):
+    if request.user.is_superuser:
+        periodic_tasks_execute_once()
+        messages.success(request, "DB 관리가 이루어졌습니다.")
+        return redirect('user:mypage')
+    return redirect('user:login')
 
 # (Superuser) Initialize Rewards
 
@@ -527,6 +550,7 @@ def initialize_rewards(request):
         initializeReward()
         messages.success(request, "업적 업데이트가 성공적으로 이루어졌습니다.")
         return redirect('user:mypage')
+    return redirect('user:login')
 
 # Check Alert (Ajax)
 
@@ -562,7 +586,8 @@ def load_new_alert_ajax(request):
         new_alert = Alert.objects.filter(
             user=request.user, checked=False).order_by('-time')[2]
     except:
-        return None
+        return JsonResponse({'new_alert_id': 0, 'new_alert_content': "",
+                             'new_alert_related_url': ""})
     return JsonResponse({'new_alert_id': new_alert.id, 'new_alert_content': new_alert.content,
                          'new_alert_related_url': new_alert.related_url()})
 
@@ -604,6 +629,8 @@ def date_reward_ajax(request):
 
 
 def public_userpage(request, pk):
+    if request.user == AnonymousUser():
+        return redirect('user:login')
     view_user = get_object_or_404(User, pk=pk)
 
     rewards = GetReward.objects.filter(

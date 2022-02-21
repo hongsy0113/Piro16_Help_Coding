@@ -49,17 +49,16 @@
                         <path d="M10.6597 23.25C12.2118 23.25 13.4709 21.991 13.4709 20.4375H7.84852C7.84852 21.991 9.10755 23.25 10.6597 23.25ZM20.1251 16.6709C19.2761 15.7586 17.6874 14.3862 17.6874 9.89062C17.6874 6.47607 15.2933 3.74268 12.0651 3.07207V2.15625C12.0651 1.37974 11.4358 0.75 10.6597 0.75C9.88362 0.75 9.25433 1.37974 9.25433 2.15625V3.07207C6.0261 3.74268 3.63196 6.47607 3.63196 9.89062C3.63196 14.3862 2.04334 15.7586 1.19432 16.6709C0.930646 16.9544 0.813751 17.2932 0.815948 17.625C0.820782 18.3457 1.38636 19.0312 2.22659 19.0312H19.0928C19.933 19.0312 20.4991 18.3457 20.5034 17.625C20.5056 17.2932 20.3887 16.954 20.1251 16.6709V16.6709Z" fill="#4E4E4E"/>
                     </svg>                    
                 </a>
-                <div class="header__alert-dot {% if user.has_new_alert %}alert__dot-unread{% else %}alert__dot-read{% endif %}"></div> <!-- 알림 있으면 파란 점 -->
+                <div id="alert-dot-nav" class="header__alert-dot {% if user.has_new_alert %}alert__dot-unread{% else %}alert__dot-read{% endif %}"></div> <!-- 알림 있으면 파란 점 -->
                 {% if user.has_new_alert %}
                 <div class="header__alert-dropdown">
                     <div id="alert-count-modal">새로운 알림이 {{ user.has_new_alert }}개 있어요.</div>
                     <div class="header__alerts">
                         {% for alert in user.get_new_alert %}
                         <div id="alert-{{ alert.id }}-modal" class="header__alert">
-                        <a href="{{ alert.related_url }}" onclick="viewAlertModal({{ alert.id }})" >
+                            <a href="{{ alert.related_url }}" onclick="viewAlertModal({{ alert.id }})" >
                                 <div class="alert__dot alert__dot-unread"></div>
                                 <span>{{ alert.content }}</span>
-                                <!-- check-alert-button 원래 위치 -->
                             </a>
                             <button class="check-alert-button" id="check-alert-{{ alert.id }}-button-modal" onclick="checkAlertModal({{ alert.id }}); loadNewAlert(); checkAlert({{ alert.id }});">확인</button> <!-- 이거 Ajax는 css 되고서 구현해야 할 듯 -->
                         </div>
@@ -137,10 +136,6 @@
             const checkModalHandleResponse = () => {
                 if (requestCheckAlertModal.status < 400) {
                     const {alert_id, new_alert_num} = JSON.parse(requestCheckAlertModal.response);
-                    const newAlertMessage = document.querySelector(`#alert-${alert_id}-modal`);
-                    newAlertMessage.remove();
-                    const checkAlertButton = document.querySelector(`#check-alert-${alert_id}-button-modal`);
-                    checkAlertButton.remove();
                     const alertNumDisplay = document.querySelector(`#alert-count-modal`);
                     if (new_alert_num != 0) {
                         alertNumDisplay.innerHTML = `새로운 알림이 ${new_alert_num}개 있어요.`;
@@ -148,6 +143,12 @@
                         alertNumDisplay.innerHTML = `새로운 알림이 없어요.`;
                         const checkAllAlertButton = document.querySelector(`#check-all-alert-button-modal`);
                         checkAllAlertButton.remove();
+                        const alertDot = document.querySelector(`#alert-dot-nav`);
+                        alertDot.className = "header__alert-dot alert__dot-read";
+                    }
+                    const newAlertMessage = document.querySelector(`#alert-${alert_id}-modal`);
+                    if (newAlertMessage != null) {
+                        newAlertMessage.remove();
                     }
                 }
             };
@@ -175,18 +176,16 @@
             const checkAllModalHandleResponse = () => {
                 if (requestCheckAllAlertModal.status < 400) {
                     const {all_alert_id} = JSON.parse(requestCheckAllAlertModal.response);
-                    for (let index = 0; index < all_alert_id.length; index++) {
-                        try {
-                            const newAlertMessage = document.querySelector(`#alert-${all_alert_id[index]}-modal`);
-                            newAlertMessage.remove();
-                            const checkAlertButton = document.querySelector(`#check-alert-${all_alert_id[index]}-button-modal`);
-                            checkAlertButton.remove();
-                        } catch (e) {
-                            // Do nothing
-                        }
-                    }
                     const alertNumDisplay = document.querySelector(`#alert-count-modal`);
                     alertNumDisplay.innerHTML = `새로운 알림이 없어요.`;
+                    const alertDot = document.querySelector(`#alert-dot-nav`);
+                    alertDot.className = "header__alert-dot alert__dot-read";
+                    for (let index = 0; index < all_alert_id.length; index++) {
+                        const newAlertMessage = document.querySelector(`#alert-${all_alert_id[index]}-modal`);
+                        if (newAlertMessage != null) {
+                            newAlertMessage.remove();
+                        }
+                    }
                     const checkAllAlertButton = document.querySelector(`#check-all-alert-button-modal`);
                     checkAllAlertButton.remove();
                 }
@@ -214,32 +213,39 @@
 
             const loadNewAlertHandleResponse = () => {
                 if (requestLoadNewAlert.status < 400) {
-                    try {
-                        const {new_alert_id, new_alert_content, new_alert_related_url} = JSON.parse(requestLoadNewAlert.response);
-                        const originalAlert = document.querySelector('.header__alerts');
-                        const newAlertA = document.createElement('a');
-                        newAlertA.href = new_alert_related_url;
-                        newAlertA.setAttribute('onclick', `viewAlertModal(${new_alert_id})`);
-                        const newAlertDiv1 = document.createElement('div');
-                        newAlertDiv1.id = `alert-${new_alert_id}-modal`;
-                        newAlertDiv1.className = 'header__alert';
-                        const newAlertDiv2 = document.createElement('div');
-                        newAlertDiv2.className = 'alert__dot alert__dot-unread';
-                        const newAlertSpan = document.createElement('span');
-                        newAlertSpan.innerHTML = new_alert_content;
-                        const newAlertButton = document.createElement('button');
-                        newAlertButton.id = `check-alert-${new_alert_id}-button-modal`;
-                        newAlertButton.className = 'check-alert-button';
-                        newAlertButton.setAttribute('onclick', `checkAlertModal(${new_alert_id}); loadNewAlert(); checkAlert(${new_alert_id});`);
-                        newAlertButton.innerHTML = '확인';
-                        originalAlert.appendChild(newAlertDiv1);
-                        newAlertDiv1.appendChild(newAlertA);
-                        newAlertA.appendChild(newAlertDiv2);
-                        newAlertA.appendChild(newAlertSpan);
-                        newAlertDiv1.appendChild(newAlertButton);
-                    } catch (e) {
+                    
+                    const {new_alert_id, new_alert_content, new_alert_related_url} = JSON.parse(requestLoadNewAlert.response);
+                        const checkExistAlert = document.querySelector(`#alert-${new_alert_id}-modal`);
 
-                    }
+                        if (new_alert_id != 0 && checkExistAlert == null) {
+                            const originalAlert = document.querySelector('.header__alerts');
+                        
+                            const newAlertDiv1 = document.createElement('div');
+                            newAlertDiv1.id = `alert-${new_alert_id}-modal`;
+                            newAlertDiv1.className = 'header__alert';
+                            
+                            const newAlertA = document.createElement('a');
+                            newAlertA.href = new_alert_related_url;
+                            newAlertA.setAttribute('onclick', `viewAlertModal(${new_alert_id})`);
+                            
+                            const newAlertDiv2 = document.createElement('div');
+                            newAlertDiv2.className = 'alert__dot alert__dot-unread';
+
+                            const newAlertSpan = document.createElement('span');
+                            newAlertSpan.innerHTML = new_alert_content;
+
+                            const newAlertButton = document.createElement('button');
+                            newAlertButton.id = `check-alert-${new_alert_id}-button-modal`;
+                            newAlertButton.className = 'check-alert-button';
+                            newAlertButton.setAttribute('onclick', `checkAlertModal(${new_alert_id}); loadNewAlert(); checkAlert(${new_alert_id});`);
+                            newAlertButton.innerHTML = '확인';
+
+                            originalAlert.appendChild(newAlertDiv1);
+                            newAlertDiv1.appendChild(newAlertA);
+                            newAlertA.appendChild(newAlertDiv2);
+                            newAlertA.appendChild(newAlertSpan);
+                            newAlertDiv1.appendChild(newAlertButton);
+                        }
                 }
             };
 

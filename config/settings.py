@@ -65,7 +65,6 @@ INSTALLED_APPS = [
     'qna',
     'six',
     'hitcount',
-    'django_cleanup.apps.CleanupConfig',
 ]
 
 MIDDLEWARE = [

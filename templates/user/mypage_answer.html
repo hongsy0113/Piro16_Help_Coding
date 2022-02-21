@@ -7,6 +7,10 @@
 <link rel="stylesheet" href="{% static 'css/mypage.css' %}">
 {% endblock css %}
 
+{% block js %}
+    <script src="{% static 'js/user_profile_redirect.js' %}" defer></script>
+{% endblock %}
+
 {% block title %} 도와줘, 코딩 | 답변 기록 {% endblock %}
   
 
@@ -27,8 +31,8 @@
   <p>- 답변 기록이 없습니다.</p>
   {% endif %}
   <div class="mypage__bottom-btn">
-    <button class="bluebtn"><a href="{% url 'user:mypage' %}" style="text-decoration: none">마이페이지로 돌아가기</a></button>
-    <button class="bluebtn"><a href="{% url 'qna:question_list' %}" style="text-decoration: none">답변하러 가기</a></button>
+    <button class="bluebtn"><a id="profile-redirect" href="{% url 'user:mypage' %}" style="text-decoration: none">마이페이지로 돌아가기</a></button>
+    <button id="profile-go-qna" class="bluebtn"><a href="{% url 'qna:question_list' %}" style="text-decoration: none">답변하러 가기</a></button>
   </div>
 </div>
 

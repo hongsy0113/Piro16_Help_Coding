@@ -141,6 +141,7 @@
     font-size: 18px;
     line-height: 150%;
     color: #000000;
+    padding: 0;
 }
 
 .wait-member__text span {
@@ -153,7 +154,7 @@
 }
 
 .group__wait--text {
-    margin-top: 23%;
+    margin: auto;
     font-family: Noto Sans CJK KR;
     font-weight: bold;
     font-size: 30px;
@@ -168,7 +169,7 @@
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    gap: 65px;
+    gap: 60px;
     width: 100%;
     border-bottom: 2px solid #BDBDBD;
     padding: 13px 0px;
@@ -177,7 +178,7 @@
 .wait-member__imgnname {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 16px;
     width: 200px;
 }
 
