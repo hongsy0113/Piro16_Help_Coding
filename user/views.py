@@ -413,6 +413,10 @@ def drop_success(request):
 class MypageView(ListView):
     paginate_by = 10
 
+    def get(self, *args, **kwargs):
+        if self.request.user == AnonymousUser():
+            return redirect('user:login')
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         paginator = context['paginator']
@@ -523,6 +527,7 @@ def periodic_tasks(request):
             PERIODIC_TASKS_TIMER.timer.start()
             messages.success(request, "DB 관리가 성공적으로 진행되고 있습니다.")
         return redirect('user:mypage')
+    return redirect('user:login')
 
 
 # (Superuser) Periodic Tasks Immediate
@@ -532,6 +537,7 @@ def periodic_tasks_immediate(request):
         periodic_tasks_execute()
         messages.success(request, "DB 관리가 이루어졌습니다.")
         return redirect('user:mypage')
+    return redirect('user:login')
 
 # (Superuser) Initialize Rewards
 
@@ -541,6 +547,7 @@ def initialize_rewards(request):
         initializeReward()
         messages.success(request, "업적 업데이트가 성공적으로 이루어졌습니다.")
         return redirect('user:mypage')
+    return redirect('user:login')
 
 # Check Alert (Ajax)
 
@@ -619,6 +626,8 @@ def date_reward_ajax(request):
 
 
 def public_userpage(request, pk):
+    if request.user == AnonymousUser():
+        return redirect('user:login')
     view_user = get_object_or_404(User, pk=pk)
 
     rewards = GetReward.objects.filter(
