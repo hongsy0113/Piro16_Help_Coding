@@ -36,6 +36,7 @@
   color: white;
   font-size: 22px;
   padding: 4px 15px 5px;
+  line-height: 20px;
 }
 
 .alert__count__none {
