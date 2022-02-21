@@ -57,6 +57,10 @@
   background-color: white;
 }
 
+.alert__container button:hover, #check-all-alert-button:hover {
+  background-color: #37c6e5;
+  color: white;
+}
 .alert__title #check-all-alert-button {
   margin-right: 20px;
 }
@@ -128,6 +132,7 @@
   font-weight: bold;
   margin: 0;
   margin-right: 20px;
+  max-width: 810px;
 }
 
 .alert__content p:last-of-type {
