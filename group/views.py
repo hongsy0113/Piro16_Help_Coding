@@ -152,7 +152,12 @@ def group_create(request):
         error.validation_group(name, mode, '', 'group_create')
 
         if not error.has_error_group() and form.is_valid():
-            group = form.save()
+            #group = form.save()
+            group=Group.objects.create(
+                name=name,
+                mode=mode,
+                intro=request.POST.get('intro'),
+            )
             os.makedirs(
                 MEDIA_ROOT + '/group/group_{}/thumbnail/'.format(group.pk), exist_ok=True)
             group.mode = mode
@@ -218,59 +223,77 @@ def group_update(request, pk):
     prev_name = group.name
 
     if request.method == 'POST':
-        form = GroupForm(request.POST, instance=group)
+        form = GroupForm(request.POST, request.FILES, instance=group)
 
-        group.name = request.POST.get('name')
-        name = group.name
-
-        group.intro = request.POST.get('intro')
-        intro = group.intro
-
+        # group.name = request.POST.get('name')
+        # name = group.name
+        name = request.POST.get('name')
+        intro = request.POST.get('intro')
         mode = request.POST.get('group-mode__tag')
-        group.mode = mode
 
-        original_info = OriginalGroupInfo()
-        original_info.remember(request)
+        # group.intro = request.POST.get('intro')
+        # intro = group.intro
+
+        # mode = request.POST.get('group-mode__tag')
+        # group.mode = mode
+
+        
         # 에러 메세지
         error = GroupErrorMessage()
         error.validation_group(name, mode, prev_name, 'group_update')
 
-        if not error.has_error_group():
+        if not error.has_error_group() and form.is_valid():
+            group = form.save()
             group.intro = request.POST.get('intro')
+
             if request.FILES.get('image'):  # form valid 시
                 group.image = request.FILES.get('image')
 
             elif request.POST['img_recent']:   # 다른 필드 에러 시(기존 파일 남아있도록)
-                group.image = './group/group_{}/thumbnail/{}'.format(
-                    group.pk, request.POST['img_recent'])
-                # original_info.image = request.POST['img_recent']
+                if os.path.isfile('./media/group/group_{}/thumbnail/{}'.format(group.pk, request.POST['img_recent'])):
+                    group.image = './group/group_{}/thumbnail/{}'.format(group.pk, request.POST['img_recent'])
+                else:
+                    os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
+                    shutil.copyfile('./media/temp/{}'.format(request.POST['img_recent']),
+                               './media/group/group_{}/thumbnail/{}'.format(group.pk, request.POST['img_recent'])) ###
+                    group.image = './group/group_{}/thumbnail/{}'.format(group.pk, request.POST['img_recent'])
+                    # temp 파일 삭제
+                if os.path.isfile('./media/temp/{}'.format(request.POST['img_recent'])):
+                    os.remove('./media/temp/{}'.format(request.POST['img_recent']))
+                # group.image = './group/group_{}/thumbnail/{}'.format(
+                #     group.pk, request.POST['img_recent'])
+                # # original_info.image = request.POST['img_recent']
 
             group.save()
 
             return redirect('group:group_detail', pk)
 
         # 에러 메세지가 존재할 때
-        if request.FILES.get('image'):
-            os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
-            with open('./media/temp/{}'.format(request.FILES['image'].name), 'wb+') as destination:
-                for chunk in request.FILES['image'].chunks():
-                    destination.write(chunk)
-
-        original_info.image = request.POST['img_recent']
-
-        if group.image:
-            current_image = str(group.image).split('/')[-1]
         else:
-            current_image = ''
+            if request.FILES.get('image'):
+                os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
+                with open('./media/temp/{}'.format(request.FILES['image'].name), 'wb+') as destination:
+                    for chunk in request.FILES['image'].chunks():
+                        destination.write(chunk)
 
-        ctx = {
-            'error': error,
-            'origin': original_info,
-            'current_image': current_image,
-            'temp_img_location': '/media/group/group_{}/thumbnail/'.format(group.pk)
-        }
+            original_info = OriginalGroupInfo()
+            original_info.remember(request)
 
-        return render(request, template_name='group/group_form.html', context=ctx)
+            original_info.image = request.POST['img_recent']
+
+            if group.image:
+                current_image = str(group.image).split('/')[-1]
+            else:
+                current_image = ''
+
+            ctx = {
+                'error': error,
+                'origin': original_info,
+                'current_image': current_image,
+                'temp_img_location': '/media/group/group_{}/thumbnail/'.format(group.pk)
+            }
+
+            return render(request, template_name='group/group_form.html', context=ctx)
 
     else:
         form = GroupForm(instance=group)

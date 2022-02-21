@@ -16,10 +16,8 @@ from django.views.generic import ListView, View
 from hitcount.views import HitCountDetailView
 from django.views.generic.detail import SingleObjectMixin
 from django.core.files.storage import FileSystemStorage
-from config.settings import MEDIA_ROOT
 import mimetypes
 from user.update import *
-from .forms import FileFieldForm
 from django.contrib.auth.models import AnonymousUser
 
 basic_tags = ['동작', '형태', '소리', '이벤트', '제어',' 감지', '연산', '변수', '내 블록', '기타']
@@ -187,12 +185,12 @@ def question_create(request):
 
             # image, file 부분
             date_dir = datetime.today().strftime('/%Y/%m/%d/')
-            os.makedirs(MEDIA_ROOT + '/qna/uploads' + date_dir, exist_ok=True)
+            os.makedirs('./media/qna/uploads' + date_dir, exist_ok=True)
 
             if request.FILES.get('image'):
                 question.image = request.FILES.get('image')
             elif request.POST['img_recent']:
-                os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
+                os.makedirs('./media/temp/', exist_ok=True)
                 shutil.copyfile('./media/temp/{}'.format(request.POST['img_recent']),
                                 './media/qna/uploads'+ date_dir +'{}'.format(request.POST['img_recent'])) ###
                 question.image =  './qna/uploads'+ date_dir + '{}'.format(request.POST['img_recent']) ###
@@ -204,7 +202,7 @@ def question_create(request):
             if request.FILES.get('attached_file'):
                 question.attached_file = request.FILES.get('attached_file')
             elif request.POST['file_recent']:
-                os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
+                os.makedirs('./media/temp/', exist_ok=True)
                 shutil.copyfile('./media/temp/{}'.format(request.POST['file_recent']),
                                 './media/qna/uploads'+ date_dir +'{}'.format(request.POST['file_recent'])) ###
                 question.attached_file = './qna/uploads'+ date_dir +'{}'.format( request.POST['file_recent']) ###
@@ -236,12 +234,12 @@ def question_create(request):
             original_information.remember(request, ['create'])
 
             if request.FILES.get('image'):
-                os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
+                os.makedirs('./media/temp/', exist_ok=True)
                 with open('./media/temp/{}'.format(request.FILES['image'].name), 'wb+') as destination:
                     for chunk in request.FILES['image'].chunks():
                         destination.write(chunk)
             if request.FILES.get('attached_file'):
-                os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
+                os.makedirs('./media/temp/', exist_ok=True)
                 with open('./media/temp/{}'.format(request.FILES['attached_file'].name), 'wb+' ) as destination:
                     for chunk in request.FILES['attached_file'].chunks():
                         destination.write(chunk)
@@ -377,7 +375,7 @@ def question_update(request, pk):
                 if os.path.isfile('./media/qna/uploads'+ date_dir +'{}'.format(request.POST['img_recent'])):
                     question.image = './qna/uploads'+ date_dir +'{}'.format(request.POST['img_recent'])
                 else:
-                    os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
+                    os.makedirs('./media/temp/', exist_ok=True)
                     shutil.copyfile('./media/temp/{}'.format(request.POST['img_recent']),
                                 './media/qna/uploads'+ date_dir +'{}'.format(request.POST['img_recent'])) ###
                     question.image =  './qna/uploads'+ date_dir + '{}'.format(request.POST['img_recent']) ###
@@ -392,7 +390,7 @@ def question_update(request, pk):
                 if os.path.isfile('./media/qna/uploads'+ date_dir +'{}'.format(request.POST['file_recent'])):
                     question.attached_file = './qna/uploads'+ date_dir +'{}'.format(request.POST['file_recent'])
                 else:
-                    os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
+                    os.makedirs('./media/temp/', exist_ok=True)
                     shutil.copyfile('./media/temp/{}'.format(request.POST['file_recent']),
                                 './media/qna/uploads'+ date_dir +'{}'.format(request.POST['file_recent']))
                     question.attached_file =  './qna/uploads'+ date_dir + '{}'.format(request.POST['file_recent'])
@@ -424,12 +422,12 @@ def question_update(request, pk):
             #         for chunk in request.FILES['attached_file'].chunks():
             #             destination.write(chunk)
             if request.FILES.get('image'):
-                os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
+                os.makedirs('./media/temp/', exist_ok=True)
                 with open('./media/temp/{}'.format(request.FILES['image'].name), 'wb+') as destination:
                     for chunk in request.FILES['image'].chunks():
                         destination.write(chunk)
             if request.FILES.get('attached_file'):
-                os.makedirs(MEDIA_ROOT + '/temp/', exist_ok=True)
+                os.makedirs('./media/temp/', exist_ok=True)
                 with open('./media/temp/{}'.format(request.FILES['attached_file'].name), 'wb+' ) as destination:
                     for chunk in request.FILES['attached_file'].chunks():
                         destination.write(chunk)

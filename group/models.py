@@ -57,7 +57,6 @@ class Group(models.Model):
 
     # 그룹 삭제 시 media파일 동시 삭제 
     def delete(self, *args, **kwargs):
-        
         group_dir = './media/group/group_{0}/'.format(self.pk)
         super(Group, self).delete(*args, **kwargs)
         shutil.rmtree(group_dir)
@@ -118,6 +117,12 @@ class GroupPost(models.Model, HitCountMixin):
 
     def get_filename(self):
         return os.path.basename(self.attached_file.name)
+    
+    def delete(self, *args, **kwargs):
+        self.attached_file.delete()
+        self.image.delete()
+        super(GroupPost, self).delete(*args, **kwargs)
+
 
 
 # 편의상 댓글, 답변 모두 answer

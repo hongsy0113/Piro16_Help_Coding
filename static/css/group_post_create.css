@@ -235,11 +235,17 @@ html, body, section {
 
     text-decoration: none;
     text-align: center;
-    font-family: Noto Sans CJK KR;
-    font-weight: bold;
-    font-size: 25px;
+    font-weight: 500;
+    font-size: 20px;
     line-height: 50%;
     color: #ffffff;
+
+    transition: 0.1s;
+}
+
+.btn-save:hover {
+    color: #37C6E6;
+    background-color: white;
 }
 
 .btn-return {
@@ -254,12 +260,14 @@ html, body, section {
 
     text-decoration: none;
     text-align: center;
-    font-family: Noto Sans CJK KR;
-    font-size: 25px;
+    font-weight: 500;
+    font-size: 20px;
     line-height: 50%;
     color: #A6A6A6;
+    transition: 0.1s;
 }
 
-.btn-save:hover, .btn-return:hover {
-    color: black;
+.btn-return:hover {
+    color: #4e4e4e;
+    border: 2px solid #828282;
 }
