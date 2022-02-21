@@ -82,6 +82,12 @@
       const checkHandleResponse = () => {
           if (requestCheckAlert.status < 400) {
               const {alert_id, new_alert_num} = JSON.parse(requestCheckAlert.response);
+              const alertNumDisplay = document.querySelector(`#alert-count`);
+              if (new_alert_num != 0) {
+                  alertNumDisplay.innerHTML = new_alert_num;
+              } else {
+                  alertNumDisplay.className = 'alert__count__none';
+              }
               const newAlertMessage = document.querySelector(`#alert-${alert_id}`).firstChild;
               newAlertMessage.style.color = '#828282';
               const newAlertHover = document.querySelector(`#alert-${alert_id}-hover`);
@@ -90,12 +96,6 @@
               checkAlertButton.remove();
               const alertDot = document.querySelector(`#alert-${alert_id}-dot`);
               alertDot.className = 'alert__dot alert__dot-read';
-              const alertNumDisplay = document.querySelector(`#alert-count`);
-              if (new_alert_num != 0) {
-                  alertNumDisplay.innerHTML = new_alert_num;
-              } else {
-                  alertNumDisplay.className = 'alert__count__none';
-              }
           }
       };
 
@@ -122,26 +122,24 @@
       const checkAllHandleResponse = () => {
           if (requestCheckAllAlert.status < 400) {
               const {all_alert_id} = JSON.parse(requestCheckAllAlert.response);
-              for (let index = 0; index < all_alert_id.length; index++) {
-                  try {
-                    const newAlertMessage = document.querySelector(`#alert-${all_alert_id[index]}`).firstChild;
-                    newAlertMessage.style.color = '#828282';
-                    const newAlertHover = document.querySelector(`#alert-${all_alert_id[index]}-hover`);
-                    newAlertHover.setAttribute("onMouseover", `document.querySelector('#alert-${all_alert_id[index]}').firstChild.style.color='#0a58ca'`);
-                    newAlertHover.setAttribute("onMouseout", `document.querySelector('#alert-${all_alert_id[index]}').firstChild.style.color='#828282'`);
-                    const checkAlertButton = document.querySelector(`#check-alert-${all_alert_id[index]}-button`);
-                    checkAlertButton.remove();
-                    const alertDot = document.querySelector(`#alert-${all_alert_id[index]}-dot`);
-                    alertDot.className = 'alert__dot alert__dot-read';
-                  } catch (e) {
-                    console.log(e);
-                    console.log(all_alert_id[index]);
-                  }
-              }
               const alertNumDisplay = document.querySelector(`#alert-count`);
               alertNumDisplay.className = 'alert__count__none';
               const checkAllAlertButton = document.querySelector(`#check-all-alert-button`);
               checkAllAlertButton.remove();
+              for (let index = 0; index < all_alert_id.length; index++) {
+                  const newAlertMessage = document.querySelector(`#alert-${all_alert_id[index]}`);
+                  if (newAlertMessage != null) {
+                      newAlertMessage.firstChild.style.color = '#828282';
+                      const newAlertHover = document.querySelector(`#alert-${all_alert_id[index]}-hover`);
+                      newAlertHover.setAttribute("onMouseover", `document.querySelector('#alert-${all_alert_id[index]}').firstChild.style.color='#0a58ca'`);
+                      newAlertHover.setAttribute("onMouseout", `document.querySelector('#alert-${all_alert_id[index]}').firstChild.style.color='#828282'`);
+                      const checkAlertButton = document.querySelector(`#check-alert-${all_alert_id[index]}-button`);
+                      checkAlertButton.remove();
+                      const alertDot = document.querySelector(`#alert-${all_alert_id[index]}-dot`);
+                      alertDot.className = 'alert__dot alert__dot-read';
+                  }
+              }
+              
           }
       };
 

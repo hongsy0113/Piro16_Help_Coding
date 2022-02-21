@@ -15,11 +15,11 @@ JOB_CATEGORY = {'student': ['elementary_school', 'middle_school', 'high_school']
                 'adult': ['university', 'programmer', 'parents', 'teacher', 'etc']}
 
 # 레벨 체계
-LEVEL = (('level_1', '1단계'), ('level_2', '2단계'),
-         ('level_3', '3단계'), ('level_4', '4단계'), ('level_5', '5단계'))
+LEVEL = (('level_1', '1단계'), ('level_2', '2단계'), ('level_3', '3단계'), ('level_4', '4단계'), ('level_5', '5단계'),
+         ('level_6', '6단계'), ('level_7', '7단계'), ('level_8', '8단계'), ('level_9', '9단계'), ('level_10', '10단계'))
 LEVEL_STEP = [LEVEL[i][0] for i in range(len(LEVEL))]
-LEVEL_UP_BOUNDARY = {'student': [0, 100, 200, 300, 400],
-                     'adult': [0, 150, 300, 450, 500]}
+LEVEL_UP_BOUNDARY = {'student': [0, 100, 220, 350, 500, 700, 1000, 1500, 2500, 5000],
+                     'adult': [0, 120, 250, 400, 600, 900, 1300, 1800, 2500, 5000]}
 
 
 def level_description(category):

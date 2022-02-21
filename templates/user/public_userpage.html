@@ -13,7 +13,7 @@
     <div class="mypage__profile__img">
       {% if view_user.img %}<img src="{{ view_user.img.url }}" height="100">{% else %}<p>사진 없음</p>{% endif %}
     </div>
-    <div class="mypage__representative_reward">{% if user.representative_reward %}<img src="{{ user.representative_reward.img }}" height="70"></img>{% else %}<p></p>{% endif %}</div>
+    <div class="mypage__representative_reward">{% if view_user.representative_reward %}<img src="{{ view_user.representative_reward.img }}" height="70"></img>{% else %}<p></p>{% endif %}</div>
   </div>
   <div class="mypage__profile__text">
     <p>{{ view_user.nickname }}</p>
@@ -63,6 +63,9 @@
   {% else %}
   <p class="mypage__nothing-yet">아직 달성한 업적이 없어요🥺</p>
   {% endif %}
+  <div class="mypage__bottom-btn">
+    <button class="bluebtn"><a href="{% url 'user:public_userpage_reward' view_user.pk %}" style="text-decoration: none;">전체 업적 보기</a></button>
+  </div>
 </div>
 
 <div class="mypage__question__container">
@@ -82,6 +85,9 @@
     </div>
   </a>
   {% endfor %}
+  <div class="mypage__bottom-btn">
+    <button class="mypage__bottom-btn bluebtn"><a href="{% url 'user:public_userpage_question' view_user.pk %}" style="text-decoration: none;">전체 질문 보기</a></button>
+  </div>
   {% else %}
   <p class="mypage__nothing-yet">질문 기록이 없어요🥺</p>
   {% endif %}
@@ -96,6 +102,9 @@
     <p class="mypage__answer__question">Q. {{ answer.question_id.title }}</p>
   </a>
   {% endfor %}
+  <div class="mypage__bottom-btn">
+    <button class="mypage__bottom-btn bluebtn"><a href="{% url 'user:public_userpage_answer' view_user.pk %}" style="text-decoration: none;">전체 답변 보기</a></button>
+  </div>
   {% else %}
   <p class="mypage__nothing-yet">답변 기록이 없어요🥺</p>
   {% endif %}

@@ -36,6 +36,13 @@ def periodic_tasks_execute():
     PERIODIC_TASKS_TIMER.timer.start()
 
 
+def periodic_tasks_execute_once():
+    unauthenticated_user_delete()
+    group_code_change()
+    old_alert_delete()
+    old_point_delete()
+
+
 def unauthenticated_user_delete():
     for user in User.objects.all():
         if not user.is_active:
