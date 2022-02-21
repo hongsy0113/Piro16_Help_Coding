@@ -121,7 +121,8 @@ class User(AbstractUser):
 
     def mypage_description(self):
         my_category = ''
-        description = [['열심히 활동해서 포인트를 모으면 레벨을 높일 수 있어요!'], ['─'], ['💛 레벨 체계']]
+        description = [['열심히 활동해서 포인트를 모으면 레벨을 높일 수 있어요!'], ["특히 '❤ 좋아요'를 받으면 더 많은 점수를 얻을 수 있으니,"], ["'묻고 답하기' 게시판에서 좋은 질문과 답변을 열심히 적어보아요:)"],
+                       ['(* 어린이 회원과 어른 회원의 레벨, 포인트 체계가 다르답니다.)'], ['─'], ['💛 레벨 체계']]
         for category in JOB_CATEGORY:
             if self.job in JOB_CATEGORY[category]:
                 my_category = category
@@ -184,7 +185,7 @@ class Alert(models.Model):
         elif self.alert_type in ['level_up', 'level_change']:
             return '/mypage/point/'
         elif self.alert_type in ['get_reward']:
-            return '/mypage/reward/'
+            return '/mypage/reward/{}/'.format(self.user.id)
         elif self.alert_type in ['group_create', 'group_join', 'group_reject', 'group_register', 'group_maker']:
             # if Group.objects.filter(pk=self.related_id):
             return '/group/{}/group_detail/'.format(self.related_id)

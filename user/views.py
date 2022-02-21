@@ -277,7 +277,7 @@ def sign_up(request):
 
 def activate(request, uid64, token):
     uid = force_str(urlsafe_base64_decode(uid64))
-    user = User.objects.get(pk=uid)
+    user = get_object_or_404(User, pk=uid)
     if user is not None and user_activation_token.check_token(user, token):
         user.is_active = True
         user.save()
@@ -413,10 +413,6 @@ def drop_success(request):
 class MypageView(ListView):
     paginate_by = 10
 
-    def get(self, *args, **kwargs):
-        if self.request.user == AnonymousUser():
-            return redirect('user:login')
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         paginator = context['paginator']
@@ -442,6 +438,8 @@ class QuestionView(MypageView):
     context_object_name = 'questions'
 
     def get_queryset(self):
+        if self.request.user == AnonymousUser():
+            return HttpResponse('비정상적인 접근입니다.')
         try:
             user = get_object_or_404(User, pk=self.kwargs["pk"])
         except KeyError:
@@ -460,6 +458,8 @@ class AnswerView(MypageView):
     context_object_name = 'answers'
 
     def get_queryset(self):
+        if self.request.user == AnonymousUser():
+            return HttpResponse('비정상적인 접근입니다.')
         try:
             user = get_object_or_404(User, pk=self.kwargs["pk"])
         except KeyError:
@@ -498,6 +498,8 @@ class PointView(MypageView):
     context_object_name = 'points'
 
     def get_queryset(self):
+        if self.request.user == AnonymousUser():
+            return HttpResponse('비정상적인 접근입니다.')
         points = GetPoint.objects.filter(
             user=self.request.user).order_by('-get_date')
         return points
@@ -511,6 +513,8 @@ class AlertView(MypageView):
     context_object_name = 'alerts'
 
     def get_queryset(self):
+        if self.request.user == AnonymousUser():
+            return HttpResponse('비정상적인 접근입니다.')
         alerts = Alert.objects.filter(user=self.request.user).order_by('-time')
         return alerts
 
@@ -534,7 +538,7 @@ def periodic_tasks(request):
 
 def periodic_tasks_immediate(request):
     if request.user.is_superuser:
-        periodic_tasks_execute()
+        periodic_tasks_execute_once()
         messages.success(request, "DB 관리가 이루어졌습니다.")
         return redirect('user:mypage')
     return redirect('user:login')

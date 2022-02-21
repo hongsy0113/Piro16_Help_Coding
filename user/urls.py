@@ -14,7 +14,7 @@ urlpatterns = [
     path('mypage/question/',
          views.QuestionView.as_view(), name="mypage_question"),
     path('mypage/answer/', views.AnswerView.as_view(), name="mypage_answer"),
-    path('mypage/reward/<int:pk>', views.my_page_reward, name="mypage_reward"),
+    path('mypage/reward/<int:pk>/', views.my_page_reward, name="mypage_reward"),
     path('mypage/reward/representative_ajax/',
          views.representative_reward_ajax, name="representative_reward_ajax"),
     path('mypage/reward/date_ajax/',
