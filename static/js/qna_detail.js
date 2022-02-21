@@ -226,7 +226,7 @@ relpyHandleResponse = (replyId, answerId ,content, user, created_at, img_url, is
             </div>
             <div class="answer__user__profile-right">
                 <div>
-                    <div class="answer__user__profile-name">
+                    <div class="btn answer__user__profile-name answer__user__profile-name-${replyId}" id="answer-profile-${replyId}">
                         <h2>${user}</h2>
                         ${isAuthorTag}
                     </div>
@@ -279,6 +279,28 @@ relpyHandleResponse = (replyId, answerId ,content, user, created_at, img_url, is
     answerEditSubmitButton.addEventListener('click', function(){
         onClickAnswerEditSubmit(replyId);
     })
+
+    const answerUserProfile = document.querySelectorAll('.answer__user__profile-name');
+    answerUserProfile.forEach(function(btn) {
+        btn.addEventListener('click', function(){
+            const [txt1, txt2, userId] = btn.getAttribute('id').split('-');
+            onClickUserProfile(userId);
+        })
+    })
+
+    const onClickUserProfile = async (userId) => {
+        const url = '/group_wait_profile/';
+        const { data } = await axios.post(url, {
+            userId
+        });
+        answerProfileHandleResponse(
+            data.userId
+        )
+    }
+
+    answerProfileHandleResponse = (userId) => {
+        document.location.href = `/${userId}/public_userpage`;
+    }
 }
 
 
