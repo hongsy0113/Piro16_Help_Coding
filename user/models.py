@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from .constants import *
 from datetime import datetime
+import shutil
 # user 대표 이미지
 
 
@@ -136,6 +137,12 @@ class User(AbstractUser):
             description += [["다음 레벨까지 " + str(
                 LEVEL_UP_BOUNDARY[my_category][LEVEL_STEP.index(self.level) + 1] - self.points()) + "점이 더 필요해요!"]]
         return description
+
+    def delete(self, *args, **kwargs):
+        user_dir = './media/user/user_{0}/'.format(self.email)
+        super(User, self).delete(*args, **kwargs)
+        shutil.rmtree(user_dir)
+        
 
 
 class GetPoint(models.Model):
