@@ -60,9 +60,6 @@
     </div>
     {% endfor %}
   </div>
-  <div class="mypage__bottom-btn">
-    <button><a  href="{% url 'user:mypage_reward' %}" style="text-decoration: none; color: #37c6e5;">전체 업적 보기</a></button>
-  </div>
   {% else %}
   <p class="mypage__nothing-yet">아직 달성한 업적이 없어요🥺</p>
   {% endif %}
@@ -85,9 +82,6 @@
     </div>
   </a>
   {% endfor %}
-  <div class="mypage__bottom-btn">
-    <button><a  href="{% url 'user:mypage_question' %}" style="text-decoration: none; color: #37c6e5;">전체 질문 보기</a></button>
-  </div>
   {% else %}
   <p class="mypage__nothing-yet">질문 기록이 없어요🥺</p>
   {% endif %}
@@ -102,9 +96,6 @@
     <p class="mypage__answer__question">Q. {{ answer.question_id.title }}</p>
   </a>
   {% endfor %}
-  <div class="mypage__bottom-btn">
-    <button><a  href="{% url 'user:mypage_answer' %}" style="text-decoration: none; color: #37c6e5;">전체 답변 보기</a></button>
-  </div>
   {% else %}
   <p class="mypage__nothing-yet">답변 기록이 없어요🥺</p>
   {% endif %}
