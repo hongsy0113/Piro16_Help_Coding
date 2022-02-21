@@ -243,11 +243,11 @@ def sign_up(request):
             email = EmailMessage(mail_subject, message, to=[user.email])
             email.send()
             ######## 업적 초기화를 위한 임시적인 부분 ########
-            #if request.POST['email'] == 'reward@reward.com':
+            # if request.POST['email'] == 'reward@reward.com':
             #    initializeReward()
             ################################################
             ######## 타이머 실행을 위한 임시적인 부분 ########
-            #if request.POST['email'] == 'timer@timer.com':
+            # if request.POST['email'] == 'timer@timer.com':
             #    PERIODIC_TASKS_TIMER.timer = Timer(initial_period(datetime.now()),
             #                                       periodic_tasks)
             #    PERIODIC_TASKS_TIMER.timer.start()
@@ -438,9 +438,14 @@ class QuestionView(MypageView):
     context_object_name = 'questions'
 
     def get_queryset(self):
+        try:
+            user = get_object_or_404(User, pk=self.kwargs["pk"])
+        except KeyError:
+            user = self.request.user
         questions = Question.objects.filter(
-            user=self.request.user).order_by('-updated_at')
+            user=user).order_by('-updated_at')
         return questions
+
 
 # My Page Answer List
 
@@ -451,24 +456,32 @@ class AnswerView(MypageView):
     context_object_name = 'answers'
 
     def get_queryset(self):
+        try:
+            user = get_object_or_404(User, pk=self.kwargs["pk"])
+        except KeyError:
+            user = self.request.user
         answers = Answer.objects.filter(
-            user=self.request.user).order_by('-updated_at')
+            user=user).order_by('-updated_at')
         return answers
 
 # My Page Reward List
 
 
-def my_page_reward(request):
+def my_page_reward(request, pk):
     user = request.user
-    user_reward = []
+    public = False
     if user == AnonymousUser():
         return redirect('user:login')
+    if request.user.pk != pk:
+        user = get_object_or_404(User, pk=pk)
+        public = True
+    user_reward = []
     rewards = Reward.objects.all()
     for get_reward in GetReward.objects.filter(user=user):
         user_reward.append(get_reward.reward.id)
     representative_reward = user.representative_reward
     ctx = {'user': user, 'rewards': rewards, 'user_reward': user_reward,
-           'representative_reward': representative_reward}
+           'representative_reward': representative_reward, 'public': public}
     return render(request, template_name='user/mypage_reward.html', context=ctx)
 
 
@@ -504,9 +517,9 @@ def periodic_tasks(request):
     if request.user.is_superuser:
         if PERIODIC_TASKS_TIMER.timer != None:
             messages.success(request, "이미 DB 관리가 진행되고 있습니다.")
-        else :
+        else:
             PERIODIC_TASKS_TIMER.timer = Timer(
-            initial_period(datetime.now()), periodic_tasks_execute)
+                initial_period(datetime.now()), periodic_tasks_execute)
             PERIODIC_TASKS_TIMER.timer.start()
             messages.success(request, "DB 관리가 성공적으로 진행되고 있습니다.")
         return redirect('user:mypage')
@@ -514,7 +527,7 @@ def periodic_tasks(request):
 
 # (Superuser) Periodic Tasks Immediate
 
-def periodic_tasks_immedicate(request):
+def periodic_tasks_immediate(request):
     if request.user.is_superuser:
         periodic_tasks_execute()
         messages.success(request, "DB 관리가 이루어졌습니다.")

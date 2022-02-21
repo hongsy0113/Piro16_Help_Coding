@@ -88,7 +88,7 @@
   <p class="mypage__nothing-yet">아직 달성한 업적이 없어요🥺</p>
   {% endif %}
   <div class="mypage__bottom-btn">
-    <button class="bluebtn"><a href="{% url 'user:mypage_reward' %}" style="text-decoration: none;">전체 업적 보기</a></button>
+    <button class="bluebtn"><a href="{% url 'user:mypage_reward' user.pk %}" style="text-decoration: none;">전체 업적 보기</a></button>
   </div>
 </div>
 
