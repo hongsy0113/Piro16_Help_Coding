@@ -94,6 +94,13 @@ button {
     align-items: center;
     justify-content: center;
     display: flex;
+    transition: 0.1s;
+}
+
+.qna__ask-btn:hover {
+    background-color: white;
+    color: #37C6E5;
+    border: 2px solid #37C6E5;
 }
 
 /* 게시물 정렬 & 필터 box */
