@@ -125,7 +125,6 @@ if(showGroupWaitBtn) {
 }
 
 const onClickGroupWait = async(id) => {
-    console.log(group_id) 
     const url = '/group/wait_list_ajax/';
     const { data } = await axios.post(url, {
         id
