@@ -45,7 +45,7 @@ def main(request):
             user=user).order_by('-created_at')[:3]
         posts_img_dict = {}
         for post in posts:
-            if post.attached_link:
+            if get_img_src(post.attached_link):
                 posts_img_dict[post] = get_img_src(post.attached_link)
             elif post.image:
                 posts_img_dict[post] = post.image.url
