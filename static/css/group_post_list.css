@@ -395,14 +395,22 @@ a {
     color: white;
     background-color: #37C6E6;
     border-radius: 30px;
-    font-weight: bold;
-    font-size: 18px;
+    font-weight: 500;
+    font-size: 20px;
     line-height: 105%;
     text-decoration: none;
     align-items: center;
     justify-content: center;
     display: flex;
     cursor: pointer;
+
+    transition: 0.1s;
+}
+
+.group_post__ask-btn:hover {
+    background-color: white;
+    color: #37C6E6;
+    border: 2px solid #37C6E6;
 }
 
 /* 페이지네이션 */
