@@ -6,7 +6,6 @@ if (currentURL[currentURL.length - 4] != "mypage") {
   if (goQnaButton != null) {
     goQnaButton.remove();
   }
-} else {
   var redirectURL = "";
   for (index = 0; index < currentURL.length - 2; index++) {
     redirectURL = redirectURL + currentURL[index];
