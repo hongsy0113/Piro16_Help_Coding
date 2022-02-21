@@ -89,13 +89,20 @@ a {
     color: white;
     background-color: #37C6E6;
     border-radius: 30px;
-    font-weight: bold;
+    font-weight: 500;
     font-size: 18px;
     line-height: 105%;
     text-decoration: none;
     align-items: center;
     justify-content: center;
     display: flex;
+    transition: 0.1s;
+}
+
+.group__make-btn:hover{
+    background-color: white;
+    color: #37C6E6;
+    border: 2px solid #37C6E6;
 }
 
 /* 그룹 정렬 sort-box */

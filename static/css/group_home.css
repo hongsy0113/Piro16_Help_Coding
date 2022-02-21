@@ -24,7 +24,7 @@ a {
 }
 
 .right__makebtn {
-    padding: 12px 24px 14px;
+    padding: 14px 24px;
     background: #37C6E6;
     border: 2px solid #37C6E6;
     box-sizing: border-box;
@@ -34,15 +34,22 @@ a {
     text-align: center;
     font-family: Noto Sans CJK KR;
     text-decoration: none;
-    /* font-weight: bold; */
+    font-weight: 500;
     color: #FFFFFF;
-    font-size: 24px;
+    font-size: 18px;
     line-height: 105%;
     margin-right: 30px;
+    transition: 0.1s;
+}
+
+.right__makebtn:hover {
+    background: #FFFFFF;
+    border: 2px solid #37C6E6;
+    color: #37C6E6;
 }
 
 .right__joinbtn {
-    padding: 12px 24px 14px;
+    padding: 14px 24px;
     background: #FF8989;
     border: 2px solid #FF8989;
     box-sizing: border-box;
@@ -52,11 +59,18 @@ a {
     text-align: center;
     font-family: Noto Sans CJK KR;
     text-decoration: none;
-    /* font-weight: bold; */
+    font-weight: 500;
     color: #FFFFFF;
-    font-size: 24px;
+    font-size: 18px;
     line-height: 105%;
     cursor: pointer;
+    transition: 0.1s;
+}
+
+.right__joinbtn:hover {
+    background: #FFFFFF;
+    border: 2px solid #FF8989;
+    color: #FF8989;
 }
 
 /* 게시물 정렬 (sort) */

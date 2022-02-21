@@ -218,7 +218,7 @@
                         const {new_alert_id, new_alert_content, new_alert_related_url} = JSON.parse(requestLoadNewAlert.response);
                         const originalAlert = document.querySelector('.header__alerts');
                         const newAlertA = document.createElement('a');
-                        newAlertA.href = new_alert_related_url; //링크가 안 달림...
+                        newAlertA.href = new_alert_related_url;
                         newAlertA.setAttribute('onclick', `viewAlertModal(${new_alert_id})`);
                         const newAlertDiv1 = document.createElement('div');
                         newAlertDiv1.id = `alert-${new_alert_id}-modal`;
