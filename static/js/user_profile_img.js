@@ -44,10 +44,10 @@ function passwordLoad() {
 
 function passwordChange() {
   const passwordChangeBlock = document.querySelector('#password_change_block');
-  if (passwordChangeBlock.style.display == 'none') {
-    passwordChangeBlock.style.display = 'flex';
+  if (passwordChangeBlock.hidden) {
+    passwordChangeBlock.hidden = false;
   } else {
-    passwordChangeBlock.style.display = 'none';
+    passwordChangeBlock.hidden = true;
     document.querySelector('#current_password').value = "";
     document.querySelector('#new_password1').value = "";
     document.querySelector('#new_password2').value = "";

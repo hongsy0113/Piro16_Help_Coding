@@ -9,7 +9,7 @@
 
 
 {% block content %}
-<div> <!-- Ajax 때문에 id는 유지해주세요! -->
+<div>
   <div class="alert__title-outer">
     <div class="alert__title">
       <div>
@@ -41,7 +41,6 @@
         {% endif %}
         <div id="alert-{{ alert.id }}" class="alert__content"><p>{{ alert.content }}</p><p>{{ alert.time_past }}</p></div>
       </a>
-      <!-- 원래 위치 -->
       {% if not alert.checked %}
       <button id="check-alert-{{ alert.id }}-button" onclick="checkAlert({{ alert.id }}); checkAlertModal({{ alert.id }}); loadNewAlert();">확인</button>
       {% endif %}

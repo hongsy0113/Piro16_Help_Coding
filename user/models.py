@@ -52,7 +52,7 @@ class Reward(models.Model):
 
 class User(AbstractUser):
     email = models.EmailField(verbose_name='email')
-    password = models.CharField(max_length=50)
+    password = models.CharField(max_length=200)
     nickname = models.CharField(max_length=50)
     birth = models.DateField(null=True, blank=True)
     img = models.ImageField(
@@ -121,20 +121,20 @@ class User(AbstractUser):
 
     def mypage_description(self):
         my_category = ''
-        description = ['열심히 활동해서 포인트를 모으면 레벨을 높일 수 있어요!', '~~~', '💛 레벨 체계']
+        description = [['열심히 활동해서 포인트를 모으면 레벨을 높일 수 있어요!'], ['─'], ['💛 레벨 체계']]
         for category in JOB_CATEGORY:
             if self.job in JOB_CATEGORY[category]:
                 my_category = category
-        description += level_description(my_category)
-        description += ['~~~', '💛 포인트 체계']
-        description += point_description(my_category)
-        description += ['~~~', '💛 나의 현황', self.nickname +
-                        " 님의 현재 레벨은 " + self.get_level() + ", 포인트는 " + str(self.points()) + "점입니다."]
+        description += [level_description(my_category)]
+        description += [['─'], ['💛 포인트 체계']]
+        description += [point_description(my_category)]
+        description += [['─'], ['💛 나의 현황'], [self.nickname +
+                        " 님의 현재 레벨은 " + self.get_level() + ", 포인트는 " + str(self.points()) + "점입니다."]]
         if LEVEL_STEP.index(self.level) == len(LEVEL) - 1:
-            description += ["이미 최고 레벨에 도달했어요!"]
+            description += [["이미 최고 레벨에 도달했어요!"]]
         else:
-            description += ["다음 레벨까지 " + str(
-                LEVEL_UP_BOUNDARY[my_category][LEVEL_STEP.index(self.level) + 1] - self.points()) + "점이 더 필요해요!"]
+            description += [["다음 레벨까지 " + str(
+                LEVEL_UP_BOUNDARY[my_category][LEVEL_STEP.index(self.level) + 1] - self.points()) + "점이 더 필요해요!"]]
         return description
 
 
