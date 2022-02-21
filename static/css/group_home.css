@@ -24,11 +24,13 @@ a {
 }
 
 .right__makebtn {
-    padding: 14px 24px;
+    width: 155px;
+    height: 60px;
+    /* padding: 14px 24px; */
     background: #37C6E6;
     border: 2px solid #37C6E6;
     box-sizing: border-box;
-    border-radius: 26px; 
+    border-radius: 30px; 
     
     align-items: center;
     text-align: center;
@@ -40,6 +42,9 @@ a {
     line-height: 105%;
     margin-right: 30px;
     transition: 0.1s;
+
+    display: flex;
+    justify-content: center;
 }
 
 .right__makebtn:hover {
@@ -49,11 +54,13 @@ a {
 }
 
 .right__joinbtn {
-    padding: 14px 24px;
+    width: 155px;
+    height: 60px;
+    /* padding: 14px 24px; */
     background: #FF8989;
     border: 2px solid #FF8989;
     box-sizing: border-box;
-    border-radius: 26px;
+    border-radius: 30px;
 
     align-items: center;
     text-align: center;
@@ -65,6 +72,9 @@ a {
     line-height: 105%;
     cursor: pointer;
     transition: 0.1s;
+
+    display: flex;
+    justify-content: center;
 }
 
 .right__joinbtn:hover {
