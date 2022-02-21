@@ -174,7 +174,7 @@
                                         <div>
                                             <div class="answer__user__profile-name">
                                                 {% if reply.user %}
-                                                <h2>{{ reply.user }}</h2>
+                                                <h2><a href="{% url 'user:public_userpage' reply.user.pk %}" style="text-decoration: none; color:#212529;">{{ reply.user }}</a></h2>
                                                 {% if reply.user.id == question.user.id %}
                                                 <span class="answer__writer-mark">글쓴이</span>
                                                 {% endif %}
