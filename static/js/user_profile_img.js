@@ -54,7 +54,6 @@ function passwordChange() {
   }
 }
 
-console.log("ffff");
 imageLoad();
 try {
   passwordLoad();

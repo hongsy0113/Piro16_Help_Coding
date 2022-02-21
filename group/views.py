@@ -398,11 +398,6 @@ def group_member_state(request):
     groups = Group.objects.all()
     mygroup = user.group_set.all()
 
-    for group in groups:
-        print(group.waits)
-        for wait in group.waits:
-            print(wait.nickname)
-    print(groups_wait)
     group_wait = []
     wait_status = ''
 
