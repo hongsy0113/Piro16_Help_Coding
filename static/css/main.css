@@ -236,6 +236,7 @@ section {
 .landing__group__card img {
     background-color: #828282;
     height: 217px;
+    object-fit: cover;
 }
 
 .landing__group__card__text {
