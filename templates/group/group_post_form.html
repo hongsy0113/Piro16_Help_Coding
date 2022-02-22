@@ -10,6 +10,7 @@
 
 {% block js %}
     <script type="text/javascript" src="/static/js/group_post_form.js" defer></script>
+    <script src="{% static 'js/group_form_redirect.js' %}" defer></script>
     <script type="text/javascript" src="/static/js/help_template.js" defer></script>
 {% endblock %} 
 
@@ -252,8 +253,8 @@
             </div>
 
             <div class="post-create__btn">
-                <button type="submit" class="btn-save btn-effect">올리기</button>
-                <a href="{% url 'group:post_list' group.pk %}" class="btn-return btn-effect">취소</a>
+                <button id="group-form-success-button" type="submit" class="btn-save btn-effect">올리기</button>
+                <a id="group-form-cancel-button" href="{% url 'group:post_list' group.pk %}" class="btn-return btn-effect">취소</a>
             </div>
         </div>
     </form>

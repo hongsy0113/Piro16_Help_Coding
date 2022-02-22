@@ -471,19 +471,20 @@ class AnswerView(MypageView):
 
 
 def my_page_reward(request, pk):
-    user = request.user
     public = False
-    if user == AnonymousUser():
+    if request.user == AnonymousUser():
         return redirect('user:login')
     if request.user.pk != pk:
-        user = get_object_or_404(User, pk=pk)
+        view_user = get_object_or_404(User, pk=pk)
         public = True
+    else:
+        view_user = request.user
     user_reward = []
     rewards = Reward.objects.all()
-    for get_reward in GetReward.objects.filter(user=user):
+    for get_reward in GetReward.objects.filter(user=view_user):
         user_reward.append(get_reward.reward.id)
-    representative_reward = user.representative_reward
-    ctx = {'user': user, 'rewards': rewards, 'user_reward': user_reward,
+    representative_reward = view_user.representative_reward
+    ctx = {'view_user': view_user, 'rewards': rewards, 'user_reward': user_reward,
            'representative_reward': representative_reward, 'public': public}
     return render(request, template_name='user/mypage_reward.html', context=ctx)
 

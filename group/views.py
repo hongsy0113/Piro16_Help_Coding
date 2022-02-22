@@ -235,7 +235,9 @@ def group_update(request, pk):
 
         if not error.has_error_group() and form.is_valid():
             group = form.save()
-            group.intro = request.POST.get('intro')
+            group.name = name
+            group.intro = intro
+            group.mode = mode
 
             if request.FILES.get('image'):  # form valid 시
                 group.image = request.FILES.get('image')

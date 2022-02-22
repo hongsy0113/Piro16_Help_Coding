@@ -9,6 +9,7 @@
 {% endblock %}
 
 {% block js %}
+    <script src="{% static 'js/qna_redirect.js' %}" defer></script>
     <script type="text/javascript" src="/static/js/qna_create.js" defer></script>
     <script type="text/javascript" src="/static/js/help_template.js" defer></script>
 {% endblock %} 
@@ -227,8 +228,8 @@
             <div class="tag_input_box"></div>
 
             <div class="post-create__btn">
-                <button class="btn-save btn-effect" type="submit">올리기</button>
-                <a href="{% url 'qna:question_list' %}" class="btn-return btn-effect">취소</a>
+                <button id="qna-form-success-button" class="btn-save btn-effect" type="submit">올리기</button>
+                <a id="qna-form-cancel-button" href="{% url 'qna:question_list' %}" class="btn-return btn-effect">취소</a>
             </div>
         </form>
     </div>
