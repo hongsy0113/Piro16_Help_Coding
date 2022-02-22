@@ -30,11 +30,11 @@
         <p class="mypage__reward__name">{{ reward.name }}</p> 
         <p class="mypage__reward__content">{{ reward.info }}</p>
         {% if reward.id in user_reward %}
-        <p id="reward-parameter" hidden>{{ user.id }} {{ reward.id }}</p>
+        <p id="reward-parameter" hidden>{{ view_user.id }} {{ reward.id }}</p>
         <p id="reward-{{ reward.id }}-date" class="mypage__reward__date"></p>
         {% if not public %}
         <p id="reward-{{ reward.id }}-representative" {% if reward != representative_reward %}hidden{% endif %}>대표 배지로 선택됨</p>
-        <button class="bluebtn" id="reward-{{ reward.id }}-button" onclick="setRepresentativeReward({{ user.id }}, {{ reward.id }})" {% if reward == representative_reward %}hidden{% endif %}>대표 배지 설정</button>
+        <button class="bluebtn" id="reward-{{ reward.id }}-button" onclick="setRepresentativeReward({{ view_user.id }}, {{ reward.id }})" {% if reward == representative_reward %}hidden{% endif %}>대표 배지 설정</button>
         {% endif %}
         {% else %}
         <p>미획득</p>
