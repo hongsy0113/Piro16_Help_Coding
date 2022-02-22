@@ -9,6 +9,7 @@
 
 {% block js %}
     <script src="{% static 'js/group_create.js' %}" defer></script>
+    <script src="{% static 'js/group_form_redirect.js' %}" defer></script>
     <script type="text/javascript" src="/static/js/help_template.js" defer></script>
     <!-- <script src="{% static 'js/user_profile_img.js' %}" defer></script> -->
 {% endblock %}
@@ -95,8 +96,8 @@
         </div>
 
         <div class="group-create__btn">
-            <button type="submit" class="btn-save btn-effect">완료</button>
-            <a href="{% url 'group:group_home' %}" class="btn-return btn-effect">취소</a>
+            <button id="group-form-success-button" type="submit" class="btn-save btn-effect">완료</button>
+            <a id="group-form-cancel-button" href="{% url 'group:group_home' %}" class="btn-return btn-effect">취소</a>
         </div>
     </div>   <!-- 그룹 생성 컨테이너 끝 -->
 </form>
