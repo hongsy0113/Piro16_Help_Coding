@@ -139,7 +139,7 @@ a {
     justify-content: space-between;
 }
 
-.search-result__top button {
+.search-result__top a {
     all: unset;
     color: #4e4e4e;
     padding: 1px 2px;

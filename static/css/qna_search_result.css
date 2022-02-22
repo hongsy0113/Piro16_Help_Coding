@@ -19,7 +19,7 @@
     margin: 0;
 }
 
-.searchresult__title button {
+.searchresult__title a {
     all: unset;
     padding: 0px 12px;
     color: #4e4e4e;

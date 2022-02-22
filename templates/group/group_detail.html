@@ -258,7 +258,7 @@
     <!-- 유저가 member인 경우 -->
     {% if maker != user and user in members %}
         <div class="bottom-btn__box">
-            <a href="{% url 'group:group_drop' group.pk %}" class="btn-out">그룹 탈퇴하기</a>
+            <span class="btn-out">그룹 탈퇴하기</span> 
         </div>
     {% endif %}
 
