@@ -136,6 +136,8 @@
             const checkModalHandleResponse = () => {
                 if (requestCheckAlertModal.status < 400) {
                     const {alert_id, new_alert_num} = JSON.parse(requestCheckAlertModal.response);
+                    console.log(alert_id);
+                    console.log(new_alert_num);
                     const alertNumDisplay = document.querySelector(`#alert-count-modal`);
                     if (new_alert_num != 0) {
                         alertNumDisplay.innerHTML = `새로운 알림이 ${new_alert_num}개 있어요.`;
@@ -216,7 +218,7 @@
                     
                     const {new_alert_id, new_alert_content, new_alert_related_url} = JSON.parse(requestLoadNewAlert.response);
                         const checkExistAlert = document.querySelector(`#alert-${new_alert_id}-modal`);
-
+                        console.log(new_alert_id);
                         if (new_alert_id != 0 && checkExistAlert == null) {
                             const originalAlert = document.querySelector('.header__alerts');
                         

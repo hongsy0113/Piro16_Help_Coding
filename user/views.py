@@ -6,7 +6,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import AnonymousUser
 from django.views import View
 from django.views.generic import ListView
-from .forms import LoginForm, SignupForm, MypageReviseForm
+from .forms import LoginForm, SignupForm, MypageReviseForm, PasswordChangeSearchForm, PasswordChangeForm
 from .models import *
 from .constants import *
 from .update import *
@@ -73,6 +73,8 @@ class LoginView(View):
         return render(request, 'user/login.html', ctx)
 
     def get(self, request):
+        if request.user != AnonymousUser():
+            return redirect('user:main')
         form = LoginForm()
         return render(request, 'user/login.html', {'form': form})
 
@@ -93,6 +95,7 @@ class ErrorMessages():
 
     def validation_check(self, email, nickname, current_password, new_password1, new_password2, birth, img, img_setting, img_recent, job, command):
 
+        # signup / mypage_revise (password_change, image_change) / password_forgotten
         if 'signup' in command:
             # 예외1-1) 잘못된 이메일 형식
             if not re.compile('^[a-zA-Z0-9]+@[a-zA-Z0-9.]+$').match(email):
@@ -100,24 +103,25 @@ class ErrorMessages():
             elif User.objects.filter(email=email):  # 예외1-2) 이미 가입된 유저
                 self.email = '이미 가입된 유저예요. 다른 이메일 주소를 입력해주세요.'
 
-        if not nickname:  # 예외2-1) 닉네임 입력하지 않음
-            self.nickname = '닉네임을 입력해주세요.'
-        elif len(nickname) > 7:  # 예외2-2) 너무 긴 닉네임
-            self.nickname = '닉네임은 7글자 이내로 지어주세요.'
-        else:
-            if 'signup' in command:  # 예외2-3) 이미 사용 중인 닉네임 (회원 가입 시)
-                if User.objects.filter(nickname=nickname):
-                    self.nickname = '이미 사용 중인 닉네임이에요. 다른 닉네임을 입력해주세요.'
-            else:  # 예외2-3) 이미 사용 중인 닉네임 (닉네임 수정 시)
-                if User.objects.filter(nickname=nickname) and User.objects.get(nickname=nickname).email != email:
-                    self.nickname = '이미 사용 중인 닉네임이에요. 다른 닉네임을 입력해주세요.'
+        if 'signup' in command or 'mypage_revise' in command:
+            if not nickname:  # 예외2-1) 닉네임 입력하지 않음
+                self.nickname = '닉네임을 입력해주세요.'
+            elif len(nickname) > 7:  # 예외2-2) 너무 긴 닉네임
+                self.nickname = '닉네임은 7글자 이내로 지어주세요.'
+            else:
+                if 'signup' in command:  # 예외2-3) 이미 사용 중인 닉네임 (회원 가입 시)
+                    if User.objects.filter(nickname=nickname):
+                        self.nickname = '이미 사용 중인 닉네임이에요. 다른 닉네임을 입력해주세요.'
+                else:  # 예외2-3) 이미 사용 중인 닉네임 (닉네임 수정 시)
+                    if User.objects.filter(nickname=nickname) and User.objects.get(nickname=nickname).email != email:
+                        self.nickname = '이미 사용 중인 닉네임이에요. 다른 닉네임을 입력해주세요.'
 
         if 'password_change' in command:
             # 예외3-1) 현재 비밀번호 오류
             if not check_password(current_password, User.objects.get(email=email).password):
                 self.current_password = '현재 비밀번호가 일치하지 않아요.'
 
-        if 'signup' in command or 'password_change' in command:
+        if 'signup' in command or 'password_change' in command or 'password_forgotten' in command:
             # 예외4-1) 잘못된 비밀번호 형식
             if not re.compile('^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d$@$!%*#?&]{8,}$').match(new_password1):
                 self.new_password1 = '비밀번호는 영문자와 숫자를 혼합하여 8자리 이상으로 만들어주세요. (사용 가능 특수 기호 : $@$!%*#?&)'
@@ -127,8 +131,9 @@ class ErrorMessages():
                 self.new_password2 = '비밀번호가 일치하지 않아요.'
 
         # 예외5) 잘못된 생년월일 형식
-        if not re.compile('^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$').match(birth):
-            self.birth = '유효한 생년월일을 입력해주세요.'
+        if 'signup' in command or 'mypage_revise' in command:
+            if not re.compile('^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$').match(birth):
+                self.birth = '유효한 생년월일을 입력해주세요.'
 
         if 'signup' in command or 'image_change' in command:
             if img_setting == 'own_img' and not img and not img_recent:  # 예외6) 이미지 선택 안 함
@@ -149,18 +154,19 @@ class OriginalInformation():
     def remember(self, request, command):
         if 'signup' in command:
             self.email = request.POST['email']
-        else:
+        elif 'password_forgotten' not in command:
             self.current_password = request.POST['current_password']
         self.new_password1 = request.POST['new_password1']
         self.new_password2 = request.POST['new_password2']
-        self.nickname = request.POST['nickname']
-        self.birth_y = request.POST['birth-y']
-        self.birth_m = request.POST['birth-m']
-        self.birth_d = request.POST['birth-d']
-        self.img = request.FILES.get('img')
-        self.img_setting = request.POST.get('img_setting')
-        self.introduction = request.POST['introduction']
-        self.job = request.POST.get('job')
+        if 'password_forgotten' not in command:
+            self.nickname = request.POST['nickname']
+            self.birth_y = request.POST['birth-y']
+            self.birth_m = request.POST['birth-m']
+            self.birth_d = request.POST['birth-d']
+            self.img = request.FILES.get('img')
+            self.img_setting = request.POST.get('img_setting')
+            self.introduction = request.POST['introduction']
+            self.job = request.POST.get('job')
 
 # Birth Format (YYYY-MM-DD)
 
@@ -664,3 +670,60 @@ def group_wait_profile(request):
     return JsonResponse({
         'userId': wait_id
     })
+
+
+# Password Change (Email Search)
+def password_change_search(request):
+    if request.method == 'POST':
+        if User.objects.filter(email=request.POST['email']):
+            user = User.objects.get(email=request.POST['email'])
+            # 이메일 발송
+            current_site = get_current_site(request)
+            message = render_to_string('user/user_password_change_email.html',
+                                       {
+                                           'user': user,
+                                           'domain': current_site.domain,
+                                           'uid': urlsafe_base64_encode(force_bytes(user.pk)).encode().decode(),
+                                           'token': user_activation_token.make_token(user),
+                                       }
+                                       )
+            mail_subject = '[도와줘, 코딩] 비밀번호 변경 메일입니다.'
+            email = EmailMessage(mail_subject, message, to=[user.email])
+            email.send()
+            return render(request, 'user/password_change_email_sent.html', {'email': request.POST['email']})
+        else:
+            form = PasswordChangeForm(request.POST)
+            return render(request, 'user/password_change_search.html', {'form': form, 'original_email': request.POST['email'], 'search_error': '해당 이메일의 유저가 없어요.'})
+    form = PasswordChangeSearchForm()
+    return render(request, 'user/password_change_search.html', {'form': form, 'original_email': '', 'search_error': ''})
+
+# Password Change
+
+
+def password_change(request, uid64, token):
+    uid = force_str(urlsafe_base64_decode(uid64))
+    user = get_object_or_404(User, pk=uid)
+    if user is not None and request.method == 'POST':
+        password_change_error = ErrorMessages()
+        password_change_error.validation_check('', '', '',
+                                               request.POST['new_password1'],
+                                               request.POST['new_password2'],
+                                               '', '', '', '', '',
+                                               ['password_forgotten']
+                                               )
+        if not password_change_error.has_error():
+            user.set_password(request.POST['new_password1'])
+            user.save()
+            return render(request, 'user/password_change_success.html', {'email': user.email})
+
+        original_information = OriginalInformation()
+        original_information.remember(request, ['password_forgotten'])
+        form = PasswordChangeForm(request.POST)
+        return render(request, 'user/password_change.html', {'form': form, 'original_information': original_information, 'password_change_error': password_change_error})
+
+    elif user is not None and request.method == 'GET':
+        form = PasswordChangeForm()
+        return render(request, 'user/password_change.html', {'form': form, 'original_information': ''})
+
+    else:
+        return HttpResponse('비정상적인 접근입니다.')
