@@ -44,4 +44,8 @@ urlpatterns = [
          name="periodic_tasks_immediate"),
     path('initialize_rewards/', views.initialize_rewards,
          name="initialize_rewards"),
+    path('password_change/search/',
+         views.password_change_search, name="password_change_search"),
+    path('password_change/<uid64>/<token>/',
+         views.password_change, name="password_change"),
 ]
