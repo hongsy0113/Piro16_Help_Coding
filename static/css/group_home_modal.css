@@ -53,7 +53,7 @@ a {
 }
 
 .modal__content--top span {
-    font-family: Noto Sans CJK KR;
+    font-family: "Noto Sans KR", sans-serif;
     font-weight: bold;
     font-size: 36px;
     line-height: 105%;
@@ -76,7 +76,7 @@ a {
     box-sizing: border-box;
     border-radius: 41px;
 
-    font-family: Noto Sans CJK KR;
+    font-family: "Noto Sans KR", sans-serif;
     font-weight: bold;
     font-size: 24px;
     line-height: 105%;
@@ -123,7 +123,7 @@ a {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: Noto Sans CJK KR;
+    font-family: "Noto Sans KR", sans-serif;
     font-weight: bold;
     font-size: 26px;
     line-height: 105%;
@@ -142,7 +142,7 @@ a {
     border: 2px solid #FF8989;
     box-sizing: border-box;
     border-radius: 41px;
-    font-family: Noto Sans CJK KR;
+    font-family: "Noto Sans KR", sans-serif;
     font-weight: bold;
     font-size: 26px;
     line-height: 105%;
@@ -198,14 +198,14 @@ a {
     border: 1px solid #BDBDBD;
     box-sizing: border-box;
     border-radius: 5px;
-    font-family: Noto Sans CJK KR;
+    font-family: "Noto Sans KR", sans-serif;
     font-size: 24px;
     line-height: 100%;
     color: #828282;
 }
 
 .group-code__input::placeholder {
-    font-family: Noto Sans CJK KR;
+    font-family: "Noto Sans KR", sans-serif;
     font-size: 24px;
     line-height: 100%;
     color: #828282;
@@ -219,7 +219,7 @@ a {
     box-sizing: border-box;
     border-radius: 41px;
 
-    font-family: Noto Sans CJK KR;
+    font-family: "Noto Sans KR", sans-serif;
     font-weight: bold;
     font-size: 24px;
     line-height: 105%;
@@ -265,7 +265,7 @@ a {
     justify-content: center;
     align-items: center;
     padding: 2px 0px 14px 0px;
-    /* font-family: Noto Sans CJK KR; */
+    /*  font-family: "Noto Sans KR", sans-serif; */
     font-size: 21px;
     font-weight: bold;
     line-height: 100%;
@@ -301,7 +301,7 @@ a {
     border-radius: 26px;
     text-decoration: none;
     color: #37C6E5;
-    font-family: Noto Sans CJK KR;
+    font-family: "Noto Sans KR", sans-serif;
     font-weight: bold;
     font-size: 16px;
     line-height: 100%;

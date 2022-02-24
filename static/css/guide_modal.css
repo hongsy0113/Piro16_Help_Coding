@@ -45,7 +45,7 @@
 }
 
 .modal__content--top span {
-    font-family: Noto Sans CJK KR;
+    font-family: "Noto Sans KR", sans-serif;
     font-weight: bold;
     font-size: 36px;
     line-height: 105%;
@@ -68,7 +68,7 @@
     box-sizing: border-box;
     border-radius: 41px;
 
-    font-family: Noto Sans CJK KR;
+    font-family: "Noto Sans KR", sans-serif;
     font-weight: bold;
     font-size: 24px;
     line-height: 105%;

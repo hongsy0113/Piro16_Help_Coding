@@ -118,7 +118,7 @@ button {
 }
 
 .list-sort__btn a {
-    font-family: Noto Sans CJK KR;
+    font-family: "Noto Sans KR", sans-serif;
     font-size: 16px;
     line-height: 150%;
     display: flex;
@@ -132,7 +132,7 @@ button {
 }
 
 .list-sort__btn span {
-    font-family: Noto Sans CJK KR;
+    font-family: "Noto Sans KR", sans-serif;
     font-weight: bold;
     font-size: 18px;
     line-height: 150%;
@@ -169,7 +169,7 @@ button {
     cursor: pointer;
     font-size: 14px;
     margin: 3px;
-    font-family: Noto Sans CJK KR;
+    font-family: "Noto Sans KR", sans-serif;
     font-size: 15px;
 }
 
@@ -205,7 +205,7 @@ button {
     margin-left: 10px;
     background-color: #5e5e5e;
 
-    font-family: Noto Sans CJK KR;
+    font-family: "Noto Sans KR", sans-serif;
     font-size: 15px;
     color: #ffffff;
 }
@@ -222,7 +222,7 @@ button {
     background-color: #5e5e5e;
 
     text-decoration: none;
-    font-family: Noto Sans CJK KR;
+    font-family: "Noto Sans KR", sans-serif;
     font-size: 15px;
     color: #ffffff;
 }
@@ -373,7 +373,7 @@ button {
     border: 1px solid #37C6E6;
     box-sizing: border-box;
     text-decoration: none;
-    font-family: Noto Sans CJK KR;
+    font-family: "Noto Sans KR", sans-serif;
     font-weight: bold;
     font-size: 18px;
     line-height: 150%;
@@ -389,7 +389,7 @@ button {
 /* 현재 페이지 표시 */
 .all__page-link:hover {
     text-decoration: none;
-    font-family: Noto Sans CJK KR;
+    font-family: "Noto Sans KR", sans-serif;
     font-weight: bold;
     font-size: 18px;
     line-height: 150%;
@@ -404,7 +404,7 @@ button {
 
 .all__page-item-active {
     text-decoration: none;
-    font-family: Noto Sans CJK KR;
+    font-family: "Noto Sans KR", sans-serif;
     font-weight: bold;
     font-size: 18px;
     line-height: 150%;

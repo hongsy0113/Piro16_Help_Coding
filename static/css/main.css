@@ -415,7 +415,7 @@ p.main__title, .main__qna__box p {
 }
 
 .notpost-text {
-    font-family: Noto Sans CJK KR;
+    font-family: "Noto Sans KR", sans-serif;
     font-weight: bold; 
     font-size: 25px;
     color: #4E4E4E;
