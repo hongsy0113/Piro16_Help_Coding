@@ -107,6 +107,12 @@ class GroupPost(models.Model, HitCountMixin):
 
     like_user = models.ManyToManyField('user.User', blank=True)
 
+    
+    ## 매번 iframe과 썸네일 이미지를 크롤링해오느라 느려지지 않도록 textfield 에 저장
+    iframe = models.CharField(max_length=200, null=True, blank=True, default='')
+    thumbnail_url = models.CharField(max_length=200, null=True, blank=True, default='')
+
+
     hit_count_generic = GenericRelation(
         HitCount, object_id_field='object_pk',
         related_query_name='hit_count_generic_relation'

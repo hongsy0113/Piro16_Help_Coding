@@ -115,7 +115,7 @@
 
 
     <!-- 게시글이 없을 때 -->
-    {% if not posts_value_dict %}
+    {% if not posts_answer_count_dict %}
     <div class="no-post__box">
         <div class="no-post__text">
             <h2>아직 게시글이 👌개예요</h2>
@@ -134,15 +134,12 @@
     <div class="group-post__list">  <!-- 게시글 목록 시작 -->
 
         <div class="gridbox">
-            {% for post, value in posts_value_dict.items %}    
+            {% for post, answer_count in posts_answer_count_dict.items %}    
                 <div class="gridbox__item-post">    <!-- 그룹 게시글 하나 시작 -->
                     <a href="{% url 'group:post_detail' group.pk post.pk %}">    
                         <div class="img__post">
-                            {% if post.image %}
-                            <img src="{{ post.image.url }}" height="200" width="200" class="img__post-img" />
-                            {% elif value.1 %}
-                            <!-- 스크래치, 엔트리 iframe이 들어가있다면 해당하는 썸네일이 목록에서 보이도록 -->
-                            <img alt="" src="{{ value.1 | safe}}" height="200" width="200" class="img__post-img">
+                            {% if post.thumbnail_url %}
+                            <img alt="" src="{{ post.thumbnail_url }}" height="200" width="200" class="img__post-img">
                             {% else %}
                             <img src="/static/img/none_image_group_post.png" height="200" width="200" class="img__post-img" />
                             {% endif %}
@@ -162,7 +159,7 @@
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
                             <path d="M13.1592 0.505859H1.90918C0.875 0.505859 0.0341797 1.34668 0.0341797 2.38086V10.8184C0.0341797 11.8525 0.875 12.6934 1.90918 12.6934H4.72168V15.1543C4.72168 15.4414 5.0498 15.6084 5.28125 15.4385L8.94043 12.6934H13.1592C14.1934 12.6934 15.0342 11.8525 15.0342 10.8184V2.38086C15.0342 1.34668 14.1934 0.505859 13.1592 0.505859Z" fill="white"/>
                             </svg>
-                            <span>{{ value.0 }}</span>    <!-- 댓글 개수 수정 여기서 해주세요 -->
+                            <span>{{ answer_count }}</span>    <!-- 댓글 개수 수정 여기서 해주세요 -->
                         </div>
                     </a>
 
@@ -191,7 +188,7 @@
     </div>
 
 
-    {% if posts_value_dict %}
+    {% if posts_answer_count_dict %}
     <div class="group_post__search-container">  <!-- 게시글 검색 -->
         {% if is_member %}
         <a class="group_post__ask-btn" href="{% url 'group:post_create' group.pk %}">내 작품 공유</a>
