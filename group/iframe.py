@@ -7,11 +7,16 @@ import json
 # input: (entry) url, width, height
 # output: iframe
 def get_entry_iframe(url, width, height):
-  res = requests.get(url)
-  soup = bs(res.content, "html.parser")
-  data = soup.find("script", {"type": "application/json"})  
-  data = json.loads(data.text)
-  query_id = data['props']['initialProps']['pageProps']['query']['id']
+  ## 주소창에서 직접 복사한 url인 경우
+  if 'playentry' in url:
+    query_id = url.split('/')[-1]
+  ## 외부공유 에서 가져온 url인 경우
+  else:
+    res = requests.get(url)
+    soup = bs(res.content, "html.parser")
+    data = soup.find("script", {"type": "application/json"})  
+    data = json.loads(data.text)
+    query_id = data['props']['initialProps']['pageProps']['query']['id']
   embed_url = 'https://playentry.org/iframe/' + query_id
   #iframe = "<iframe width='" + str(width) + "' height='" + str(height) + "' src='https://playentry.org/iframe/" + query_id + "' frameborder='0'></iframe>"
   iframe = "<iframe width='" + str(width) + "' height='" + str(height) + "' src='" + embed_url + "' frameborder='0'></iframe>"
@@ -44,7 +49,7 @@ def get_iframe(url, width, height):
       return ''
   if 'scratch' in url:
     iframe = get_scratch_iframe(url, width, height)
-  elif 'naver' in url:
+  elif 'naver' in url or 'playentry' in url:
     iframe = get_entry_iframe(url, width, height)
   return iframe
 
@@ -58,14 +63,18 @@ def get_img_src(url):
   except: 
       return ''
   if 'scratch' in url:
+    if url[-1] == '/':
+      url = url[:-1]
     query_id = url.split('/')[-1]
     image_src = "https://cdn2.scratch.mit.edu/get_image/project/" + query_id + "_480x360.png"
-  elif 'naver' in url:
-    soup = bs(response.content, "html.parser")
-    data = soup.find("script", {"type": "application/json"})  
-    data = json.loads(data.text)
-    query_id = data['props']['initialProps']['pageProps']['query']['id']
-    
+  elif 'naver' in url or 'playentry' in url:
+    if 'naver' in url:
+      soup = bs(response.content, "html.parser")
+      data = soup.find("script", {"type": "application/json"})  
+      data = json.loads(data.text)
+      query_id = data['props']['initialProps']['pageProps']['query']['id']
+    else:
+      query_id = url.split('/')[-1]
     image_src = "https://playentry.org/uploads/thumb/" + query_id[0:4]  + "/" + query_id + ".png"
   try:
     response = requests.get(image_src)
