@@ -99,7 +99,7 @@ def question_list(request):
     elif sort_by == 'view':    # 조회수순
         questions = questions.order_by('-hit_count_generic__hits')
     # 페이징 처리
-    paginator = Paginator(questions, 5)    # 페이지당 5개씩 보여주기
+    paginator = Paginator(questions, 10)    # 페이지당 10개씩 보여주기
     page_obj = paginator.get_page(page)
     
     dict ={}
