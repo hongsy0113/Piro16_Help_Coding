@@ -832,20 +832,25 @@ def post_list(request, pk):
 
     # 각 게시글과 iframe 관련 썸네일의 이미지 경로 딕셔너리 생성
     # key 는 각 게시글이고, value는 (댓글 수, 썸네일 이미지 경로) tuple인 딕셔너리
-    posts_value_dict = {}
-    for page in page_obj:
-        answers_count = GroupAnswer.objects.filter(
-            post_id=page, answer_depth=0, is_deleted=False).count()
+    # posts_value_dict = {}
+    # for page in page_obj:
+    #     answers_count = GroupAnswer.objects.filter(
+    #         post_id=page, answer_depth=0, is_deleted=False).count()
 
-        if page.attached_link:
-            posts_value_dict[page] = (
-                answers_count, get_img_src(page.attached_link))
-        else:
-            posts_value_dict[page] = (answers_count, None)
+    #     if page.attached_link:
+    #         posts_value_dict[page] = (
+    #             answers_count, get_img_src(page.attached_link))
+    #     else:
+    #         posts_value_dict[page] = (answers_count, None)
+
+    posts_answer_count_dict = {}
+    for page in page_obj:
+        answers_count = GroupAnswer.objects.filter(post_id=page, answer_depth=0, is_deleted=False).count()
+        posts_answer_count_dict[page] = answers_count
 
     ctx = {
         'posts': page_obj,
-        'posts_value_dict': posts_value_dict,
+        'posts_answer_count_dict': posts_answer_count_dict,
         'group': group,
         'sort_by': sort_by,
         'filter_by': filter_by_list,
@@ -887,16 +892,20 @@ def search_result(request, pk):
 
     # 각 게시글과 iframe 관련 썸네일의 이미지 경로 딕셔너리 생성
     # key 는 각 게시글이고, value는 (댓글 수, 썸네일 이미지 경로) tuple인 딕셔너리
-    posts_value_dict = {}
-    for page in page_obj:
-        answers_count = GroupAnswer.objects.filter(
-            post_id=page, answer_depth=0, is_deleted=False).count()
+    # posts_value_dict = {}
+    # for page in page_obj:
+    #     answers_count = GroupAnswer.objects.filter(
+    #         post_id=page, answer_depth=0, is_deleted=False).count()
 
-        if page.attached_link:
-            posts_value_dict[page] = (
-                answers_count, get_img_src(page.attached_link))
-        else:
-            posts_value_dict[page] = (answers_count, None)
+    #     if page.attached_link:
+    #         posts_value_dict[page] = (
+    #             answers_count, get_img_src(page.attached_link))
+    #     else:
+    #         posts_value_dict[page] = (answers_count, None)
+    posts_answer_count_dict = {}
+    for page in page_obj:
+        answers_count = GroupAnswer.objects.filter(post_id=page, answer_depth=0, is_deleted=False).count()
+        posts_answer_count_dict[page] = answers_count
 
     # ismember
     is_member = user in group.members.all()
@@ -904,7 +913,7 @@ def search_result(request, pk):
     ctx = {
         'query': query,
         'posts': page_obj,
-        'posts_value_dict': posts_value_dict,
+        'posts_answer_count_dict': posts_answer_count_dict,
         'group_pk': pk,
         'group': group,
         'sort_by': sort_by,
@@ -969,6 +978,16 @@ def post_create(request, pk):
                     os.remove(
                         './media/temp/{}'.format(request.POST['file_recent']))
 
+            ## TODO
+            # 목록화면에서 iframe과 썸네일 이미지 가져오느라 느려지지 않도록 따로 저장
+            # 썸네일 이미지 저장
+            post.save()
+            if post.attached_link:
+                post.thumbnail_url = get_img_src(post.attached_link)
+                post.iframe = get_iframe(post.attached_link, 800, 600)
+            elif post.thumbnail_url == '' and post.image:
+                post.thumbnail_url = post.image.url
+            
             post.save()
             update_group_post(post, request.user)
 
@@ -1070,6 +1089,17 @@ def post_update(request, pk, post_pk):
                         './media/temp/{}'.format(request.POST['file_recent']))
 
             post = form.save()
+
+            ## TODO
+            # 목록화면에서 iframe과 썸네일 이미지 가져오느라 느려지지 않도록 따로 저장
+            # 썸네일 이미지 저장
+            if post.attached_link:
+                post.thumbnail_url = get_img_src(post.attached_link)
+                post.iframe = get_iframe(post.attached_link, 800, 600)
+            elif post.thumbnail_url == '' and post.image:
+                post.thumbnail_url = post.image.url
+
+            post.save()
 
             return redirect('group:post_detail', pk, post.pk)
         else:
@@ -1204,9 +1234,9 @@ class GroupPostDetailView(HitCountDetailView):
             answers_reply_dict[answer] = replies
 
         # iframe
-        iframe_url = post.attached_link
-        iframe = get_iframe(iframe_url, 800, 600)
-        context['iframe'] = iframe
+        # iframe_url = post.attached_link
+        # iframe = get_iframe(iframe_url, 800, 600)
+        # context['iframe'] = iframe
 
         ####
 

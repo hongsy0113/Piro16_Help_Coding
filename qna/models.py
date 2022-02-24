@@ -33,9 +33,6 @@ class Question(models.Model, HitCountMixin):
     def __str__(self):
         return self.title
 
-    def is_answered(self):
-        return self.answer_set.count() > 0
-
     def get_filename(self):
         return os.path.basename(str(self.attached_file))
 
@@ -48,7 +45,6 @@ class Question(models.Model, HitCountMixin):
         self.attached_file.delete()
         self.image.delete()
         super(Question, self).delete(*args, **kwargs)
-        
 
 class Answer(models.Model):
     #####

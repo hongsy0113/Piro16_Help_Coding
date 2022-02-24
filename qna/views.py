@@ -34,15 +34,19 @@ def question_tag_filter(questions, tag_filter_by_list):
 
 def question_answer_filter(questions, answer_filter_by):
     if answer_filter_by == 'NOT_ANSWERED':
-        questions= questions.filter(answer = None)
+        questions_list = [question.id for question in questions if not question.answer_set.filter(is_deleted = False, answer_depth = 0).exists()]
+        questions = Question.objects.filter(id__in = questions_list)
     else:
-        questions = questions.annotate(answer_count=models.Count("answer")).filter(answer_count__gt = 0)
+        # TODO 
+        # 답변 여부 필터 할 때 진짜 답변만 고려할 수 있도록 필터 
+        questions_list = [question.id for question in questions if question.answer_set.filter(is_deleted = False, answer_depth = 0).exists()]
+        questions = Question.objects.filter(id__in = questions_list)
     return questions
 
 ### Error messages
 # 이름이 user.view에 있는 것과 겹쳐서, 헷갈릴 여지가 있을 것 같습니다.
 # QnaErrorMessages가 좋을 것 같습니다.
- # TODO : validation 체크할 때 request 객체와 form을 넘겨주는 건 어떨까요?
+# TODO : validation 체크할 때 request 객체와 form을 넘겨주는 건 어떨까요?
 # TODO : 넘겨주는 인자가 너무 많고, 순서 헷갈릴 여지도 있어보입니다.
 class QnaErrorMessages():
     title, content, image, attached_file, s_or_e_tag, tags = '', '', '', '', '', ''
@@ -95,7 +99,7 @@ def question_list(request):
     elif sort_by == 'view':    # 조회수순
         questions = questions.order_by('-hit_count_generic__hits')
     # 페이징 처리
-    paginator = Paginator(questions, 5)    # 페이지당 5개씩 보여주기
+    paginator = Paginator(questions, 10)    # 페이지당 10개씩 보여주기
     page_obj = paginator.get_page(page)
     
     dict ={}
@@ -505,7 +509,10 @@ def question_delete(request, pk):
     question = get_object_or_404(Question, pk=pk)
 
     # TODO : 게시글에 댓글이 있는지 확인
-    if len(question.answer_set.all()) > 0:
+    # 단 그 depth =0 이고 is_deleted = False 댓글만 고려
+    answers_count = Answer.objects.filter(question_id = question, answer_depth=0, is_deleted = False).count()
+    #if len(question.answer_set.all()) > 0:
+    if answers_count > 0:
         ### 답변이 달려 있어서 삭제 불가능
         return redirect('qna:question_detail', pk)
     update_question_cancel(question, request.user)
