@@ -1268,11 +1268,11 @@ class FileDownloadView(SingleObjectMixin, View):
 
         file_path = object.attached_file.path
         file_type, _ = mimetypes.guess_type(file_path)
-        # file_type = object.attached_file.name.split('.')[-1]  # django file object에 content type 속성이 없어서 따로 저장한 필드
+        
         fs = FileSystemStorage(file_path)
         response = FileResponse(
             fs.open(file_path, 'rb'), content_type=file_type)
-        response['Content-Disposition'] = f'attachment; filename={object.get_filename()}'
+        response['Content-Disposition'] = f'attachment; filename={object.get_filename_download()}'
 
         return response
 
