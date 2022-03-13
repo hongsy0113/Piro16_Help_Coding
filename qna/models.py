@@ -4,6 +4,7 @@ from group.models  import *
 from django.contrib.contenttypes.fields import GenericRelation
 from hitcount.models import HitCountMixin, HitCount
 import os
+import urllib
 
 # Create your models here.
 class Question(models.Model, HitCountMixin):
@@ -33,8 +34,14 @@ class Question(models.Model, HitCountMixin):
     def __str__(self):
         return self.title
 
+    # html 표시용 filename
     def get_filename(self):
         return os.path.basename(str(self.attached_file))
+
+    # 파일 다운로드 용 filname
+    def get_filename_download (self):
+        file_name = urllib.parse.quote(self.attached_file.name.split('/')[-1].encode('utf-8'))
+        return file_name
 
     hit_count_generic = GenericRelation(
         HitCount, object_id_field='object_pk',
