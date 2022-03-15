@@ -3,6 +3,11 @@ section {
     padding: 0;
 }
 
+a {
+    text-decoration: none;
+    color: #000;
+}
+
 .landing__container {
     width: 100%;
     height: 740px;
