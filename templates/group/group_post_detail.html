@@ -50,11 +50,17 @@
     </div>
     <div class="post__detail__tagcontainer">
         {% if post.category == 'S' %}
-        <div class="post__detail__tag">자랑</div>
+        <a href="{% url 'group:post_list' group.pk %}?filter_by=S">
+            <div class="post__detail__tag">자랑</div>
+        </a>
         {% elif post.category == 'Q' %}
-        <div class="post__detail__tag">질문</div>
+        <a href="{% url 'group:post_list' group.pk %}?filter_by=Q">
+            <div class="post__detail__tag">질문</div>
+        </a>
         {% else %}
-        <div class="post__detail__tag">기타</div>
+        <a href="{% url 'group:post_list' group.pk %}?filter_by=ETC">
+            <div class="post__detail__tag">기타</div>
+        </a>
         {% endif %}
     </div>
 <hr>

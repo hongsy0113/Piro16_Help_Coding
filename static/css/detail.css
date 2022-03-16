@@ -1,3 +1,7 @@
+a {
+    text-decoration: none;
+}
+
 .post__detail__group-name {
     display: flex;
     align-items: center;

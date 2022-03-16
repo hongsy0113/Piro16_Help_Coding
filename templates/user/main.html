@@ -31,12 +31,27 @@
         </div>
         <div class="main__qna__slidecontainer">
             <div class="main__qna__slideinner">
+                {% for question, answer in question_answer_dict.items %}
+                    <div class="main__qna__box">
+                        <div class="main__qna__question">
+                            <a href="{% url 'qna:question_detail' question.id %}">
+                                <p>Q. {{ question.content }}</p>
+                            </a>
+                        </div>
+                        <div class="main__qna__answer">
+                            <a href="{% url 'qna:question_detail' question.id %}#answer-id-{{ answer.id }} ">
+                                <p>A. {{ answer.content }}</p>
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+                {% comment %}
                 <div class="main__qna__box">
                     <div class="main__qna__question">
                         <p>Q. 회전 방식을 바꾸면 무슨 변화가 있나요?</p>
                     </div>
                     <div class="main__qna__answer">
-                        <p>A. 회전 방식을 왼쪽 - 오른쪽으로 설정하면 오브젝트 좌우 반전이 가능해요.</p>
+                        <p>A. 회전 방식을 왼쪽 - 오른쪽으로 설정하면 오브젝트 좌우 반전이 가능해요</p>
                     </div>
                 </div>
                 <div class="main__qna__box">
@@ -55,6 +70,7 @@
                         <p>A. 그럼요! 나중에 대학생이 되면 피로그래밍에서 재미있게 프로그래밍 해봐요.</p>
                     </div>
                 </div>
+                {% endcomment %}
             </div>
         </div>
         <div class="main__arrow-container-outer" style="position: absolute; width: 100vw;">

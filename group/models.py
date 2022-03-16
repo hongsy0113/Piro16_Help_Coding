@@ -5,6 +5,7 @@ from django.contrib.contenttypes.fields import GenericRelation
 from hitcount.models import HitCountMixin, HitCount
 import os, shutil
 from datetime import datetime
+import urllib
 #######################################
 # 파일 저장 경로 지정하기 위한 함수들
 # group 대표 이미지
@@ -121,8 +122,14 @@ class GroupPost(models.Model, HitCountMixin):
     def __str__(self):
         return self.title
 
+    # html 표시용 filename
     def get_filename(self):
         return os.path.basename(self.attached_file.name)
+
+    # 파일 다운로드 용 filname
+    def get_filename_download (self):
+        file_name = urllib.parse.quote(self.attached_file.name.split('/')[-1].encode('utf-8'))
+        return file_name
     
     def delete(self, *args, **kwargs):
         self.attached_file.delete()

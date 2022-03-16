@@ -136,7 +136,7 @@ def search_result(request):
         questions = questions.order_by('-hit_count_generic__hits')
 
     page = request.GET.get('page', '1')    # 페이지
-    paginator = Paginator(questions, 5)    # 페이지당 5개씩 보여주기
+    paginator = Paginator(questions, 10)    # 페이지당 5개씩 보여주기
     page_obj = paginator.get_page(page)
     
     dict ={}
@@ -322,6 +322,8 @@ class QuestionDetailView(HitCountDetailView):
 
         return context
 
+import urllib
+
 class FileDownloadView(SingleObjectMixin, View):
     queryset = Question.objects.all()
 
@@ -330,11 +332,12 @@ class FileDownloadView(SingleObjectMixin, View):
         
         file_path = object.attached_file.path
         file_type, _ = mimetypes.guess_type(file_path)
-        #file_type = object.attached_file.name.split('.')[-1]  # django file object에 content type 속성이 없어서 따로 저장한 필드
+        
         fs = FileSystemStorage(file_path)
         response = FileResponse(fs.open(file_path, 'rb'), content_type=file_type)
-        response['Content-Disposition'] = f'attachment; filename={object.get_filename()}'
         
+        response['Content-Disposition'] = f'attachment; filename={object.get_filename_download()}'
+    
         return response
 
 
