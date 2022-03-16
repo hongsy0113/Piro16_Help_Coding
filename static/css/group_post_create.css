@@ -70,7 +70,7 @@ html, body, section {
 }
 
 .post-create__input ::placeholder {
-    font-family: Noto Sans CJK KR;
+    font-family: "Noto Sans KR", sans-serif;
     color: #828282;
     font-size: 18px;
     line-height: 150%;
@@ -78,8 +78,8 @@ html, body, section {
 
 .text-container {
     margin-bottom: 10px;
-    color: #4F4F4F;
-    font-family: Noto Sans CJK KR;
+    color: #4F4F4F;  
+    font-family: "Noto Sans KR", sans-serif;
     font-weight: bold;
     font-size: 24px;
     line-height: 150%;
@@ -116,8 +116,8 @@ html, body, section {
     background-color: #999999;
     border-radius: 5px;
     cursor: pointer;
-    color: #ffffff;
-    font-family: Noto Sans CJK KR;
+    color: #ffffff;  
+    font-family: "Noto Sans KR", sans-serif;
     font-size: 20px;
     line-height: 150%;
 }
@@ -154,8 +154,8 @@ html, body, section {
     border-radius: 5px;
 }
 
-.group-post__form-input--link ::placeholder {
-    font-family: Noto Sans CJK KR;
+.group-post__form-inpu
+t--link ::placeholder {  font-family: "Noto Sans KR", sans-se KR;
     color: #828282;
     font-size: 18px;
     line-height: 150%;
@@ -190,8 +190,7 @@ html, body, section {
     font-size: 14px;
     margin: 3px;
     width: 150px;
-
-    font-family: Noto Sans CJK KR;
+    font-family: "Noto Sans KR", sans-seriR;
     font-weight: bold;
     font-size: 20px;
     line-height: 150%;
@@ -205,8 +204,8 @@ html, body, section {
 
 .post-create__error {
     padding-left: 15px;
-    color: rgb(255, 60, 60);
-    font-family: Noto Sans CJK KR;
+    color: rgb(255, 6
+    0, 60);  font-family: "Noto Sans KR", sans-serif;
     font-size: 18px;
 }
 

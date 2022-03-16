@@ -45,7 +45,7 @@
 }
 
 .modal__content--top span {
-    font-family: Noto Sans CJK KR;
+    font-family: "Noto Sans KR", sans-serif;
     font-weight: bold;
     font-size: 36px;
     line-height: 105%;
@@ -68,7 +68,7 @@
     box-sizing: border-box;
     border-radius: 41px;
 
-    font-family: Noto Sans CJK KR;
+    font-family: "Noto Sans KR", sans-serif;
     font-weight: bold;
     font-size: 24px;
     line-height: 105%;
@@ -91,7 +91,7 @@
 }
 
 .code_box h1 {
-    font-family: Noto Sans CJK KR;
+    font-family: "Noto Sans KR", sans-serif;
     font-weight: bold;
     font-size: 60px;
     line-height: 105%;
@@ -102,7 +102,7 @@
 }
 
 .code_box h2 {
-    font-family: Noto Sans CJK KR;
+    font-family: "Noto Sans KR", sans-serif;
     font-weight: bold;
     font-size: 22px;
     line-height: 105%;
@@ -112,7 +112,7 @@
 }
 
 .code_box span {
-    font-family: Noto Sans CJK KR;
+    font-family: "Noto Sans KR", sans-serif;
     /* font-weight: bold; */
     font-size: 20px;
     line-height: 105%;
@@ -136,7 +136,7 @@
 }
 
 .wait-member__name {
-    font-family: Noto Sans CJK KR;
+    font-family: "Noto Sans KR", sans-serif;
     font-weight: bold;
     font-size: 18px;
     line-height: 150%;
@@ -145,7 +145,7 @@
 }
 
 .wait-member__text span {
-    font-family: Noto Sans CJK KR;
+    font-family: "Noto Sans KR", sans-serif;
     font-size: 17px;
     line-height: 150%;
     display: flex;
@@ -155,7 +155,7 @@
 
 .group__wait--text {
     margin: auto;
-    font-family: Noto Sans CJK KR;
+    font-family: "Noto Sans KR", sans-serif;
     font-weight: bold;
     font-size: 30px;
     line-height: 150%;
@@ -203,7 +203,7 @@
     box-sizing: border-box;
     border-radius: 41px;
 
-    font-family: Noto Sans CJK KR;
+    font-family: "Noto Sans KR", sans-serif;
     font-weight: bold;
     font-size: 24px;
     line-height: 105%;
@@ -221,7 +221,7 @@
     box-sizing: border-box;
     border-radius: 41px;
 
-    font-family: Noto Sans CJK KR;
+    font-family: "Noto Sans KR", sans-serif;
     font-weight: bold;
     font-size: 18px;
     line-height: 100%;
@@ -236,7 +236,7 @@
     box-sizing: border-box;
     border-radius: 41px;
 
-    font-family: Noto Sans CJK KR;
+    font-family: "Noto Sans KR", sans-serif;
     font-weight: bold;
     font-size: 18px;
     line-height: 100%;
@@ -245,7 +245,7 @@
 }
 
 .alert__text {
-    font-family: Noto Sans CJK KR;
+    font-family: "Noto Sans KR", sans-serif;
     font-size: 17px;
     line-height: 150%;
     display: flex;
