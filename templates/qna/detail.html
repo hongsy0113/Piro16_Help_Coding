@@ -112,7 +112,7 @@
     <div class="answer__list">
         <!-- 답변 부분 -->
         {% for answer, replies in answers_reply_dict.items %}
-            <div class="answer__container answer__container--{{ answer.id }}">
+            <div class="answer__container answer__container--{{ answer.id }}" id="answer-id-{{ answer.id }}">
                 <div class="answer__content-container answer__content-container--{{ answer.id }}">
                     <div class="answer__user__profile">
                         <div class="answer__user__profile-left">

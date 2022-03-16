@@ -1,4 +1,5 @@
 import json
+from random import random, sample
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, HttpResponse, get_object_or_404
@@ -23,13 +24,14 @@ from django.utils.encoding import force_bytes
 from django.core.mail import EmailMessage
 from .tokens import user_activation_token
 from django.utils.encoding import force_bytes, force_str
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from config.settings import MEDIA_ROOT
 import re
 import shutil
 import os
 from threading import Timer
 from datetime import datetime
+from django.db.models import Count
 
 
 # Main
@@ -53,6 +55,21 @@ def main(request):
 
         ctx['posts_img_dict'] = posts_img_dict
 
+        ### 이번주 우수 질문
+        ## 특정 기간 동안 올라온 질문 중 답변이 완료된 질문들을 선정
+        ## 좋아요 순서대로 10개를 택하고 그 중 3개를 랜덤으로 보여줌
+        ### 답변은 좋아요가 제일 많은 답변 보여줌
+        main_questions = Question.objects.filter(created_at__gte = date.today() - timedelta(days=14))
+        questions_list = [question.id for question in main_questions if question.answer_set.filter(is_deleted = False, answer_depth = 0).exists()]
+        main_questions = Question.objects.filter(id__in = questions_list).annotate(total_likes=Count('like_user')).order_by('-total_likes')[:10]
+        ## 3개 랜덤으로 select
+        id_list = [question.id for question in main_questions]
+        main_questions = Question.objects.filter(id__in = sample(id_list, 3))
+        # 세 개의 질문에 대해 가장 좋아요 많이 받은 답변을 선택해 dictionary에 담기
+        question_answer_dict = {}
+        for question in main_questions:
+            question_answer_dict[question] = question.answer_set.filter(is_deleted = False, answer_depth = 0).annotate(total_likes=Count('like_user')).order_by('-total_likes').first()
+        ctx['question_answer_dict'] = question_answer_dict
     return render(request, 'user/main.html', context=ctx)
 
 # Login
