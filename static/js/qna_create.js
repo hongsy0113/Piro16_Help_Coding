@@ -4,9 +4,9 @@ addTag.addEventListener("click", create_tag, {once: true});
 
 function create_tag() {
     const inputBox = document.querySelector('.tag_input_box');
-    const tagInput = document.createElement('div');
+    const tagInput = document.createElement('form');
     tagInput.setAttribute('class', 'group-post__form-box');
-    tagInput.innerHTML = "<input type='text' placeholder='태그를 입력하세요.' class='input_tag group-post__form-input'/> <input type='button' value='추가' class='add_btn group-post__form-label' />";
+    tagInput.innerHTML = "<input type='text' maxlength='20' placeholder='태그를 입력하세요.' class='input_tag group-post__form-input'/> <input type='button' value='추가' class='add_btn group-post__form-label' />";
     inputBox.appendChild(tagInput);
 
     const addBtn = document.querySelector(".add_btn");
@@ -20,7 +20,7 @@ function add() {
     const inputTag = document.querySelector(".input_tag");
     // 새로운 태그 추가
 
-    if (inputTag.value.length > 0 && inputTag.value.length < 20) {
+    if (inputTag.value.length > 0 && inputTag.value.length <= 20) {
 
         const newTag = document.createElement("input");
         const newLabel = document.createElement("label")
