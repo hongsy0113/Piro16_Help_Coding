@@ -6,7 +6,7 @@ function create_tag() {
     const inputBox = document.querySelector('.tag_input_box');
     const tagInput = document.createElement('form');
     tagInput.setAttribute('class', 'group-post__form-box');
-    tagInput.innerHTML = "<input type='text' maxlength='20' placeholder='태그를 입력하세요.' class='input_tag group-post__form-input'/> <input type='button' value='추가' class='add_btn group-post__form-label' />";
+    tagInput.innerHTML = "<input type='text' maxlength='20' placeholder='태그는 20자 이내로 입력하세요.' class='input_tag group-post__form-input'/> <input type='button' value='추가' class='add_btn group-post__form-label' />";
     inputBox.appendChild(tagInput);
 
     const addBtn = document.querySelector(".add_btn");
