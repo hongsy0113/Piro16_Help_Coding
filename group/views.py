@@ -220,7 +220,11 @@ def group_update(request, pk):
         return redirect('user:main')
 
     group = get_object_or_404(Group, pk=pk)
+    members = group.members.all()
     prev_name = group.name
+
+    if user not in members:
+        return redirect('group:group_home')
 
     if request.method == 'POST':
         form = GroupForm(request.POST, request.FILES, instance=group)
@@ -327,6 +331,10 @@ def group_delete(request, pk):
         return redirect('user:main')
 
     group = get_object_or_404(Group, pk=pk)
+    is_member = user in group.members.all()
+    
+    if not is_member:
+        return redirect('group:group_home')
 
     if user == group.maker:
         update_delete_group(group)
@@ -348,6 +356,9 @@ def group_drop(request, pk):
 
     group = get_object_or_404(Group, pk=pk)
     members = group.members.all()
+    
+    if user not in members:
+        return redirect('group:group_home')
 
     if len(members) > 1:
         if user == group.maker:
@@ -381,6 +392,11 @@ def group_detail(request, pk):
         return redirect('user:main')
 
     group = get_object_or_404(Group, pk=pk)
+    mygroup = user.group_set.all()
+    members = group.members.all()
+
+    if group.mode == 'PRIVATE' and user not in members:
+        return redirect('group:group_home')
 
     group_star = GroupStar.objects.filter(Q(group=group) & Q(user=user))
     if GroupStar.objects.filter(Q(group=group) & Q(user=user)):
@@ -388,8 +404,7 @@ def group_detail(request, pk):
     else:
         is_star = False
 
-    mygroup = user.group_set.all()
-    members = group.members.all()
+   
     waits = group.waits.all()
     if group.maker in members:
         maker = group.maker
@@ -804,6 +819,9 @@ def post_list(request, pk):
     # ismember
     is_member = user in group.members.all()
 
+    if group.mode == 'PRIVATE' and not is_member:
+        return redirect('group:group_home')
+
     # 게시글 필터
     filter_by_list = request.GET.getlist('filter_by')
     if filter_by_list:
@@ -863,12 +881,16 @@ def post_list(request, pk):
 
 def search_result(request, pk):
     user = request.user
+    group = Group.objects.get(pk=pk)
+    members = group.members.all()
+
     if user == AnonymousUser():
         return redirect('user:main')
+    if group.mode == 'PRIVATE' and user not in members:
+        return redirect('group:group_home')
     if not request.GET.get('search') or request.GET.get('search').isspace():
         return redirect('group:post_list', pk)
     if 'search' in request.GET:
-        group = Group.objects.get(pk=pk)
         query = request.GET.get('search')
         posts = GroupPost.objects.filter(group__pk=pk).filter(
             Q(title__icontains=query) |  # 제목으로 검색
@@ -931,6 +953,10 @@ def post_create(request, pk):
         return redirect('user:main')
 
     group = get_object_or_404(Group, pk=pk)
+    is_member = user in group.members.all()
+
+    if not is_member:
+        return redirect('group:post_list', pk)
 
     if request.method == 'POST':
         form = PostForm(request.POST, request.FILES)
@@ -1039,6 +1065,10 @@ def post_update(request, pk, post_pk):
 
     post = get_object_or_404(GroupPost, pk=post_pk)
     group = get_object_or_404(Group, pk=pk)
+    is_member = user in group.members.all()
+
+    if not is_member:
+        return redirect('group:post_list', pk)
 
     # file data dir
     date_dir = datetime.today().strftime('/%Y/%m/%d/')
