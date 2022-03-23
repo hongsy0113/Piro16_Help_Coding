@@ -91,6 +91,7 @@ iframe {
 
 .question__detail__content p, .post__detail__content p {
     word-break: break-word;
+    white-space: pre-wrap;  /* 줄바꿈, 공백 인식 */
 }
 
 .detail__content--attached_file {

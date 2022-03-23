@@ -105,7 +105,7 @@ if (is_member){
         })
         const answerDeleteButton = document.querySelector(`.answer__delete-btn--${id}`);
         answerDeleteButton.addEventListener('click',function(){
-            if (confirm("정말 삭제하시겠습니까?")){
+            if (confirm("정말 삭제하실건가요?")){
                 onClickAnswerDelete(id);
             }
             else {
@@ -262,7 +262,7 @@ if (is_member){
         })
         const answerDeleteButton = document.querySelector(`.answer__delete-btn--${replyId}`);
         answerDeleteButton.addEventListener('click',function(){
-            if (confirm("정말 삭제하시겠습니까?")){
+            if (confirm("정말 삭제하실건가요?")){
                 onClickAnswerDelete(replyId);
             }
             else {
@@ -375,7 +375,7 @@ if (is_member){
         btn.addEventListener('click',function(){
             const btnElementId = btn.getAttribute('id').split('-');
             const answerId = btnElementId[btnElementId.length-1];
-            if (confirm("정말 삭제하시겠습니까?")){
+            if (confirm("정말 삭제하실건가요?")){
                 onClickAnswerDelete(answerId);
             }
             else {
@@ -418,7 +418,7 @@ if (is_member){
             answeredUser.innerHTML = '<h2>(알 수 없음)</h2>';
             
             const answerContent = document.querySelector(`.answer__content--${answerId}`);
-            answerContent.innerHTML =  '삭제된 답변입니다.';
+            answerContent.innerHTML =  '삭제된 답변이에요.';
 
             const answerEditButton = document.querySelector(`.answer__edit-btn--${answerId}`);
             answerEditButton.remove();
@@ -494,7 +494,7 @@ if (is_member){
     const postDeleteBtn = document.querySelector('.post__delete-btn');
     if (postDeleteBtn){
         postDeleteBtn.addEventListener('click',function(){
-            if (confirm("정말 삭제하시겠습니까?")){
+            if (confirm("정말 삭제하실건가요?")){
                 document.location.href = `/group/${group_id}/post_delete/${post_id}`;
             }
             else {
