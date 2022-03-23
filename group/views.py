@@ -223,7 +223,7 @@ def group_update(request, pk):
     members = group.members.all()
     prev_name = group.name
 
-    if user not in members:
+    if (user not in members) or (user != group.maker):
         return redirect('group:group_home')
 
     if request.method == 'POST':
@@ -333,7 +333,7 @@ def group_delete(request, pk):
     group = get_object_or_404(Group, pk=pk)
     is_member = user in group.members.all()
     
-    if not is_member:
+    if (not is_member) or (user != group.maker):
         return redirect('group:group_home')
 
     if user == group.maker:
@@ -442,7 +442,7 @@ def group_member_state(request):
     wait_status = ''
 
     for group in groups:
-        if user in groups_wait:
+        if user in group_wait:
             group_wait.append(group)
             wait_status = '가입 대기중 ...'
         elif group == mygroup:
@@ -529,6 +529,9 @@ def create_code_ajax(request):
     group_id = req['groupId']
 
     group = get_object_or_404(Group, pk=group_id)
+    if group.mode == 'PRIVATE' and user not in group.members:
+        return redirect('group:group_home')
+
     if group.code != None:
         code = group.code
     else:
@@ -641,10 +644,12 @@ def group_wait_cancel(request, pk):
     user = request.user
     if user == AnonymousUser():
         return redirect('user:main')
-
     group = get_object_or_404(Group, pk=pk)
     members = group.members.all()
     waits = group.waits.all()
+
+    if user not in waits:
+        return redirect('group:group_home')
 
     if user not in members and user in waits:
         group.waits.remove(user)
@@ -667,6 +672,9 @@ def group_join_accept(request):
 
     wait_user = get_object_or_404(User, pk=wait_user_id)
     group = get_object_or_404(Group, pk=group_id)
+
+    if user != group.maker:
+        return redirect('group:group_home')
 
     wait_id = wait_user.id
     group.waits.remove(wait_user)
@@ -692,6 +700,9 @@ def group_join_reject(request):
 
     wait_user = get_object_or_404(User, pk=wait_user_id)
     group = get_object_or_404(Group, pk=group_id)
+
+    if user != group.maker:
+        return redirect('group:group_home')
 
     wait_id = wait_user.id
 
@@ -888,6 +899,7 @@ def search_result(request, pk):
         return redirect('user:main')
     if group.mode == 'PRIVATE' and user not in members:
         return redirect('group:group_home')
+        
     if not request.GET.get('search') or request.GET.get('search').isspace():
         return redirect('group:post_list', pk)
     if 'search' in request.GET:
@@ -1313,6 +1325,9 @@ def post_delete(request, pk, post_pk):
         return redirect('user:main')
 
     post = get_object_or_404(GroupPost, pk=post_pk)
+    if user != post.user:
+        return redirect('group:post_detail', pk, post.pk )
+
     post.delete()
     return redirect('group:post_list', pk)
 
@@ -1473,6 +1488,7 @@ def answer_like_ajax(request):
     answer = get_object_or_404(GroupAnswer, pk=answer_id)
     liked_users = answer.like_user
 
+
     is_liked = request.user in liked_users.all()
 
     if is_liked:
@@ -1496,7 +1512,8 @@ def answer_delete_ajax(request):
     answer_id = req['id']
 
     answer = get_object_or_404(GroupAnswer, pk=answer_id)
-
+    if user != answer.user:
+        return redirect('group:group_home')
     # 대댓글이거나 대댓글이 없는 답변의 경우 아예 삭제
     if answer.groupanswer_set.count() == 0:
         # 마지막 대댓글이었다면 부모 답변도 삭제
@@ -1575,6 +1592,9 @@ def group_star_ajax(request):
     group = get_object_or_404(Group, id=group_id)
     # 1. 그룹 -> 2. 사용자
     group_star = GroupStar.objects.filter(Q(group=group) & Q(user=user))
+
+    if user != group.members:
+        return redirect('group:group_home')
 
     if group_star:
         group_star.delete()
