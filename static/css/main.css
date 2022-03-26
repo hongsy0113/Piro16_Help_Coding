@@ -442,3 +442,44 @@ p.main__title, .main__qna__box p {
     font-weight: bold;
     transition: 0.5s;
 }
+
+@media only screen and (max-width: 600px) {
+    .landing__element {
+        width: 100vw;
+    }
+    .landing__element h1, h3 {
+        font-size: 26px !important;
+        line-height: 150%;
+        text-align: left;
+        width: 300px;
+    }
+
+    .landing__element p {
+        font-size: 18px;
+        width: 300px;
+    }
+
+    .landing__first, .landing__qna, .landing__reward, .landing__group {
+        align-items: center;
+    }
+
+    .qna__search-container {
+        width: 300px;
+        height: 50px;
+    }
+
+    .qna__search-box input{
+        width: 100%;
+        font-size: 14px;
+    }
+    .landing__qna {
+        align-items: center;
+    }
+    .landing__ctabtn {
+        align-self: center;
+    }
+    .landing__reward {
+        flex-direction: column;
+    }
+
+}
