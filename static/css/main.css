@@ -442,3 +442,129 @@ p.main__title, .main__qna__box p {
     font-weight: bold;
     transition: 0.5s;
 }
+
+@media only screen and (max-width: 600px) {
+    .landing__element {
+        width: 100vw;
+    }
+    .landing__element h1, h3 {
+        font-size: 26px !important;
+        line-height: 150%;
+        text-align: left;
+        width: 300px;
+    }
+
+    .landing__element p {
+        font-size: 18px;
+        width: 300px;
+    }
+
+    .landing__qna__top > h1 {
+        padding-right: 90px;
+    }
+
+    .landing__qna__top > p {
+        padding-right: 60px;
+    }
+
+    .landing__qna__top svg {
+        margin: -3px -17px 0 -18px !important;
+        transform: scale(0.7);
+    }
+
+    .landing__first, .landing__qna, .landing__reward, .landing__group {
+        align-items: center;
+    }
+
+    .qna__search-container {
+        width: 300px;
+        height: 50px;
+    }
+
+    .qna__search-box input{
+        width: 100%;
+        font-size: 14px;
+    }
+    .landing__qna {
+        align-items: center;
+    }
+
+    .landing__qna__boxes {
+        transform: scale(0.7);
+        margin-left: -480px;
+    }
+
+    .landing__qna__box {
+        height: 70px;
+        width: 320px;
+    }
+
+    .landing__qna__box-1 {
+        top: -110px;
+        left: 200px;
+    }
+    .landing__qna__box-2 {
+        top: -25px;
+        left: 125px;
+    }
+    .landing__qna__box-3 {
+        top: 211px;
+        left: 180px;
+    }
+    .landing__qna__box-4 {
+        top: 63px;
+        left: 260px;
+        z-index: 1;
+    }
+    .landing__qna__box-5 {
+        top: 120px;
+        left: 125px;
+    }
+
+    .landing__qna__box p {
+        text-align: center;
+        width: 270px;
+    }
+    .landing__ctabtn {
+        align-self: center;
+    }
+    .landing__reward {
+        flex-direction: column;
+    }
+
+    .landing__container-reward {
+        height: auto;
+        padding: 40px 0;
+    }
+
+    .landing__reward__imgcontainer {
+        height: 100px;
+        width: 300px;
+        gap: 10px;
+        overflow: hidden;
+    }
+
+    .landing__reward__imgcontainer img {
+        width: 100%;
+        height: auto;
+        padding: 5px;
+    }
+
+    .landing__group {
+        width: 100%;
+        overflow: hidden;
+    }
+    .landing__group__top h1 {
+        padding-right: 70px;
+    }
+
+    .landing__group__cardcontainer {
+        transform: scale(0.5);
+    }
+
+    .landing__group__cardcontainer a:nth-of-type(2) {
+        box-shadow: 0px 0px 10px rgb(0 0 0 / 10%);
+        transform: scale(1.1);
+        color: black;
+    }
+}
