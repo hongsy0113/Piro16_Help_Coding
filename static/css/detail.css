@@ -227,6 +227,12 @@ iframe {
     gap: 15px;
 }
 
+/* 댓글 개행 */
+.answer__content {
+    word-break: break-word;
+    white-space: pre-wrap;
+}
+
 .answer__user__profile {
     display: flex;
     gap: 15px;
