@@ -70,6 +70,17 @@ def main(request):
         # for question in main_questions:
         #     question_answer_dict[question] = question.answer_set.filter(is_deleted = False, answer_depth = 0).annotate(total_likes=Count('like_user')).order_by('-total_likes').first()
         # ctx['question_answer_dict'] = question_answer_dict
+        main_questions = Question.objects.filter(created_at__gte = date.today() - timedelta(days=30))
+        questions_list = [question.id for question in main_questions if question.answer_set.filter(is_deleted = False, answer_depth = 0).exists()]
+        main_questions = Question.objects.filter(id__in = questions_list).annotate(total_likes=Count('like_user')).order_by('-total_likes')[:10]
+        ## 3개 랜덤으로 select
+        id_list = [question.id for question in main_questions]
+        main_questions = Question.objects.filter(id__in = sample(id_list, 3))
+        # 세 개의 질문에 대해 가장 좋아요 많이 받은 답변을 선택해 dictionary에 담기
+        question_answer_dict = {}
+        for question in main_questions:
+            question_answer_dict[question] = question.answer_set.filter(is_deleted = False, answer_depth = 0).annotate(total_likes=Count('like_user')).order_by('-total_likes').first()
+        ctx['question_answer_dict'] = question_answer_dict
     return render(request, 'user/main.html', context=ctx)
 
 # Login
