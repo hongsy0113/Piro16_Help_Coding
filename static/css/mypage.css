@@ -323,7 +323,7 @@
   border: 1px solid #37c6e6;
   box-sizing: border-box;
   text-decoration: none;
-  font-family: Noto Sans CJK KR;
+  font-family: "Noto Sans KR", sans-serif;
   font-weight: bold;
   font-size: 18px;
   line-height: 150%;
@@ -339,7 +339,7 @@
 /* 현재 페이지 표시 */
 .page-link:hover {
   text-decoration: none;
-  font-family: Noto Sans CJK KR;
+  font-family: "Noto Sans KR", sans-serif;
   font-weight: bold;
   font-size: 18px;
   line-height: 150%;
@@ -354,7 +354,7 @@
 
 .page-item-active {
   text-decoration: none;
-  font-family: Noto Sans CJK KR;
+  font-family: "Noto Sans KR", sans-serif;
   font-weight: bold;
   font-size: 18px;
   line-height: 150%;

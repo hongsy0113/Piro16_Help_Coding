@@ -460,13 +460,13 @@ footer {
 .intro-box__top {
     width: 70px;
     color: black;
-    font-family: Noto Sans CJK KR;
+    font-family: "Noto Sans KR", sans-serif;
     font-size: 17px;
     line-height: 150%;
 }
 
 .intro-box__bottom {
-    font-family: Noto Sans CJK KR;
+    font-family: "Noto Sans KR", sans-serif;
     font-size: 16px;
     line-height: 150%;
     color: #4e4e4e;
@@ -504,3 +504,61 @@ footer {
 
 
 
+@media only screen and (max-width: 600px) {
+  .header__nav-container {
+    height: 70px;
+    width: 100vw;
+    padding: 0 25px;
+  }
+
+  .header__nav-left svg {
+    height: 26px;
+  }
+
+  .header__nav-right ul {
+    gap: 20px;
+  }
+
+  .header__nav-right a {
+    font-size: 14px;
+  }
+
+  .footer__container {
+    width: 100%;
+    padding: 40px;
+    height: auto;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+  }
+
+  .footer__logo img {
+    height: 30px;
+    width: auto;
+  }
+  .footer-left {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .footer__text--intro-box {
+    flex-direction: column;
+    gap: 5px;
+    align-items: flex-start;
+  }
+
+  .intro-box__top, .intro-box__bottom {
+    font-size: 12px;
+  }
+
+  .footer__contact-box{
+    width: 300px;
+
+  }
+
+  .footer__contact-box svg {
+    width: 30px;
+    height: 30px;
+  }
+}

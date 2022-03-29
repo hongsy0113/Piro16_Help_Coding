@@ -20,7 +20,7 @@ button {
 }
 
 .container-top__title--name {
-    font-family: Noto Sans CJK KR;
+    font-family: "Noto Sans KR", sans-serif;
     font-weight: bold;
     font-size: 47px;
     line-height: 150%;
@@ -61,7 +61,7 @@ button {
 }
 
 .button-left__like span {
-    font-family: Noto Sans CJK KR;
+    font-family: "Noto Sans KR", sans-serif;
     font-weight: bold;
     font-size: 22px;
     line-height: 105%;
@@ -100,7 +100,7 @@ button {
 .star__group span, .btn-community span {
     display: flex;
     align-items: center;
-    font-family: Noto Sans CJK KR;
+    font-family: "Noto Sans KR", sans-serif;
     font-weight: bold;
     font-size: 22px;
     line-height: 105%;
@@ -146,7 +146,7 @@ button {
 }
 
 .text-box__top {
-    font-family: Noto Sans CJK KR;
+    font-family: "Noto Sans KR", sans-serif;
     font-weight: bold;
     font-size: 24px;
     line-height: 150%;
@@ -155,7 +155,7 @@ button {
 }
 
 .text-box__bottom {
-    font-family: Noto Sans CJK KR;
+    font-family: "Noto Sans KR", sans-serif;
     font-weight: bold;
     font-size: 20px;
     line-height: 150%;
@@ -167,7 +167,7 @@ button {
     overflow-y: auto;
     margin-bottom: 0;
 
-    font-family: Noto Sans CJK KR;
+    font-family: "Noto Sans KR", sans-serif;
     font-weight: bold;
     font-size: 19px;
     line-height: 150%;
@@ -182,7 +182,7 @@ button {
 }
 
 .member-top__left {
-    font-family: Noto Sans CJK KR;
+    font-family: "Noto Sans KR", sans-serif;
     font-weight: bold;
     font-size: 36px;
     line-height: 150%;
@@ -216,7 +216,7 @@ button {
 }
 
 .top-right__button span {
-    font-family: Noto Sans CJK KR;
+    font-family: "Noto Sans KR", sans-serif;
     font-weight: bold;
     font-size: 22px;
     line-height: 105%;
@@ -262,7 +262,7 @@ button {
 }
 
 .member-list__maker--text, .member-list__one--text {
-    font-family: Noto Sans CJK KR;
+    font-family: "Noto Sans KR", sans-serif;
     font-weight: bold;
     font-size: 24px;
     line-height: 150%;
@@ -286,7 +286,7 @@ button {
 
 .text__intro {
     overflow-y: auto;
-    font-family: Noto Sans CJK KR;
+    font-family: "Noto Sans KR", sans-serif;
     font-size: 21px;
     line-height: 150%;
     color: #828282;
@@ -309,7 +309,7 @@ button {
     border-radius: 26px;
 
     color: #FF8989;
-    font-family: Noto Sans CJK KR;
+    font-family: "Noto Sans KR", sans-serif;
     font-weight: bold;
     font-size: 24px;
     line-height: 105%;

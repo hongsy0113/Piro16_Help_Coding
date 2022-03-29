@@ -112,7 +112,7 @@ a {
 }
 
 .list-sort__btn a {
-    font-family: Noto Sans CJK KR;
+    font-family: "Noto Sans KR", sans-serif;
     font-size: 16px;
     line-height: 150%;
     display: flex;
@@ -126,7 +126,7 @@ a {
 }
 
 .list-sort__btn span {
-    font-family: Noto Sans CJK KR;
+    font-family: "Noto Sans KR", sans-serif;
     font-weight: bold;
     font-size: 18px;
     line-height: 150%;
@@ -177,7 +177,7 @@ a {
 }
 
 .like__group span {
-    font-family: Noto Sans CJK KR;
+    font-family: "Noto Sans KR", sans-serif;
     font-size: 14px;
     line-height: 150%;
     color: #FFFFFF;
@@ -251,13 +251,13 @@ a {
 
 .content__group-member span {
     color: #4E4E4E;
-    font-family: Noto Sans CJK KR;
+    font-family: "Noto Sans KR", sans-serif;
     font-size: 16px;
 }
 
 .content__group-bottom {
     width: 100%;
-    font-family: Noto Sans CJK KR;
+    font-family: "Noto Sans KR", sans-serif;
     font-weight: bold;
     font-size: 18px;
     line-height: 130%;
@@ -291,7 +291,7 @@ a {
     border: 1px solid #37C6E6;
     box-sizing: border-box;
     text-decoration: none;
-    font-family: Noto Sans CJK KR;
+    font-family: "Noto Sans KR", sans-serif;
     font-weight: bold;
     font-size: 18px;
     line-height: 150%;
@@ -307,7 +307,7 @@ a {
 /* 현재 페이지 표시 */
 .all__page-link:hover {
     text-decoration: none;
-    font-family: Noto Sans CJK KR;
+    font-family: "Noto Sans KR", sans-serif;
     font-weight: bold;
     font-size: 18px;
     line-height: 150%;
@@ -322,7 +322,7 @@ a {
 
 .all__page-item-active {
     text-decoration: none;
-    font-family: Noto Sans CJK KR;
+    font-family: "Noto Sans KR", sans-serif;
     font-weight: bold;
     font-size: 18px;
     line-height: 150%;

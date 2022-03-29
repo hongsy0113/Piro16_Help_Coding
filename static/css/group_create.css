@@ -60,7 +60,7 @@ html, body, section {
 }
 
 .group-create__input ::placeholder {
-    font-family: Noto Sans CJK KR;
+    font-family: "Noto Sans KR", sans-serif;
     color: #828282;
     font-size: 18px;
     line-height: 150%;
@@ -73,7 +73,7 @@ html, body, section {
 .text-container {
     margin-bottom: 10px;
     color: #4F4F4F;
-    font-family: Noto Sans CJK KR;
+    font-family: "Noto Sans KR", sans-serif;
     font-weight: bold;
     font-size: 24px;
     line-height: 150%;
@@ -95,7 +95,7 @@ html, body, section {
     box-sizing: border-box;
     border-radius: 5px;
 
-    font-family: Noto Sans CJK KR;
+    font-family: "Noto Sans KR", sans-serif;
     color: #828282;
     font-size: 16px;
     line-height: 170%;
@@ -116,7 +116,7 @@ html, body, section {
 }
 
 .input-img__text {
-    font-family: Noto Sans CJK KR;
+    font-family: "Noto Sans KR", sans-serif;
     color: #828282;
     font-size: 16px;
     line-height: 150%;
@@ -130,7 +130,7 @@ html, body, section {
     border-radius: 5px;
     cursor: pointer;
     color: #ffffff;
-    font-family: Noto Sans CJK KR;
+    font-family: "Noto Sans KR", sans-serif;
     font-size: 20px;
     line-height: 150%;
 }
@@ -190,7 +190,7 @@ html, body, section {
     cursor: pointer;
 
     color: #4E4E4E;
-    font-family: Noto Sans CJK KR;
+    font-family: "Noto Sans KR", sans-serif;
     font-style: normal;
     font-weight: bold;
     font-size: 24px;
@@ -230,7 +230,7 @@ html, body, section {
 
     text-decoration: none;
     text-align: center;
-    font-family: Noto Sans CJK KR;
+    font-family: "Noto Sans KR", sans-serif;
     font-size: 20px;
     line-height: 50%;
     font-weight: 500;
@@ -256,7 +256,7 @@ html, body, section {
 
     text-decoration: none;
     text-align: center;
-    font-family: Noto Sans CJK KR;
+    font-family: "Noto Sans KR", sans-serif;
     font-size: 20px;
     font-weight: 500;
     line-height: 50%;
