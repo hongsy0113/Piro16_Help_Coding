@@ -70,7 +70,7 @@
                 <label for="image" class="userform__image__text">프로필 사진</label><br />
                 <div class="userform__image__inputcontainer">
                     <div class="user-base__image">
-                        {% for base_image in base_images %}<input type="radio" name="img_setting" value="{{ base_image }}" {% if original_information %}{% if original_information.img_setting == base_image %}checked{% endif %}{% else %}{% if current_image == base_image %}checked{% endif %}{% endif %}>
+                        {% for base_image in base_images %}<input type="radio" name="img_setting" value="{{ base_image }}" {% if original_information %}{% if original_information.img_setting == base_image %}checked{% endif %}{% else %}{% if user.default_img == base_image %}checked{% endif %}{% endif %}>
                         <img src="/static/img/user_thumbnail/{{ base_image }}" height="50" width="50">
                         {% endfor %}
                     </div>
@@ -88,7 +88,7 @@
                     </div>
 
                     <div class="user-not-change__image">
-                        {% if current_image not in base_images %}
+                        {% if not user.default_img %}
                         <input type="radio" name="img_setting" value="no_change_img" {% if original_information %}{% if original_information.img_setting == "no_change_img" %}checked{% endif %}{% else %}{% if current_image not in base_images %}checked{% endif %}{% endif %}></input>
                         <img src="{{ user.img.url }}" class="img_display not-change-img__display" height="50" width="50">
                         <label>이미지 변경 안 함</label>
