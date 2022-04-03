@@ -31,6 +31,8 @@
         </div>
         <div class="main__qna__slidecontainer">
             <div class="main__qna__slideinner">
+                <!-- 나중에 다시 수정할 예정 (성윤 )-->
+                {% comment %}
                 {% for question, answer in question_answer_dict.items %}
                     <div class="main__qna__box">
                         <div class="main__qna__question">
@@ -45,7 +47,7 @@
                         </div>
                     </div>
                 {% endfor %}
-                {% comment %}
+                {% endcomment %}
                 <div class="main__qna__box">
                     <div class="main__qna__question">
                         <p>Q. 회전 방식을 바꾸면 무슨 변화가 있나요?</p>
@@ -70,7 +72,6 @@
                         <p>A. 그럼요! 나중에 대학생이 되면 피로그래밍에서 재미있게 프로그래밍 해봐요.</p>
                     </div>
                 </div>
-                {% endcomment %}
             </div>
         </div>
         <div class="main__arrow-container-outer" style="position: absolute; width: 100vw;">
