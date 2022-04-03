@@ -123,7 +123,7 @@
 <hr>
     {% if user.is_authenticated %}
     <div class="answer__input__container">
-        <input type="textarea" name="new_answer" placeholder="댓글을 입력하세요 (욕설이나 비방은 상대방에게 상처를 줄 수 있어요)" class="answer__input">    
+        <textarea name="new_answer" placeholder="댓글을 입력하세요 (욕설이나 비방은 상대방에게 상처를 줄 수 있어요)" class="answer__input"></textarea>    
         <input type="button" value = "작성" class="answer__submit">
     </div>
     {% endif %}
@@ -179,9 +179,10 @@
                 </div>
             </div>
 
+            <!-- 원댓글 수정 -->
             <div class="answer__edit answer__edit--{{ answer.id }}" style=" display: none;">
                 <div class="answer__edit__flexbox">
-                    <input type="text" name="edit_answer_{{ answer.id }}" class="answer__edit-input answer__edit-input--{{ answer.id }}" id = "answer-edit-input-{{ answer.id }}" value="{{ answer.content }}">    
+                    <textarea name="edit_answer_{{ answer.id }}" class="answer__edit-input answer__edit-input--{{ answer.id }}" id = "answer-edit-input-{{ answer.id }}" value="{{ answer.content }}"></textarea>    
                     <input type="button" value = "수정" class="answer__edit-submit answer__edit-submit--{{ answer.id }}" id = "answer-edit-submit-{{ answer.id }}">
                 </div>
             </div>
@@ -219,7 +220,7 @@
                                     {% endif %}
                                 </div>
                             </div>
-                            <p class= "answer__content answer__content--{{ reply.id }}"> {{ reply.content }}</p>
+                            <p class= "answer__content answer__content--{{ reply.id }}">{{ reply.content }}</p>
                             <div class="answer__like-btn answer__like-btn--{{ reply.id }}" id="reply-like-{{ reply.id }}" style="align-self:flex-end">
                                 {% if user in reply.like_user.all %}
                                 <i class="fas fa-heart"></i>
@@ -233,8 +234,7 @@
 
                         <div class="answer__edit answer__edit--{{ reply.id }}" style=" display: none;">
                             <div class="answer__edit__flexbox">
-                                <input type="text" name="edit_answer_{{ reply.id }}" class="answer__edit-input answer__edit-input--{{ reply.id }}" id = "answer-edit-input-{{ reply.id }}" 
-                                value="{{ reply.content }}">    
+                                <textarea name="edit_answer_{{ reply.id }}" class="answer__edit-input answer__edit-input--{{ reply.id }}" id = "answer-edit-input-{{ reply.id }}" value="{{ reply.content }}"></textarea>
                                 <input type="button" value = "수정" class="answer__edit-submit answer__edit-submit--{{ reply.id }}" id = "answer-edit-submit-{{ reply.id }}">
                             </div>
                         </div>
@@ -245,7 +245,7 @@
             <div class="reply__form reply__form--{{ answer.id }}" style="display: none;">
                 <div class="reply__form__flexbox">
                     {% if user.is_authenticated %}
-                    <input type="text" name="new_reply_{{ answer.id }}" placeholder="답변을 입력하세요 (욕설이나 비방은 상대방에게 상처를 줄 수 있어요)" class="reply__input reply__input--{{ answer.id }}" id = "reply-input-{{ answer.id }}">    
+                    <textarea name="new_reply_{{ answer.id }}" placeholder="답변을 입력하세요 (욕설이나 비방은 상대방에게 상처를 줄 수 있어요)" class="reply__input reply__input--{{ answer.id }}" id = "reply-input-{{ answer.id }}"></textarea>
                     <input type="button" value = "작성" class="reply__submit reply__submit--{{ answer.id }}" id = "reply-submit-{{ answer.id }}">
                     {% endif %}
                 </div>
