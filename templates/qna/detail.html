@@ -199,7 +199,7 @@
                                         {% endif %}
                                     </div>
                                 </div>
-                                <p class= "answer__content answer__content--{{ reply.id }}"> {{ reply.content }}</p>
+                                <p class= "answer__content answer__content--{{ reply.id }}">{{ reply.content }}</p>
                                 <div class="answer__like-btn answer__like-btn--{{ reply.id }}" id="reply-like-{{ reply.id }}" style="align-self:flex-end">
                                     {% if user in reply.like_user.all %}
                                     <i class="fas fa-heart"></i>
@@ -225,7 +225,7 @@
                 <div class="reply__form reply__form--{{ answer.id }}" style="display: none;">
                     <div class="reply__form__flexbox">
                         {% if user.is_authenticated %}
-                        <input type="text" name="new_reply_{{ answer.id }}" placeholder="답변을 입력하세요" class="reply__input reply__input--{{ answer.id }}" id = "reply-input-{{ answer.id }}">    
+                        <textarea name="new_reply_{{ answer.id }}" placeholder="답변을 입력하세요" class="reply__input reply__input--{{ answer.id }}" id = "reply-input-{{ answer.id }}"></textarea>
                         <input type="button" value = "작성" class="reply__submit reply__submit--{{ answer.id }}" id = "reply-submit-{{ answer.id }}">
                         {% endif %}
                     </div>
