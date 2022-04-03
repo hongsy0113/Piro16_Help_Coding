@@ -161,7 +161,7 @@
 
                 <div class="answer__edit answer__edit--{{ answer.id }}" style=" display: none;">
                     <div class="answer__edit__flexbox">
-                        <input type="text" name="edit_answer_{{ answer.id }}" class="answer__edit-input answer__edit-input--{{ answer.id }}" id = "answer-edit-input-{{ answer.id }}" value="{{ answer.content }}">    
+                        <textarea name="edit_answer_{{ answer.id }}" class="answer__edit-input answer__edit-input--{{ answer.id }}" id = "answer-edit-input-{{ answer.id }}" value="{{ answer.content }}"></textarea>
                         <input type="button" value = "수정" class="answer__edit-submit answer__edit-submit--{{ answer.id }}" id = "answer-edit-submit-{{ answer.id }}">
                     </div>
                 </div>
