@@ -5,7 +5,12 @@
 
 ### DEMO 계정
 ID: demo@demo.com
+
 Password: demo1234
+
+💙 데모 계정으로 도와줘,코딩을 체험해보세요!
+
+❤ 오류를 발견하시거나 피드백이 있으시다면 우측하단 메신저로 남겨주세요! 감사합니다:)
 
 # 기획의도
 코딩 교육이 활성화되면서 코딩을 공부하는 어린이, 청소년들이 많아지고 있습니다.
@@ -71,6 +76,13 @@ Password: demo1234
 * 신고하기 기능
 * sb2, ent 파일 실행 기능
 * 다양한 배지, 업적
+
+# 데이터베이스 ERD
+
+[ERD 링크](https://www.erdcloud.com/d/bty4ndmQKuwNhhBNC)
+
+![image](https://user-images.githubusercontent.com/87005840/162022219-023f6670-a1d3-4482-a541-e2d242f152f9.png)
+
 
 ### 코드 컨벤션
 * Python
