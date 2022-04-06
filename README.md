@@ -4,7 +4,7 @@
 
 
 ### DEMO 계정
-ID: demo@demo.com
+ID: demo@demo
 
 Password: demo1234
 
