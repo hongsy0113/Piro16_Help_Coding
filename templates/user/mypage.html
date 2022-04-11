@@ -17,7 +17,13 @@
 <div class="mypage__profile__container">
   <div class="mypage__profile_reward">
     <div class="mypage__profile__img">
-      {% if user.img %}<img src="{{ user.img.url }}" height="100">{% else %}<p>사진 없음</p>{% endif %}
+      {% if user.img %}
+      <img src="{{ user.img.url }}" height="100">
+      {% elif user.default_img %}
+      <img src="/static/img/user_thumbnail/{{ user.default_img }}" height="100">
+      {% else %}
+      <p>사진 없음</p>
+      {% endif %}
     </div>
     <div class="mypage__representative_reward">{% if user.representative_reward %}<img src="{{ user.representative_reward.img }}" height="70"></img>{% else %}<p></p>{% endif %}</div>
   </div>
