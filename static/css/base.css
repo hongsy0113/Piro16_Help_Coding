@@ -49,7 +49,7 @@ header a {
 .header__nav-left {
   display: flex;
   align-items: center;
-  gap: 67px;
+  /* gap: 67px; */
 }
 
 .header__nav-left > ul,
@@ -505,6 +505,9 @@ footer {
 
 
 @media only screen and (max-width: 600px) {
+  section {
+    width: 300px;
+  }
   .header__nav-container {
     height: 70px;
     width: 100vw;
