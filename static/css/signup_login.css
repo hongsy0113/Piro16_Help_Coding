@@ -264,3 +264,63 @@ form input::placeholder, form textarea::placeholder {
     color: white;
     text-decoration: none;
 }
+
+.login__container > .bluebtn {
+    display: flex;
+    font-size: 14px;
+    margin: 0 auto;
+}
+
+@media only screen and (max-width: 768px) {
+    .userform__container h1, .login__container h1 {
+        font-size: 24px;
+    }
+    .login__container, .userform__container {
+        width: 100%;
+        padding-bottom: 70px;
+    }
+
+    form input, form textarea {
+        width: 100%;
+        height: 50px;
+        font-size: 16px;
+    }
+
+    form label {
+        font-size: 18px;
+        padding: 0;
+    }
+
+    .login__innercontainer p {
+        width: 100%;
+    }
+
+    .user-base__image {
+        flex-wrap: wrap;
+        width: 200px;
+    }
+
+    .userform__nextpagebtn, .userform__submitbtn, .login__loginbtn {
+        width: 150px;
+        height: 45px;
+        font-size: 24px;
+        padding: 0;
+        margin: 0 auto;
+    }
+
+    .signup__page1, .signup__page2, .login__innercontainer, .revise__container {
+        margin-bottom: 15px;
+    }
+
+    .signup__page1 > div, .signup__page2 > div {
+        width: 100%;
+    }
+
+    .userform__job__inputcontainer p {
+        font-size: 18px;
+    }
+
+    .user-select__image p {
+        width: 100%;
+    }
+}
