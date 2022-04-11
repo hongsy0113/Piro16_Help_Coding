@@ -179,7 +179,7 @@
                     {% if maker.img %}
                     <img src="{{ maker.img.url }}" height="50" width="50" style="border-radius: 50px;"/>
                     {% else %}
-                    <img src="{{ profile_img }}" height="50" width="50" style="border-radius: 50px;"/>
+                    <img src="/static/img/user_thumbnail/{{ maker.default_img }}" height="50" width="50" style="border-radius: 50px;"/>
                     {% endif %}
                 </div>
 
@@ -207,7 +207,7 @@
                     {% if member.img %}
                     <img src="{{ member.img.url }}" />
                     {% else %}
-                    <img src="{{ profile_img }}" />
+                    <img src="/static/img/user_thumbnail/{{ member.default_img }}" />
                     {% endif %}
                 </div>
 

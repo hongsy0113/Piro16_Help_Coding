@@ -99,12 +99,24 @@
                 <div class="header__mypagecontainer">
                     <a href="{%  url 'user:mypage' %}">{{user.nickname}}</a>
                     <a class="header__mypagebtn" href="{% url 'user:mypage' %}">
-                        {% if user.img %}<img src="{{ user.img.url }}" style='height: 100%; width: auto; object-fit: contain'>{% else %}<p class="header__mypagebtn-noimage"></p>{% endif %}
+                        {% if user.img %}
+                        <img src="{{ user.img.url }}" style='height: 100%; width: auto; object-fit: contain'>
+                        {% elif user.default_img %}
+                        <img src="/static/img/user_thumbnail/{{ user.default_img }}" style='height: 100%; width: auto; object-fit: contain'>
+                        {% else %}
+                        <p class="header__mypagebtn-noimage"></p>
+                        {% endif %}
                     </a>
                     <div class="header__mypage-dropdown">
                         <a href="{% url 'user:mypage' %}" class="mypage-dropdown__userprofile">
                             <div class="mypage-dropdown__userprofile-img">
-                                {% if user.img %}<img src="{{ user.img.url }}" style='height: 100%; width: auto; object-fit: cover'>{% else %}<p class="header__mypagebtn-noimage"></p>{% endif %}
+                                {% if user.img %}
+                                <img src="{{ user.img.url }}" style='height: 100%; width: auto; object-fit: cover'>
+                                {% elif user.default_img %}
+                                <img src="/static/img/user_thumbnail/{{ user.default_img }}" style='height: 100%; width: auto; object-fit: cover'>
+                                {% else %}
+                                <p class="header__mypagebtn-noimage"></p>
+                                {% endif %}
                             </div>
                             <div class="mypage-dropdown__userprofile-name">
                                 <p>{{user.nickname}}</p>

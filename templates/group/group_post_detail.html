@@ -138,6 +138,8 @@
                     <div class="answer__user__profile-left">
                         {% if answer.user.img %}
                         <img src= '{{ answer.user.img.url }}'>
+                        {% elif answer.user.default_img %}
+                        <img src="/static/img/user_thumbnail/{{ answer.user.default_img }}">
                         {% endif %}
                     </div>
                     <div class="answer__user__profile-right">
@@ -196,6 +198,8 @@
                                 <div class="answer__user__profile-left">
                                     {% if reply.user.img %}
                                     <img src= '{{ reply.user.img.url }}'>
+                                    {% elif reply.user.default_img %}
+                                    <img src="/static/img/user_thumbnail/{{ reply.user.default_img }}">
                                     {% endif %}
                                 </div>
                                 <div class="answer__user__profile-right">
@@ -203,7 +207,7 @@
                                         <div class="answer__user__profile-name">
                                             {% if reply.user %}
                                             <h2>{{ reply.user }}</h2>
-                                            {% if reply.user.id == question.user.id %}
+                                            {% if reply.user.id == post.user.id %}
                                             <span class="answer__writer-mark">글쓴이</span>
                                             {% endif %}
                                             {% else %}

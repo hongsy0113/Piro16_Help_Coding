@@ -534,7 +534,15 @@ def answer_ajax(request):
     user_id = req['user']
     user = get_object_or_404(User, pk=user_id)
     username = user.nickname
-    user_image_url = user.img.url if user.img else ''
+
+    ## user 이미지 url 지정 
+    # default 이미지인 경우 static 디렉터리의 경로, 업로드 이미지의 경우 media 디렉터리의 경로
+    if user.img:
+        user_image_url = user.img.url
+    elif user.default_img:
+        user_image_url = '/static/img/user_thumbnail/' + user.default_img
+    else:
+        user_image_url = ''
     
     this_question = get_object_or_404(Question, pk=question_id)
     # 작성자 여부
@@ -592,7 +600,14 @@ def reply_ajax(request):
     this_answer = get_object_or_404(Answer, pk=answer_id)
     this_question = this_answer.question_id
 
-    user_image_url = user.img.url if user.img else ''
+    ## user 이미지 url 지정 
+    # default 이미지인 경우 static 디렉터리의 경로, 업로드 이미지의 경우 media 디렉터리의 경로
+    if user.img:
+        user_image_url = user.img.url
+    elif user.default_img:
+        user_image_url = '/static/img/user_thumbnail/' + user.default_img
+    else:
+        user_image_url = ''
     # 작성자 여부
     if this_question.user == None:
         is_author = False
