@@ -69,6 +69,9 @@ class User(AbstractUser):
     representative_reward = models.ForeignKey(
         Reward, on_delete=models.CASCADE, null=True, blank=True)
 
+    ### default 이미지 사용 여부를 위한 integer 필드
+    default_img = models.CharField(max_length = 15, default='')
+
     def __str__(self):
         return self.nickname
 

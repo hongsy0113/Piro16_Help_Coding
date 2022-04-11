@@ -246,10 +246,12 @@ def sign_up(request):
                     user.img = '/user/user_{}/thumbnail/{}'.format(
                         user.email, request.POST['img_recent'])
             else:
-                shutil.copyfile('./static/img/user_thumbnail/{}'.format(request.POST.get('img_setting')),
-                                './media/user/user_{}/thumbnail/{}'.format(user.email, request.POST.get('img_setting')))
-                user.img = '/user/user_{}/thumbnail/{}'.format(
-                    user.email, request.POST.get('img_setting'))
+                # USER가 DEFAULT IMG 고른 상황
+                user.default_img = request.POST.get('img_setting')
+                # shutil.copyfile('./static/img/user_thumbnail/{}'.format(request.POST.get('img_setting')),
+                #                 './media/user/user_{}/thumbnail/{}'.format(user.email, request.POST.get('img_setting')))
+                # user.img = '/user/user_{}/thumbnail/{}'.format(
+                #     user.email, request.POST.get('img_setting'))
             user.is_active = False  # 이메일 인증 기능 구현 시에는 False로 바꿀 것
             user.save()
             # 인증 이메일 발송
@@ -366,11 +368,13 @@ def my_page_revise(request):
                     else:
                         user.img = '/user/user_{}/thumbnail/{}'.format(
                             user.email, request.POST['img_recent'])
+                    # 이미지 직접 설정한 경우 default_img field를 blank로 해야 함
+                    user.default_img = ''
                 else:
-                    shutil.copyfile('./static/img/user_thumbnail/{}'.format(request.POST.get('img_setting')),
-                                    './media/user/user_{}/thumbnail/{}'.format(user.email, request.POST.get('img_setting')))
-                    user.img = '/user/user_{}/thumbnail/{}'.format(
-                        user.email, request.POST.get('img_setting'))
+                    # default img 선택한 경우
+                    # img field를 null로 해야 됨
+                    user.img = None
+                    user.default_img = request.POST.get('img_setting')
             user.nickname = request.POST['nickname']
             user.birth = birth
             user.introduction = request.POST['introduction']
@@ -387,12 +391,22 @@ def my_page_revise(request):
                     destination.write(chunk)
         original_information.img = request.POST['img_recent']
         ctx = {'user': user, 'form': form, 'revise_error': revise_error, 'base_images': BASE_IMAGES, 'job_choice': JOB_CHOICE,
-               'current_image': user.img.url.split('/')[-1], 'original_information': original_information, 'temp_img_location': '/media/user/user_{}/thumbnail/'.format(user.email)}
+               'original_information': original_information, 'temp_img_location': '/media/user/user_{}/thumbnail/'.format(user.email)}
+        if user.img:
+            ctx['current_image'] = user.img.url.split('/')[-1]
+        else:
+            ctx['current_image'] = user.default_img
         return render(request, template_name='user/mypage_revise.html', context=ctx)
     else:
         form = MypageReviseForm(instance=user)
+
         ctx = {'user': user, 'form': form, 'base_images': BASE_IMAGES, 'job_choice': JOB_CHOICE,
-               'current_image': user.img.url.split('/')[-1], 'temp_img_location': '/media/user/user_{}/thumbnail/'.format(user.email)}
+                'temp_img_location': '/media/user/user_{}/thumbnail/'.format(user.email)}
+        # user_img 필드에 항상 값이 들어가 있지 않다. 만약 default이미지라면 null이 되어야 함
+        if user.img:
+            ctx['current_image'] = user.img.url.split('/')[-1]
+        else:
+            ctx['current_image'] = user.default_img
         return render(request, template_name='user/mypage_revise.html', context=ctx)
 
 # Drop
