@@ -823,7 +823,7 @@ def post_list(request, pk):
         return redirect('user:main')
 
     posts = GroupPost.objects.filter(group__pk=pk).order_by('-created_at')
-    group = Group.objects.get(pk=pk)
+    group = get_object_or_404(Group, pk=pk)
     page = request.GET.get('page', '1')    # 페이지
 
     # ismember
