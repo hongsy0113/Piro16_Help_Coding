@@ -42,8 +42,8 @@ button {
 
 .return-main__btn {
   padding: 12px 24px 14px;
-  background: #37c6e6;
-  border: 2px solid #37c6e6;
+  background: var(--help-blue);
+  border: 2px solid var(--help-blue);
   box-sizing: border-box;
   border-radius: 26px;
 
@@ -57,7 +57,7 @@ button {
 }
 
 .return-main__btn:hover {
-  color: #37c6e6;
+  color: var(--help-blue);
   background: #ffffff;
   transition: 0.3s;
 }

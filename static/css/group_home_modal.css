@@ -116,8 +116,8 @@ a {
     width: 220px;
     margin-left: 8px;
     padding: 21px 43px 22px;
-    background: #37C6E6;
-    border: 2px solid #37C6E6;
+    background: var(--help-blue);
+    border: 2px solid var(--help-blue);
     box-sizing: border-box;
     border-radius: 41px;
     display: flex;
@@ -133,7 +133,7 @@ a {
 
 .public-group__join-btn a:hover {
     background-color: white;
-    color: #37C6E6;
+    color: var(--help-blue);
 }
 
 .private-group__join-btn {
@@ -313,8 +313,8 @@ a {
     display: flex;
     align-items: center;
     padding: 7px 11px 6px;
-    background: #37C6E6;
-    border: 1px solid #37C6E6;
+    background: var(--help-blue);
+    border: 1px solid var(--help-blue);
     box-sizing: border-box;
     border-radius: 26px;
     width: fit-content;

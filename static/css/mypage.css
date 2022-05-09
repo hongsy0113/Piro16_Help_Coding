@@ -320,7 +320,7 @@
 
 /* 현재 페이지가 아닐 경우 */
 .page-link {
-  border: 1px solid #37c6e6;
+  border: 1px solid var(--help-blue);
   box-sizing: border-box;
   text-decoration: none;
   font-family: "Noto Sans KR", sans-serif;

@@ -77,8 +77,8 @@ button {
 
 .container-button__btn {
     padding: 10px 24px 10px;
-    background: #37C6E6;
-    border: 2px solid #37C6E6;
+    background: var(--help-blue);
+    border: 2px solid var(--help-blue);
     box-sizing: border-box;
     border-radius: 26px;
 }
@@ -208,8 +208,8 @@ button {
     display: flex;
     align-items: center;
     padding: 12px 20px 10px;
-    background: #37C6E6;
-    border: 2px solid #37C6E6;
+    background: var(--help-blue);
+    border: 2px solid var(--help-blue);
     box-sizing: border-box;
     border-radius: 26px;
     cursor: pointer;

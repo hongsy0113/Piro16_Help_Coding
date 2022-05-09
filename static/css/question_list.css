@@ -85,7 +85,7 @@ button {
     width: 155px;
     height: 60px;
     color: white;
-    background-color: #37C6E6;
+    background-color: var(--help-blue);
     border-radius: 30px;
     font-weight: bold;
     font-size: 18px;
@@ -99,8 +99,8 @@ button {
 
 .qna__ask-btn:hover {
     background-color: white;
-    color: #37C6E5;
-    border: 2px solid #37C6E5;
+    color: var(--help-blue);
+    border: 2px solid var(--help-blue);
 }
 
 /* 게시물 정렬 & 필터 box */
@@ -370,7 +370,7 @@ button {
 
 /* 현재 페이지가 아닐 경우 */
 .all__page-link {
-    border: 1px solid #37C6E6;
+    border: 1px solid var(--help-blue);
     box-sizing: border-box;
     text-decoration: none;
     font-family: "Noto Sans KR", sans-serif;
@@ -378,7 +378,7 @@ button {
     font-size: 18px;
     line-height: 150%;
     text-align: center;
-    color: #37C6E5;
+    color: var(--help-blue);
     padding: 6px 14px;
     background-color: #ffffff;
     border-radius: 100%;
@@ -396,7 +396,7 @@ button {
     text-align: center;
     color: #FFFFFF;
     padding: 6px 14px;
-    background-color: #37C6E5;
+    background-color: var(--help-blue);
     border-radius: 100%;
     margin-right: 10px;
     box-sizing: border-box;
@@ -411,7 +411,7 @@ button {
     text-align: center;
     color: #FFFFFF;
     padding: 6px 14px;
-    background-color: #37C6E5;
+    background-color: var(--help-blue);
     border-radius: 100%;
     margin-right: 10px;
     box-sizing: border-box;

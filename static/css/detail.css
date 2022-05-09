@@ -147,8 +147,8 @@ iframe {
 .question__like-btn, .post__like-btn {
     display: flex;
     padding: 12px 18px;
-    border: 1px solid #37c6e6;
-    color: #37c6e6;
+    border: 1px solid var(--help-blue);
+    color: var(--help-blue);
     font-size: 22px;
     font-weight: bold;
     line-height: 100%;
@@ -168,7 +168,7 @@ iframe {
 }
 
 .question__like-btn:hover, .question__like-btn:hover span, .post__like-btn:hover, .post__like-btn:hover span {
-    background-color: #37c6e6;
+    background-color: var(--help-blue);
     color: white;
 }
 
@@ -195,10 +195,10 @@ iframe {
     position: absolute;
     right: 15px;
     bottom: 50px;
-    background-color: #37c6e6;
+    background-color: var(--help-blue);
     padding: 10px 20px 12px;
     border-radius: 5px;
-    border: 2px solid #37c6e6;
+    border: 2px solid var(--help-blue);
     font-size: 18px;
     line-height: 100%;
     color: white;
@@ -297,7 +297,7 @@ iframe {
     font-size: 14px !important;
     color:white;
     line-height: 100% !important;
-    background-color: #37c6e6;
+    background-color: var(--help-blue);
     padding: 4px 7px 2px;
     border-radius: 10px;
     height: 22px;
@@ -329,10 +329,10 @@ iframe {
     justify-content: space-between;
     font-weight: bold;
     font-size: 18px;
-    color: #37c6e6;
+    color: var(--help-blue);
 }
 .answer__like-btn {
-    color: #37c6e6;
+    color: var(--help-blue);
     font-size: 18px;
     font-weight: bold;
 }
@@ -357,9 +357,9 @@ iframe {
 
 .reply__submit {
     color: white;
-    background-color: #37c6e6;
+    background-color: var(--help-blue);
     border-radius: 5px;
-    border: #37c6e6;
+    border: var(--help-blue);
     font-size: 18px;
     font-weight: bold;
     padding: 10px 20px 12px;
@@ -383,9 +383,9 @@ iframe {
 
 .answer__edit-submit {
     color: white;
-    background-color: #37c6e6;
+    background-color: var(--help-blue);
     border-radius: 5px;
-    border: #37c6e6;
+    border: var(--help-blue);
     font-size: 18px;
     font-weight: bold;
     padding: 10px 20px 12px;

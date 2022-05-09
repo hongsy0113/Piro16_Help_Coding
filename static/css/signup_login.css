@@ -176,8 +176,8 @@ form input::placeholder, form textarea::placeholder {
 .userform__nextpagebtn, .userform__submitbtn, .login__loginbtn {
     width: 180px;
     height: 75px;
-    background: #37C6E6;
-    border: 2px solid #37C6E6;
+    background: var(--help-blue);
+    border: 2px solid var(--help-blue);
     box-sizing: border-box;
     border-radius: 37.5px;
     font-weight: bold;
@@ -237,7 +237,7 @@ form input::placeholder, form textarea::placeholder {
 }
 
 .signup_success__btn {
-    background: #37C6E5;
+    background: var(--help-blue);
     color: white;
     width: 235px;
     height: 66px;
