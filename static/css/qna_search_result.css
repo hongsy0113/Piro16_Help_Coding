@@ -274,7 +274,7 @@
 
 /* 현재 페이지가 아닐 경우 */
 .all__page-link {
-    border: 1px solid #37C6E6;
+    border: 1px solid var(--help-blue);
     box-sizing: border-box;
     text-decoration: none;
     font-family: "Noto Sans KR", sans-serif;
@@ -282,7 +282,7 @@
     font-size: 18px;
     line-height: 150%;
     text-align: center;
-    color: #37C6E5;
+    color: var(--help-blue);
     padding: 6px 14px;
     background-color: #ffffff;
     border-radius: 100%;
@@ -300,7 +300,7 @@
     text-align: center;
     color: #FFFFFF;
     padding: 6px 14px;
-    background-color: #37C6E5;
+    background-color: var(--help-blue);
     border-radius: 100%;
     margin-right: 10px;
     box-sizing: border-box;
@@ -315,7 +315,7 @@
     text-align: center;
     color: #FFFFFF;
     padding: 6px 14px;
-    background-color: #37C6E5;
+    background-color: var(--help-blue);
     border-radius: 100%;
     margin-right: 10px;
     box-sizing: border-box;

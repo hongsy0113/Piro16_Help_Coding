@@ -87,7 +87,7 @@ a {
     width: 155px;
     height: 60px;
     color: white;
-    background-color: #37C6E6;
+    background-color: var(--help-blue);
     border-radius: 30px;
     font-weight: 500;
     font-size: 18px;
@@ -101,8 +101,8 @@ a {
 
 .group__make-btn:hover{
     background-color: white;
-    color: #37C6E6;
-    border: 2px solid #37C6E6;
+    color: var(--help-blue);
+    border: 2px solid var(--help-blue);
 }
 
 /* 그룹 정렬 sort-box */
@@ -288,7 +288,7 @@ a {
 
 /* 현재 페이지가 아닐 경우 */
 .all__page-link {
-    border: 1px solid #37C6E6;
+    border: 1px solid var(--help-blue);
     box-sizing: border-box;
     text-decoration: none;
     font-family: "Noto Sans KR", sans-serif;

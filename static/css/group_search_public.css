@@ -117,7 +117,7 @@ a {
     width: 155px;
     height: 60px;
     color: white;
-    background-color: #37C6E6;
+    background-color: var(--help-blue);
     border-radius: 30px;
     font-weight: bold;
     font-size: 18px;

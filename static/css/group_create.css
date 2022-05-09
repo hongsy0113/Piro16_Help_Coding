@@ -223,8 +223,8 @@ html, body, section {
     height: 55px;
     padding: 20px;
 
-    background: #37C6E6;
-    border: 2px solid #37C6E6;
+    background: var(--help-blue);
+    border: 2px solid var(--help-blue);
     box-sizing: border-box;
     border-radius: 41px;
 
@@ -240,7 +240,7 @@ html, body, section {
 }
 
 .btn-save:hover {
-    color: #37C6E6;
+    color: var(--help-blue);
     background-color: white;
 }
 

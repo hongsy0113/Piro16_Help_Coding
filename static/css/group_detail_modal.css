@@ -64,7 +64,7 @@
 .modal__close {
     position: static;
     background: #FFFFFF;
-    border: 2px solid #37C6E6;
+    border: 2px solid var(--help-blue);
     box-sizing: border-box;
     border-radius: 41px;
 
@@ -80,7 +80,7 @@
 }
 
 .modal__close:hover, .group__wait--close:hover {
-    background-color: #37C6E6;
+    background-color: var(--help-blue);
     color: #ffffff;
     transition: 0.2px;
 }
@@ -199,7 +199,7 @@
 .group__wait--close {
     position: static;
     background: #FFFFFF;
-    border: 2px solid #37C6E6;
+    border: 2px solid var(--help-blue);
     box-sizing: border-box;
     border-radius: 41px;
 
@@ -217,7 +217,7 @@
 .wait-accept__btn {
     padding: 6px 15px 6px;
     background: #37C6E5;
-    border: 2px solid #37C6E6;
+    border: 2px solid var(--help-blue);
     box-sizing: border-box;
     border-radius: 41px;
 
@@ -232,7 +232,7 @@
 .wait-reject__btn {
     padding: 6px 15px 6px;
     background: #FFFFFF;
-    border: 2px solid #37C6E6;
+    border: 2px solid var(--help-blue);
     box-sizing: border-box;
     border-radius: 41px;
 
