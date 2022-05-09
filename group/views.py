@@ -814,7 +814,7 @@ def post_list(request, pk):
         return redirect('user:main')
 
     posts = GroupPost.objects.filter(group__pk=pk).order_by('-created_at')
-    group = Group.objects.get(pk=pk)
+    group = get_object_or_404(Group, pk=pk)
     page = request.GET.get('page', '1')    # 페이지
 
     # ismember
@@ -1081,6 +1081,9 @@ def post_update(request, pk, post_pk):
         error_messages = GroupPostErrorMessages()
         error_messages.validation_check(request, ['create'])
         if not error_messages.has_error():
+
+            post = form.save()
+
             if request.FILES.get('image'):  # form valid 시
                 post.image = request.FILES.get('image')
 
@@ -1099,6 +1102,8 @@ def post_update(request, pk, post_pk):
                 if os.path.isfile('./media/temp/{}'.format(request.POST['img_recent'])):
                     os.remove(
                         './media/temp/{}'.format(request.POST['img_recent']))
+            else:
+                post.image = None
 
             if request.FILES.get('attached_file'):  # form valid 시
                 post.attached_file = request.FILES.get('attached_file')
@@ -1119,8 +1124,9 @@ def post_update(request, pk, post_pk):
                 if os.path.isfile('./media/temp/{}'.format(request.POST['file_recent'])):
                     os.remove(
                         './media/temp/{}'.format(request.POST['file_recent']))
+            else:
+                post.attached_file = None
 
-            post = form.save()
 
             ## TODO
             # 목록화면에서 iframe과 썸네일 이미지 가져오느라 느려지지 않도록 따로 저장

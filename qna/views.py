@@ -357,7 +357,7 @@ def question_update(request, pk):
 
         error_messages.validation_check(request,['update'])
         if not error_messages.has_error() and form.is_valid():
-            
+
             question = form.save()
 
             tags = request.POST.getlist('detail_tag')
@@ -386,6 +386,8 @@ def question_update(request, pk):
                     # temp 파일 삭제
                 if os.path.isfile('./media/temp/{}'.format(request.POST['img_recent'])):
                     os.remove('./media/temp/{}'.format(request.POST['img_recent']))
+            else:
+                question.image = None
 
             if request.FILES.get('attached_file'):  # form valid 시
                 question.attached_file = request.FILES.get('attached_file')
@@ -401,6 +403,9 @@ def question_update(request, pk):
                     # temp 파일 삭제
                 if os.path.isfile('./media/temp/{}'.format(request.POST['file_recent'])):
                     os.remove('./media/temp/{}'.format(request.POST['file_recent']))
+            else:
+                question.attached_file = None
+
 
             question.save()
             update_question(question, request.user)
