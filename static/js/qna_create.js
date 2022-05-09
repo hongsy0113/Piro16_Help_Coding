@@ -97,35 +97,3 @@ function fileChange(event) {
 
 imageLoad();
 fileLoad();
-
-
-
-/// 첨부 취소 관련 함수
-
-// 이미지 첨부 취소 버튼
-const imgCancel = document.querySelector(".group-post__form-imgcancel");
-// 해당 이미지 file input 태그
-const imgFile = document.querySelector("#img_upload");
-
-imgCancel.addEventListener('click', function(){
-    imgFile.value = null;
-    const imageDisplay = document.querySelector('#img_display');
-    imageDisplay.hidden = true;
-    const imageUploadName = document.querySelector('#img_upload_name');
-    imageUploadName.value = null;
-    const imageRecent = document.querySelector('#img_recent');
-    imageRecent.value = null;
-})
-
-// 파일 첨부 취소 버튼
-const fileCancel = document.querySelector(".group-post__form-filecancel");
-// 해당 파일 file input 태그
-const fileFile = document.querySelector("#file_upload");
-
-fileCancel.addEventListener('click', function(){
-    fileFile.value = null;
-    const fileRecent = document.querySelector('#file_recent');
-    fileRecent.value = null;
-    const fileUploadName = document.querySelector('#file_upload_name');
-    fileUploadName.value = null;
-})
