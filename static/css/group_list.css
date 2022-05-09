@@ -296,7 +296,7 @@ a {
     font-size: 18px;
     line-height: 150%;
     text-align: center;
-    color: #37C6E5;
+    color: var(--help-blue);
     padding: 6px 14px;
     background-color: #ffffff;
     border-radius: 100%;
@@ -314,7 +314,7 @@ a {
     text-align: center;
     color: #FFFFFF;
     padding: 6px 14px;
-    background-color: #37C6E5;
+    background-color: var(--help-blue);
     border-radius: 100%;
     margin-right: 10px;
     box-sizing: border-box;
@@ -329,7 +329,7 @@ a {
     text-align: center;
     color: #FFFFFF;
     padding: 6px 14px;
-    background-color: #37C6E5;
+    background-color: var(--help-blue);
     border-radius: 100%;
     margin-right: 10px;
     box-sizing: border-box;

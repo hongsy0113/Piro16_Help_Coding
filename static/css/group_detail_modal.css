@@ -216,7 +216,7 @@
 
 .wait-accept__btn {
     padding: 6px 15px 6px;
-    background: #37C6E5;
+    background: var(--help-blue);
     border: 2px solid var(--help-blue);
     box-sizing: border-box;
     border-radius: 41px;

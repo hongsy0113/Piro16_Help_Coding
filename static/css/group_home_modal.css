@@ -296,11 +296,11 @@ a {
 .group-info__btn {
     padding: 5px 13px 7px;
     background: #FFFFFF;
-    border: 2px solid #37C6E5;
+    border: 2px solid var(--help-blue);
     box-sizing: border-box;
     border-radius: 26px;
     text-decoration: none;
-    color: #37C6E5;
+    color: var(--help-blue);
     font-family: "Noto Sans KR", sans-serif;
     font-weight: bold;
     font-size: 16px;

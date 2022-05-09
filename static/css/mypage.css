@@ -80,7 +80,7 @@
 
 .mypage__bottom-btn > button,
 .mypage__profile__btn > button {
-  border: 1px solid #37c6e5;
+  border: 1px solid var(--help-blue);
   padding: 1px 6px !important;
 }
 
@@ -104,7 +104,7 @@
 }
 .mypage__options > h3:first-of-type {
   color: #4f4f4f;
-  border-bottom: 4px solid #37c6e5;
+  border-bottom: 4px solid var(--help-blue);
 }
 
 .mypage__options > h3:hover,
@@ -276,7 +276,7 @@
 }
 
 .mypage__message {
-  color: #37c6e5;
+  color: var(--help-blue);
   font-size: 18px !important;
 }
 
@@ -328,7 +328,7 @@
   font-size: 18px;
   line-height: 150%;
   text-align: center;
-  color: #37c6e5;
+  color: var(--help-blue);
   padding: 6px 14px;
   background-color: #ffffff;
   border-radius: 100%;
@@ -346,7 +346,7 @@
   text-align: center;
   color: #ffffff;
   padding: 6px 14px;
-  background-color: #37c6e5;
+  background-color: var(--help-blue);
   border-radius: 100%;
   margin-right: 10px;
   box-sizing: border-box;
@@ -361,7 +361,7 @@
   text-align: center;
   color: #ffffff;
   padding: 6px 14px;
-  background-color: #37c6e5;
+  background-color: var(--help-blue);
   border-radius: 100%;
   margin-right: 10px;
   box-sizing: border-box;

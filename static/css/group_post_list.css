@@ -46,12 +46,12 @@ a {
     padding: 10px 24px 12px;
 
     background: #FFFFFF;
-    border: 2px solid #37C6E5;
+    border: 2px solid var(--help-blue);
     box-sizing: border-box;
     border-radius: 26px;
 
     text-decoration: none;
-    color: #37C6E5;
+    color: var(--help-blue);
     font-family: "Noto Sans KR", sans-serif;
     font-weight: bold;
     font-size: 18px;
@@ -59,7 +59,7 @@ a {
 }
 
 .group-post__top--info a:hover {
-    background: #37C6E5;
+    background: var(--help-blue);
     color: #ffffff;
 }
 
@@ -444,7 +444,7 @@ a {
     font-size: 18px;
     line-height: 150%;
     text-align: center;
-    color: #37C6E5;
+    color: var(--help-blue);
     padding: 6px 14px;
     background-color: #ffffff;
     border-radius: 100%;
@@ -462,7 +462,7 @@ a {
     text-align: center;
     color: #FFFFFF;
     padding: 6px 14px;
-    background-color: #37C6E5;
+    background-color: var(--help-blue);
     border-radius: 100%;
     margin-right: 10px;
     box-sizing: border-box;
@@ -477,7 +477,7 @@ a {
     text-align: center;
     color: #FFFFFF;
     padding: 6px 14px;
-    background-color: #37C6E5;
+    background-color: var(--help-blue);
     border-radius: 100%;
     margin-right: 10px;
     box-sizing: border-box;

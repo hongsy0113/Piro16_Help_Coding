@@ -43,7 +43,7 @@ a {
 }
 /* 첫번째 컨테이너 */
 .landing__container-first {
-    background: #37C6E5;
+    background: var(--help-blue);
 }
 
 .landing__first {
@@ -163,7 +163,7 @@ a {
 .landing__qna__box-5 {
     top: 150px;
     left: 415px;
-    border: 2px solid #37C6E5;
+    border: 2px solid var(--help-blue);
     z-index: 13;
 }
 
@@ -266,7 +266,7 @@ a {
 }
 
 .landing__ctabtn {
-    background: #37C6E5;
+    background: var(--help-blue);
     color: white;
     width: 235px;
     height: 66px;
@@ -309,7 +309,7 @@ p.main__title, .main__qna__box p {
 
 
 .main__container:first-of-type{
-    background: #37C6E5;
+    background: var(--help-blue);
 }
 .main__search {
     width: 1080px;
@@ -427,7 +427,7 @@ p.main__title, .main__qna__box p {
 }
 
 .landing__ctabtn--group {
-    background: #37C6E5;
+    background: var(--help-blue);
     color: white;
     width: 235px;
     height: 66px;
