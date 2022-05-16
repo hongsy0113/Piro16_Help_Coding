@@ -86,6 +86,9 @@ imgCancel.addEventListener('click', function(){
     imageUploadName.value = null;
     const imageRecent = document.querySelector('#img_recent');
     imageRecent.value = null;
+
+    // 취소 버튼 안 보이게 하기
+    imgCancel.hidden = true;
 })
 
 // 파일 첨부 취소 버튼
@@ -99,4 +102,31 @@ fileCancel.addEventListener('click', function(){
     fileRecent.value = null;
     const fileUploadName = document.querySelector('#file_upload_name');
     fileUploadName.value = null;
+
+    // 취소 버튼 안 보이게 하기
+    fileCancel.hidden = true;
+})
+
+
+// input 태그에 파일 업로드 될 때만 취서 버튼 활성화
+
+const imageUploadName = document.querySelector('#img_upload_name');
+const fileUploadName = document.querySelector('#file_upload_name');
+
+imgFile.addEventListener('change', function(){
+    if (imgFile.value == null) {
+        imgCancel.hidden = true;
+    }
+    else {
+        imgCancel.hidden = false;
+    }
+})
+
+fileFile.addEventListener('change', function(){
+    if (fileFile.value == null) {
+        fileCancel.hidden = true;
+    }
+    else {
+        fileCancel.hidden = false;
+    }
 })

@@ -108,7 +108,7 @@
                 <div class="group-post__form-box">  
                     <input  id="img_upload_name" class="group-post__form-input group-post__form-input--image" placeholder="질문과 관련된 사진을 추가하세요" readonly  />
                     <label for="img_upload" class="group-post__form-label">사진 올리기</label>
-                    <button type = "button" class = "group-post__form-imgcancel">업로드 취소</button>
+                    <button type = "button" class = "group-post__form-imgcancel" {% if current_image or original_information.image %}{% else %}hidden{% endif %}>업로드 취소</button>
                     <input type="file" id="img_upload" class="form__input--file" name="image" onchange="imageChange(event);">
                     <input name="img_recent" id="img_recent" value="{% if current_image %}{{ current_image }}{% else %}{{ original_information.image }}{% endif %}" hidden />
                     <input id="temp_img_location" value="{{ temp_img_location }}" hidden></input>
@@ -122,7 +122,7 @@
                 <div class="group-post__form-box">
                     <input id="file_upload_name" class="group-post__form-input group-post__form-input--file"  placeholder="질문과 관련된 파일(코드)을 추가하세요" readonly/>
                     <label for="file_upload" class="group-post__form-label">파일 올리기</label>
-                    <button type = "button" class = "group-post__form-filecancel">업로드 취소</button>
+                    <button type = "button" class = "group-post__form-filecancel" {% if current_image or original_information.image %}{% else %}hidden{% endif %}>업로드 취소</button>
                     <input type="file" class="form__input--file" id="file_upload" name="attached_file" value="{{ form.attached_file.url }}" onchange="fileChange(event); "/>
                     <input name="file_recent" id="file_recent" value="{% if current_file %}{{ current_file }}{% else %}{{ original_information.attached_file }}{% endif %}" hidden />
                     <input id="temp_file_location" value="{{ temp_file_location }}" hidden></input>
